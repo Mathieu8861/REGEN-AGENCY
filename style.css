@@ -629,16 +629,12 @@ p:last-child {
 .services__image-wrapper {
     position: relative;
     width: 100%;
-    max-width: 450px;
-    aspect-ratio: 1;
+    max-width: 500px;
 }
 
-.services__decoration {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(var(--color-secondary-rgb), 0.1), rgba(var(--color-accent-rgb), 0.1));
-    border-radius: var(--radius-xl);
-    border: 2px dashed rgba(var(--color-secondary-rgb), 0.3);
+.services__illustration {
+    width: 100%;
+    height: auto;
 }
 
 
