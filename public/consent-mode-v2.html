@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Consent Mode V2 - Mettez votre site aux normes RGPD et ePrivacy avec Regen Agency. Solution rapide et fiable.">
+
+    <title>Consent Mode V2 - Regen Agency</title>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/animations.css">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#173C3A">
+</head>
+<body class="loading">
+
+    <!-- Page Loader -->
+    <div class="page-loader">
+        <div class="page-loader__content">
+            <img src="assets/images/logo-icon.png" alt="Chargement" class="page-loader__logo">
+        </div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress"></div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header__container">
+            <nav class="nav">
+                <a href="/" class="nav__logo">
+                    <img src="assets/images/logo-full.png" alt="Regen Agency" class="nav__logo-img">
+                </a>
+
+                <ul class="nav__menu" id="nav-menu">
+                    <li><a href="index.html" class="nav__link">Accueil</a></li>
+                    <li class="nav__item--dropdown">
+                        <a href="services.html" class="nav__link nav__link--active">Services</a>
+                        <ul class="nav__dropdown">
+                            <li><a href="google-ads.html">Google Ads</a></li>
+                            <li><a href="meta-ads.html">Meta Ads</a></li>
+                            <li><a href="optimisation-ecommerce.html">Optimisation e-commerce</a></li>
+                            <li><a href="data-tracking.html">Data Tracking</a></li>
+                            <li><a href="consent-mode-v2.html">Consent Mode V2</a></li>
+                            <li><a href="formation-sea.html">Formations SEA</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="qui-sommes-nous.html" class="nav__link">Qui sommes-nous ?</a></li>
+                    <li><a href="blog.html" class="nav__link">Blog</a></li>
+                </ul>
+
+                <div class="nav__actions">
+                    <a href="connexion.html" class="btn btn--secondary nav__cta nav__cta--client">Espace Client</a>
+                    <a href="contact.html" class="btn btn--primary nav__cta">Prendre contact</a>
+                </div>
+
+                <button class="nav__toggle" id="nav-toggle" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero -->
+        <section class="hero-service" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+            <div class="container">
+                <span class="section__badge">Conformité</span>
+                <h1 class="hero-service__title">Consent Mode V2</h1>
+                <p class="hero-service__tagline">Soyez au niveau des nouvelles normes</p>
+                <p class="hero-service__description">Actualisez la collecte des données de votre site avec une solution rapide et efficace pour mettre à jour votre Consent Mode et votre bannière cookie.</p>
+                <div class="hero-service__cta">
+                    <a href="contact.html" class="btn btn--white btn--large">Nous contacter</a>
+                    <a href="#features" class="btn btn--secondary btn--large">Découvrir</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alert Stats -->
+        <section class="section" style="background: var(--color-light);">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-left: 4px solid #ef4444;">
+                        <div class="stat-card__number" style="color: #ef4444;">4%</div>
+                        <div class="stat-card__label">Amende maximale du CA</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid #f59e0b;">
+                        <div class="stat-card__number" style="color: #f59e0b;">Mars 2024</div>
+                        <div class="stat-card__label">Date limite Google</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid var(--color-secondary);">
+                        <div class="stat-card__number">96h</div>
+                        <div class="stat-card__label">Délai d'installation minimum</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid var(--color-primary);">
+                        <div class="stat-card__number">100%</div>
+                        <div class="stat-card__label">Conformité garantie</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="section" id="features">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Nos atouts</span>
+                    <h2 class="section__title">Une solution complète</h2>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-card__icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <polyline points="9 12 11 14 15 10"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-card__title">Solution conforme</h3>
+                        <p class="feature-card__text">Installation alignée avec les réglementations RGPD et ePrivacy en vigueur.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-card__icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-card__title">Installation rapide</h3>
+                        <p class="feature-card__text">Déploiement de l'outil en moins de 96 heures par notre expert.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-card__icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-card__title">Données préservées</h3>
+                        <p class="feature-card__text">Installation d'outils avancés pour un tracking inchangé malgré la conformité.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content -->
+        <section class="section section--content" style="background: var(--color-light);">
+            <div class="container">
+                <div class="two-columns">
+                    <div class="two-columns__content">
+                        <span class="section__badge">Contexte</span>
+                        <h2>Pourquoi le Consent Mode V2 est obligatoire</h2>
+                        <p>Depuis le <strong>1er mars 2024</strong>, les sites collectant des données utilisateurs via cookies doivent mettre à jour leur bannière de consentement.</p>
+                        <p>Le Consent Mode V2 permet un respect plus précis des choix de consentement des utilisateurs. C'est à la fois :</p>
+                        <ul class="services__list" style="margin-top: var(--spacing-md);">
+                            <li>
+                                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Une obligation légale (RGPD et ePrivacy)
+                            </li>
+                            <li>
+                                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Une préparation au Digital Markets Act
+                            </li>
+                            <li>
+                                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Une nécessité pour conserver vos données Google
+                            </li>
+                        </ul>
+                        <p style="margin-top: var(--spacing-md);"><strong>Attention :</strong> Retarder l'implémentation risque de vous faire perdre vos capacités de reporting.</p>
+                    </div>
+                    <div class="two-columns__visual" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.5" style="width: 150px; height: 150px;">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            <circle cx="12" cy="16" r="1"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advantages -->
+        <section class="section section--advantages">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Nos petits plus</span>
+                    <h2 class="section__title">Pourquoi nous choisir ?</h2>
+                </div>
+
+                <div class="advantages-grid">
+                    <div class="advantage-card">
+                        <div class="advantage-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <h3 class="advantage-card__title">Tarification juste et adaptée</h3>
+                        <p class="advantage-card__text">Des formules sur-mesure en fonction de vos enjeux et vos ressources.</p>
+                    </div>
+
+                    <div class="advantage-card">
+                        <div class="advantage-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <h3 class="advantage-card__title">Disponibilité 24/7</h3>
+                        <p class="advantage-card__text">Techniciens disponibles pour vérifier le bon fonctionnement de vos campagnes.</p>
+                    </div>
+
+                    <div class="advantage-card">
+                        <div class="advantage-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <polyline points="9 12 11 14 15 10"/>
+                            </svg>
+                        </div>
+                        <h3 class="advantage-card__title">Confiance et transparence</h3>
+                        <p class="advantage-card__text">Relations de proximité à long terme avec nos partenaires.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="section section--faq">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">FAQ</span>
+                    <h2 class="section__title">Questions fréquentes</h2>
+                </div>
+
+                <div class="faq-list">
+                    <details class="faq-item">
+                        <summary class="faq-item__question">Le Consent Mode V2 est-il vraiment nécessaire ?</summary>
+                        <p class="faq-item__answer">Oui, c'est une obligation légale depuis mars 2024. Sans lui, vous risquez des amendes et la perte de vos données publicitaires Google.</p>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">Quelle est la date limite d'installation ?</summary>
+                        <p class="faq-item__answer">La date limite était le 1er mars 2024. Si vous n'êtes pas encore conforme, il est urgent d'agir pour éviter la perte de données.</p>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">J'en ai besoin même si je ne fais pas de publicité ?</summary>
+                        <p class="faq-item__answer">Si vous utilisez Google Analytics ou tout autre outil de tracking, oui. Le Consent Mode V2 concerne la collecte de données au sens large.</p>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">Quels risques si je ne l'installe pas ?</summary>
+                        <p class="faq-item__answer">Vous risquez une amende pouvant atteindre 4% de votre CA annuel, plus la perte de vos données de tracking Google.</p>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">Pouvez-vous intervenir en urgence ?</summary>
+                        <p class="faq-item__answer">Oui, nous proposons des interventions d'urgence avec un déploiement en 96 heures maximum.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="section section--cta">
+            <div class="container">
+                <div class="cta-box">
+                    <h2 class="cta-box__title">Mettez-vous en conformité dès maintenant</h2>
+                    <p class="cta-box__text">N'attendez plus pour installer le Consent Mode V2 et protéger vos données.</p>
+                    <div class="cta-box__actions">
+                        <a href="contact.html" class="btn btn--white btn--large">Nous contacter</a>
+                        <a href="mailto:contact@regen-agency.com" class="cta-box__email">contact@regen-agency.com</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__brand">
+                    <a href="/" class="footer__logo">
+                        <img src="assets/images/logo-icon.png" alt="Regen Agency" class="footer__logo-icon">
+                        <span class="footer__logo-text">Regen Agency</span>
+                    </a>
+                </div>
+
+                <div class="footer__links">
+                    <div class="footer__col">
+                        <h4 class="footer__title">Services</h4>
+                        <ul class="footer__list">
+                            <li><a href="google-ads.html">Google Ads</a></li>
+                            <li><a href="meta-ads.html">Meta Ads</a></li>
+                            <li><a href="data-tracking.html">Data Tracking</a></li>
+                            <li><a href="optimisation-ecommerce.html">E-commerce</a></li>
+                            <li><a href="consent-mode-v2.html">Consent Mode V2</a></li>
+                            <li><a href="formation-sea.html">Formations</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__title">En savoir plus</h4>
+                        <ul class="footer__list">
+                            <li><a href="qui-sommes-nous.html">À propos de nous</a></li>
+                            <li><a href="qui-sommes-nous.html#team">La Team</a></li>
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="mentions-legales.html">Mentions Légales</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__title">Support</h4>
+                        <ul class="footer__list">
+                            <li><a href="contact.html">Contactez nous</a></li>
+                            <li><a href="services.html#faq">FAQ</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer__social">
+                    <a href="https://www.facebook.com/RegenAgency" class="footer__social-link" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/regenagency_/" class="footer__social-link" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://www.linkedin.com/company/regenagency/" class="footer__social-link" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2025 Regen Agency, tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

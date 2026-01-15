@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Regen Agency - Déploiement publicitaire et développement des ventes. Google Ads, Meta Ads, Data Tracking, Optimisation e-commerce.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Regen Agency - Déploiement publicitaire">
+    <meta property="og:description" content="Une nouvelle manière de générer de la croissance pour votre entreprise.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://regen-agency.com">
+    <meta property="og:image" content="https://regen-agency.com/assets/images/og-image.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Regen Agency - Déploiement publicitaire">
+    <meta name="twitter:description" content="Une nouvelle manière de générer de la croissance pour votre entreprise.">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#173C3A">
+
+    <title>Regen Agency - Déploiement publicitaire et développement des ventes</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body class="loading">
+
+    <!-- Page Loader -->
+    <div class="page-loader">
+        <div class="page-loader__content">
+            <img src="assets/images/logo-icon.png" alt="Chargement" class="page-loader__logo">
+        </div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress"></div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header__container">
+            <nav class="nav">
+                <a href="/" class="nav__logo">
+                    <img src="assets/images/logo-full.png" alt="Regen Agency" class="nav__logo-img">
+                </a>
+                
+                <ul class="nav__menu" id="nav-menu">
+                    <li><a href="index.html" class="nav__link nav__link--active">Accueil</a></li>
+                    <li class="nav__item--dropdown">
+                        <a href="services.html" class="nav__link">Services</a>
+                        <ul class="nav__dropdown">
+                            <li><a href="google-ads.html">Google Ads</a></li>
+                            <li><a href="meta-ads.html">Meta Ads</a></li>
+                            <li><a href="optimisation-ecommerce.html">Optimisation e-commerce</a></li>
+                            <li><a href="data-tracking.html">Data Tracking</a></li>
+                            <li><a href="consent-mode-v2.html">Consent Mode V2</a></li>
+                            <li><a href="formation-sea.html">Formations SEA</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="qui-sommes-nous.html" class="nav__link">Qui sommes-nous ?</a></li>
+                    <li><a href="blog.html" class="nav__link">Blog</a></li>
+                </ul>
+                
+                <div class="nav__actions">
+                    <a href="connexion.html" class="btn btn--secondary nav__cta nav__cta--client">Espace Client</a>
+                    <a href="contact.html" class="btn btn--primary nav__cta">Prendre contact</a>
+                </div>
+
+                <button class="nav__toggle" id="nav-toggle" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main>
+        <!-- Hero -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero__content">
+                    <div class="hero__text">
+                        <span class="hero__badge">Bienvenue</span>
+                        <h1 class="hero__title">
+                            Une nouvelle manière de <span class="text-gradient">générer de la croissance</span> pour votre entreprise.
+                        </h1>
+                        <p class="hero__subtitle">
+                            Déploiement publicitaire, optimisation e-commerce, data tracking, venez découvrir nos services.
+                        </p>
+                                            </div>
+                    <div class="hero__visual">
+                        <div class="hero__illustration">
+                            <video src="assets/images/video_header_arbre.mp4" class="hero__video" autoplay loop muted playsinline></video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="hero__stats">
+                <div class="container">
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat__number">7</span>
+                            <span class="stat__label">de ROI moyen</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat__number">300<span class="stat__unit">K</span></span>
+                            <span class="stat__label">de CA généré sur 2024</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat__number">+150<span class="stat__unit">%</span></span>
+                            <span class="stat__label">de croissance</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat__number">8000</span>
+                            <span class="stat__label">commandes générées</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Ads -->
+        <section class="section section--services" id="services">
+            <div class="container">
+                <div class="services__content">
+                    <div class="services__text">
+                        <span class="section__badge">Services Ads</span>
+                        <h2 class="section__title">Comment la publicité en ligne peut aider votre entreprise à se développer ?</h2>
+                        <p class="section__description">
+                            Google, Facebook, Instagram, Tiktok, Linkedin et bien d'autres permettent de <strong>faire rayonner votre marque</strong> de bien des manières. En fonction de vos besoins, les ads sont un excellent moyen d'<strong>atteindre de nouveaux objectifs</strong>.
+                        </p>
+                        <div class="services__lists">
+                            <ul class="services__list">
+                                <li>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Booster vos ventes
+                                </li>
+                                <li>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Générer des prospects
+                                </li>
+                                <li>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Gagner en visibilité
+                                </li>
+                            </ul>
+                            <ul class="services__list">
+                                <li>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Rester compétitif
+                                </li>
+                                <li>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Mieux connaître vos clients
+                                </li>
+                                <li>
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Mesurer efficacement vos données
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="services__cta">
+                            <a href="#contact" class="btn btn--primary">Nous contacter</a>
+                            <a href="#expertise" class="btn btn--secondary">En savoir plus</a>
+                        </div>
+                    </div>
+                    <div class="services__visual">
+                        <div class="services__image-wrapper">
+                            <img src="assets/images/image_service_ads.jpg" alt="Illustration publicité en ligne" class="services__illustration">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Valeur ajoutée -->
+        <section class="section section--value">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Nos petits plus</span>
+                    <h2 class="section__title">Notre valeur ajoutée</h2>
+                </div>
+                <div class="value__grid">
+                    <div class="value-card">
+                        <div class="value-card__icon value-card__icon--coins">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <ellipse cx="12" cy="6" rx="8" ry="3"/>
+                                <path d="M4 6v4c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/>
+                                <path d="M4 10v4c0 1.66 3.58 3 8 3s8-1.34 8-3v-4"/>
+                                <path d="M4 14v4c0 1.66 3.58 3 8 3s8-1.34 8-3v-4"/>
+                            </svg>
+                        </div>
+                        <h3 class="value-card__title">Une tarification juste et adaptée</h3>
+                        <p class="value-card__text">Nous souhaitons avoir des formules sur mesure pour chacun de nos clients, en fonction de vos enjeux et vos ressources.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-card__icon value-card__icon--clock">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" class="clock-circle"/>
+                                <polyline points="12 6 12 12 16 14" class="clock-hands"/>
+                            </svg>
+                        </div>
+                        <h3 class="value-card__title">7/7j</h3>
+                        <p class="value-card__text">Parce que vos investissements publicitaires ne prennent pas de vacances ou de week-end, alors nous non plus. Nous avons toujours un technicien disponible.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-card__icon value-card__icon--shield">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" class="shield-body"/>
+                                <polyline points="9 12 11 14 15 10" class="shield-check"/>
+                            </svg>
+                        </div>
+                        <h3 class="value-card__title">Confiance et transparence</h3>
+                        <p class="value-card__text">Un de nos objectifs est de créer une relation de proximité à long terme avec nos futurs partenaires.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expertises -->
+        <section class="section section--expertise" id="expertise">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Nos top services</span>
+                    <h2 class="section__title">Nos domaines d'expertises</h2>
+                </div>
+                <div class="expertise__grid">
+                    <article class="expertise-card">
+                        <div class="expertise-card__icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                        </div>
+                        <h3 class="expertise-card__title">Google Ads</h3>
+                        <p class="expertise-card__text">Exploitez tout le potentiel des plateformes Google : Réseau de Recherche, Shopping, Display, Discovery & Youtube.</p>
+                        <a href="google-ads.html" class="expertise-card__link">
+                            Passer à la vitesse supérieure
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
+                    </article>
+
+                    <article class="expertise-card">
+                        <div class="expertise-card__icon expertise-card__icon--meta">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02z"/>
+                            </svg>
+                        </div>
+                        <h3 class="expertise-card__title">Meta Ads</h3>
+                        <p class="expertise-card__text">Construisez l'histoire de votre marque sur les réseaux sociaux Facebook et Instagram grâce à nos campagnes ads.</p>
+                        <a href="meta-ads.html" class="expertise-card__link">
+                            Booster ma marque
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
+                    </article>
+
+                    <article class="expertise-card">
+                        <div class="expertise-card__icon expertise-card__icon--data">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                                <line x1="12" y1="22.08" x2="12" y2="12"/>
+                            </svg>
+                        </div>
+                        <h3 class="expertise-card__title">Outils Data Tracking</h3>
+                        <p class="expertise-card__text">Mesurez toutes les données de votre site et campagnes grâce à nos solutions techniques personnalisées.</p>
+                        <a href="data-tracking.html" class="expertise-card__link">
+                            Ne plus rien manquer
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
+                    </article>
+
+                    <article class="expertise-card">
+                        <div class="expertise-card__icon expertise-card__icon--ecom">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="20" cy="21" r="1"/>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                            </svg>
+                        </div>
+                        <h3 class="expertise-card__title">Optimisation e-commerce</h3>
+                        <p class="expertise-card__text">Améliorez l'expérience de vos clients, facilitez le parcours d'achat et augmentez votre taux de conversion.</p>
+                        <a href="optimisation-ecommerce.html" class="expertise-card__link">
+                            Je teste
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
+                    </article>
+
+                    <article class="expertise-card">
+                        <div class="expertise-card__icon expertise-card__icon--consent">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                <circle cx="12" cy="16" r="1"/>
+                            </svg>
+                        </div>
+                        <h3 class="expertise-card__title">Consent Mode V2</h3>
+                        <p class="expertise-card__text">Mettez aux normes RGPD et ePrivacy votre bannière cookie avec une solution rapide, fiable et adaptée.</p>
+                        <a href="consent-mode-v2.html" class="expertise-card__link">
+                            Se mettre à jour
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
+                    </article>
+
+                    <article class="expertise-card">
+                        <div class="expertise-card__icon expertise-card__icon--formation">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                            </svg>
+                        </div>
+                        <h3 class="expertise-card__title">Formations SEA</h3>
+                        <p class="expertise-card__text">Formez vous et vos collaborateurs avec notre expert en marketing digital Google & Réseaux Sociaux.</p>
+                        <a href="formation-sea.html" class="expertise-card__link">
+                            Découvrir le programme
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Collaboration -->
+        <section class="section section--collab">
+            <div class="container">
+                <div class="collab__content">
+                    <div class="collab__visual">
+                        <div class="collab__decoration"></div>
+                    </div>
+                    <div class="collab__text">
+                        <span class="section__badge">Vous & Nous</span>
+                        <h2 class="section__title">Pour une collaboration idéale</h2>
+                        
+                        <div class="collab__items">
+                            <div class="collab-item">
+                                <div class="collab-item__number">01</div>
+                                <div class="collab-item__content">
+                                    <h3 class="collab-item__title">Connaître vos ressources</h3>
+                                    <p class="collab-item__text">Pour travailler efficacement, il est bon de savoir définir quelles sont les ressources à votre disposition : outils, connaissances, équipe, budget.</p>
+                                </div>
+                            </div>
+                            <div class="collab-item">
+                                <div class="collab-item__number">02</div>
+                                <div class="collab-item__content">
+                                    <h3 class="collab-item__title">Connaître vos besoins</h3>
+                                    <p class="collab-item__text">Cela nous permet d'avoir un premier axe de réflexion pour établir une stratégie parfaitement adaptée et vous faire gagner du temps.</p>
+                                </div>
+                            </div>
+                            <div class="collab-item">
+                                <div class="collab-item__number">03</div>
+                                <div class="collab-item__content">
+                                    <h3 class="collab-item__title">Avoir conscience du temps nécessaire</h3>
+                                    <p class="collab-item__text">Vos résultats dépendront de nombreux facteurs. Forts de notre expérience, nous saurons gérer tout défi qui se présentera.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Témoignages -->
+        <section class="section section--testimonials" id="testimonials">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Témoignages</span>
+                    <h2 class="section__title">Vos retours d'expériences</h2>
+                </div>
+                <div class="testimonials-carousel">
+                    <div class="testimonials-carousel__track">
+                        <article class="testimonial-card">
+                            <div class="testimonial-card__content">
+                                <p class="testimonial-card__text">"L'Agence m'accompagne depuis Janvier 2024 et depuis le début, mon business n'a jamais cessé d'évoluer. Cela m'a permis de tripler mon chiffre d'affaires grâce à leur accompagnement."</p>
+                            </div>
+                            <div class="testimonial-card__author">
+                                <div class="testimonial-card__avatar">E</div>
+                                <div class="testimonial-card__info">
+                                    <span class="testimonial-card__name">Emma</span>
+                                    <span class="testimonial-card__role">Directrice chez Abra'cadabrod</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="testimonial-card">
+                            <div class="testimonial-card__content">
+                                <p class="testimonial-card__text">"Collaborer avec Regen Agency a été une expérience révélatrice. Nous avons vu une nette amélioration de notre visibilité en ligne et une augmentation significative de nos ventes."</p>
+                            </div>
+                            <div class="testimonial-card__author">
+                                <div class="testimonial-card__avatar">M</div>
+                                <div class="testimonial-card__info">
+                                    <span class="testimonial-card__name">Mathis</span>
+                                    <span class="testimonial-card__role">CEO chez THE BRAND LAB</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="testimonial-card">
+                            <div class="testimonial-card__content">
+                                <p class="testimonial-card__text">"Je recommande vivement Regen Agency ! Jaemeson et Mathieu sont très professionnels, réactifs et sympathiques. Un vrai partenaire de confiance."</p>
+                            </div>
+                            <div class="testimonial-card__author">
+                                <div class="testimonial-card__avatar">P</div>
+                                <div class="testimonial-card__info">
+                                    <span class="testimonial-card__name">Philippe</span>
+                                    <span class="testimonial-card__role">Dirigeant chez SCATAIR</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="testimonial-card">
+                            <div class="testimonial-card__content">
+                                <p class="testimonial-card__text">"Nous sommes ravies de notre collaboration avec Regen Agency. Jaemeson et Mathieu sont très réactifs, à l'écoute de nos objectifs et mettent tout en œuvre pour obtenir les meilleurs résultats sur nos campagnes Google Ads, notamment grâce à de nombreuses optimisations et de précieux conseils !"</p>
+                            </div>
+                            <div class="testimonial-card__author">
+                                <div class="testimonial-card__avatar">C</div>
+                                <div class="testimonial-card__info">
+                                    <span class="testimonial-card__name">Chloé</span>
+                                    <span class="testimonial-card__role">Responsable Marketing chez Emile & Co</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="testimonial-card">
+                            <div class="testimonial-card__content">
+                                <p class="testimonial-card__text">"Depuis que je collabore avec Mathieu et Jaemeson, mon nombre d'abonnements pour mon application sportive a triplé, tout en réduisant mes coûts par rapport à leurs concurrents qui ont pu gérer mes comptes avant eux. C'est exactement ce que je recherchais : un service simple, efficace, et qui tient ses promesses. Le job est fait ! Merci Regen Agency."</p>
+                            </div>
+                            <div class="testimonial-card__author">
+                                <div class="testimonial-card__avatar">G</div>
+                                <div class="testimonial-card__info">
+                                    <span class="testimonial-card__name">Guillaume</span>
+                                    <span class="testimonial-card__role">Coach Sportif chez SupperSept</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="testimonial-card">
+                            <div class="testimonial-card__content">
+                                <p class="testimonial-card__text">"Pour notre bijouterie OCCMP, nous avions besoin d'un nouveau site web capable de refléter l'identité de notre marque, tout en offrant une navigation fluide et une visibilité optimale sur les moteurs de recherche. L'équipe de Regen Agency a parfaitement compris nos attentes et a su créer un site élégant, moderne et performant. Leur expertise nous a été précieuse du début à la fin du projet."</p>
+                            </div>
+                            <div class="testimonial-card__author">
+                                <div class="testimonial-card__avatar">S</div>
+                                <div class="testimonial-card__info">
+                                    <span class="testimonial-card__name">Simon</span>
+                                    <span class="testimonial-card__role">Associé chez OCCMP</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="testimonial-card">
+                            <div class="testimonial-card__content">
+                                <p class="testimonial-card__text">"L'accompagnement personnalisé que j'ai reçu de la part de Regen Agency a été remarquable. Leur approche stratégique et leur planification détaillée de mes campagnes SEA m'ont permis d'atteindre mes objectifs de visibilité en ligne de manière efficace et mesurable."</p>
+                            </div>
+                            <div class="testimonial-card__author">
+                                <div class="testimonial-card__avatar">I</div>
+                                <div class="testimonial-card__info">
+                                    <span class="testimonial-card__name">Ilyas Elhams</span>
+                                    <span class="testimonial-card__role">Architecte & Enseignant à l'ENSA de Paris-Est</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Navigation du carrousel -->
+                    <div class="testimonials-carousel__nav">
+                        <button class="testimonials-carousel__btn testimonials-carousel__btn--prev" aria-label="Témoignage précédent">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <div class="testimonials-carousel__dots"></div>
+                        <button class="testimonials-carousel__btn testimonials-carousel__btn--next" aria-label="Témoignage suivant">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Final -->
+        <section class="section section--cta" id="contact">
+            <div class="container">
+                <div class="cta-box">
+                    <h2 class="cta-box__title">Faites prospérer votre entreprise avec nos solutions Ads</h2>
+                    <p class="cta-box__text">Google Ads, Meta Ads, Data Tracking... Discutons de votre projet.</p>
+                    <div class="cta-box__actions">
+                        <a href="mailto:contact@regen-agency.com" class="btn btn--white btn--large">Nous contacter</a>
+                        <a href="mailto:contact@regen-agency.com" class="cta-box__email">contact@regen-agency.com</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Section -->
+        <section class="section section--blog" id="blog">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__tag">Blog</span>
+                    <h2 class="section__title">Nos derniers <span class="text-gradient">articles</span></h2>
+                    <p class="section__subtitle">Restez informé des dernières tendances du marketing digital et de la publicité en ligne.</p>
+                </div>
+
+                <div class="blog__grid">
+                    <article class="blog-card">
+                        <div class="blog-card__image">
+                            <img src="assets/images/blog-placeholder.jpg" alt="Article blog">
+                            <span class="blog-card__category">Google Ads</span>
+                        </div>
+                        <div class="blog-card__content">
+                            <span class="blog-card__date">10 Janvier 2025</span>
+                            <h3 class="blog-card__title">Comment optimiser vos campagnes Google Ads en 2025</h3>
+                            <p class="blog-card__excerpt">Découvrez les meilleures pratiques pour maximiser votre ROI sur Google Ads cette année.</p>
+                            <a href="blog/article-1.html" class="blog-card__link">Lire l'article →</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card">
+                        <div class="blog-card__image">
+                            <img src="assets/images/blog-placeholder.jpg" alt="Article blog">
+                            <span class="blog-card__category">Meta Ads</span>
+                        </div>
+                        <div class="blog-card__content">
+                            <span class="blog-card__date">8 Janvier 2025</span>
+                            <h3 class="blog-card__title">Les nouvelles fonctionnalités Meta Ads à connaître</h3>
+                            <p class="blog-card__excerpt">Meta a déployé de nouvelles fonctionnalités publicitaires. Voici ce qu'il faut savoir.</p>
+                            <a href="blog/article-2.html" class="blog-card__link">Lire l'article →</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card">
+                        <div class="blog-card__image">
+                            <img src="assets/images/blog-placeholder.jpg" alt="Article blog">
+                            <span class="blog-card__category">Data Tracking</span>
+                        </div>
+                        <div class="blog-card__content">
+                            <span class="blog-card__date">5 Janvier 2025</span>
+                            <h3 class="blog-card__title">Consent Mode V2 : tout ce que vous devez savoir</h3>
+                            <p class="blog-card__excerpt">Le Consent Mode V2 est devenu obligatoire. Voici comment vous mettre en conformité.</p>
+                            <a href="blog/article-3.html" class="blog-card__link">Lire l'article →</a>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="section__cta">
+                    <a href="blog.html" class="btn btn--secondary">Voir tous les articles</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__brand">
+                    <a href="/" class="footer__logo">
+                        <img src="assets/images/logo-icon.png" alt="Regen Agency" class="footer__logo-icon">
+                        <span class="footer__logo-text">Regen Agency</span>
+                    </a>
+                </div>
+                
+                <div class="footer__links">
+                    <div class="footer__col">
+                        <h4 class="footer__title">Services</h4>
+                        <ul class="footer__list">
+                            <li><a href="google-ads.html">Google Ads</a></li>
+                            <li><a href="meta-ads.html">Meta Ads</a></li>
+                            <li><a href="data-tracking.html">Data Tracking</a></li>
+                            <li><a href="optimisation-ecommerce.html">E-commerce</a></li>
+                            <li><a href="consent-mode-v2.html">Consent Mode V2</a></li>
+                            <li><a href="formation-sea.html">Formations</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__title">En savoir plus</h4>
+                        <ul class="footer__list">
+                            <li><a href="qui-sommes-nous.html">À propos de nous</a></li>
+                            <li><a href="qui-sommes-nous.html#team">La Team</a></li>
+                            <li><a href="mentions-legales.html">Mentions Légales</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__title">Support</h4>
+                        <ul class="footer__list">
+                            <li><a href="contact.html">Contactez nous</a></li>
+                            <li><a href="services.html#faq">FAQ</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer__social">
+                    <a href="https://www.facebook.com/RegenAgency" class="footer__social-link" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/regenagency_/" class="footer__social-link" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://www.linkedin.com/company/regenagency/" class="footer__social-link" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2025 Regen Agency, tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+</body>
+</html>
