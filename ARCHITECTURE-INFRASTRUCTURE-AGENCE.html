@@ -779,19 +779,143 @@
         </table>
     </div>
 
-    <!-- SECTION 8: QUESTIONS -->
+    <!-- SECTION 8: CONFORMITÉ RGPD / UE -->
     <div class="section">
-        <h2 class="section-title"><span class="section-number">8</span>Questions pour validation</h2>
+        <h2 class="section-title"><span class="section-number">8</span>Conformité RGPD / Union Européenne</h2>
 
-        <div class="info-box warning">
-            <ol style="margin-left: 20px;">
-                <li style="margin: 10px 0;">L'architecture proposée répond-elle aux besoins identifiés ?</li>
-                <li style="margin: 10px 0;">Y a-t-il des contraintes de sécurité supplémentaires à considérer ?</li>
-                <li style="margin: 10px 0;">Préférence sur les régions d'hébergement (EU obligatoire / RGPD) ?</li>
-                <li style="margin: 10px 0;">Besoin d'un environnement de staging/préproduction ?</li>
-                <li style="margin: 10px 0;">Politique de backup spécifique requise ?</li>
-            </ol>
+        <div class="info-box" style="background: #e6f4ea; border-color: #2FB963;">
+            <strong style="color: #173C3A;">✓ Hébergement 100% EU confirmé</strong><br>
+            Toutes les données sont hébergées dans l'Union Européenne, en conformité avec le RGPD.
         </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Région EU</th>
+                    <th>Localisation</th>
+                    <th>Conformité</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Vercel</strong></td>
+                    <td>✓ fra1</td>
+                    <td>Frankfurt, Allemagne</td>
+                    <td>RGPD, ISO 27001</td>
+                </tr>
+                <tr>
+                    <td><strong>Railway</strong></td>
+                    <td>✓ eu-west</td>
+                    <td>Europe de l'Ouest</td>
+                    <td>RGPD, SOC 2</td>
+                </tr>
+                <tr>
+                    <td><strong>Supabase</strong></td>
+                    <td>✓ eu-central-1</td>
+                    <td>Frankfurt, Allemagne</td>
+                    <td>RGPD, SOC 2, HIPAA</td>
+                </tr>
+                <tr>
+                    <td><strong>Stripe</strong></td>
+                    <td>✓ EU</td>
+                    <td>Dublin, Irlande</td>
+                    <td>PCI DSS, RGPD</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top:25px; margin-bottom:15px; color:#173C3A;">Mesures RGPD implémentées</h4>
+
+        <table>
+            <tbody>
+                <tr>
+                    <td><strong>Localisation des données</strong></td>
+                    <td>Toutes les bases de données hébergées sur serveurs EU (Frankfurt)</td>
+                </tr>
+                <tr>
+                    <td><strong>Pas de transfert US</strong></td>
+                    <td>Aucune donnée personnelle transférée hors UE</td>
+                </tr>
+                <tr>
+                    <td><strong>Chiffrement</strong></td>
+                    <td>Données chiffrées au repos et en transit (TLS 1.3)</td>
+                </tr>
+                <tr>
+                    <td><strong>Droit à l'oubli</strong></td>
+                    <td>Suppression des données clients sur demande via Supabase</td>
+                </tr>
+                <tr>
+                    <td><strong>Portabilité</strong></td>
+                    <td>Export des données au format standard (JSON, CSV)</td>
+                </tr>
+                <tr>
+                    <td><strong>Consentement cookies</strong></td>
+                    <td>Consent Mode V2 implémenté sur tous les sites</td>
+                </tr>
+                <tr>
+                    <td><strong>DPA (Data Processing Agreement)</strong></td>
+                    <td>Contrats de sous-traitance signés avec chaque fournisseur</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box">
+            <strong>Configuration requise à la création de chaque projet :</strong>
+            <ul style="margin: 10px 0 0 20px;">
+                <li><strong>Vercel</strong> : Sélectionner "Frankfurt (fra1)" dans Project Settings → Functions Region</li>
+                <li><strong>Railway</strong> : Sélectionner "EU West" lors de la création du projet</li>
+                <li><strong>Supabase</strong> : Sélectionner "Frankfurt (eu-central-1)" lors de la création du projet</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SECTION 9: LIENS UTILES -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">9</span>Liens utiles</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Vercel</strong></td>
+                    <td>https://vercel.com</td>
+                </tr>
+                <tr>
+                    <td><strong>Railway</strong></td>
+                    <td>https://railway.app</td>
+                </tr>
+                <tr>
+                    <td><strong>Railway Template Medusa</strong></td>
+                    <td>https://railway.app/template/medusa</td>
+                </tr>
+                <tr>
+                    <td><strong>Supabase</strong></td>
+                    <td>https://supabase.com</td>
+                </tr>
+                <tr>
+                    <td><strong>Medusa.js Documentation</strong></td>
+                    <td>https://docs.medusajs.com</td>
+                </tr>
+                <tr>
+                    <td><strong>Stripe</strong></td>
+                    <td>https://stripe.com</td>
+                </tr>
+                <tr>
+                    <td><strong>Google Ads API</strong></td>
+                    <td>https://developers.google.com/google-ads/api</td>
+                </tr>
+                <tr>
+                    <td><strong>Meta Marketing API</strong></td>
+                    <td>https://developers.facebook.com/docs/marketing-apis</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <!-- FOOTER -->
