@@ -4,9 +4,8 @@
 
 ### Accès GitHub
 - **Repository** : https://github.com/Mathieu8861/REGEN-AGENCY
-- **Branche de travail** : `adoring-thompson`
-- **Worktree local** : `C:\Users\Mathieu\.claude-worktrees\REGEN-AGENCY\adoring-thompson`
-- **Dossier Bureau (copie de travail)** : `C:\Users\Mathieu\Desktop\Regen Agency\Création site Web\REGEN-AGENCY`
+- **Branche principale** : `main`
+- **Dossier de travail** : `C:\Users\Mathieu\Desktop\Regen Agency\Création site Web\REGEN-AGENCY`
 
 ### Stack technique
 - HTML5
@@ -71,17 +70,18 @@ REGEN-AGENCY/
 
 Ordre des sections de haut en bas :
 
-1. **Header** - Navigation avec logo, liens, bouton contact
-2. **Hero** - Titre principal, stats, vidéo en fond
-3. **Services Ads** - "Comment la publicité en ligne peut aider..."
-4. **Nos Réalisations** - Portfolio campagnes (fond vert foncé)
-5. **Notre Valeur Ajoutée** - "Nos petits plus" (3 cartes)
-6. **Nos Domaines d'Expertises** - 6 cartes services (fond vert foncé)
-7. **Collaboration** - "Pour une collaboration idéale"
-8. **Témoignages** - Carrousel avis clients (fond vert foncé)
-9. **CTA Final** - Bouton contact
-10. **Blog** - Derniers articles
-11. **Footer** - Liens, contact, réseaux sociaux
+1. **Page Loader** - Animation de chargement avec logo
+2. **Header** - Navigation avec logo, liens, boutons Espace Client / Contact
+3. **Hero** - Titre principal, vidéo arbre, stats animées
+4. **Services Ads** - "Comment la publicité en ligne peut aider..."
+5. **Nos Réalisations** - Portfolio campagnes (fond vert foncé)
+6. **Notre Valeur Ajoutée** - "Nos petits plus" (3 cartes)
+7. **Nos Domaines d'Expertises** - 6 cartes services (fond vert foncé)
+8. **Collaboration** - "Pour une collaboration idéale" (3 étapes)
+9. **Témoignages** - Carrousel 7 avis clients (fond vert foncé)
+10. **CTA Final** - Bouton contact
+11. **Blog** - Derniers articles
+12. **Footer** - Liens, contact, réseaux sociaux
 
 ---
 
@@ -97,10 +97,11 @@ Ordre des sections de haut en bas :
 - **Smooth Scroll** : Navigation fluide vers les ancres
 - **Magnetic Buttons** : Effet magnétique sur boutons (desktop)
 - **Ripple Effect** : Effet vague au clic sur boutons
+- **Scroll Progress Bar** : Barre de progression en haut de page
 
 ### Désactivées (causaient des artefacts visuels)
-- **initHealingGlow()** : Effet de glow sur les cartes au hover - créait des bordures moches
-- **initTiltEffect()** : Effet 3D tilt sur les cartes - créait des bordures noires/vertes
+- **initHealingGlow()** : Effet de glow sur les cartes au hover
+- **initTiltEffect()** : Effet 3D tilt sur les cartes
 
 ---
 
@@ -116,50 +117,25 @@ Ordre des sections de haut en bas :
 6. **Simon** - Associé chez OCCMP
 7. **Ilyas Elhams** - Architecte & Enseignant à l'ENSA de Paris-Est
 
-### Structure HTML d'un témoignage
-```html
-<article class="testimonial-card">
-    <div class="testimonial-card__content">
-        <p class="testimonial-card__text">"Texte du témoignage"</p>
-    </div>
-    <div class="testimonial-card__author">
-        <div class="testimonial-card__avatar">X</div> <!-- Initiale ou futur logo -->
-        <div class="testimonial-card__info">
-            <span class="testimonial-card__name">Prénom</span>
-            <span class="testimonial-card__role">Poste chez Entreprise</span>
-        </div>
-    </div>
-</article>
-```
-
-**Note** : Les avatars sont prévus pour recevoir des logos d'entreprise (images rondes).
-
 ---
 
 ## 6. PAGES HTML - STATUT
 
 | Page | Fichier | Statut |
 |------|---------|--------|
-| Accueil | index.html | En cours |
-| Services | services.html | Logo + nav mis à jour |
-| Contact | contact.html | Logo + nav mis à jour |
-| Blog | blog.html | Logo + nav mis à jour |
-| Qui sommes-nous | qui-sommes-nous.html | Logo + nav mis à jour |
-| Google Ads | google-ads.html | Logo + nav mis à jour |
-| Meta Ads | meta-ads.html | Logo + nav mis à jour |
-| Data Tracking | data-tracking.html | Logo + nav mis à jour |
-| Optimisation E-commerce | optimisation-ecommerce.html | Logo + nav mis à jour |
-| Consent Mode V2 | consent-mode-v2.html | Logo + nav mis à jour |
-| Formation SEA | formation-sea.html | Logo + nav mis à jour |
-| Mentions légales | mentions-legales.html | Logo + nav mis à jour |
-| Connexion | connexion.html | Page "Coming Soon" - pas modifiée |
-
-### Modifications appliquées sur toutes les pages
-- Logo `logo-icon.png` dans le page loader
-- Logo `logo-full.png` dans le header
-- Suppression du toggle dark mode
-- Logo `logo-icon.png` dans le footer
-- Ajout lien "Blog" dans la navigation
+| Accueil | index.html | ✅ Complète |
+| Services | services.html | ✅ Complète |
+| Contact | contact.html | ✅ Complète |
+| Blog | blog.html | ✅ Complète |
+| Qui sommes-nous | qui-sommes-nous.html | ✅ Complète |
+| Google Ads | google-ads.html | ✅ Complète |
+| Meta Ads | meta-ads.html | ✅ Complète |
+| Data Tracking | data-tracking.html | ✅ Complète |
+| Optimisation E-commerce | optimisation-ecommerce.html | ✅ Complète |
+| Consent Mode V2 | consent-mode-v2.html | ✅ Complète |
+| Formation SEA | formation-sea.html | ✅ Complète |
+| Mentions légales | mentions-legales.html | ✅ Complète |
+| Connexion | connexion.html | 🚧 Coming Soon |
 
 ---
 
@@ -173,18 +149,52 @@ Images manquantes (placeholders actuellement) :
 
 ---
 
-## 8. CORRECTIONS CSS IMPORTANTES
+## 8. WORKFLOW DE TRAVAIL
+
+### Méthode simple
+
+1. **Ouvrir le projet** dans l'explorateur :
+   ```
+   C:\Users\Mathieu\Desktop\Regen Agency\Création site Web\REGEN-AGENCY
+   ```
+
+2. **Visualiser le site** dans le navigateur :
+   ```
+   file:///C:/Users/Mathieu/Desktop/Regen%20Agency/Création%20site%20Web/REGEN-AGENCY/index.html
+   ```
+
+3. **Rafraîchir** avec `Ctrl+Shift+R` pour vider le cache
+
+4. **Sauvegarder sur GitHub** :
+   ```powershell
+   cd "C:\Users\Mathieu\Desktop\Regen Agency\Création site Web\REGEN-AGENCY"
+   git add -A
+   git commit -m "Description des changements"
+   git push origin main
+   ```
+
+---
+
+## 9. NOTES TECHNIQUES
+
+### Compteurs avec dégradé pendant animation
+```css
+.stat__number.counting {
+    background: var(--gradient-logo);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat__number.counted {
+    -webkit-text-fill-color: var(--color-white);
+}
+```
 
 ### Boutons sans artefacts
-Le bouton `.btn--secondary` utilisait une `border` qui causait des artefacts au hover. Correction appliquée :
 ```css
 .btn--secondary {
     border: none;
-    box-shadow: inset 0 0 0 2px var(--color-secondary); /* Simule la bordure */
-}
-
-.btn--secondary:hover {
-    box-shadow: 0 4px 16px rgba(var(--color-secondary-rgb), 0.3);
+    box-shadow: inset 0 0 0 2px var(--color-secondary);
 }
 ```
 
@@ -201,59 +211,12 @@ Le bouton `.btn--secondary` utilisait une `border` qui causait des artefacts au 
 }
 ```
 
-### Compteurs avec dégradé pendant animation
-```css
-.stat__number.counting {
-    background: var(--gradient-logo);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.stat__number.counted {
-    -webkit-text-fill-color: var(--color-white);
-}
-```
-
 ---
 
-## 9. NETTOYAGE A FAIRE
-
-Fichiers temporaires à supprimer du repo :
-- Tous les fichiers `tmpclaude-*-cwd` à la racine
-- `.claude/settings.local.json` (ne pas commit)
-
----
-
-## 10. WORKFLOW DE TRAVAIL
-
-1. Les modifications sont faites dans le worktree : `C:\Users\Mathieu\.claude-worktrees\REGEN-AGENCY\adoring-thompson\public\`
-
-2. Pour voir les changements, copier vers le dossier Bureau :
-```bash
-cp -r public/* "C:\Users\Mathieu\Desktop\Regen Agency\Création site Web\REGEN-AGENCY\"
-```
-
-3. Ouvrir dans le navigateur :
-```
-file:///C:/Users/Mathieu/Desktop/Regen%20Agency/Création%20site%20Web/REGEN-AGENCY/index.html
-```
-
-4. Rafraîchir avec **Ctrl+Shift+R** pour vider le cache
-
-5. Pour push sur GitHub :
-```bash
-git add -A
-git commit -m "Description des changements"
-git push origin adoring-thompson
-```
-
----
-
-## 11. PROCHAINES ETAPES SUGGÉRÉES
+## 10. PROCHAINES ETAPES SUGGÉRÉES
 
 - [ ] Créer les images pour la section "Nos réalisations"
 - [ ] Ajouter les logos entreprises dans les avatars témoignages
 - [ ] Créer le favicon
-- [ ] Compléter le contenu de la page Blog
 - [ ] Vérifier le responsive sur mobile
 - [ ] Déployer en ligne (GitHub Pages, Netlify, ou Vercel)
