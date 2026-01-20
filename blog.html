@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Blog Regen Agency - Actualités, conseils et tendances du marketing digital, Google Ads, Meta Ads et e-commerce.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Blog - Regen Agency">
+    <meta property="og:description" content="Actualités, conseils et tendances du marketing digital.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://regen-agency.com/blog">
+
+    <title>Blog - Regen Agency</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#173C3A">
+</head>
+<body class="loading">
+
+    <!-- Page Loader -->
+    <div class="page-loader">
+        <div class="page-loader__content">
+            <img src="assets/images/logo-icon.png" alt="Chargement" class="page-loader__logo">
+        </div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress"></div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header__container">
+            <nav class="nav">
+                <a href="/" class="nav__logo">
+                    <img src="assets/images/logo-full.png" alt="Regen Agency" class="nav__logo-img">
+                </a>
+
+                <ul class="nav__menu" id="nav-menu">
+                    <li><a href="index.html" class="nav__link">Accueil</a></li>
+                    <li class="nav__item--dropdown">
+                        <a href="services.html" class="nav__link">Services</a>
+                        <ul class="nav__dropdown">
+                            <li><a href="google-ads.html">Google Ads</a></li>
+                            <li><a href="meta-ads.html">Meta Ads</a></li>
+                            <li><a href="optimisation-ecommerce.html">Optimisation e-commerce</a></li>
+                            <li><a href="data-tracking.html">Data Tracking</a></li>
+                            <li><a href="consent-mode-v2.html">Consent Mode V2</a></li>
+                            <li><a href="formation-sea.html">Formations SEA</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="qui-sommes-nous.html" class="nav__link">Qui sommes-nous ?</a></li>
+                    <li><a href="blog.html" class="nav__link nav__link--active">Blog</a></li>
+                </ul>
+
+                <div class="nav__actions">
+                    <a href="connexion.html" class="btn btn--secondary nav__cta nav__cta--client">Espace Client</a>
+                    <a href="contact.html" class="btn btn--primary nav__cta">Prendre contact</a>
+                </div>
+
+                <button class="nav__toggle" id="nav-toggle" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main>
+        <!-- Hero Blog -->
+        <section class="hero-page">
+            <div class="container">
+                <div class="hero-page__content">
+                    <span class="section__tag">Blog</span>
+                    <h1 class="hero-page__title">Nos <span class="text-gradient">articles</span></h1>
+                    <p class="hero-page__subtitle">Restez informé des dernières tendances du marketing digital, de la publicité en ligne et du e-commerce.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Filter -->
+        <section class="section section--blog-list">
+            <div class="container">
+                <!-- Filter -->
+                <div class="blog-filter">
+                    <button class="blog-filter__btn active" data-filter="all">Tous</button>
+                    <button class="blog-filter__btn" data-filter="google-ads">Google Ads</button>
+                    <button class="blog-filter__btn" data-filter="meta-ads">Meta Ads</button>
+                    <button class="blog-filter__btn" data-filter="data-tracking">Data Tracking</button>
+                    <button class="blog-filter__btn" data-filter="ecommerce">E-commerce</button>
+                </div>
+
+                <!-- Blog Grid -->
+                <div class="blog__grid blog__grid--full">
+                    <article class="blog-card" data-category="google-ads">
+                        <div class="blog-card__image">
+                            <img src="assets/images/blog-placeholder.jpg" alt="Article blog">
+                            <span class="blog-card__category">Google Ads</span>
+                        </div>
+                        <div class="blog-card__content">
+                            <span class="blog-card__date">10 Janvier 2025</span>
+                            <h3 class="blog-card__title">Comment optimiser vos campagnes Google Ads en 2025</h3>
+                            <p class="blog-card__excerpt">Découvrez les meilleures pratiques pour maximiser votre ROI sur Google Ads cette année.</p>
+                            <a href="blog/article-1.html" class="blog-card__link">Lire l'article →</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card" data-category="meta-ads">
+                        <div class="blog-card__image">
+                            <img src="assets/images/blog-placeholder.jpg" alt="Article blog">
+                            <span class="blog-card__category">Meta Ads</span>
+                        </div>
+                        <div class="blog-card__content">
+                            <span class="blog-card__date">8 Janvier 2025</span>
+                            <h3 class="blog-card__title">Les nouvelles fonctionnalités Meta Ads à connaître</h3>
+                            <p class="blog-card__excerpt">Meta a déployé de nouvelles fonctionnalités publicitaires. Voici ce qu'il faut savoir.</p>
+                            <a href="blog/article-2.html" class="blog-card__link">Lire l'article →</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card" data-category="data-tracking">
+                        <div class="blog-card__image">
+                            <img src="assets/images/blog-placeholder.jpg" alt="Article blog">
+                            <span class="blog-card__category">Data Tracking</span>
+                        </div>
+                        <div class="blog-card__content">
+                            <span class="blog-card__date">5 Janvier 2025</span>
+                            <h3 class="blog-card__title">Consent Mode V2 : tout ce que vous devez savoir</h3>
+                            <p class="blog-card__excerpt">Le Consent Mode V2 est devenu obligatoire. Voici comment vous mettre en conformité.</p>
+                            <a href="blog/article-3.html" class="blog-card__link">Lire l'article →</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card" data-category="ecommerce">
+                        <div class="blog-card__image">
+                            <img src="assets/images/blog-placeholder.jpg" alt="Article blog">
+                            <span class="blog-card__category">E-commerce</span>
+                        </div>
+                        <div class="blog-card__content">
+                            <span class="blog-card__date">3 Janvier 2025</span>
+                            <h3 class="blog-card__title">5 stratégies pour booster vos ventes e-commerce</h3>
+                            <p class="blog-card__excerpt">Augmentez votre chiffre d'affaires avec ces techniques éprouvées.</p>
+                            <a href="blog/article-4.html" class="blog-card__link">Lire l'article →</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card" data-category="google-ads">
+                        <div class="blog-card__image">
+                            <img src="assets/images/blog-placeholder.jpg" alt="Article blog">
+                            <span class="blog-card__category">Google Ads</span>
+                        </div>
+                        <div class="blog-card__content">
+                            <span class="blog-card__date">28 Décembre 2024</span>
+                            <h3 class="blog-card__title">Performance Max : guide complet 2025</h3>
+                            <p class="blog-card__excerpt">Tout savoir sur les campagnes Performance Max et comment les optimiser.</p>
+                            <a href="blog/article-5.html" class="blog-card__link">Lire l'article →</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card" data-category="meta-ads">
+                        <div class="blog-card__image">
+                            <img src="assets/images/blog-placeholder.jpg" alt="Article blog">
+                            <span class="blog-card__category">Meta Ads</span>
+                        </div>
+                        <div class="blog-card__content">
+                            <span class="blog-card__date">25 Décembre 2024</span>
+                            <h3 class="blog-card__title">Comment créer des audiences similaires efficaces</h3>
+                            <p class="blog-card__excerpt">Les lookalike audiences peuvent transformer vos campagnes. Voici comment.</p>
+                            <a href="blog/article-6.html" class="blog-card__link">Lire l'article →</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__brand">
+                    <a href="/" class="footer__logo">
+                        <img src="assets/images/logo-icon.png" alt="Regen Agency" class="footer__logo-icon">
+                        <span class="footer__logo-text">Regen Agency</span>
+                    </a>
+                </div>
+
+                <div class="footer__links">
+                    <div class="footer__col">
+                        <h4 class="footer__title">Services</h4>
+                        <ul class="footer__list">
+                            <li><a href="google-ads.html">Google Ads</a></li>
+                            <li><a href="meta-ads.html">Meta Ads</a></li>
+                            <li><a href="data-tracking.html">Data Tracking</a></li>
+                            <li><a href="optimisation-ecommerce.html">E-commerce</a></li>
+                            <li><a href="consent-mode-v2.html">Consent Mode V2</a></li>
+                            <li><a href="formation-sea.html">Formations</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__title">En savoir plus</h4>
+                        <ul class="footer__list">
+                            <li><a href="qui-sommes-nous.html">À propos de nous</a></li>
+                            <li><a href="qui-sommes-nous.html#team">La Team</a></li>
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="mentions-legales.html">Mentions Légales</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__title">Support</h4>
+                        <ul class="footer__list">
+                            <li><a href="contact.html">Contactez nous</a></li>
+                            <li><a href="services.html#faq">FAQ</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer__social">
+                    <a href="https://www.facebook.com/RegenAgency" class="footer__social-link" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/regenagency_/" class="footer__social-link" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://www.linkedin.com/company/regenagency/" class="footer__social-link" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2025 Regen Agency, tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+</body>
+</html>
