@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin - Regen Agency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #173C3A;
+            --color-secondary: #2FB963;
+            --color-accent: #05C08A;
+            --color-dark: #202020;
+            --color-light: #f8faf9;
+            --gradient-logo: linear-gradient(135deg, #2FB963 0%, #05C08A 50%, #173C3A 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: var(--color-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* LOGIN SCREEN */
+        .login-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .login-screen.hidden {
+            display: none;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: var(--gradient-logo);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-logo svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .login-input {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-input:focus {
+            border-color: var(--color-secondary);
+        }
+
+        .login-input.error {
+            border-color: #e74c3c;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .login-btn {
+            padding: 15px 30px;
+            background: var(--gradient-logo);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(47, 185, 99, 0.4);
+        }
+
+        .login-error {
+            color: #e74c3c;
+            font-size: 0.875rem;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .login-error.visible {
+            opacity: 1;
+        }
+
+        /* ADMIN PANEL */
+        .admin-panel {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .admin-panel.visible {
+            display: block;
+        }
+
+        .admin-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .admin-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-logo {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-logo);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-logo svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+        }
+
+        .admin-title span {
+            color: var(--color-secondary);
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: transparent;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        /* SECTIONS */
+        .admin-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--color-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--color-secondary);
+        }
+
+        /* LINK CARDS */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .link-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .link-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(47, 185, 99, 0.1), rgba(5, 192, 138, 0.1));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .link-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--color-secondary);
+        }
+
+        .link-content {
+            flex: 1;
+        }
+
+        .link-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 5px;
+        }
+
+        .link-description {
+            font-size: 0.875rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .link-arrow {
+            width: 24px;
+            height: 24px;
+            stroke: #ccc;
+            transition: stroke 0.3s ease, transform 0.3s ease;
+        }
+
+        .link-card:hover .link-arrow {
+            stroke: var(--color-secondary);
+            transform: translateX(5px);
+        }
+
+        /* FOOTER */
+        .admin-footer {
+            text-align: center;
+            padding-top: 40px;
+            color: #999;
+            font-size: 0.875rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .admin-header-left {
+                flex-direction: column;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
+                <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <h1 class="login-title">Espace Admin</h1>
+        <p class="login-subtitle">Regen Agency - Accès restreint</p>
+
+        <form class="login-form" id="loginForm">
+            <input
+                type="password"
+                class="login-input"
+                id="passwordInput"
+                placeholder="Mot de passe"
+                autocomplete="off"
+            >
+            <button type="submit" class="login-btn">Accéder</button>
+        </form>
+        <p class="login-error" id="loginError">Mot de passe incorrect</p>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-container">
+
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="admin-header-left">
+                    <div class="admin-logo">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
+                            <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h1 class="admin-title">Regen <span>Admin</span></h1>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Déconnexion</button>
+            </header>
+
+            <!-- Section: Documents -->
+            <section class="admin-section">
+                <h2 class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    Documents
+                </h2>
+                <div class="links-grid">
+
+                    <!-- Architecture Infrastructure -->
+                    <a href="ARCHITECTURE-INFRASTRUCTURE-AGENCE.html" target="_blank" class="link-card">
+                        <div class="link-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                        </div>
+                        <div class="link-content">
+                            <div class="link-title">Architecture Infrastructure</div>
+                            <div class="link-description">Document technique pour validation ingénieur</div>
+                        </div>
+                        <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="admin-footer">
+                <p>Regen Agency &copy; 2025 - Espace réservé</p>
+            </footer>
+
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Configuration
+            const CORRECT_PASSWORD = 'regen8861';
+            const SESSION_KEY = 'regen_admin_auth';
+
+            // Elements
+            const loginScreen = document.getElementById('loginScreen');
+            const adminPanel = document.getElementById('adminPanel');
+            const loginForm = document.getElementById('loginForm');
+            const passwordInput = document.getElementById('passwordInput');
+            const loginError = document.getElementById('loginError');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            // Check if already authenticated
+            function checkAuth() {
+                const isAuth = sessionStorage.getItem(SESSION_KEY);
+                if (isAuth === 'true') {
+                    showAdmin();
+                }
+            }
+
+            // Show admin panel
+            function showAdmin() {
+                loginScreen.classList.add('hidden');
+                adminPanel.classList.add('visible');
+            }
+
+            // Show login screen
+            function showLogin() {
+                loginScreen.classList.remove('hidden');
+                adminPanel.classList.remove('visible');
+                passwordInput.value = '';
+            }
+
+            // Handle login
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const password = passwordInput.value;
+
+                if (password === CORRECT_PASSWORD) {
+                    sessionStorage.setItem(SESSION_KEY, 'true');
+                    showAdmin();
+                } else {
+                    passwordInput.classList.add('error');
+                    loginError.classList.add('visible');
+
+                    setTimeout(() => {
+                        passwordInput.classList.remove('error');
+                        loginError.classList.remove('visible');
+                    }, 2000);
+                }
+            });
+
+            // Handle logout
+            logoutBtn.addEventListener('click', function() {
+                sessionStorage.removeItem(SESSION_KEY);
+                showLogin();
+            });
+
+            // Init
+            checkAuth();
+        })();
+    </script>
+
+</body>
+</html>
