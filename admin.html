@@ -230,27 +230,30 @@
         }
 
         .link-card {
-            background: white;
-            border-radius: 16px;
-            padding: 4px;
             background: var(--gradient-logo);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            border-radius: 16px;
+            padding: 3px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             text-decoration: none;
-            display: flex;
-            flex-direction: column;
+            display: block;
             overflow: hidden;
         }
 
         .link-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 32px rgba(47, 185, 99, 0.3);
+            box-shadow: 0 12px 40px rgba(47, 185, 99, 0.25);
+        }
+
+        .link-card-inner {
+            background: white;
+            border-radius: 13px;
+            overflow: hidden;
         }
 
         .link-preview {
             width: 100%;
-            height: 200px;
-            border-radius: 12px 12px 0 0;
+            height: 160px;
             overflow: hidden;
             position: relative;
             background: #f8faf9;
@@ -271,31 +274,28 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to bottom, rgba(23, 60, 58, 0.85) 0%, transparent 50%);
+            background: transparent;
         }
 
-        .link-header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 15px 20px;
+        .link-footer {
+            padding: 15px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            z-index: 1;
+            background: white;
+            border-top: 1px solid #f0f0f0;
         }
 
         .link-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            color: white;
+            color: var(--color-primary);
         }
 
         .link-arrow {
-            width: 24px;
-            height: 24px;
-            stroke: white;
+            width: 20px;
+            height: 20px;
+            stroke: var(--color-secondary);
             transition: transform 0.3s ease;
         }
 
@@ -383,10 +383,12 @@
 
                     <!-- Architecture Infrastructure -->
                     <a href="ARCHITECTURE-INFRASTRUCTURE-AGENCE.html" target="_blank" class="link-card">
-                        <div class="link-preview">
-                            <iframe src="ARCHITECTURE-INFRASTRUCTURE-AGENCE.html" loading="lazy"></iframe>
-                            <div class="link-preview-overlay"></div>
-                            <div class="link-header">
+                        <div class="link-card-inner">
+                            <div class="link-preview">
+                                <iframe src="ARCHITECTURE-INFRASTRUCTURE-AGENCE.html" loading="lazy"></iframe>
+                                <div class="link-preview-overlay"></div>
+                            </div>
+                            <div class="link-footer">
                                 <div class="link-title">Architecture Infrastructure</div>
                                 <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
