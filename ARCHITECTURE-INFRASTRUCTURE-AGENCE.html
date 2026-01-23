@@ -360,7 +360,7 @@
     <div class="header">
         <h1>Architecture Infrastructure</h1>
         <div class="subtitle">Regen Agency - Document Technique</div>
-        <div class="date">Janvier 2025 - Pour validation</div>
+        <div class="date">Janvier 2025 - v1.2 - Mis à jour</div>
     </div>
 
     <!-- SECTION 1: VUE D'ENSEMBLE -->
@@ -630,6 +630,86 @@
         </table>
     </div>
 
+    <!-- SECTION 4.5: NOM DE DOMAINE VS HÉBERGEMENT -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">4.5</span>Nom de domaine vs Hébergement</h2>
+
+        <div class="info-box" style="background: #e6f4ea; border-color: #2FB963;">
+            <strong style="color: #173C3A;">⚠️ IMPORTANT - À ne pas confondre :</strong><br>
+            Le <strong>nom de domaine</strong> (OVH, Ionos...) et l'<strong>hébergement</strong> (Vercel, Railway...) sont deux choses distinctes.
+        </div>
+
+        <div class="architecture-box">
+            <div class="architecture-title">SCHÉMA EXPLICATIF</div>
+            <div class="three-columns">
+                <div class="column">
+                    <div class="column-header">NOM DE DOMAINE<br><small style="font-weight:400;color:#666;">OVH, Ionos, Gandi...</small></div>
+                    <ul>
+                        <li>C'est l'adresse web</li>
+                        <li>exemple.fr</li>
+                        <li>Coût : ~10€/an</li>
+                        <li>Seul achat chez OVH/Ionos</li>
+                    </ul>
+                    <div style="text-align:center; margin-top:15px;">
+                        <span class="cost-badge">~10€/AN</span>
+                    </div>
+                </div>
+                <div class="column" style="flex: 0.3; display: flex; align-items: center; justify-content: center; background: transparent; border: none;">
+                    <div style="font-size: 30pt; color: #2FB963;">≠</div>
+                </div>
+                <div class="column">
+                    <div class="column-header">HÉBERGEMENT<br><small style="font-weight:400;color:#666;">Vercel, Railway...</small></div>
+                    <ul>
+                        <li>C'est le serveur</li>
+                        <li>Stocke les fichiers du site</li>
+                        <li>Vercel = GRATUIT</li>
+                        <li>Pas besoin d'OVH/Ionos</li>
+                    </ul>
+                    <div style="text-align:center; margin-top:15px;">
+                        <span class="cost-badge free">GRATUIT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Ce qu'on achète</th>
+                    <th>Où ?</th>
+                    <th>Prix</th>
+                    <th>Pourquoi ?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Nom de domaine</strong></td>
+                    <td>OVH, Ionos, Gandi</td>
+                    <td>~10€/an</td>
+                    <td>Pour avoir une adresse personnalisée (exemple.fr)</td>
+                </tr>
+                <tr style="background: #e6f4ea;">
+                    <td><strong>Hébergement</strong></td>
+                    <td>Vercel</td>
+                    <td style="color: #2FB963; font-weight: bold;">GRATUIT</td>
+                    <td>Pour stocker et servir les fichiers du site</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box" style="background: #fff8e6; border-color: #f0ad4e;">
+            <strong>En résumé pour un site vitrine :</strong><br>
+            <ul style="margin: 10px 0 0 20px;">
+                <li>✅ Acheter uniquement le <strong>nom de domaine</strong> chez OVH/Ionos (~10€/an)</li>
+                <li>✅ L'hébergement est <strong>100% gratuit</strong> sur Vercel</li>
+                <li>❌ Pas besoin d'hébergement payant chez OVH/Ionos</li>
+            </ul>
+            <p style="margin-top: 15px; font-weight: bold; color: #173C3A;">
+                → Coût total annuel d'un site vitrine : ~10€/an (domaine seul)
+            </p>
+        </div>
+    </div>
+
     <!-- SECTION 5: SÉCURITÉ -->
     <div class="section">
         <h2 class="section-title"><span class="section-number">5</span>Sécurité</h2>
@@ -674,44 +754,53 @@
     <div class="section">
         <h2 class="section-title"><span class="section-number">6</span>Estimation des coûts</h2>
 
+        <div class="info-box" style="background: #e6f4ea; border-color: #2FB963;">
+            <strong>Rappel :</strong> Le nom de domaine (~10€/an) est le seul coût fixe. L'hébergement Vercel est gratuit pour les sites vitrines.
+        </div>
+
         <table>
             <thead>
                 <tr>
                     <th>Type de projet</th>
+                    <th>Domaine</th>
                     <th>Vercel</th>
                     <th>Railway</th>
                     <th>Supabase</th>
-                    <th>Total/mois</th>
+                    <th>Total/AN</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Site vitrine</td>
-                    <td>Gratuit</td>
+                <tr style="background: #e6f4ea;">
+                    <td><strong>Site vitrine</strong></td>
+                    <td>~10€/an</td>
+                    <td style="color: #2FB963;">Gratuit</td>
                     <td>-</td>
                     <td>-</td>
-                    <td><strong>Gratuit</strong></td>
+                    <td><strong style="color: #2FB963;">~10€/an</strong></td>
                 </tr>
                 <tr>
                     <td>Site vitrine + formulaire</td>
+                    <td>~10€/an</td>
                     <td>Gratuit</td>
                     <td>-</td>
                     <td>Gratuit</td>
-                    <td><strong>Gratuit</strong></td>
+                    <td><strong>~10€/an</strong></td>
                 </tr>
                 <tr>
                     <td>E-commerce custom</td>
+                    <td>~10€/an</td>
                     <td>Gratuit</td>
-                    <td>~10€</td>
+                    <td>~10€/mois</td>
                     <td>Gratuit</td>
-                    <td><strong>~10€</strong></td>
+                    <td><strong>~130€/an</strong></td>
                 </tr>
                 <tr>
                     <td>Dashboard custom</td>
+                    <td>~10€/an</td>
                     <td>Gratuit</td>
-                    <td>~10€</td>
+                    <td>~10€/mois</td>
                     <td>Gratuit</td>
-                    <td><strong>~10€</strong></td>
+                    <td><strong>~130€/an</strong></td>
                 </tr>
             </tbody>
         </table>
