@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conventions Développement Web - Regen Agency</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+            padding: 40px 60px;
+            max-width: 210mm;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #2FB963;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 28pt;
+            color: #173C3A;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 14pt;
+            color: #666;
+        }
+
+        .header .date {
+            font-size: 10pt;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 35px;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 16pt;
+            color: #173C3A;
+            border-bottom: 2px solid #2FB963;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        .section-number {
+            display: inline-block;
+            background: #2FB963;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 12pt;
+            margin-right: 10px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th {
+            background: #173C3A;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:nth-child(even) {
+            background: #f8faf9;
+        }
+
+        /* Code blocks */
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', monospace;
+            font-size: 9pt;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 9pt;
+            margin: 15px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .code-comment { color: #6a9955; }
+        .code-property { color: #9cdcfe; }
+        .code-value { color: #ce9178; }
+        .code-selector { color: #d7ba7d; }
+
+        /* Info boxes */
+        .info-box {
+            background: #e8f5f0;
+            border-left: 4px solid #2FB963;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .info-box.warning {
+            background: #fff8e6;
+            border-color: #f0ad4e;
+        }
+
+        .info-box.danger {
+            background: #fdeaea;
+            border-color: #e74c3c;
+        }
+
+        /* Architecture boxes */
+        .architecture-box {
+            background: #f8faf9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .architecture-title {
+            text-align: center;
+            font-weight: 700;
+            color: #173C3A;
+            font-size: 12pt;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #e8f5f0;
+            border-radius: 5px;
+        }
+
+        /* Flow diagram */
+        .flow-diagram {
+            background: #f8faf9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .flow-number {
+            width: 30px;
+            height: 30px;
+            background: #173C3A;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12pt;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .flow-content {
+            flex: 1;
+        }
+
+        .flow-content strong {
+            color: #173C3A;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            color: #2FB963;
+            font-size: 20pt;
+            margin: 5px 0;
+        }
+
+        /* File structure */
+        .file-structure {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            font-size: 10pt;
+        }
+
+        .file-structure .folder { color: #dcdcaa; }
+        .file-structure .file { color: #9cdcfe; }
+        .file-structure .comment { color: #6a9955; }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            background: #e8f5f0;
+            color: #173C3A;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 9pt;
+            margin-right: 5px;
+        }
+
+        .tag.required {
+            background: #173C3A;
+            color: white;
+        }
+
+        .tag.forbidden {
+            background: #e74c3c;
+            color: white;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            border-bottom: 1px solid #eee;
+        }
+
+        .checklist li::before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            color: #2FB963;
+            font-size: 14pt;
+        }
+
+        /* Two columns */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .column-box {
+            background: #f8faf9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .column-box h4 {
+            color: #173C3A;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2FB963;
+        }
+
+        .column-box.success h4 { border-color: #2FB963; }
+        .column-box.danger h4 { border-color: #e74c3c; }
+
+        .column-box ul {
+            margin-left: 20px;
+            font-size: 10pt;
+        }
+
+        .column-box li {
+            margin: 8px 0;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 9pt;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                padding: 20px 40px;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+
+        .page-break {
+            page-break-before: always;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Conventions Développement Web</h1>
+        <div class="subtitle">Regen Agency - Document de référence</div>
+        <div class="date">Janvier 2025 - v2.4</div>
+    </div>
+
+    <!-- SECTION 1: MÉTHODOLOGIE -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">1</span>Méthodologie de travail</h2>
+
+        <p><strong>Principe fondamental :</strong> Valider chaque décision importante avec le client avant d'avancer. Utiliser des questions à choix multiples pour clarifier les besoins.</p>
+
+        <div class="flow-diagram">
+            <div class="flow-step">
+                <div class="flow-number">1</div>
+                <div class="flow-content">
+                    <strong>Briefing projet</strong><br>
+                    Récolter les infos client (charte, contenu, pages)
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="flow-number">2</div>
+                <div class="flow-content">
+                    <strong>Pages de démo</strong> (si infos manquantes)<br>
+                    <code>demo-typo.html</code>, <code>demo-palette.html</code>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="flow-number">3</div>
+                <div class="flow-content">
+                    <strong>Validation client</strong><br>
+                    Le client choisit typo + couleurs
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="flow-number">4</div>
+                <div class="flow-content">
+                    <strong>Brandboard PDF</strong><br>
+                    Générer et envoyer avec la maquette
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="flow-number">5</div>
+                <div class="flow-content">
+                    <strong>Développement</strong><br>
+                    Coder le site avec la charte validée
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>Pages de démo à supprimer avant livraison :</strong>
+            <code>demo-typo.html</code>, <code>demo-palette.html</code>, <code>demo-comparatif.html</code>
+        </div>
+    </div>
+
+    <!-- SECTION 2: STACK TECHNIQUE -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">2</span>Stack technique</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Technologie</th>
+                    <th>Choix</th>
+                    <th>Pourquoi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>HTML</strong></td>
+                    <td>HTML5 sémantique</td>
+                    <td>Accessibilité, SEO</td>
+                </tr>
+                <tr>
+                    <td><strong>CSS</strong></td>
+                    <td>Custom (pas de framework)</td>
+                    <td>Performance, contrôle total</td>
+                </tr>
+                <tr>
+                    <td><strong>JavaScript</strong></td>
+                    <td>Vanilla ES6+</td>
+                    <td>Légèreté, pas de dépendances</td>
+                </tr>
+                <tr>
+                    <td><strong>Fonts</strong></td>
+                    <td>Google Fonts</td>
+                    <td>Gratuit, performant</td>
+                </tr>
+                <tr>
+                    <td><strong>Icônes</strong></td>
+                    <td>SVG inline</td>
+                    <td>Personnalisables, légers</td>
+                </tr>
+                <tr>
+                    <td><strong>Hébergement</strong></td>
+                    <td>GitHub Pages / Vercel</td>
+                    <td>Gratuit, simple</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box danger">
+            <strong>INTERDIT :</strong>
+            <span class="tag forbidden">Bootstrap</span>
+            <span class="tag forbidden">Tailwind</span>
+            <span class="tag forbidden">jQuery</span>
+            <span class="tag forbidden">FontAwesome</span>
+        </div>
+    </div>
+
+    <!-- SECTION 3: STRUCTURE FICHIERS -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">3</span>Structure des fichiers</h2>
+
+        <div class="file-structure">
+            <span class="folder">projet/</span><br>
+            ├── <span class="file">index.html</span> <span class="comment">← Page principale</span><br>
+            ├── <span class="file">[autres-pages].html</span> <span class="comment">← Pages secondaires</span><br>
+            ├── <span class="file">style.css</span> <span class="comment">← CSS unique (desktop + mobile)</span><br>
+            ├── <span class="file">script.js</span> <span class="comment">← JavaScript (optionnel)</span><br>
+            ├── <span class="folder">assets/</span><br>
+            │   ├── <span class="folder">images/</span><br>
+            │   └── <span class="folder">icons/</span> <span class="comment">← SVG</span><br>
+            ├── <span class="file">favicon.png</span><br>
+            └── <span class="file">README.md</span>
+        </div>
+
+        <div class="info-box warning">
+            <strong>Règle d'or : 1 seul fichier CSS</strong><br>
+            Moins de requêtes HTTP, pas de conflits de spécificité, media queries à la fin du fichier.
+        </div>
+    </div>
+
+    <!-- PAGE BREAK -->
+    <div class="page-break"></div>
+
+    <!-- SECTION 4: VARIABLES CSS -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">4</span>Variables CSS (Template)</h2>
+
+        <pre><code><span class="code-selector">:root</span> {
+    <span class="code-comment">/* === COULEURS === */</span>
+    <span class="code-property">--color-primary</span>: <span class="code-value">#______</span>;      <span class="code-comment">/* Couleur principale */</span>
+    <span class="code-property">--color-secondary</span>: <span class="code-value">#______</span>;    <span class="code-comment">/* Couleur secondaire */</span>
+    <span class="code-property">--color-accent</span>: <span class="code-value">#______</span>;       <span class="code-comment">/* Couleur d'accent */</span>
+    <span class="code-property">--color-dark</span>: <span class="code-value">#______</span>;         <span class="code-comment">/* Textes foncés */</span>
+    <span class="code-property">--color-light</span>: <span class="code-value">#______</span>;        <span class="code-comment">/* Fonds clairs */</span>
+    <span class="code-property">--color-white</span>: <span class="code-value">#ffffff</span>;
+
+    <span class="code-comment">/* === TYPOGRAPHIES === */</span>
+    <span class="code-property">--font-title</span>: <span class="code-value">'______', sans-serif</span>;   <span class="code-comment">/* Titres */</span>
+    <span class="code-property">--font-body</span>: <span class="code-value">'______', sans-serif</span>;    <span class="code-comment">/* Corps */</span>
+
+    <span class="code-comment">/* === ESPACEMENTS === */</span>
+    <span class="code-property">--spacing-xs</span>: <span class="code-value">0.25rem</span>;    <span class="code-comment">/* 4px */</span>
+    <span class="code-property">--spacing-sm</span>: <span class="code-value">0.5rem</span>;     <span class="code-comment">/* 8px */</span>
+    <span class="code-property">--spacing-md</span>: <span class="code-value">1rem</span>;       <span class="code-comment">/* 16px */</span>
+    <span class="code-property">--spacing-lg</span>: <span class="code-value">1.5rem</span>;     <span class="code-comment">/* 24px */</span>
+    <span class="code-property">--spacing-xl</span>: <span class="code-value">3rem</span>;       <span class="code-comment">/* 48px */</span>
+    <span class="code-property">--spacing-2xl</span>: <span class="code-value">5rem</span>;      <span class="code-comment">/* 80px */</span>
+
+    <span class="code-comment">/* === BORDURES === */</span>
+    <span class="code-property">--radius-sm</span>: <span class="code-value">8px</span>;
+    <span class="code-property">--radius-md</span>: <span class="code-value">12px</span>;
+    <span class="code-property">--radius-lg</span>: <span class="code-value">16px</span>;
+    <span class="code-property">--radius-full</span>: <span class="code-value">50px</span>;
+
+    <span class="code-comment">/* === LAYOUT === */</span>
+    <span class="code-property">--max-width</span>: <span class="code-value">1200px</span>;
+    <span class="code-property">--header-height</span>: <span class="code-value">80px</span>;
+}</code></pre>
+    </div>
+
+    <!-- SECTION 5: CONVENTIONS CSS -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">5</span>Conventions CSS - BEM</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Syntaxe</th>
+                    <th>Exemple</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Bloc</strong></td>
+                    <td><code>.bloc</code></td>
+                    <td><code>.card</code>, <code>.header</code>, <code>.hero</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Élément</strong></td>
+                    <td><code>.bloc__element</code></td>
+                    <td><code>.card__title</code>, <code>.header__logo</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Modificateur</strong></td>
+                    <td><code>.bloc--modificateur</code></td>
+                    <td><code>.btn--primary</code>, <code>.card--featured</code></td>
+                </tr>
+                <tr>
+                    <td><strong>État</strong></td>
+                    <td><code>.is-*</code> ou <code>.has-*</code></td>
+                    <td><code>.is-visible</code>, <code>.has-error</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top: 20px; color: #173C3A;">Ordre des propriétés</h4>
+        <pre><code><span class="code-selector">.element</span> {
+    <span class="code-comment">/* 1. Positionnement */</span>
+    <span class="code-property">position</span>: <span class="code-value">relative</span>;
+    <span class="code-property">z-index</span>: <span class="code-value">10</span>;
+
+    <span class="code-comment">/* 2. Display & Box Model */</span>
+    <span class="code-property">display</span>: <span class="code-value">flex</span>;
+    <span class="code-property">width</span>: <span class="code-value">100%</span>;
+    <span class="code-property">padding</span>: <span class="code-value">var(--spacing-md)</span>;
+
+    <span class="code-comment">/* 3. Visuel */</span>
+    <span class="code-property">background</span>: <span class="code-value">var(--color-white)</span>;
+    <span class="code-property">border-radius</span>: <span class="code-value">var(--radius-md)</span>;
+
+    <span class="code-comment">/* 4. Typographie */</span>
+    <span class="code-property">font-family</span>: <span class="code-value">var(--font-body)</span>;
+    <span class="code-property">color</span>: <span class="code-value">var(--color-dark)</span>;
+
+    <span class="code-comment">/* 5. Animations */</span>
+    <span class="code-property">transition</span>: <span class="code-value">0.3s ease</span>;
+}</code></pre>
+    </div>
+
+    <!-- SECTION 6: RESPONSIVE -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">6</span>Responsive Design</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Breakpoint</th>
+                    <th>Media Query</th>
+                    <th>Usage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Desktop small</td>
+                    <td><code>@media (max-width: 1200px)</code></td>
+                    <td>Écrans moyens</td>
+                </tr>
+                <tr>
+                    <td>Tablette</td>
+                    <td><code>@media (max-width: 1024px)</code></td>
+                    <td>iPad, tablettes</td>
+                </tr>
+                <tr>
+                    <td>Mobile large</td>
+                    <td><code>@media (max-width: 768px)</code></td>
+                    <td>Smartphones grands</td>
+                </tr>
+                <tr>
+                    <td>Mobile small</td>
+                    <td><code>@media (max-width: 480px)</code></td>
+                    <td>Smartphones petits</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box">
+            <strong>Règles :</strong>
+            <ul style="margin: 10px 0 0 20px;">
+                <li><strong>Desktop first</strong> : styles par défaut = desktop</li>
+                <li>Media queries en <strong>fin de fichier</strong>, regroupées par breakpoint</li>
+                <li>Safari : doubler <code>backdrop-filter</code> avec <code>-webkit-backdrop-filter</code></li>
+                <li>iPhone X+ : utiliser <code>env(safe-area-inset-*)</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PAGE BREAK -->
+    <div class="page-break"></div>
+
+    <!-- SECTION 7: COMPOSANTS SIGNATURE -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">7</span>Composants signature</h2>
+
+        <h4 style="color: #173C3A; margin-bottom: 15px;">Header flottant glassmorphism</h4>
+        <pre><code><span class="code-selector">.header</span> {
+    <span class="code-property">position</span>: <span class="code-value">fixed</span>;
+    <span class="code-property">top</span>: <span class="code-value">var(--spacing-md)</span>;
+    <span class="code-property">left</span>: <span class="code-value">50%</span>;
+    <span class="code-property">transform</span>: <span class="code-value">translateX(-50%)</span>;
+    <span class="code-property">width</span>: <span class="code-value">calc(100% - 2rem)</span>;
+    <span class="code-property">max-width</span>: <span class="code-value">var(--max-width)</span>;
+    <span class="code-property">z-index</span>: <span class="code-value">1000</span>;
+
+    <span class="code-property">background</span>: <span class="code-value">rgba(255, 255, 255, 0.85)</span>;
+    <span class="code-property">backdrop-filter</span>: <span class="code-value">blur(12px)</span>;
+    <span class="code-property">-webkit-backdrop-filter</span>: <span class="code-value">blur(12px)</span>;
+    <span class="code-property">border</span>: <span class="code-value">1px solid rgba(0, 0, 0, 0.08)</span>;
+    <span class="code-property">border-radius</span>: <span class="code-value">var(--radius-lg)</span>;
+}</code></pre>
+
+        <h4 style="color: #173C3A; margin: 25px 0 15px;">Card avec hover lift</h4>
+        <pre><code><span class="code-selector">.card</span> {
+    <span class="code-property">background</span>: <span class="code-value">var(--color-white)</span>;
+    <span class="code-property">border-radius</span>: <span class="code-value">var(--radius-lg)</span>;
+    <span class="code-property">box-shadow</span>: <span class="code-value">0 2px 8px rgba(0, 0, 0, 0.08)</span>;
+    <span class="code-property">transition</span>: <span class="code-value">0.3s ease</span>;
+}
+
+<span class="code-selector">.card:hover</span> {
+    <span class="code-property">transform</span>: <span class="code-value">translateY(-8px)</span>;
+    <span class="code-property">box-shadow</span>: <span class="code-value">0 16px 48px rgba(0, 0, 0, 0.2)</span>;
+}</code></pre>
+
+        <h4 style="color: #173C3A; margin: 25px 0 15px;">Bouton CTA</h4>
+        <pre><code><span class="code-selector">.btn--cta</span> {
+    <span class="code-property">background</span>: <span class="code-value">var(--color-primary)</span>;
+    <span class="code-property">color</span>: <span class="code-value">white</span>;
+    <span class="code-property">padding</span>: <span class="code-value">14px 28px</span>;
+    <span class="code-property">border-radius</span>: <span class="code-value">var(--radius-full)</span>;
+    <span class="code-property">font-weight</span>: <span class="code-value">600</span>;
+    <span class="code-property">transition</span>: <span class="code-value">0.3s ease</span>;
+}
+
+<span class="code-selector">.btn--cta:hover</span> {
+    <span class="code-property">transform</span>: <span class="code-value">translateY(-2px)</span>;
+    <span class="code-property">box-shadow</span>: <span class="code-value">0 4px 16px rgba(0, 0, 0, 0.12)</span>;
+}</code></pre>
+    </div>
+
+    <!-- SECTION 8: RÈGLES STRICTES -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">8</span>Règles strictes</h2>
+
+        <div class="two-columns">
+            <div class="column-box success">
+                <h4>TOUJOURS faire</h4>
+                <ul>
+                    <li><code>overflow: visible</code> sur sections</li>
+                    <li>Doubler <code>backdrop-filter</code> avec webkit</li>
+                    <li>Tester sur mobile réel</li>
+                    <li>Utiliser <code>rem</code> pour les fonts</li>
+                    <li>Safe areas iPhone</li>
+                    <li>Alt sur les images</li>
+                </ul>
+            </div>
+            <div class="column-box danger">
+                <h4>JAMAIS faire</h4>
+                <ul>
+                    <li><code>overflow: hidden</code> sur sections</li>
+                    <li>Header collapse sur mobile</li>
+                    <li>Font icons (FontAwesome)</li>
+                    <li>Frameworks CSS</li>
+                    <li>jQuery</li>
+                    <li>Pixels pour les fonts</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 9: BRANDBOARD -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">9</span>Brandboard - Livrable client</h2>
+
+        <p><strong>Avant de coder</strong>, générer un brandboard PDF à envoyer au client avec la maquette.</p>
+
+        <div class="architecture-box">
+            <div class="architecture-title">CONTENU DU BRANDBOARD</div>
+            <table style="margin: 0;">
+                <tbody>
+                    <tr>
+                        <td><strong>En-tête</strong></td>
+                        <td>Logo + nom projet + description du style</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Palette couleurs</strong></td>
+                        <td>5 couleurs avec codes HEX et usage</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Typographies</strong></td>
+                        <td>Police titres + police corps (Google Fonts)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hiérarchie typo</strong></td>
+                        <td>H1, H2, H3, body, small avec tailles</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Boutons</strong></td>
+                        <td>Primary, secondary, outline, ghost</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Architecture</strong></td>
+                        <td>Liste des pages prévues</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="info-box">
+            <strong>Fichier :</strong> <code>BRANDBOARD-[NOM-PROJET].html</code><br>
+            <strong>Pour le PDF :</strong> Ouvrir dans navigateur → Imprimer → Enregistrer en PDF
+        </div>
+    </div>
+
+    <!-- SECTION 10: CHECKLIST -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">10</span>Checklist avant livraison</h2>
+
+        <div class="two-columns">
+            <div class="column-box">
+                <h4>Structure & Code</h4>
+                <ul class="checklist">
+                    <li>Fichiers organisés (HTML, CSS unique, assets/)</li>
+                    <li>Favicon configuré</li>
+                    <li>Meta tags complets (title, description, og:image)</li>
+                    <li>Variables CSS dans :root</li>
+                    <li>Reset CSS appliqué</li>
+                </ul>
+            </div>
+            <div class="column-box">
+                <h4>Responsive & Mobile</h4>
+                <ul class="checklist">
+                    <li>Testé 1024px, 768px, 480px</li>
+                    <li>Safe areas iPhone X+</li>
+                    <li>Touch states (:active)</li>
+                    <li>Menu burger fonctionnel</li>
+                    <li>Images optimisées (WebP)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p><strong>Document de référence :</strong> Regen Agency</p>
+        <p>Tous les projets de sites web custom doivent suivre ces conventions.</p>
+        <p style="margin-top: 10px; color: #999;">Janvier 2025 - Version 2.4</p>
+    </div>
+
+</body>
+</html>
