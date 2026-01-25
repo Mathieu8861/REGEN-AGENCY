@@ -770,11 +770,57 @@
         </div>
     </div>
 
+    <!-- SECTION 11: CSS IMPRESSION -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">11</span>CSS obligatoire pour l'impression</h2>
+
+        <p>Pour les fichiers HTML destinés à être exportés en PDF (brandboards, docs), toujours inclure ces règles :</p>
+
+        <pre><code>* {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+}
+
+@media print {
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}</code></pre>
+
+        <div class="info-box">
+            <strong>Pourquoi ?</strong> Par défaut, les navigateurs n'impriment pas les couleurs de fond (background-color) pour économiser l'encre. Ces règles forcent l'impression des couleurs.
+        </div>
+    </div>
+
+    <!-- SECTION 12: LIVRAISON MAQUETTE -->
+    <div class="section">
+        <h2 class="section-title"><span class="section-number">12</span>Livraison maquette - Éléments manquants</h2>
+
+        <h3>Quand proposer ?</h3>
+        <p><strong>À la fin d'une maquette/démo</strong>, avant d'envoyer au client, toujours proposer de lister les éléments manquants pour finaliser le vrai site.</p>
+
+        <h3>Comment faire ?</h3>
+        <p>Analyser ce qui a été utilisé en placeholder/fictif dans la maquette et lister :</p>
+        <ul>
+            <li>Photos manquantes (équipe, produits, locaux, etc.)</li>
+            <li>Textes à remplacer (présentations, descriptions, etc.)</li>
+            <li>Informations pratiques (horaires, tarifs, coordonnées, etc.)</li>
+            <li>Éléments légaux (mentions légales, SIRET, etc.)</li>
+            <li>Contenus spécifiques au projet</li>
+        </ul>
+
+        <div class="info-box">
+            Cette liste est <strong>spécifique à chaque projet</strong> selon ce qui a été maquetté.
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <div class="footer">
         <p><strong>Document de référence :</strong> Regen Agency</p>
         <p>Tous les projets de sites web custom doivent suivre ces conventions.</p>
-        <p style="margin-top: 10px; color: #999;">Janvier 2025 - Version 2.4</p>
+        <p style="margin-top: 10px; color: #999;">Janvier 2026 - Version 2.5</p>
     </div>
 
 </body>
