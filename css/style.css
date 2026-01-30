@@ -305,7 +305,7 @@ p:last-child {
     top: 100%;
     left: 50%;
     transform: translateX(-50%) translateY(10px);
-    min-width: 220px;
+    min-width: 240px;
     padding: var(--spacing-sm);
     
     background: var(--color-white);
@@ -336,6 +336,28 @@ p:last-child {
 .nav__dropdown li a:hover {
     background: rgba(var(--color-secondary-rgb), 0.1);
     color: var(--color-secondary);
+}
+
+/* Dropdown Groups (Pôles) */
+.nav__dropdown-group {
+    padding: var(--spacing-xs) 0;
+}
+
+.nav__dropdown-group + .nav__dropdown-group {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    margin-top: var(--spacing-xs);
+    padding-top: var(--spacing-xs);
+}
+
+.nav__dropdown-label {
+    display: block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-secondary);
+    pointer-events: none;
 }
 
 /* CTA Nav */
@@ -1870,6 +1892,14 @@ p:last-child {
         background: transparent;
         margin-top: var(--spacing-sm);
     }
+
+    .nav__dropdown-group + .nav__dropdown-group {
+        border-top-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .nav__dropdown-label {
+        padding-left: var(--spacing-md);
+    }
     
     .nav__actions {
         display: none;
@@ -2628,6 +2658,51 @@ p:last-child {
     padding-top: var(--spacing-xl);
 }
 
+/* Services Poles */
+.section--services-pole {
+    padding: var(--spacing-2xl) 0;
+}
+
+.section--services-pole.section--alt {
+    background: var(--color-light);
+}
+
+.services-pole__header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.services-pole__icon {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.services-pole__icon svg {
+    width: 28px;
+    height: 28px;
+    stroke: var(--color-white);
+}
+
+.services-pole__title {
+    font-size: 1.75rem;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.services-pole__desc {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.6;
+}
+
 .services-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -3108,6 +3183,15 @@ p:last-child {
     .benefits-grid,
     .process-grid {
         grid-template-columns: 1fr;
+    }
+
+    .services-pole__header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .services-pole__title {
+        font-size: 1.5rem;
     }
 
     .service-card {

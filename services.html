@@ -52,16 +52,31 @@
                     <li class="nav__item--dropdown">
                         <a href="services.html" class="nav__link nav__link--active">Services</a>
                         <ul class="nav__dropdown">
-                            <li><a href="google-ads.html">Google Ads</a></li>
-                            <li><a href="meta-ads.html">Meta Ads</a></li>
-                            <li><a href="optimisation-ecommerce.html">Optimisation e-commerce</a></li>
-                            <li><a href="data-tracking.html">Data Tracking</a></li>
-                            <li><a href="consent-mode-v2.html">Consent Mode V2</a></li>
-                            <li><a href="formation-sea.html">Formations SEA</a></li>
+                            <li class="nav__dropdown-group">
+                                <span class="nav__dropdown-label">Ads / SEA</span>
+                                <ul>
+                                    <li><a href="google-ads.html">Google Ads</a></li>
+                                    <li><a href="meta-ads.html">Meta Ads</a></li>
+                                    <li><a href="formation-sea.html">Formations SEA</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav__dropdown-group">
+                                <span class="nav__dropdown-label">Site & Marketing</span>
+                                <ul>
+                                    <li><a href="optimisation-ecommerce.html">Optimisation E-commerce</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav__dropdown-group">
+                                <span class="nav__dropdown-label">Data Tracking</span>
+                                <ul>
+                                    <li><a href="data-tracking.html">Data Tracking</a></li>
+                                    <li><a href="consent-mode-v2.html">Consent Mode V2</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                     <li><a href="qui-sommes-nous.html" class="nav__link">Qui sommes-nous ?</a></li>
-                    <li><a href="blog.html" class="nav__link">Blog</a></li>
+                    <li><a href="partenaire.html" class="nav__link">Partenaire</a></li>
                 </ul>
 
                 <div class="nav__actions">
@@ -89,9 +104,21 @@
             </div>
         </section>
 
-        <!-- Services Grid -->
-        <section class="section section--services-grid">
+        <!-- Pôle 1 : Ads / SEA -->
+        <section class="section section--services-pole" id="pole-ads">
             <div class="container">
+                <div class="services-pole__header">
+                    <div class="services-pole__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            <polyline points="17 6 23 6 23 12"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="services-pole__title">Ads / SEA</h2>
+                        <p class="services-pole__desc">Maximisez votre visibilité et vos conversions grâce à la publicité en ligne sur Google, Meta et bien plus.</p>
+                    </div>
+                </div>
                 <div class="services-grid">
                     <article class="service-card" id="google-ads">
                         <div class="service-card__icon service-card__icon--google">
@@ -104,7 +131,7 @@
                         </div>
                         <h3 class="service-card__title">Google Ads</h3>
                         <p class="service-card__text">Exploitez tout le potentiel des plateformes Google : Réseau de recherche, Shopping, Display, Discovery & Youtube.</p>
-                        <a href="#services-ads" class="service-card__link">
+                        <a href="google-ads.html" class="service-card__link">
                             Passer à la vitesse supérieure
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="5" y1="12" x2="19" y2="12"/>
@@ -121,7 +148,7 @@
                         </div>
                         <h3 class="service-card__title">Meta Ads</h3>
                         <p class="service-card__text">Construisez l'histoire de votre marque sur les réseaux sociaux Facebook et Instagram grâce à nos campagnes ads.</p>
-                        <a href="#services-ads" class="service-card__link">
+                        <a href="meta-ads.html" class="service-card__link">
                             Booster ma marque
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="5" y1="12" x2="19" y2="12"/>
@@ -130,6 +157,83 @@
                         </a>
                     </article>
 
+                    <article class="service-card" id="formations">
+                        <div class="service-card__icon service-card__icon--formation">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-card__title">Formations SEA</h3>
+                        <p class="service-card__text">Formez vous et vos collaborateurs avec notre expert en marketing digital Google & Réseaux Sociaux.</p>
+                        <a href="formation-sea.html" class="service-card__link">
+                            Découvrir le programme
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pôle 2 : Site & Marketing -->
+        <section class="section section--services-pole section--alt" id="pole-marketing">
+            <div class="container">
+                <div class="services-pole__header">
+                    <div class="services-pole__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="services-pole__title">Site & Marketing</h2>
+                        <p class="services-pole__desc">Optimisez votre présence en ligne, améliorez l'expérience utilisateur et boostez vos taux de conversion.</p>
+                    </div>
+                </div>
+                <div class="services-grid">
+                    <article class="service-card" id="ecommerce">
+                        <div class="service-card__icon service-card__icon--ecom">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="20" cy="21" r="1"/>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-card__title">Optimisation E-commerce</h3>
+                        <p class="service-card__text">Améliorez l'expérience de vos clients, facilitez le parcours d'achat et augmentez votre taux de conversion.</p>
+                        <a href="optimisation-ecommerce.html" class="service-card__link">
+                            Je teste
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pôle 3 : Data Tracking -->
+        <section class="section section--services-pole" id="pole-data">
+            <div class="container">
+                <div class="services-pole__header">
+                    <div class="services-pole__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="services-pole__title">Data Tracking</h2>
+                        <p class="services-pole__desc">Mesurez, analysez et optimisez vos données pour prendre les meilleures décisions marketing.</p>
+                    </div>
+                </div>
+                <div class="services-grid">
                     <article class="service-card" id="tracking">
                         <div class="service-card__icon service-card__icon--data">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -140,27 +244,8 @@
                         </div>
                         <h3 class="service-card__title">Outils Data Tracking</h3>
                         <p class="service-card__text">Mesurez toutes les données de votre site et campagnes grâce à nos solutions techniques personnalisées.</p>
-                        <a href="#contact" class="service-card__link">
+                        <a href="data-tracking.html" class="service-card__link">
                             Ne plus rien manquer
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                                <polyline points="12 5 19 12 12 19"/>
-                            </svg>
-                        </a>
-                    </article>
-
-                    <article class="service-card" id="ecommerce">
-                        <div class="service-card__icon service-card__icon--ecom">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="20" cy="21" r="1"/>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                            </svg>
-                        </div>
-                        <h3 class="service-card__title">Optimisation e-commerce</h3>
-                        <p class="service-card__text">Améliorez l'expérience de vos clients, facilitez le parcours d'achat et augmentez votre taux de conversion.</p>
-                        <a href="#contact" class="service-card__link">
-                            Je teste
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                                 <polyline points="12 5 19 12 12 19"/>
@@ -178,26 +263,8 @@
                         </div>
                         <h3 class="service-card__title">Consent Mode V2</h3>
                         <p class="service-card__text">Mettez aux normes RGPD et ePrivacy votre bannière cookie avec une solution rapide, fiable et adaptée.</p>
-                        <a href="#contact" class="service-card__link">
+                        <a href="consent-mode-v2.html" class="service-card__link">
                             Se mettre à jour
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                                <polyline points="12 5 19 12 12 19"/>
-                            </svg>
-                        </a>
-                    </article>
-
-                    <article class="service-card" id="formations">
-                        <div class="service-card__icon service-card__icon--formation">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                            </svg>
-                        </div>
-                        <h3 class="service-card__title">Formations SEA</h3>
-                        <p class="service-card__text">Formez vous et vos collaborateurs avec notre expert en marketing digital Google & Réseaux Sociaux.</p>
-                        <a href="#contact" class="service-card__link">
-                            Découvrir le programme
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="5" y1="12" x2="19" y2="12"/>
                                 <polyline points="12 5 19 12 12 19"/>
@@ -428,6 +495,7 @@
                         <ul class="footer__list">
                             <li><a href="qui-sommes-nous.html">À propos de nous</a></li>
                             <li><a href="qui-sommes-nous.html#team">La Team</a></li>
+                            <li><a href="partenaire.html">Partenaire</a></li>
                             <li><a href="blog.html">Blog</a></li>
                             <li><a href="mentions-legales.html">Mentions Légales</a></li>
                         </ul>
