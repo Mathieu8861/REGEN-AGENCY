@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Espace client Regen Agency - Bientôt disponible">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Espace Utilisateur Regen Agency">
 
-    <title>Espace Client - Regen Agency</title>
+    <title>Espace Utilisateur - Regen Agency</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
@@ -22,86 +23,430 @@
     <meta name="theme-color" content="#173C3A">
 
     <style>
-        .coming-soon {
+        /* ===== LOGIN SCREEN ===== */
+        .login-screen {
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: var(--spacing-lg);
-            text-align: center;
             background: linear-gradient(135deg, var(--color-light) 0%, var(--color-white) 100%);
         }
 
-        .coming-soon__icon {
+        .login-screen.hidden {
+            display: none;
+        }
+
+        .login-box {
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .login-logo {
             width: 80px;
             height: 80px;
-            margin-bottom: var(--spacing-lg);
+            margin: 0 auto var(--spacing-lg);
+        }
+
+        .login-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .login-title {
+            font-size: 1.75rem;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .login-title span {
             color: var(--color-secondary);
         }
 
-        .coming-soon__badge {
-            display: inline-block;
-            padding: 8px 20px;
-            background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
-            color: var(--color-white);
+        .login-subtitle {
+            color: #666;
+            margin-bottom: var(--spacing-xl);
+            font-size: 0.95rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .login-input {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--radius-full);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-input:focus {
+            border-color: var(--color-secondary);
+        }
+
+        .login-input.error {
+            border-color: #e74c3c;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .login-btn {
+            padding: 15px 30px;
+            background: var(--gradient-logo);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(var(--color-secondary-rgb), 0.4);
+        }
+
+        .login-error {
+            color: #e74c3c;
             font-size: 0.875rem;
+            margin-top: var(--spacing-sm);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .login-error.visible {
+            opacity: 1;
+        }
+
+        /* Info box pour les clients */
+        .login-info {
+            background: var(--color-white);
+            border: 1px solid rgba(var(--color-secondary-rgb), 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-md);
+        }
+
+        .login-info__badge {
+            display: inline-block;
+            padding: 4px 14px;
+            background: rgba(var(--color-secondary-rgb), 0.1);
+            color: var(--color-secondary);
+            font-size: 0.75rem;
             font-weight: 600;
             border-radius: var(--radius-full);
-            margin-bottom: var(--spacing-lg);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-sm);
         }
 
-        .coming-soon__title {
-            font-size: 2.5rem;
-            margin-bottom: var(--spacing-md);
-            color: var(--color-dark);
+        .login-info__text {
+            font-size: 0.875rem;
+            color: #888;
+            line-height: 1.6;
         }
 
-        .coming-soon__text {
-            font-size: 1.125rem;
-            color: #666;
-            max-width: 500px;
-            margin-bottom: var(--spacing-xl);
+        .login-back {
+            margin-top: var(--spacing-lg);
         }
 
-        .coming-soon__features {
+        .login-back a {
+            color: var(--color-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .login-back a:hover {
+            color: var(--color-primary);
+        }
+
+        /* ===== ADMIN PANEL ===== */
+        .user-panel {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            padding: 40px 20px;
+            background: var(--color-light);
+        }
+
+        .user-panel.visible {
+            display: block;
+        }
+
+        .user-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .user-header {
             display: flex;
-            flex-wrap: wrap;
-            gap: var(--spacing-md);
-            justify-content: center;
-            margin-bottom: var(--spacing-xl);
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
         }
 
-        .coming-soon__feature {
+        .user-header-left {
             display: flex;
             align-items: center;
-            gap: var(--spacing-sm);
-            padding: 12px 20px;
-            background: var(--color-white);
-            border-radius: var(--radius-md);
+            gap: 15px;
+        }
+
+        .user-logo {
+            width: 50px;
+            height: 50px;
+        }
+
+        .user-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .user-title {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+        }
+
+        .user-title span {
+            color: var(--color-secondary);
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: transparent;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-full);
+            font-family: var(--font-primary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        /* Sections */
+        .user-section {
+            margin-bottom: 40px;
+        }
+
+        .user-section-title {
+            font-size: 1.125rem;
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--color-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-section-title svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--color-secondary);
+        }
+
+        /* Document cards */
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .doc-card {
+            background: var(--gradient-logo);
+            border-radius: var(--radius-lg);
+            padding: 3px;
             box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: block;
+            overflow: hidden;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(var(--color-secondary-rgb), 0.25);
+        }
+
+        .doc-card-inner {
+            background: white;
+            border-radius: calc(var(--radius-lg) - 3px);
+            overflow: hidden;
+            padding: 12px 12px 0 12px;
+        }
+
+        .doc-preview {
+            width: 100%;
+            height: 140px;
+            overflow: hidden;
+            position: relative;
+            background: var(--color-light);
+            border-radius: var(--radius-sm);
+            border: 1px solid #e8e8e8;
+        }
+
+        .doc-preview iframe {
+            width: 500%;
+            height: 500%;
+            border: none;
+            transform: scale(0.2);
+            transform-origin: top left;
+            pointer-events: none;
+        }
+
+        .doc-preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+        }
+
+        .doc-footer {
+            margin: 12px -12px 0 -12px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--gradient-logo);
+            border-radius: 0 0 calc(var(--radius-lg) - 3px) calc(var(--radius-lg) - 3px);
+        }
+
+        .doc-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .doc-arrow {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            transition: transform 0.3s ease;
+        }
+
+        .doc-card:hover .doc-arrow {
+            transform: translateX(5px);
+        }
+
+        /* Coming soon section for clients */
+        .coming-soon-section {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl) var(--spacing-xl);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .coming-soon-section__icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto var(--spacing-md);
+            color: var(--color-secondary);
+        }
+
+        .coming-soon-section__badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .coming-soon-section__title {
+            font-size: 1.25rem;
+            color: var(--color-dark);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .coming-soon-section__text {
+            color: #888;
+            font-size: 0.95rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .coming-soon-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            justify-content: center;
+            margin-top: var(--spacing-lg);
+        }
+
+        .coming-soon-features__item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: 8px 16px;
+            background: var(--color-light);
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
             font-weight: 500;
             color: var(--color-primary);
         }
 
-        .coming-soon__feature svg {
-            width: 20px;
-            height: 20px;
-            color: var(--color-secondary);
+        .coming-soon-features__item svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--color-secondary);
         }
 
-        .coming-soon__back {
-            margin-top: var(--spacing-lg);
+        /* Footer */
+        .user-footer {
+            text-align: center;
+            padding-top: 40px;
+            color: #999;
+            font-size: 0.875rem;
         }
 
-        @media (max-width: 768px) {
-            .coming-soon__title {
-                font-size: 1.75rem;
+        /* Responsive */
+        @media (max-width: 600px) {
+            .user-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
             }
 
-            .coming-soon__features {
+            .user-header-left {
+                flex-direction: column;
+            }
+
+            .docs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .coming-soon-features {
                 flex-direction: column;
                 align-items: center;
             }
@@ -110,56 +455,216 @@
 </head>
 <body>
 
-    <section class="coming-soon">
-        <svg class="coming-soon__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-        </svg>
-
-        <span class="coming-soon__badge">Bientôt disponible</span>
-
-        <h1 class="coming-soon__title">Espace Client</h1>
-
-        <p class="coming-soon__text">
-            Nous préparons un espace dédié pour vous permettre de suivre vos performances publicitaires en temps réel.
-        </p>
-
-        <div class="coming-soon__features">
-            <div class="coming-soon__feature">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                    <line x1="12" y1="22.08" x2="12" y2="12"/>
-                </svg>
-                Dashboard personnalisé
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="assets/images/logo-icon.png" alt="Regen Agency">
             </div>
-            <div class="coming-soon__feature">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                </svg>
-                Espace documents
+
+            <h1 class="login-title">Espace <span>Utilisateur</span></h1>
+            <p class="login-subtitle">Regen Agency - Connectez-vous pour accéder</p>
+
+            <form class="login-form" id="loginForm">
+                <input
+                    type="password"
+                    class="login-input"
+                    id="passwordInput"
+                    placeholder="Mot de passe"
+                    autocomplete="off"
+                >
+                <button type="submit" class="login-btn">Accéder</button>
+            </form>
+            <p class="login-error" id="loginError">Mot de passe incorrect</p>
+
+            <div class="login-info">
+                <span class="login-info__badge">En cours de développement</span>
+                <p class="login-info__text">
+                    L'espace utilisateur est en cours de développement.
+                    Il vous permettra bientôt de suivre vos performances et accéder à vos documents.
+                </p>
             </div>
-            <div class="coming-soon__feature">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="20" x2="18" y2="10"/>
-                    <line x1="12" y1="20" x2="12" y2="4"/>
-                    <line x1="6" y1="20" x2="6" y2="14"/>
-                </svg>
-                Résultats Ads en temps réel
+
+            <div class="login-back">
+                <a href="index.html">&larr; Retour à l'accueil</a>
             </div>
         </div>
+    </div>
 
-        <a href="index.html" class="btn btn--primary coming-soon__back">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; margin-right: 8px;">
-                <line x1="19" y1="12" x2="5" y2="12"/>
-                <polyline points="12 19 5 12 12 5"/>
-            </svg>
-            Retour à l'accueil
-        </a>
-    </section>
+    <!-- ===== USER PANEL ===== -->
+    <div class="user-panel" id="userPanel">
+        <div class="user-container">
+
+            <!-- Header -->
+            <header class="user-header">
+                <div class="user-header-left">
+                    <div class="user-logo">
+                        <img src="assets/images/logo-icon.png" alt="Regen Agency">
+                    </div>
+                    <h1 class="user-title">Regen <span>Admin</span></h1>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Déconnexion</button>
+            </header>
+
+            <!-- Section: Documents internes -->
+            <section class="user-section">
+                <h2 class="user-section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    Documents
+                </h2>
+                <div class="docs-grid">
+
+                    <!-- Architecture Infrastructure -->
+                    <a href="admin/docs/ARCHITECTURE-INFRASTRUCTURE-AGENCE.html" target="_blank" class="doc-card">
+                        <div class="doc-card-inner">
+                            <div class="doc-preview">
+                                <iframe src="admin/docs/ARCHITECTURE-INFRASTRUCTURE-AGENCE.html" loading="lazy"></iframe>
+                                <div class="doc-preview-overlay"></div>
+                            </div>
+                            <div class="doc-footer">
+                                <div class="doc-title">Architecture Infrastructure</div>
+                                <svg class="doc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Conventions Développement Web -->
+                    <a href="admin/docs/CONVENTIONS-DEV-WEB.html" target="_blank" class="doc-card">
+                        <div class="doc-card-inner">
+                            <div class="doc-preview">
+                                <iframe src="admin/docs/CONVENTIONS-DEV-WEB.html" loading="lazy"></iframe>
+                                <div class="doc-preview-overlay"></div>
+                            </div>
+                            <div class="doc-footer">
+                                <div class="doc-title">Conventions Dev Web</div>
+                                <svg class="doc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            </section>
+
+            <!-- Section: Espace client (coming soon) -->
+            <section class="user-section">
+                <h2 class="user-section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    Espace Client
+                </h2>
+                <div class="coming-soon-section">
+                    <svg class="coming-soon-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <span class="coming-soon-section__badge">Bientôt disponible</span>
+                    <h3 class="coming-soon-section__title">Dashboard client en cours de développement</h3>
+                    <p class="coming-soon-section__text">
+                        Vos clients pourront bientôt accéder à leurs données directement depuis cet espace.
+                    </p>
+                    <div class="coming-soon-features">
+                        <div class="coming-soon-features__item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                            Dashboard
+                        </div>
+                        <div class="coming-soon-features__item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            Documents
+                        </div>
+                        <div class="coming-soon-features__item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                            Résultats Ads
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="user-footer">
+                <p>Regen Agency &copy; 2025 - Espace réservé</p>
+            </footer>
+
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var ADMIN_PASSWORD = 'regen8861';
+            var SESSION_KEY = 'regen_user_auth';
+
+            var loginScreen = document.getElementById('loginScreen');
+            var userPanel = document.getElementById('userPanel');
+            var loginForm = document.getElementById('loginForm');
+            var passwordInput = document.getElementById('passwordInput');
+            var loginError = document.getElementById('loginError');
+            var logoutBtn = document.getElementById('logoutBtn');
+
+            function checkAuth() {
+                if (sessionStorage.getItem(SESSION_KEY) === 'true') {
+                    showPanel();
+                }
+            }
+
+            function showPanel() {
+                loginScreen.classList.add('hidden');
+                userPanel.classList.add('visible');
+            }
+
+            function showLogin() {
+                loginScreen.classList.remove('hidden');
+                userPanel.classList.remove('visible');
+                passwordInput.value = '';
+            }
+
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (passwordInput.value === ADMIN_PASSWORD) {
+                    sessionStorage.setItem(SESSION_KEY, 'true');
+                    showPanel();
+                } else {
+                    passwordInput.classList.add('error');
+                    loginError.classList.add('visible');
+
+                    setTimeout(function() {
+                        passwordInput.classList.remove('error');
+                        loginError.classList.remove('visible');
+                    }, 2000);
+                }
+            });
+
+            logoutBtn.addEventListener('click', function() {
+                sessionStorage.removeItem(SESSION_KEY);
+                showLogin();
+            });
+
+            checkAuth();
+        })();
+    </script>
 
 </body>
 </html>
