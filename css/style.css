@@ -2225,25 +2225,74 @@ p:last-child {
 
 .stat-card {
     text-align: center;
-    padding: var(--spacing-lg);
+    padding: 32px 24px;
     background: var(--color-white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(23, 60, 58, 0.06);
+    border: 1px solid rgba(47, 185, 99, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(23, 60, 58, 0.12);
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+.stat-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(47, 185, 99, 0.1), rgba(5, 192, 138, 0.1));
+    margin-bottom: 16px;
+}
+
+.stat-card__icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--color-secondary);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .stat-card__number {
-    font-size: 2.5rem;
+    font-size: 2.75rem;
     font-weight: 700;
-    background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 8px;
 }
 
 .stat-card__label {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     color: #666;
-    margin-top: var(--spacing-xs);
+    font-weight: 500;
+    letter-spacing: 0.02em;
 }
 
 
@@ -4333,11 +4382,23 @@ html.dark-mode .pricing-card__feature {
 
 html.dark-mode .stat-card {
     background: #1a1a1a;
-    border-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+html.dark-mode .stat-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+html.dark-mode .stat-card__icon {
+    background: linear-gradient(135deg, rgba(47, 185, 99, 0.15), rgba(5, 192, 138, 0.15));
 }
 
 html.dark-mode .stat-card__number {
-    color: var(--color-secondary);
+    background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 html.dark-mode .stat-card__label {
@@ -5662,13 +5723,10 @@ html.dark-mode .theme-toggle__icon {
     color: rgba(255,255,255,0.7);
 }
 
-/* --- Stat Card Google/Meta Accents --- */
-.stat-card--accent-google {
-    border-left: 4px solid var(--color-google-blue);
-}
-
+/* --- Stat Card Accents (deprecated, kept for fallback) --- */
+.stat-card--accent-google,
 .stat-card--accent-meta {
-    border-left: 4px solid var(--color-meta-blue);
+    border-left: none;
 }
 
 /* --- Services Checklist --- */
