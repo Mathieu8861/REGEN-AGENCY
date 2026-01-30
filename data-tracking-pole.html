@@ -88,20 +88,16 @@
         <!-- ===================== STICKY SUB-NAV ===================== -->
         <nav class="pole-nav">
             <div class="container">
-                <ul class="pole-nav__list">
-                    <li>
-                        <a href="#tracking" class="pole-nav__link pole-nav__link--active">
-                            <span class="pole-nav__dot dot--tracking"></span>
-                            Data Tracking
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#consent" class="pole-nav__link">
-                            <span class="pole-nav__dot dot--consent"></span>
-                            Consent Mode V2
-                        </a>
-                    </li>
-                </ul>
+                <div class="pole-nav__items">
+                    <a href="#tracking" class="pole-nav__link pole-nav__link--active">
+                        <span class="pole-nav__dot dot--tracking"></span>
+                        Data Tracking
+                    </a>
+                    <a href="#consent" class="pole-nav__link">
+                        <span class="pole-nav__dot dot--consent"></span>
+                        Consent Mode V2
+                    </a>
+                </div>
             </div>
         </nav>
 
@@ -355,27 +351,59 @@
 
                 <div class="realisations-showcase">
                     <div class="realisation-card reveal">
+                        <div class="realisation-card__browser-bar">
+                            <span class="realisation-card__dot"></span>
+                            <span class="realisation-card__dot"></span>
+                            <span class="realisation-card__dot"></span>
+                        </div>
                         <span class="realisation-card__tag">GTM + GA4</span>
                         <h3 class="realisation-card__title">E-commerce Shopify</h3>
-                        <p class="realisation-card__stat">99.8% Précision données</p>
+                        <div class="realisation-card__metric">
+                            <span class="realisation-card__metric-value">99.8%</span>
+                            <span class="realisation-card__metric-label">Précision données</span>
+                        </div>
                     </div>
 
                     <div class="realisation-card reveal">
+                        <div class="realisation-card__browser-bar">
+                            <span class="realisation-card__dot"></span>
+                            <span class="realisation-card__dot"></span>
+                            <span class="realisation-card__dot"></span>
+                        </div>
                         <span class="realisation-card__tag">Consent Mode V2</span>
                         <h3 class="realisation-card__title">Site vitrine B2B</h3>
-                        <p class="realisation-card__stat">100% Conformité RGPD</p>
+                        <div class="realisation-card__metric">
+                            <span class="realisation-card__metric-value">100%</span>
+                            <span class="realisation-card__metric-label">Conformité RGPD</span>
+                        </div>
                     </div>
 
                     <div class="realisation-card reveal">
+                        <div class="realisation-card__browser-bar">
+                            <span class="realisation-card__dot"></span>
+                            <span class="realisation-card__dot"></span>
+                            <span class="realisation-card__dot"></span>
+                        </div>
                         <span class="realisation-card__tag">Server-Side</span>
                         <h3 class="realisation-card__title">Marketplace</h3>
-                        <p class="realisation-card__stat">+45% Données récupérées</p>
+                        <div class="realisation-card__metric">
+                            <span class="realisation-card__metric-value">+45%</span>
+                            <span class="realisation-card__metric-label">Données récupérées</span>
+                        </div>
                     </div>
 
                     <div class="realisation-card reveal">
+                        <div class="realisation-card__browser-bar">
+                            <span class="realisation-card__dot"></span>
+                            <span class="realisation-card__dot"></span>
+                            <span class="realisation-card__dot"></span>
+                        </div>
                         <span class="realisation-card__tag">CAPI Meta</span>
                         <h3 class="realisation-card__title">E-commerce Mode</h3>
-                        <p class="realisation-card__stat">+60% Conversions trackées</p>
+                        <div class="realisation-card__metric">
+                            <span class="realisation-card__metric-value">+60%</span>
+                            <span class="realisation-card__metric-label">Conversions trackées</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -438,7 +466,7 @@
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--tracking"></span>
                             Comment accédons-nous à nos données ?
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-item__arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
                         <div class="faq-item__answer">
                             <p>Via votre dashboard Google Analytics 4, nous configurons des rapports personnalisés et un accès complet à vos données en temps réel.</p>
@@ -449,7 +477,7 @@
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--tracking"></span>
                             Le tracking impacte-t-il la vitesse de mon site ?
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-item__arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
                         <div class="faq-item__answer">
                             <p>Non. Nous utilisons le chargement asynchrone et Google Tag Manager pour garantir des performances optimales.</p>
@@ -460,7 +488,7 @@
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--consent"></span>
                             Le Consent Mode V2 est-il vraiment obligatoire ?
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-item__arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
                         <div class="faq-item__answer">
                             <p>Oui, depuis le 1er mars 2024, Google exige la mise en conformité pour continuer à collecter des données publicitaires.</p>
@@ -471,7 +499,7 @@
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--consent"></span>
                             Quels sont les risques si je ne suis pas conforme ?
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-item__arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
                         <div class="faq-item__answer">
                             <p>Une amende pouvant aller jusqu'à 4% de votre chiffre d'affaires annuel, plus la perte de vos données Google Ads.</p>
@@ -482,7 +510,7 @@
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--tracking"></span>
                             Proposez-vous des interventions urgentes ?
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-item__arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
                         <div class="faq-item__answer">
                             <p>Oui, notre équipe peut intervenir sous 24h pour les problèmes critiques de tracking.</p>
@@ -493,7 +521,7 @@
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--consent"></span>
                             Ai-je besoin du Consent Mode V2 même sans publicité ?
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-item__arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
                         <div class="faq-item__answer">
                             <p>Oui, si votre site utilise des cookies ou collecte des données utilisateurs, la conformité RGPD est obligatoire.</p>
@@ -504,7 +532,7 @@
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--tracking"></span>
                             Mon tracking est-il conforme au RGPD ?
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-item__arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
                         <div class="faq-item__answer">
                             <p>Nous veillons à ce que toutes nos implémentations respectent les normes RGPD et ePrivacy en vigueur.</p>
@@ -515,7 +543,7 @@
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--consent"></span>
                             Combien de temps dure l'installation ?
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="faq-item__arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
                         <div class="faq-item__answer">
                             <p>L'installation complète du Consent Mode V2 est réalisée en moins de 96 heures.</p>

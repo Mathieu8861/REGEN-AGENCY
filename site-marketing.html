@@ -229,11 +229,11 @@
                     <div class="pole-split__media">
                         <div class="media-zone">
                             <div class="media-zone__placeholder" style="aspect-ratio: 16/10; background: linear-gradient(135deg, #173C3A 0%, #2FB963 50%, #05C08A 100%); border-radius: 12px; position: relative; overflow: hidden;">
-                                <div class="media-zone__play" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                <button class="media-zone__play" aria-label="Voir la vidéo" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                     <svg viewBox="0 0 24 24" fill="white" width="28" height="28" style="width: 28px; height: 28px; margin-left: 3px;">
                                         <polygon points="5 3 19 12 5 21 5 3"/>
                                     </svg>
-                                </div>
+                                </button>
                             </div>
                             <p class="media-zone__caption" style="text-align: center; margin-top: 12px; font-size: 0.9rem; color: var(--color-text-light, #6b7280);">Dashboard d'analyse e-commerce</p>
                         </div>
@@ -263,7 +263,10 @@
                         <div class="realisation-card__info">
                             <span class="realisation-card__type">UX Optimization</span>
                             <h3 class="realisation-card__name">Boutique Mode</h3>
-                            <span class="realisation-card__metric">+45% Conversions</span>
+                            <div class="realisation-card__metric">
+                                <span class="realisation-card__metric-value">+45%</span>
+                                <span class="realisation-card__metric-label">Conversions</span>
+                            </div>
                         </div>
                     </div>
 
@@ -279,7 +282,10 @@
                         <div class="realisation-card__info">
                             <span class="realisation-card__type">Paniers abandonnés</span>
                             <h3 class="realisation-card__name">E-commerce Déco</h3>
-                            <span class="realisation-card__metric">+38% Récupération</span>
+                            <div class="realisation-card__metric">
+                                <span class="realisation-card__metric-value">+38%</span>
+                                <span class="realisation-card__metric-label">Récupération</span>
+                            </div>
                         </div>
                     </div>
 
@@ -295,7 +301,10 @@
                         <div class="realisation-card__info">
                             <span class="realisation-card__type">Panier moyen</span>
                             <h3 class="realisation-card__name">Alimentation Bio</h3>
-                            <span class="realisation-card__metric">+30% Valeur commande</span>
+                            <div class="realisation-card__metric">
+                                <span class="realisation-card__metric-value">+30%</span>
+                                <span class="realisation-card__metric-label">Valeur commande</span>
+                            </div>
                         </div>
                     </div>
 
@@ -311,7 +320,10 @@
                         <div class="realisation-card__info">
                             <span class="realisation-card__type">Stratégie globale</span>
                             <h3 class="realisation-card__name">Marketplace Sport</h3>
-                            <span class="realisation-card__metric">+55% CA mensuel</span>
+                            <div class="realisation-card__metric">
+                                <span class="realisation-card__metric-value">+55%</span>
+                                <span class="realisation-card__metric-label">CA mensuel</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -369,32 +381,36 @@
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--ecommerce"></span>
                             Pourquoi faire appel à vos services d'optimisation ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">Notre expertise en e-commerce nous permet d'identifier rapidement les leviers de croissance et de mettre en place des actions concrètes pour augmenter votre chiffre d'affaires.</p>
+                        <div class="faq-item__answer"><p>Notre expertise en e-commerce nous permet d'identifier rapidement les leviers de croissance et de mettre en place des actions concrètes pour augmenter votre chiffre d'affaires.</p></div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--ecommerce"></span>
                             Quelle est votre expérience en e-commerce ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">Nous travaillons avec les principales plateformes : Shopify, WooCommerce, PrestaShop. Chaque stratégie est adaptée aux spécificités de votre CMS.</p>
+                        <div class="faq-item__answer"><p>Nous travaillons avec les principales plateformes : Shopify, WooCommerce, PrestaShop. Chaque stratégie est adaptée aux spécificités de votre CMS.</p></div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--ecommerce"></span>
                             Comment se déroule l'accompagnement ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">Audit initial, plan d'action personnalisé, implémentation des optimisations, suivi des résultats et ajustements continus.</p>
+                        <div class="faq-item__answer"><p>Audit initial, plan d'action personnalisé, implémentation des optimisations, suivi des résultats et ajustements continus.</p></div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--ecommerce"></span>
                             Quel retour sur investissement puis-je espérer ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">Nos clients constatent en moyenne +25% de bénéfice et +35% de paniers récupérés dès les premiers mois d'accompagnement.</p>
+                        <div class="faq-item__answer"><p>Nos clients constatent en moyenne +25% de bénéfice et +35% de paniers récupérés dès les premiers mois d'accompagnement.</p></div>
                     </details>
                 </div>
             </div>

@@ -5083,7 +5083,19 @@ html.dark-mode .theme-toggle__icon {
     display: block;
 }
 
-.media-zone__play {
+.media-zone__img[src=""],
+.media-zone__img:not([src]) {
+    display: none;
+}
+
+/* Ensure placeholder has visible background when no image */
+.media-zone__placeholder:empty,
+.media-zone__placeholder:has(> img[src=""]) {
+    min-height: 300px;
+}
+
+.media-zone__play,
+.media-zone__play-overlay {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -5109,9 +5121,20 @@ html.dark-mode .theme-toggle__icon {
     margin-left: 3px;
 }
 
-.media-zone__play:hover {
+.media-zone__play:hover,
+.media-zone__play-overlay:hover {
     transform: translate(-50%, -50%) scale(1.1);
     box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+
+/* Alias for media-zone__image → media-zone__placeholder */
+.media-zone__image {
+    position: relative;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, var(--color-light), #e8ece9);
+    box-shadow: var(--shadow-lg);
 }
 
 .media-zone__caption {
@@ -5203,7 +5226,8 @@ html.dark-mode .theme-toggle__icon {
     background: #f5f5f5;
 }
 
-.realisation-card__browser-bar {
+.realisation-card__browser-bar,
+.realisation-card__dots {
     height: 32px;
     background: #e8e8e8;
     display: flex;
@@ -5219,14 +5243,24 @@ html.dark-mode .theme-toggle__icon {
     border-radius: 50%;
 }
 
-.realisation-card__dot:nth-child(1) { background: #ff5f57; }
-.realisation-card__dot:nth-child(2) { background: #febc2e; }
-.realisation-card__dot:nth-child(3) { background: #28c840; }
+.realisation-card__dot:nth-child(1),
+.realisation-card__dots span:nth-child(1) { background: #ff5f57; }
+.realisation-card__dot:nth-child(2),
+.realisation-card__dots span:nth-child(2) { background: #febc2e; }
+.realisation-card__dot:nth-child(3),
+.realisation-card__dots span:nth-child(3) { background: #28c840; }
+
+.realisation-card__dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
 
 .realisation-card__screenshot {
     aspect-ratio: 16 / 10;
     overflow: hidden;
     background: var(--color-light);
+    min-height: 180px;
 }
 
 .realisation-card__screenshot img {
@@ -5658,6 +5692,11 @@ html.dark-mode .theme-toggle__icon {
     color: var(--color-secondary);
     flex-shrink: 0;
     margin-top: 2px;
+}
+
+/* --- FAQ Chevron (hide SVG, use ::after) --- */
+.faq-item__chevron {
+    display: none;
 }
 
 /* --- FAQ Origin Dots --- */

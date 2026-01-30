@@ -117,26 +117,20 @@
         <!-- ============================== -->
         <nav class="pole-nav">
             <div class="container">
-                <ul class="pole-nav__list">
-                    <li>
-                        <a href="#google-ads" class="pole-nav__item pole-nav__item--active">
-                            <span class="pole-nav__dot pole-nav__dot--google"></span>
-                            Google Ads
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#meta-ads" class="pole-nav__item">
-                            <span class="pole-nav__dot pole-nav__dot--meta"></span>
-                            Meta Ads
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#formation" class="pole-nav__item">
-                            <span class="pole-nav__dot pole-nav__dot--formation"></span>
-                            Formation SEA
-                        </a>
-                    </li>
-                </ul>
+                <div class="pole-nav__items">
+                    <a href="#google-ads" class="pole-nav__item pole-nav__item--active">
+                        <span class="pole-nav__dot pole-nav__dot--google"></span>
+                        Google Ads
+                    </a>
+                    <a href="#meta-ads" class="pole-nav__item">
+                        <span class="pole-nav__dot pole-nav__dot--meta"></span>
+                        Meta Ads
+                    </a>
+                    <a href="#formation" class="pole-nav__item">
+                        <span class="pole-nav__dot pole-nav__dot--formation"></span>
+                        Formation SEA
+                    </a>
+                </div>
             </div>
         </nav>
 
@@ -226,13 +220,12 @@
                     <!-- RIGHT: Media Zone -->
                     <div class="pole-split__right">
                         <div class="media-zone">
-                            <div class="media-zone__image">
-                                <img src="" alt="Google Ads Dashboard" class="media-zone__img">
-                                <div class="media-zone__play-overlay">
+                            <div class="media-zone__placeholder">
+                                <button class="media-zone__play" aria-label="Voir la vidéo">
                                     <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
                                         <polygon points="10 8 16 12 10 16 10 8"/>
                                     </svg>
-                                </div>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -280,57 +273,65 @@
                     <div class="realisations-showcase__track">
                         <div class="realisation-card reveal">
                             <div class="realisation-card__browser">
-                                <div class="realisation-card__dots">
-                                    <span></span><span></span><span></span>
+                                <div class="realisation-card__browser-bar">
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
                                 </div>
                             </div>
                             <div class="realisation-card__screenshot" style="background: #e8f0fe;"></div>
                             <div class="realisation-card__info">
                                 <span class="realisation-card__type">Search + Shopping</span>
                                 <h3 class="realisation-card__name">E-commerce Mode</h3>
-                                <span class="realisation-card__metric">+220% ROAS</span>
+                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">+220%</span><span class="realisation-card__metric-label">ROAS</span></div>
                             </div>
                         </div>
 
                         <div class="realisation-card reveal">
                             <div class="realisation-card__browser">
-                                <div class="realisation-card__dots">
-                                    <span></span><span></span><span></span>
+                                <div class="realisation-card__browser-bar">
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
                                 </div>
                             </div>
                             <div class="realisation-card__screenshot" style="background: #e6f4ea;"></div>
                             <div class="realisation-card__info">
                                 <span class="realisation-card__type">Performance Max</span>
                                 <h3 class="realisation-card__name">Lead Gen B2B</h3>
-                                <span class="realisation-card__metric">+180% Leads</span>
+                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">+180%</span><span class="realisation-card__metric-label">Leads</span></div>
                             </div>
                         </div>
 
                         <div class="realisation-card reveal">
                             <div class="realisation-card__browser">
-                                <div class="realisation-card__dots">
-                                    <span></span><span></span><span></span>
+                                <div class="realisation-card__browser-bar">
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
                                 </div>
                             </div>
                             <div class="realisation-card__screenshot" style="background: #fef7e0;"></div>
                             <div class="realisation-card__info">
                                 <span class="realisation-card__type">YouTube Ads</span>
                                 <h3 class="realisation-card__name">Lancement Produit</h3>
-                                <span class="realisation-card__metric">2M Vues</span>
+                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">2M</span><span class="realisation-card__metric-label">Vues</span></div>
                             </div>
                         </div>
 
                         <div class="realisation-card reveal">
                             <div class="realisation-card__browser">
-                                <div class="realisation-card__dots">
-                                    <span></span><span></span><span></span>
+                                <div class="realisation-card__browser-bar">
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
                                 </div>
                             </div>
                             <div class="realisation-card__screenshot" style="background: #fce8e6;"></div>
                             <div class="realisation-card__info">
                                 <span class="realisation-card__type">Search</span>
                                 <h3 class="realisation-card__name">Service Local</h3>
-                                <span class="realisation-card__metric">-40% CPA</span>
+                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">-40%</span><span class="realisation-card__metric-label">CPA</span></div>
                             </div>
                         </div>
                     </div>
@@ -470,57 +471,65 @@
                     <div class="realisations-showcase__track">
                         <div class="realisation-card reveal">
                             <div class="realisation-card__browser">
-                                <div class="realisation-card__dots">
-                                    <span></span><span></span><span></span>
+                                <div class="realisation-card__browser-bar">
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
                                 </div>
                             </div>
                             <div class="realisation-card__screenshot" style="background: #e7f3ff;"></div>
                             <div class="realisation-card__info">
                                 <span class="realisation-card__type">Instagram Ads</span>
                                 <h3 class="realisation-card__name">Marque Beauté</h3>
-                                <span class="realisation-card__metric">+340% Engagement</span>
+                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">+340%</span><span class="realisation-card__metric-label">Engagement</span></div>
                             </div>
                         </div>
 
                         <div class="realisation-card reveal">
                             <div class="realisation-card__browser">
-                                <div class="realisation-card__dots">
-                                    <span></span><span></span><span></span>
+                                <div class="realisation-card__browser-bar">
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
                                 </div>
                             </div>
                             <div class="realisation-card__screenshot" style="background: #e3f2fd;"></div>
                             <div class="realisation-card__info">
                                 <span class="realisation-card__type">Facebook Leads</span>
                                 <h3 class="realisation-card__name">Immobilier</h3>
-                                <span class="realisation-card__metric">x5 Leads qualifiés</span>
+                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">x5</span><span class="realisation-card__metric-label">Leads qualifiés</span></div>
                             </div>
                         </div>
 
                         <div class="realisation-card reveal">
                             <div class="realisation-card__browser">
-                                <div class="realisation-card__dots">
-                                    <span></span><span></span><span></span>
+                                <div class="realisation-card__browser-bar">
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
                                 </div>
                             </div>
                             <div class="realisation-card__screenshot" style="background: #ede7f6;"></div>
                             <div class="realisation-card__info">
                                 <span class="realisation-card__type">Reels Ads</span>
                                 <h3 class="realisation-card__name">E-commerce Food</h3>
-                                <span class="realisation-card__metric">+180% Ventes</span>
+                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">+180%</span><span class="realisation-card__metric-label">Ventes</span></div>
                             </div>
                         </div>
 
                         <div class="realisation-card reveal">
                             <div class="realisation-card__browser">
-                                <div class="realisation-card__dots">
-                                    <span></span><span></span><span></span>
+                                <div class="realisation-card__browser-bar">
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
+                                    <span class="realisation-card__dot"></span>
                                 </div>
                             </div>
                             <div class="realisation-card__screenshot" style="background: #fce4ec;"></div>
                             <div class="realisation-card__info">
                                 <span class="realisation-card__type">Carrousel Ads</span>
                                 <h3 class="realisation-card__name">Mode & Accessoires</h3>
-                                <span class="realisation-card__metric">-35% CPA</span>
+                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">-35%</span><span class="realisation-card__metric-label">CPA</span></div>
                             </div>
                         </div>
                     </div>
@@ -611,13 +620,12 @@
                     <!-- RIGHT: Media + Info Cards -->
                     <div class="pole-split__right">
                         <div class="media-zone">
-                            <div class="media-zone__image">
-                                <img src="" alt="Formation SEA" class="media-zone__img">
-                                <div class="media-zone__play-overlay">
+                            <div class="media-zone__placeholder">
+                                <button class="media-zone__play" aria-label="Voir la vidéo">
                                     <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
                                         <polygon points="10 8 16 12 10 16 10 8"/>
                                     </svg>
-                                </div>
+                                </button>
                             </div>
                         </div>
 
@@ -700,72 +708,72 @@
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--google"></span>
                             Quelle est votre expertise Google Ads ?
-                            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">+5 ans d'expérience, certifié Google Partner. Gestion de campagnes Search, Shopping, Display, YouTube et Performance Max.</p>
+                        <div class="faq-item__answer"><p>+5 ans d'expérience, certifié Google Partner. Gestion de campagnes Search, Shopping, Display, YouTube et Performance Max.</p></div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--google"></span>
                             Comment suivez-vous les performances des campagnes ?
-                            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">Dashboard en temps réel, reporting hebdomadaire détaillé, et points stratégiques réguliers.</p>
+                        <div class="faq-item__answer"><p>Dashboard en temps réel, reporting hebdomadaire détaillé, et points stratégiques réguliers.</p></div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--meta"></span>
                             Quelle est votre expérience en Meta Ads ?
-                            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">+3 ans d'expérience chez Meta, plus de 1000 entreprises accompagnées sur Facebook et Instagram.</p>
+                        <div class="faq-item__answer"><p>+3 ans d'expérience chez Meta, plus de 1000 entreprises accompagnées sur Facebook et Instagram.</p></div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--meta"></span>
                             Vous concentrez-vous sur la performance ou la notoriété ?
-                            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">Les deux. Nous construisons des funnels complets : notoriété, considération, conversion.</p>
+                        <div class="faq-item__answer"><p>Les deux. Nous construisons des funnels complets : notoriété, considération, conversion.</p></div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--formation"></span>
                             Comment se déroulent les formations ?
-                            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">100% en visioconférence, modules de 1 à 2h, théorie + pratique + test final.</p>
+                        <div class="faq-item__answer"><p>100% en visioconférence, modules de 1 à 2h, théorie + pratique + test final.</p></div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--formation"></span>
                             Quel est le suivi après la formation ?
-                            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">30 jours de support post-formation pour répondre à vos questions et consolider vos acquis.</p>
+                        <div class="faq-item__answer"><p>30 jours de support post-formation pour répondre à vos questions et consolider vos acquis.</p></div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--google"></span>
                             Quels réseaux Google couvrez-vous ?
-                            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">Tous : Search, Shopping, Display, YouTube, Discovery et Performance Max.</p>
+                        <div class="faq-item__answer"><p>Tous : Search, Shopping, Display, YouTube, Discovery et Performance Max.</p></div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-item__question">
                             <span class="faq-item__origin faq-item__origin--meta"></span>
                             Proposez-vous un accompagnement international ?
-                            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <p class="faq-item__answer">Oui, traductions et adaptations culturelles disponibles pour vos campagnes.</p>
+                        <div class="faq-item__answer"><p>Oui, traductions et adaptations culturelles disponibles pour vos campagnes.</p></div>
                     </details>
                 </div>
             </div>
