@@ -215,7 +215,20 @@
             .cta-box,
             .two-columns,
             .contact-form,
-            .contact-info
+            .contact-info,
+            .glass-card,
+            .gradient-border-card,
+            .inventory-card,
+            .meta-campaign-card,
+            .pillar-card,
+            .formation-timeline__item,
+            .alert-stat,
+            .tool-card,
+            .realisation-card,
+            .pole-section__header,
+            .pole-split,
+            .media-zone,
+            .advantage-card--glass
         `);
 
         revealElements.forEach(el => {
@@ -707,6 +720,115 @@
         }
     });
 
+    // === POLE SUB-NAVIGATION ACTIVE STATE ===
+    function initPoleNav() {
+        const poleNav = document.querySelector('.pole-nav');
+        if (!poleNav) return;
+
+        const navItems = poleNav.querySelectorAll('.pole-nav__item');
+        const sections = [];
+
+        navItems.forEach(item => {
+            const targetId = item.getAttribute('href')?.replace('#', '');
+            if (targetId) {
+                const section = document.getElementById(targetId);
+                if (section) sections.push({ el: section, navItem: item });
+            }
+        });
+
+        if (sections.length === 0) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navItems.forEach(item => item.classList.remove('pole-nav__item--active'));
+                    const match = sections.find(s => s.el === entry.target);
+                    if (match) match.navItem.classList.add('pole-nav__item--active');
+                }
+            });
+        }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+
+        sections.forEach(s => observer.observe(s.el));
+    }
+
+    // === REALISATIONS CAROUSEL ===
+    function initRealisationsCarousel() {
+        const showcases = document.querySelectorAll('.realisations-showcase');
+        showcases.forEach(showcase => {
+            const track = showcase.querySelector('.realisations-showcase__track');
+            const prevBtn = showcase.querySelector('.realisations-showcase__btn--prev');
+            const nextBtn = showcase.querySelector('.realisations-showcase__btn--next');
+            if (!track) return;
+
+            let isDragging = false;
+            let startX = 0;
+            let scrollLeft = 0;
+            const cardWidth = 350 + 24; // min-width + gap
+
+            // Prev/Next buttons
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    track.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+                });
+            }
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    track.scrollBy({ left: cardWidth, behavior: 'smooth' });
+                });
+            }
+
+            // Drag to scroll (desktop)
+            track.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.pageX - track.offsetLeft;
+                scrollLeft = track.scrollLeft;
+                track.style.cursor = 'grabbing';
+            });
+
+            track.addEventListener('mouseleave', () => {
+                isDragging = false;
+                track.style.cursor = 'grab';
+            });
+
+            track.addEventListener('mouseup', () => {
+                isDragging = false;
+                track.style.cursor = 'grab';
+            });
+
+            track.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const x = e.pageX - track.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                track.scrollLeft = scrollLeft - walk;
+            });
+
+            // Make track horizontally scrollable
+            track.style.overflowX = 'auto';
+            track.style.scrollbarWidth = 'none';
+            track.style.msOverflowStyle = 'none';
+        });
+    }
+
+    // === SMOOTH SCROLL FOR POLE TABS ===
+    function initSmoothScroll() {
+        const scrollLinks = document.querySelectorAll('.pole-hero__tab, .pole-nav__item');
+        scrollLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        const offset = 70; // pole-nav height
+                        const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                        window.scrollTo({ top, behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+    }
+
     // === INITIALIZATION ===
     function init() {
         initLoader();
@@ -727,6 +849,9 @@
         initRippleEffect();
         initFloatingAnimation();
         initFormEffects();
+        initPoleNav();
+        initRealisationsCarousel();
+        initSmoothScroll();
         handleScroll();
 
         console.log('🌱 Regen Agency - Regeneration complete!');
