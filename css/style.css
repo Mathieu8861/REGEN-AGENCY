@@ -5268,7 +5268,7 @@ html.dark-mode .theme-toggle__icon {
 }
 
 .realisation-card {
-    min-width: 350px;
+    min-width: calc((var(--max-width) - 4 * var(--spacing-lg)) / 3);
     flex-shrink: 0;
     background: var(--color-white);
     border-radius: var(--radius-lg);
