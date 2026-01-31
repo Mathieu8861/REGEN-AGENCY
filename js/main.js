@@ -762,52 +762,41 @@
 
             let isDragging = false;
             let startX = 0;
-            let scrollLeft = 0;
-            const firstCard = track.querySelector('.realisation-card');
-            const cardWidth = firstCard ? (firstCard.offsetWidth + 16) : 390; // card width + gap
+            let scrollLeftStart = 0;
 
-            // Prev/Next buttons
+            function getScrollAmount() {
+                const card = track.querySelector('.realisation-card');
+                return card ? card.offsetWidth + 20 : 400;
+            }
+
             if (prevBtn) {
                 prevBtn.addEventListener('click', () => {
-                    track.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+                    track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
                 });
             }
             if (nextBtn) {
                 nextBtn.addEventListener('click', () => {
-                    track.scrollBy({ left: cardWidth, behavior: 'smooth' });
+                    track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
                 });
             }
 
-            // Drag to scroll (desktop)
             track.addEventListener('mousedown', (e) => {
                 isDragging = true;
                 startX = e.pageX - track.offsetLeft;
-                scrollLeft = track.scrollLeft;
+                scrollLeftStart = track.scrollLeft;
                 track.style.cursor = 'grabbing';
             });
 
-            track.addEventListener('mouseleave', () => {
-                isDragging = false;
-                track.style.cursor = 'grab';
-            });
-
-            track.addEventListener('mouseup', () => {
-                isDragging = false;
-                track.style.cursor = 'grab';
-            });
+            track.addEventListener('mouseleave', () => { isDragging = false; track.style.cursor = 'grab'; });
+            track.addEventListener('mouseup', () => { isDragging = false; track.style.cursor = 'grab'; });
 
             track.addEventListener('mousemove', (e) => {
                 if (!isDragging) return;
                 e.preventDefault();
                 const x = e.pageX - track.offsetLeft;
                 const walk = (x - startX) * 1.5;
-                track.scrollLeft = scrollLeft - walk;
+                track.scrollLeft = scrollLeftStart - walk;
             });
-
-            // Make track horizontally scrollable
-            track.style.overflowX = 'auto';
-            track.style.scrollbarWidth = 'none';
-            track.style.msOverflowStyle = 'none';
         });
     }
 
