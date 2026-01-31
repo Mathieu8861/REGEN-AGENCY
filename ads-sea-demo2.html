@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Google Ads, Meta Ads et Formations SEA - Maximisez vos performances publicitaires avec Regen Agency.">
+    <meta property="og:title" content="Ads / SEA - Regen Agency">
+    <meta property="og:description" content="Google Ads, Meta Ads et Formations SEA pour booster votre activité.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://regen-agency.com/ads-sea">
+
+    <title>Ads / SEA - Regen Agency</title>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#173C3A">
+
+    <style>
+        /* ================================ */
+        /*  DEMO 2: BOLD & VISUAL STYLES    */
+        /* ================================ */
+
+        /* --- Two-column dark cards --- */
+        .ads-columns-v2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .ads-card-dark {
+            background: linear-gradient(135deg, rgba(23,60,58,0.97), rgba(23,60,58,0.85));
+            border-radius: 24px;
+            padding: 48px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .ads-card-dark:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+        }
+
+        .ads-card-dark::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 24px 24px 0 0;
+        }
+
+        .ads-card-dark--google::before {
+            background: linear-gradient(90deg, #4285F4, #34A853, #FBBC05, #EA4335);
+        }
+
+        .ads-card-dark--meta::before {
+            background: linear-gradient(90deg, #1877F2, #00C6FF);
+        }
+
+        .ads-card-dark__header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .ads-card-dark__icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ads-card-dark__icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .ads-card-dark--google .ads-card-dark__icon {
+            background: rgba(66,133,244,0.15);
+            color: #4285F4;
+        }
+
+        .ads-card-dark--meta .ads-card-dark__icon {
+            background: rgba(24,119,242,0.15);
+            color: #1877F2;
+        }
+
+        .ads-card-dark__platform {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .ads-card-dark__desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .ads-card-dark__networks {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 8px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .ads-card-dark__network {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.85);
+            transition: background 0.3s;
+        }
+
+        .ads-card-dark__network:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        .ads-card-dark__network svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.7;
+        }
+
+        .ads-card-dark__stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 32px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .ads-card-dark__stat {
+            text-align: center;
+        }
+
+        .ads-card-dark__stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2FB963, #05C08A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            line-height: 1.2;
+        }
+
+        .ads-card-dark__stat-label {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* --- Creas Showcase Grid --- */
+        .creas-showcase {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: auto auto;
+            gap: 24px;
+        }
+
+        .creas-card {
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            background: #173C3A;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .creas-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 48px rgba(0,0,0,0.2);
+        }
+
+        .creas-card--featured {
+            grid-column: span 2;
+        }
+
+        .creas-card__visual {
+            width: 100%;
+            height: 280px;
+            display: block;
+        }
+
+        .creas-card--featured .creas-card__visual {
+            height: 340px;
+        }
+
+        .creas-card__overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px;
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+            color: #fff;
+        }
+
+        .creas-card__badge {
+            display: inline-block;
+            background: rgba(47,185,99,0.2);
+            border: 1px solid rgba(47,185,99,0.4);
+            color: #2FB963;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .creas-card__title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+        }
+
+        .creas-card__metric {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .creas-card__metric-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2FB963, #05C08A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .creas-card__metric-label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* --- Platforms Scroll Band --- */
+        .platforms-band {
+            background: linear-gradient(135deg, #0f2b29, #173C3A);
+            border-radius: 20px;
+            padding: 40px 48px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .platforms-band__inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .platform-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 100px;
+            padding: 12px 28px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: background 0.3s, transform 0.3s;
+            cursor: default;
+        }
+
+        .platform-chip:hover {
+            background: rgba(255,255,255,0.14);
+            transform: translateY(-2px);
+        }
+
+        .platform-chip svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* --- Formation Split --- */
+        .formation-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .formation-split__text h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--color-dark, #173C3A);
+            margin-bottom: 16px;
+        }
+
+        .formation-split__text p {
+            color: #5a6b6a;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .formation-glass-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .formation-glass-card {
+            background: linear-gradient(135deg, rgba(23,60,58,0.06), rgba(23,60,58,0.02));
+            border: 1px solid rgba(23,60,58,0.1);
+            border-radius: 16px;
+            padding: 24px 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .formation-glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(23,60,58,0.1);
+        }
+
+        .formation-glass-card__icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2FB963, #05C08A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #fff;
+        }
+
+        .formation-glass-card__icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .formation-glass-card__content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .formation-glass-card__value {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #173C3A;
+        }
+
+        .formation-glass-card__label {
+            font-size: 0.82rem;
+            color: #5a6b6a;
+            margin-top: 2px;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 900px) {
+            .ads-columns-v2 {
+                grid-template-columns: 1fr;
+            }
+            .creas-showcase {
+                grid-template-columns: 1fr;
+            }
+            .creas-card--featured {
+                grid-column: span 1;
+            }
+            .creas-card--featured .creas-card__visual {
+                height: 280px;
+            }
+            .formation-split {
+                grid-template-columns: 1fr;
+            }
+            .platforms-band__inner {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .ads-card-dark {
+                padding: 28px;
+            }
+            .ads-card-dark__stats {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .ads-card-dark__stat-number {
+                font-size: 1.5rem;
+            }
+            .platforms-band {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body class="loading">
+
+    <!-- Page Loader -->
+    <div class="page-loader">
+        <div class="page-loader__content">
+            <img src="assets/images/logo-icon.png" alt="Chargement" class="page-loader__logo">
+        </div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress"></div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header__container">
+            <nav class="nav">
+                <a href="/" class="nav__logo">
+                    <img src="assets/images/logo-full.png" alt="Regen Agency" class="nav__logo-img">
+                </a>
+
+                <ul class="nav__menu" id="nav-menu">
+                    <li><a href="index.html" class="nav__link">Accueil</a></li>
+                    <li class="nav__item--dropdown">
+                        <a href="services.html" class="nav__link nav__link--active">Services</a>
+                        <ul class="nav__dropdown">
+                            <li><a href="ads-sea.html">Ads / SEA</a></li>
+                            <li><a href="site-marketing.html">Site & Marketing</a></li>
+                            <li><a href="data-tracking-pole.html">Data & Tracking</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="qui-sommes-nous.html" class="nav__link">Qui sommes-nous ?</a></li>
+                    <li><a href="partenaire.html" class="nav__link">Partenaire</a></li>
+                </ul>
+
+                <div class="nav__actions">
+                    <a href="connexion.html" class="btn btn--secondary nav__cta nav__cta--client">Espace Utilisateur</a>
+                    <a href="contact.html" class="btn btn--primary nav__cta">Prendre contact</a>
+                </div>
+
+                <button class="nav__toggle" id="nav-toggle" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- ============================== -->
+        <!--          POLE HERO             -->
+        <!-- ============================== -->
+        <section class="pole-hero pole-hero--ads">
+            <div class="pole-hero__gradient"></div>
+            <div class="container">
+                <span class="section__badge">Ads / SEA</span>
+                <h1 class="pole-hero__title">Publicité digitale <span class="text-gradient">& Formation</span></h1>
+                <p class="pole-hero__tagline">Google Ads · Meta Ads · Formations sur-mesure</p>
+                <p class="pole-hero__description">De la stratégie publicitaire à la formation de vos équipes, maximisez chaque euro investi sur les plus grandes plateformes.</p>
+                <div class="pole-hero__tabs">
+                    <a href="#google-ads" class="pole-hero__tab pole-hero__tab--google pole-hero__tab--active">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span>Google Ads</span>
+                    </a>
+                    <a href="#meta-ads" class="pole-hero__tab pole-hero__tab--meta">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                        </svg>
+                        <span>Meta Ads</span>
+                    </a>
+                    <a href="#formation" class="pole-hero__tab pole-hero__tab--formation">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                        </svg>
+                        <span>Formation SEA</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!--  GOOGLE ADS + META ADS COLS    -->
+        <!-- ============================== -->
+        <section class="pole-section pole-section--white" id="google-ads">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Nos expertises</span>
+                    <h2 class="section__title">Deux plateformes, une seule ambition</h2>
+                    <p class="section__description">Nous maîtrisons l'ensemble des leviers publicitaires Google et Meta pour maximiser votre retour sur investissement.</p>
+                </div>
+
+                <div class="ads-columns-v2">
+                    <!-- Google Ads Card -->
+                    <div class="ads-card-dark ads-card-dark--google reveal" id="google-ads-card">
+                        <div class="ads-card-dark__header">
+                            <div class="ads-card-dark__icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                </svg>
+                            </div>
+                            <h3 class="ads-card-dark__platform">Google Ads</h3>
+                        </div>
+                        <p class="ads-card-dark__desc">Positionnez votre marque sur l'ensemble de l'écosystème Google : recherche, shopping, display, vidéo et campagnes intelligentes pilotées par l'IA.</p>
+
+                        <ul class="ads-card-dark__networks">
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                Search
+                            </li>
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                                Shopping
+                            </li>
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                Display
+                            </li>
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                                YouTube
+                            </li>
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                Performance Max
+                            </li>
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                                Demand Gen
+                            </li>
+                        </ul>
+
+                        <div class="ads-card-dark__stats">
+                            <div class="ads-card-dark__stat">
+                                <span class="ads-card-dark__stat-number">+150%</span>
+                                <span class="ads-card-dark__stat-label">Trafic</span>
+                            </div>
+                            <div class="ads-card-dark__stat">
+                                <span class="ads-card-dark__stat-number">7x</span>
+                                <span class="ads-card-dark__stat-label">ROAS moyen</span>
+                            </div>
+                            <div class="ads-card-dark__stat">
+                                <span class="ads-card-dark__stat-number">-30%</span>
+                                <span class="ads-card-dark__stat-label">CPA moyen</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Meta Ads Card -->
+                    <div class="ads-card-dark ads-card-dark--meta reveal" id="meta-ads">
+                        <div class="ads-card-dark__header">
+                            <div class="ads-card-dark__icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                                </svg>
+                            </div>
+                            <h3 class="ads-card-dark__platform">Meta Ads</h3>
+                        </div>
+                        <p class="ads-card-dark__desc">Construisez votre marque et générez des conversions sur Facebook et Instagram grâce à des campagnes visuelles ultra-ciblées et des formats immersifs.</p>
+
+                        <ul class="ads-card-dark__networks">
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/></svg>
+                                Feed
+                            </li>
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                                Stories
+                            </li>
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                                Reels
+                            </li>
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                                Messenger
+                            </li>
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                                Audience Network
+                            </li>
+                            <li class="ads-card-dark__network">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><path d="M1 10h22"/></svg>
+                                Collection
+                            </li>
+                        </ul>
+
+                        <div class="ads-card-dark__stats">
+                            <div class="ads-card-dark__stat">
+                                <span class="ads-card-dark__stat-number">5x</span>
+                                <span class="ads-card-dark__stat-label">ROI moyen</span>
+                            </div>
+                            <div class="ads-card-dark__stat">
+                                <span class="ads-card-dark__stat-number">+200%</span>
+                                <span class="ads-card-dark__stat-label">Visiteurs</span>
+                            </div>
+                            <div class="ads-card-dark__stat">
+                                <span class="ads-card-dark__stat-number">-25%</span>
+                                <span class="ads-card-dark__stat-label">CPA moyen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!--     CREAS SHOWCASE             -->
+        <!-- ============================== -->
+        <section class="pole-section pole-section--light">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Réalisations</span>
+                    <h2 class="section__title">Résultats concrets</h2>
+                    <p class="section__description">Des campagnes performantes sur Google et Meta qui génèrent un impact réel et mesurable.</p>
+                </div>
+
+                <div class="creas-showcase">
+                    <!-- Row 1: Featured (2 cols) + Regular (1 col) -->
+                    <div class="creas-card creas-card--featured reveal">
+                        <div class="creas-card__visual" style="background: linear-gradient(135deg, #1a3a5c, #2d6a9f);"></div>
+                        <div class="creas-card__overlay">
+                            <span class="creas-card__badge">Search + Shopping</span>
+                            <h3 class="creas-card__title">E-commerce Mode</h3>
+                            <div class="creas-card__metric">
+                                <span class="creas-card__metric-value">+220%</span>
+                                <span class="creas-card__metric-label">ROAS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="creas-card reveal">
+                        <div class="creas-card__visual" style="background: linear-gradient(135deg, #2d1b4e, #6b3fa0);"></div>
+                        <div class="creas-card__overlay">
+                            <span class="creas-card__badge">Instagram Ads</span>
+                            <h3 class="creas-card__title">Marque Beauté</h3>
+                            <div class="creas-card__metric">
+                                <span class="creas-card__metric-value">+340%</span>
+                                <span class="creas-card__metric-label">Engagement</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Regular (1 col) + Featured (2 cols) -->
+                    <div class="creas-card reveal">
+                        <div class="creas-card__visual" style="background: linear-gradient(135deg, #1b3d2f, #2d7a52);"></div>
+                        <div class="creas-card__overlay">
+                            <span class="creas-card__badge">Performance Max</span>
+                            <h3 class="creas-card__title">Lead Gen B2B</h3>
+                            <div class="creas-card__metric">
+                                <span class="creas-card__metric-value">+180%</span>
+                                <span class="creas-card__metric-label">Leads</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="creas-card creas-card--featured reveal">
+                        <div class="creas-card__visual" style="background: linear-gradient(135deg, #3d1b1b, #9f3f3f);"></div>
+                        <div class="creas-card__overlay">
+                            <span class="creas-card__badge">Reels + Stories</span>
+                            <h3 class="creas-card__title">E-commerce Food</h3>
+                            <div class="creas-card__metric">
+                                <span class="creas-card__metric-value">x5</span>
+                                <span class="creas-card__metric-label">Ventes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!--     AUTRES PLATEFORMES         -->
+        <!-- ============================== -->
+        <section class="pole-section pole-section--white">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Multi-plateformes</span>
+                    <h2 class="section__title">Et aussi sur ces plateformes</h2>
+                    <p class="section__description">Nous étendons votre présence publicitaire sur l'ensemble des réseaux pertinents pour votre audience.</p>
+                </div>
+
+                <div class="platforms-band reveal">
+                    <div class="platforms-band__inner">
+                        <span class="platform-chip">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.87a8.28 8.28 0 004.83 1.56v-3.5a4.84 4.84 0 01-1.07-.24z"/></svg>
+                            TikTok Ads
+                        </span>
+                        <span class="platform-chip">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                            LinkedIn Ads
+                        </span>
+                        <span class="platform-chip">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.17 9.42 7.64 11.15-.1-.94-.2-2.4.04-3.43.22-.94 1.4-5.94 1.4-5.94s-.36-.72-.36-1.78c0-1.66.96-2.9 2.16-2.9 1.02 0 1.52.77 1.52 1.68 0 1.03-.66 2.56-.99 3.98-.28 1.18.59 2.15 1.76 2.15 2.11 0 3.73-2.22 3.73-5.43 0-2.84-2.04-4.82-4.96-4.82-3.38 0-5.36 2.53-5.36 5.15 0 1.02.39 2.11.88 2.71.1.12.11.22.08.34-.09.37-.29 1.18-.33 1.34-.05.22-.18.26-.4.16-1.5-.7-2.43-2.88-2.43-4.64 0-3.78 2.74-7.25 7.91-7.25 4.15 0 7.38 2.96 7.38 6.92 0 4.12-2.6 7.44-6.21 7.44-1.21 0-2.35-.63-2.74-1.37l-.75 2.84c-.27 1.04-1 2.35-1.49 3.15C9.57 23.81 10.75 24 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/></svg>
+                            Pinterest Ads
+                        </span>
+                        <span class="platform-chip">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-3.16 19.5c-.07-.94-.01-2.06.24-3.07l1.77-7.52s-.45-.9-.45-2.24c0-2.1 1.22-3.66 2.73-3.66 1.29 0 1.91.97 1.91 2.13 0 1.3-.83 3.24-1.25 5.04-.36 1.5.75 2.72 2.22 2.72 2.66 0 4.45-3.42 4.45-7.47 0-3.07-2.07-5.37-5.84-5.37-4.26 0-6.92 3.18-6.92 6.73 0 1.22.36 2.09.92 2.76.26.3.29.43.2.78-.07.26-.23.88-.29 1.13-.1.37-.38.5-.7.36C5.67 13.24 4.56 11 4.56 8.68 4.56 4.73 7.88 1 12.52 1c3.72 0 6.17 2.69 6.17 5.58 0 3.82-2.12 6.67-5.26 6.67-1.06 0-2.05-.57-2.39-1.22l-.69 2.72c-.23.86-.69 1.72-1.1 2.4A10 10 0 0012 2z"/></svg>
+                            Snapchat Ads
+                        </span>
+                        <span class="platform-chip">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            X (Twitter)
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!--     FORMATION SOMMAIRE         -->
+        <!-- ============================== -->
+        <section class="pole-section pole-section--light" id="formation">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge badge--formation">Formation SEA</span>
+                    <h2 class="section__title">Besoin de monter en compétences ?</h2>
+                </div>
+
+                <div class="formation-split">
+                    <div class="formation-split__text reveal">
+                        <h3>Des formations pratiques et personnalisées</h3>
+                        <p>Maîtrisez Google Ads et Meta Ads grâce à nos modules sur-mesure. De la prise en main de l'interface à l'optimisation avancée, nos formations couvrent tous les niveaux et s'adaptent à vos objectifs métier.</p>
+                        <a href="contact.html" class="btn btn--primary btn--large">Demander un programme</a>
+                    </div>
+
+                    <div class="formation-glass-cards">
+                        <div class="formation-glass-card reveal">
+                            <div class="formation-glass-card__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                    <line x1="8" y1="21" x2="16" y2="21"/>
+                                    <line x1="12" y1="17" x2="12" y2="21"/>
+                                </svg>
+                            </div>
+                            <div class="formation-glass-card__content">
+                                <span class="formation-glass-card__value">100% distanciel</span>
+                                <span class="formation-glass-card__label">Visioconférence interactive</span>
+                            </div>
+                        </div>
+
+                        <div class="formation-glass-card reveal">
+                            <div class="formation-glass-card__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 010 7.75"/>
+                                </svg>
+                            </div>
+                            <div class="formation-glass-card__content">
+                                <span class="formation-glass-card__value">Tous niveaux</span>
+                                <span class="formation-glass-card__label">Débutant à expert</span>
+                            </div>
+                        </div>
+
+                        <div class="formation-glass-card reveal">
+                            <div class="formation-glass-card__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </div>
+                            <div class="formation-glass-card__content">
+                                <span class="formation-glass-card__value">30 jours de suivi</span>
+                                <span class="formation-glass-card__label">Support post-formation inclus</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!--         FAQ SECTION            -->
+        <!-- ============================== -->
+        <section class="pole-section pole-section--light">
+            <div class="container">
+                <div class="section__header">
+                    <h2 class="section__title">Questions fréquentes</h2>
+                </div>
+
+                <div class="faq-list">
+                    <details class="faq-item">
+                        <summary class="faq-item__question">
+                            <span class="faq-item__origin faq-item__origin--google"></span>
+                            Quelle est votre expertise Google Ads ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="faq-item__answer"><p>+5 ans d'expérience, certifié Google Partner. Gestion de campagnes Search, Shopping, Display, YouTube et Performance Max.</p></div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">
+                            <span class="faq-item__origin faq-item__origin--google"></span>
+                            Comment suivez-vous les performances des campagnes ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="faq-item__answer"><p>Dashboard en temps réel, reporting hebdomadaire détaillé, et points stratégiques réguliers.</p></div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">
+                            <span class="faq-item__origin faq-item__origin--meta"></span>
+                            Quelle est votre expérience en Meta Ads ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="faq-item__answer"><p>+3 ans d'expérience chez Meta, plus de 1000 entreprises accompagnées sur Facebook et Instagram.</p></div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">
+                            <span class="faq-item__origin faq-item__origin--meta"></span>
+                            Vous concentrez-vous sur la performance ou la notoriété ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="faq-item__answer"><p>Les deux. Nous construisons des funnels complets : notoriété, considération, conversion.</p></div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">
+                            <span class="faq-item__origin faq-item__origin--formation"></span>
+                            Comment se déroulent les formations ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="faq-item__answer"><p>100% en visioconférence, modules de 1 à 2h, théorie + pratique + test final.</p></div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">
+                            <span class="faq-item__origin faq-item__origin--formation"></span>
+                            Quel est le suivi après la formation ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="faq-item__answer"><p>30 jours de support post-formation pour répondre à vos questions et consolider vos acquis.</p></div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">
+                            <span class="faq-item__origin faq-item__origin--google"></span>
+                            Quels réseaux Google couvrez-vous ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="faq-item__answer"><p>Tous : Search, Shopping, Display, YouTube, Discovery et Performance Max.</p></div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-item__question">
+                            <span class="faq-item__origin faq-item__origin--meta"></span>
+                            Proposez-vous un accompagnement international ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="faq-item__answer"><p>Oui, traductions et adaptations culturelles disponibles pour vos campagnes.</p></div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!--         CTA SECTION            -->
+        <!-- ============================== -->
+        <section class="section section--cta">
+            <div class="container">
+                <div class="cta-box">
+                    <h2 class="cta-box__title">Prêt à booster vos performances publicitaires ?</h2>
+                    <div class="cta-box__actions">
+                        <a href="contact.html" class="btn btn--white btn--large">Nous contacter</a>
+                        <a href="mailto:regen.agency@hotmail.com" class="cta-box__email">regen.agency@hotmail.com</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__brand">
+                    <a href="/" class="footer__logo">
+                        <img src="assets/images/logo-icon.png" alt="Regen Agency" class="footer__logo-icon">
+                        <span class="footer__logo-text">Regen Agency</span>
+                    </a>
+                </div>
+
+                <div class="footer__links">
+                    <div class="footer__col">
+                        <h4 class="footer__title">Services</h4>
+                        <ul class="footer__list">
+                            <li><a href="ads-sea.html">Ads / SEA</a></li>
+                            <li><a href="site-marketing.html">Site & Marketing</a></li>
+                            <li><a href="data-tracking-pole.html">Data & Tracking</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__title">En savoir plus</h4>
+                        <ul class="footer__list">
+                            <li><a href="qui-sommes-nous.html">À propos de nous</a></li>
+                            <li><a href="qui-sommes-nous.html#team">La Team</a></li>
+                            <li><a href="partenaire.html">Partenaire</a></li>
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="mentions-legales.html">Mentions Légales</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__title">Support</h4>
+                        <ul class="footer__list">
+                            <li><a href="contact.html">Contactez nous</a></li>
+                            <li><a href="services.html#faq">FAQ</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer__social">
+                    <a href="https://www.facebook.com/RegenAgency" class="footer__social-link" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/regenagency_/" class="footer__social-link" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://www.linkedin.com/company/regenagency/" class="footer__social-link" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p class="footer__copyright">&copy; 2025 Regen Agency, tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
