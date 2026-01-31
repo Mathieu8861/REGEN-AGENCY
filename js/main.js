@@ -763,7 +763,8 @@
             let isDragging = false;
             let startX = 0;
             let scrollLeft = 0;
-            const cardWidth = 350 + 24; // min-width + gap
+            const firstCard = track.querySelector('.realisation-card');
+            const cardWidth = firstCard ? (firstCard.offsetWidth + 16) : 390; // card width + gap
 
             // Prev/Next buttons
             if (prevBtn) {

@@ -5255,7 +5255,7 @@ html.dark-mode .theme-toggle__icon {
 
 .realisations-showcase__track {
     display: flex;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
     padding: var(--spacing-md) calc((100vw - var(--max-width)) / 2 + var(--spacing-lg));
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: grab;
@@ -5268,7 +5268,7 @@ html.dark-mode .theme-toggle__icon {
 }
 
 .realisation-card {
-    min-width: calc((var(--max-width) - 4 * var(--spacing-lg)) / 3);
+    min-width: calc((var(--max-width) - 2 * var(--spacing-lg) - 2 * var(--spacing-md)) / 3);
     flex-shrink: 0;
     background: var(--color-white);
     border-radius: var(--radius-lg);
