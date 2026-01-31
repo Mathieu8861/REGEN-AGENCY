@@ -5859,11 +5859,17 @@ html.dark-mode .theme-toggle__icon {
     gap: var(--spacing-md);
 }
 
+.meta-campaigns-grid--full {
+    grid-template-columns: repeat(4, 1fr);
+}
+
 .meta-campaign-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-lg);
+    text-align: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg) var(--spacing-md);
     background: var(--color-white);
     border-radius: var(--radius-lg);
     border: 1px solid rgba(0,0,0,0.06);
@@ -5876,12 +5882,18 @@ html.dark-mode .theme-toggle__icon {
 .meta-campaign-card::before {
     content: '';
     position: absolute;
-    left: 0;
     top: 0;
-    bottom: 0;
-    width: 4px;
-    background: linear-gradient(180deg, #1877F2, #42b72a);
-    border-radius: 4px 0 0 4px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1877F2, #42b72a);
+    border-radius: 4px 4px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.meta-campaign-card:hover::before {
+    opacity: 1;
 }
 
 .meta-campaign-card:hover {
@@ -5890,10 +5902,10 @@ html.dark-mode .theme-toggle__icon {
 }
 
 .meta-campaign-card__icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: rgba(24,119,242,0.08);
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(24,119,242,0.08), rgba(66,183,42,0.08));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5902,19 +5914,19 @@ html.dark-mode .theme-toggle__icon {
 }
 
 .meta-campaign-card__icon svg {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
 }
 
 .meta-campaign-card__title {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--color-primary);
-    margin-bottom: 2px;
+    margin-bottom: 0;
 }
 
 .meta-campaign-card__text {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #888;
     line-height: 1.4;
 }
@@ -5950,6 +5962,7 @@ html.dark-mode .theme-toggle__icon {
     .features-grid--2col { grid-template-columns: 1fr; }
     .inventory-grid { grid-template-columns: 1fr; }
     .meta-campaigns-grid { grid-template-columns: 1fr; }
+    .meta-campaigns-grid--full { grid-template-columns: repeat(2, 1fr); }
     .alert-stats-grid { grid-template-columns: 1fr; }
     .formation-timeline { padding-left: 60px; }
     .formation-timeline__number { left: -40px; width: 32px; height: 32px; font-size: 0.75rem; }
