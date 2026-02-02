@@ -728,9 +728,203 @@
         initPoleNav();
         initSmoothScroll();
         initHeroSlider();
+        initRealisationsMarquee();
+        initProcessLine();
         handleScroll();
 
         console.log('🌱 Regen Agency - Regeneration complete!');
+    }
+
+    // =====================================================
+    // MARQUEE RÉALISATIONS (auto-scroll + drag)
+    // =====================================================
+    function initRealisationsMarquee() {
+        const marquee = document.querySelector('.realisations-marquee');
+        if (!marquee) return;
+
+        const track = marquee.querySelector('.realisations-marquee__track');
+        if (!track) return;
+
+        // Dupliquer les cards pour boucle infinie
+        const cards = track.innerHTML;
+        track.innerHTML = cards + cards;
+
+        // Drag interaction
+        let isDragging = false;
+        let startX = 0;
+        let scrollStart = 0;
+        let currentTranslate = 0;
+
+        function getTranslateX() {
+            const style = window.getComputedStyle(track);
+            const matrix = new DOMMatrix(style.transform);
+            return matrix.m41;
+        }
+
+        marquee.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            marquee.classList.add('is-dragging');
+            startX = e.clientX;
+            currentTranslate = getTranslateX();
+            track.style.animation = 'none';
+            track.style.transform = `translateX(${currentTranslate}px)`;
+            e.preventDefault();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const diff = e.clientX - startX;
+            const halfWidth = track.scrollWidth / 2;
+            let newX = currentTranslate + diff;
+
+            // Boucle infinie
+            if (newX > 0) newX -= halfWidth;
+            if (newX < -halfWidth) newX += halfWidth;
+
+            track.style.transform = `translateX(${newX}px)`;
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            marquee.classList.remove('is-dragging');
+
+            // Reprendre l'animation depuis la position actuelle
+            const currentX = getTranslateX();
+            const halfWidth = track.scrollWidth / 2;
+            const progress = Math.abs(currentX) / halfWidth;
+
+            track.style.animation = '';
+            track.style.transform = '';
+            track.style.animationDelay = `-${progress * 35}s`;
+        });
+
+        // Touch support
+        marquee.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            marquee.classList.add('is-dragging');
+            startX = e.touches[0].clientX;
+            currentTranslate = getTranslateX();
+            track.style.animation = 'none';
+            track.style.transform = `translateX(${currentTranslate}px)`;
+        }, { passive: true });
+
+        marquee.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const diff = e.touches[0].clientX - startX;
+            const halfWidth = track.scrollWidth / 2;
+            let newX = currentTranslate + diff;
+            if (newX > 0) newX -= halfWidth;
+            if (newX < -halfWidth) newX += halfWidth;
+            track.style.transform = `translateX(${newX}px)`;
+        }, { passive: true });
+
+        marquee.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            marquee.classList.remove('is-dragging');
+            const currentX = getTranslateX();
+            const halfWidth = track.scrollWidth / 2;
+            const progress = Math.abs(currentX) / halfWidth;
+            track.style.animation = '';
+            track.style.transform = '';
+            track.style.animationDelay = `-${progress * 35}s`;
+        });
+    }
+
+    // =====================================================
+    // PROCESS LINE — scroll-driven fill animation
+    // =====================================================
+    function initProcessLine() {
+        const section = document.querySelector('.process-creation');
+        if (!section) return;
+
+        const lineFill = section.querySelector('.process-creation__line-fill');
+        if (!lineFill) return;
+
+        const steps = section.querySelectorAll('.process-creation__step');
+        if (!steps.length) return;
+
+        const visual = document.getElementById('processVisual');
+
+        let ticking = false;
+
+        function updateLine() {
+            const firstStep = steps[0];
+            const lastStep = steps[steps.length - 1];
+
+            const firstRect = firstStep.getBoundingClientRect();
+            const lastRect = lastStep.getBoundingClientRect();
+
+            const timelineTop = firstRect.top;
+            const timelineBottom = lastRect.top + lastRect.height / 2;
+            const timelineHeight = timelineBottom - timelineTop;
+
+            if (timelineHeight <= 0) return;
+
+            const viewportCenter = window.innerHeight * 0.6;
+            const progress = (viewportCenter - timelineTop) / timelineHeight;
+            const clampedProgress = Math.max(0, Math.min(1, progress));
+
+            lineFill.style.height = `${clampedProgress * 100}%`;
+
+            // Active steps
+            let activeCount = 0;
+            steps.forEach((step) => {
+                const stepRect = step.getBoundingClientRect();
+                const stepCenter = stepRect.top + stepRect.height / 2;
+                if (stepCenter < viewportCenter) {
+                    step.classList.add('process-creation__step--active');
+                    activeCount++;
+                } else {
+                    step.classList.remove('process-creation__step--active');
+                }
+            });
+
+            // Piloter l'illustration : 7 steps → 4 phases visuelles
+            // Steps 1-2 → phase 1 (wireframe)
+            // Steps 3-4 → phase 2 (design)
+            // Step 5    → phase 3 (code)
+            // Steps 6-7 → phase 4 (live)
+            if (visual) {
+                let phase = 1;
+                if (activeCount >= 6) phase = 4;
+                else if (activeCount >= 5) phase = 3;
+                else if (activeCount >= 3) phase = 2;
+                else phase = 1;
+
+                const prevPhase = visual.getAttribute('data-phase') || '1';
+                visual.setAttribute('data-phase', phase);
+
+                // Toggle active class for animation triggers
+                const layers = visual.querySelectorAll('.process-visual__layer');
+                layers.forEach(l => l.classList.remove('active'));
+
+                const activeLayerClass = ['wireframe', 'design', 'code', 'live'][phase - 1];
+                const activeLayer = visual.querySelector(`.process-visual__layer--${activeLayerClass}`);
+                if (activeLayer) activeLayer.classList.add('active');
+
+                // Update URL text dynamically
+                const urlText = visual.querySelector('.process-visual__url-text');
+                if (urlText) {
+                    const urls = ['votre-site.com', 'votre-site.com/maquette', 'localhost:3000', '🟢 votre-site.com'];
+                    urlText.textContent = urls[phase - 1] || urls[0];
+                }
+            }
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    updateLine();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+
+        // Initial call
+        updateLine();
     }
 
     // Wait for DOM
