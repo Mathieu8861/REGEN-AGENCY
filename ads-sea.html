@@ -17,7 +17,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- Theme Color -->
     <meta name="theme-color" content="#173C3A">
 </head>
 <body class="loading">
@@ -71,608 +70,410 @@
     <main>
 
         <!-- ============================== -->
-        <!--          POLE HERO             -->
+        <!--          HERO                  -->
         <!-- ============================== -->
         <section class="pole-hero pole-hero--ads">
             <div class="pole-hero__gradient"></div>
             <div class="container">
-                <span class="section__badge">Ads / SEA</span>
-                <h1 class="pole-hero__title">Publicité digitale <span class="text-gradient">& Formation</span></h1>
-                <p class="pole-hero__tagline">Google Ads · Meta Ads · Formations sur-mesure</p>
-                <p class="pole-hero__description">De la stratégie publicitaire à la formation de vos équipes, maximisez chaque euro investi sur les plus grandes plateformes.</p>
-                <div class="pole-hero__tabs">
-                    <a href="#google-ads" class="pole-hero__tab pole-hero__tab--google pole-hero__tab--active">
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        <span>Google Ads</span>
-                    </a>
-                    <a href="#meta-ads" class="pole-hero__tab pole-hero__tab--meta">
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
-                        </svg>
-                        <span>Meta Ads</span>
-                    </a>
-                    <a href="#formation" class="pole-hero__tab pole-hero__tab--formation">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                        </svg>
-                        <span>Formation SEA</span>
-                    </a>
+                <div class="hero-slider">
+                    <!-- Texte gauche -->
+                    <div class="hero-slider__text">
+                        <h1 class="hero-slider__title">
+                            <span class="hero-slider__line hero-slider__line--dynamic">
+                                <span class="hero-slider__word hero-slider__word--active" data-color="#DB4437">Vendez plus</span>
+                                <span class="hero-slider__word" data-color="#1877F2">Démarquez-vous</span>
+                                <span class="hero-slider__word" data-color="#000000">Explosez vos vues</span>
+                                <span class="hero-slider__word" data-color="#0A66C2">Gagnez des leads</span>
+                            </span>
+                            <span class="hero-slider__line hero-slider__line--static">
+                                grâce à <span class="hero-slider__platform hero-slider__platform--active" data-color="#DB4437">Google Ads</span><span class="hero-slider__platform" data-color="#1877F2">Meta Ads</span><span class="hero-slider__platform" data-color="#000000">TikTok Ads</span><span class="hero-slider__platform" data-color="#0A66C2">LinkedIn Ads</span>.
+                            </span>
+                        </h1>
+
+                        <p class="hero-slider__description">Quel que soit votre objectif, faites en sorte que vos clients potentiels trouvent facilement votre entreprise grâce à la publicité en ligne.</p>
+
+                        <div class="hero-slider__actions">
+                            <a href="contact.html" class="btn btn--primary btn--large">Lancer ma campagne</a>
+                            <a href="#expertises" class="btn btn--secondary">En savoir plus</a>
+                        </div>
+
+                        <!-- Indicateurs -->
+                        <div class="hero-slider__dots">
+                            <button class="hero-slider__dot hero-slider__dot--active" data-slide="0" style="--dot-color: #DB4437" aria-label="Google Ads">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                            </button>
+                            <button class="hero-slider__dot" data-slide="1" style="--dot-color: #1877F2" aria-label="Meta Ads">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 008.44-9.9c0-5.53-4.5-10.02-10-10.02z"/></svg>
+                            </button>
+                            <button class="hero-slider__dot" data-slide="2" style="--dot-color: #000000" aria-label="TikTok Ads">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.92a8.27 8.27 0 004.76 1.5V7a4.84 4.84 0 01-1-.31z"/></svg>
+                            </button>
+                            <button class="hero-slider__dot" data-slide="3" style="--dot-color: #0A66C2" aria-label="LinkedIn Ads">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Visuel droite -->
+                    <div class="hero-slider__visual">
+                        <!-- Google Ads mockup -->
+                        <div class="hero-slider__mockup hero-slider__mockup--active" data-slide="0">
+                            <div class="hero-slider__circle" style="background: rgba(219,68,55,0.08)">
+                                <div class="mockup-card mockup-card--google">
+                                    <div class="mockup-card__badge" style="background:#DB4437">Shopping</div>
+                                    <div class="mockup-card__img" style="background: linear-gradient(135deg, #fce8e6, #f8d7d4)">
+                                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" fill="#F4B400"/><line x1="3" y1="6" x2="21" y2="6" stroke="#DB4437" stroke-width="2"/><path d="M16 10a4 4 0 01-8 0" stroke="#4285F4" stroke-width="2" fill="none"/></svg>
+                                    </div>
+                                    <span class="mockup-card__title" style="color:#DB4437">Promo sur vos produits</span>
+                                    <span class="mockup-card__sub">Explorer les collections</span>
+                                    <div class="mockup-card__footer">
+                                        <span>votre-site.com</span>
+                                        <span class="mockup-card__stars">★★★★★</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Meta Ads mockup (FB + Insta) -->
+                        <div class="hero-slider__mockup" data-slide="1">
+                            <div class="hero-slider__circle" style="background: rgba(24,119,242,0.08)">
+                                <div class="mockup-duo">
+                                    <div class="mockup-card mockup-card--fb">
+                                        <div class="mockup-card__badge" style="background:#1877F2">Facebook</div>
+                                        <div class="mockup-card__img" style="background: linear-gradient(135deg, #e8f0fe, #d4e4fc)">
+                                            <svg viewBox="0 0 24 24" fill="#1877F2" width="28" height="28"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                                        </div>
+                                        <span class="mockup-card__title" style="color:#1877F2">Votre marque</span>
+                                        <span class="mockup-card__sub">Sponsorisé · 👍 2.4k</span>
+                                    </div>
+                                    <div class="mockup-card mockup-card--insta">
+                                        <div class="mockup-card__badge" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)">Instagram</div>
+                                        <div class="mockup-card__img" style="background: linear-gradient(135deg, #fde8ef, #f5d0e0)">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="#E1306C" stroke-width="2" width="28" height="28"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                                        </div>
+                                        <span class="mockup-card__title" style="color:#E1306C">Story Ads</span>
+                                        <span class="mockup-card__sub">Découvrir · ❤️ 1.8k</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TikTok Ads mockup -->
+                        <div class="hero-slider__mockup" data-slide="2">
+                            <div class="hero-slider__circle" style="background: rgba(0,0,0,0.05)">
+                                <div class="mockup-card mockup-card--tiktok">
+                                    <div class="mockup-card__badge" style="background:#000000">Publicité</div>
+                                    <div class="mockup-card__img" style="background: linear-gradient(135deg, #f0f0f0, #e5e5e5)">
+                                        <svg viewBox="0 0 24 24" fill="#000000" width="32" height="32"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.92a8.27 8.27 0 004.76 1.5V7a4.84 4.84 0 01-1-.31z"/></svg>
+                                    </div>
+                                    <span class="mockup-card__title" style="color:#000">Vidéo virale</span>
+                                    <span class="mockup-card__sub">1.2M de vues</span>
+                                    <div class="mockup-card__footer">
+                                        <span>Pour vous</span>
+                                        <span>🔥 Tendance</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LinkedIn Ads mockup -->
+                        <div class="hero-slider__mockup" data-slide="3">
+                            <div class="hero-slider__circle" style="background: rgba(10,102,194,0.10)">
+                                <div class="mockup-card mockup-card--linkedin">
+                                    <div class="mockup-card__badge" style="background:#0A66C2">Contenu sponsorisé</div>
+                                    <div class="mockup-card__img" style="background: linear-gradient(135deg, #e0eef8, #cde3f5)">
+                                        <svg viewBox="0 0 24 24" fill="#0A66C2" width="32" height="32"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                                    </div>
+                                    <span class="mockup-card__title" style="color:#0A66C2">Générez des leads B2B</span>
+                                    <span class="mockup-card__sub">Contacter</span>
+                                    <div class="mockup-card__footer">
+                                        <span>LinkedIn Business</span>
+                                        <span>👍 847</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- ============================== -->
+        <!--   DOUBLE BLOC GOOGLE / META    -->
         <!-- ============================== -->
-        <!--     GOOGLE ADS SECTION         -->
-        <!-- ============================== -->
-        <section class="pole-section pole-section--white" id="google-ads">
+        <section class="pole-section pole-section--dark" id="expertises">
             <div class="container">
-                <div class="section__header">
-                    <span class="section__badge badge--google">Google Ads</span>
-                    <h2 class="section__title">Maximisez votre visibilité sur Google</h2>
-                    <p class="section__description">Search, Shopping, Display, YouTube : nous exploitons tout l'écosystème Google pour générer des résultats mesurables et durables.</p>
+                <div class="section__header reveal">
+                    <span class="section__badge">Nos expertises</span>
+                    <h2 class="section__title">Deux plateformes, une stratégie de croissance</h2>
+                    <p class="section__description">Nous pilotons vos campagnes sur Google et Meta pour maximiser votre visibilité, vos conversions et votre rentabilité.</p>
                 </div>
 
-                <div class="pole-split">
-                    <!-- LEFT: Inventory Grid -->
-                    <div class="pole-split__left">
-                        <div class="inventory-grid">
-                            <div class="inventory-card inventory-card--blue reveal">
-                                <div class="inventory-card__icon" style="background: rgba(66,133,244,0.1); color: #4285F4;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                    </svg>
-                                </div>
-                                <h3 class="inventory-card__title">Réseau de Recherche</h3>
-                                <p class="inventory-card__text">Positionnement premium sur les résultats Google</p>
-                            </div>
+                <div class="dual-bloc">
 
-                            <div class="inventory-card inventory-card--green reveal">
-                                <div class="inventory-card__icon" style="background: rgba(15,157,88,0.1); color: #0F9D58;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-                                        <line x1="3" y1="6" x2="21" y2="6"/>
-                                        <path d="M16 10a4 4 0 01-8 0"/>
-                                    </svg>
-                                </div>
-                                <h3 class="inventory-card__title">Google Shopping</h3>
-                                <p class="inventory-card__text">Vos produits en vitrine sur Google</p>
+                    <!-- ===== GOOGLE ADS ===== -->
+                    <div class="dual-bloc__col dual-bloc__col--google reveal" id="google-ads">
+                        <div class="dual-bloc__header">
+                            <div class="dual-bloc__icon dual-bloc__icon--google">
+                                <svg viewBox="0 0 48 48" width="36" height="36">
+                                    <path d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" fill="#FFC107"/>
+                                    <path d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" fill="#FF3D00"/>
+                                    <path d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0124 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z" fill="#4CAF50"/>
+                                    <path d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" fill="#1976D2"/>
+                                </svg>
                             </div>
+                            <h3 class="dual-bloc__title">Google Ads</h3>
+                        </div>
 
-                            <div class="inventory-card inventory-card--yellow reveal">
-                                <div class="inventory-card__icon" style="background: rgba(244,180,0,0.1); color: #F4B400;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                                        <line x1="8" y1="21" x2="16" y2="21"/>
-                                        <line x1="12" y1="17" x2="12" y2="21"/>
-                                    </svg>
-                                </div>
-                                <h3 class="inventory-card__title">Réseau Display</h3>
-                                <p class="inventory-card__text">Bannières sur 2M+ de sites partenaires</p>
-                            </div>
+                        <p class="dual-bloc__description">Exploitez tout le potentiel de l'écosystème Google. Nous concevons, optimisons et pilotons vos campagnes pour générer du trafic qualifié et des conversions mesurables.</p>
 
-                            <div class="inventory-card inventory-card--red reveal">
-                                <div class="inventory-card__icon" style="background: rgba(219,68,55,0.1); color: #DB4437;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <polygon points="10 8 16 12 10 16 10 8"/>
-                                    </svg>
-                                </div>
-                                <h3 class="inventory-card__title">YouTube Ads</h3>
-                                <p class="inventory-card__text">Vidéos publicitaires ciblées</p>
-                            </div>
+                        <p class="dual-bloc__tags-label">Types de campagnes</p>
+                        <div class="dual-bloc__tags">
+                            <span class="dual-bloc__tag dual-bloc__tag--google-blue" data-tooltip="Annonces textuelles affichées en haut des résultats Google lorsqu'un utilisateur recherche vos produits ou services.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                Réseau de Recherche
+                            </span>
+                            <span class="dual-bloc__tag dual-bloc__tag--google-yellow" data-tooltip="Vos produits apparaissent avec photo, prix et nom de boutique directement dans les résultats Google.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#F4B400" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                                Google Shopping
+                            </span>
+                            <span class="dual-bloc__tag dual-bloc__tag--google-green" data-tooltip="Bannières visuelles diffusées sur des millions de sites partenaires Google pour toucher votre audience en navigation.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#0F9D58" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                Réseau Display
+                            </span>
+                            <span class="dual-bloc__tag dual-bloc__tag--google-red" data-tooltip="Publicités vidéo diffusées avant, pendant ou après les vidéos YouTube pour capter l'attention de votre cible.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#DB4437" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                                YouTube Ads
+                            </span>
+                            <span class="dual-bloc__tag dual-bloc__tag--google-blue" data-tooltip="Campagne pilotée par l'IA Google qui diffuse sur tous les canaux (Search, Shopping, Display, YouTube, Gmail, Maps) simultanément.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                Performance Max
+                            </span>
+                            <span class="dual-bloc__tag dual-bloc__tag--google-green" data-tooltip="Format visuel et immersif pour toucher de nouvelles audiences sur YouTube, Discover et Gmail avec des créas engageantes.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#0F9D58" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                                Demand Gen
+                            </span>
+                        </div>
 
-                            <div class="inventory-card inventory-card--blue reveal">
-                                <div class="inventory-card__icon" style="background: rgba(66,133,244,0.1); color: #4285F4;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
-                                    </svg>
+                        <!-- Offres promotionnelles Google -->
+                        <p class="dual-bloc__tags-label">Offre promotionnelle Google</p>
+                        <div class="promo-google">
+                            <div class="promo-google__rows">
+                                <div class="promo-google__row">
+                                    <span class="promo-google__badge">Offre A</span>
+                                    <span class="promo-google__amount">400 €</span>
+                                    <span class="promo-google__sep">d'avoir pub si vous dépensez 400 €</span>
                                 </div>
-                                <h3 class="inventory-card__title">Discovery / Demand Gen</h3>
-                                <p class="inventory-card__text">Audiences qualifiées sur Gmail, YouTube, Discover</p>
+                                <div class="promo-google__row promo-google__row--popular">
+                                    <span class="promo-google__badge">Offre B</span>
+                                    <span class="promo-google__amount">570 €</span>
+                                    <span class="promo-google__sep">d'avoir pub si vous dépensez 740 €</span>
+                                </div>
+                                <div class="promo-google__row">
+                                    <span class="promo-google__badge">Offre C</span>
+                                    <span class="promo-google__amount">1100 €</span>
+                                    <span class="promo-google__sep">d'avoir pub si vous dépensez 1850 €</span>
+                                </div>
                             </div>
+                            <p class="promo-google__disclaimer">Offre soumise à conditions · Nouveaux annonceurs uniquement</p>
+                        </div>
 
-                            <div class="inventory-card inventory-card--green reveal">
-                                <div class="inventory-card__icon" style="background: rgba(15,157,88,0.1); color: #0F9D58;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                                    </svg>
-                                </div>
-                                <h3 class="inventory-card__title">Performance Max</h3>
-                                <p class="inventory-card__text">Campagnes multicanaux alimentées par l'IA</p>
-                            </div>
+                        <div class="dual-bloc__cta">
+                            <a href="contact.html" class="btn btn--primary">Lancer mes campagnes Google</a>
                         </div>
                     </div>
 
-                    <!-- RIGHT: Media Zone -->
-                    <div class="pole-split__right">
-                        <div class="media-zone">
-                            <div class="media-zone__placeholder">
-                                <button class="media-zone__play" aria-label="Voir la vidéo">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
-                                        <polygon points="10 8 16 12 10 16 10 8"/>
-                                    </svg>
-                                </button>
+                    <!-- ===== META ADS ===== -->
+                    <div class="dual-bloc__col dual-bloc__col--meta reveal" id="meta-ads">
+                        <div class="dual-bloc__header">
+                            <div class="dual-bloc__icon dual-bloc__icon--meta">
+                                <img src="assets/images/meta.png" alt="Meta" style="width: 36px; height: 36px; object-fit: contain;">
+                            </div>
+                            <h3 class="dual-bloc__title">Meta Ads</h3>
+                        </div>
+
+                        <p class="dual-bloc__description">Construisez l'histoire de votre marque sur Facebook et Instagram. Nous créons des campagnes qui captent l'attention et transforment l'intérêt en actions concrètes.</p>
+
+                        <p class="dual-bloc__tags-label">Objectifs de campagne</p>
+                        <div class="dual-bloc__tags">
+                            <span class="dual-bloc__tag dual-bloc__tag--meta" data-tooltip="Augmentez la visibilité de votre marque en touchant un maximum de personnes dans votre audience cible.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#1877F2" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                Notoriété & Reach
+                            </span>
+                            <span class="dual-bloc__tag dual-bloc__tag--meta" data-tooltip="Générez des clics vers votre site ou des interactions (likes, commentaires, partages) sur vos publications.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#1877F2" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                                Trafic & Engagement
+                            </span>
+                            <span class="dual-bloc__tag dual-bloc__tag--meta" data-tooltip="Optimisez vos campagnes pour déclencher des achats, ajouts au panier ou inscriptions sur votre site.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#1877F2" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                                Conversions & Ventes
+                            </span>
+                            <span class="dual-bloc__tag dual-bloc__tag--meta" data-tooltip="Collectez des contacts qualifiés directement via des formulaires intégrés à Facebook et Instagram.">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#1877F2" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                                Leads & Formulaires
+                            </span>
+                        </div>
+
+                        <p class="dual-bloc__tags-label">Placements & formats</p>
+                        <div class="dual-bloc__tags">
+                            <span class="dual-bloc__tag dual-bloc__tag--meta">Feed</span>
+                            <span class="dual-bloc__tag dual-bloc__tag--meta">Stories</span>
+                            <span class="dual-bloc__tag dual-bloc__tag--meta">Reels</span>
+                            <span class="dual-bloc__tag dual-bloc__tag--meta">Carrousel</span>
+                            <span class="dual-bloc__tag dual-bloc__tag--meta">Collection</span>
+                            <span class="dual-bloc__tag dual-bloc__tag--meta">Messenger</span>
+                        </div>
+
+                        <!-- Logos écosystème Meta -->
+                        <p class="dual-bloc__tags-label">L'écosystème Meta</p>
+                        <div class="dual-bloc__platforms-grid">
+                            <div class="platform-tile platform-tile--facebook">
+                                <div class="platform-tile__icon">
+                                    <svg viewBox="0 0 24 24" fill="white" width="24" height="24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                                </div>
+                                <span>Facebook</span>
+                            </div>
+                            <div class="platform-tile platform-tile--instagram">
+                                <div class="platform-tile__icon">
+                                    <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="white" stroke-width="2"/><circle cx="12" cy="12" r="4" stroke="white" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.2" fill="white"/></svg>
+                                </div>
+                                <span>Instagram</span>
+                            </div>
+                            <div class="platform-tile platform-tile--messenger">
+                                <div class="platform-tile__icon">
+                                    <svg viewBox="0 0 24 24" fill="none" width="24" height="24"><path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.907 1.434 5.503 3.678 7.199V22l3.38-1.876c.9.252 1.855.388 2.842.388h.1c5.523 0 10-4.145 10-9.243S17.523 2 12 2z" fill="white"/><path d="M13.2 14.2l-2.6-2.8L6 14.2l5-5.4 2.6 2.8L18 8.8l-4.8 5.4z" fill="#0099FF"/></svg>
+                                </div>
+                                <span>Messenger</span>
+                            </div>
+                            <div class="platform-tile platform-tile--whatsapp">
+                                <div class="platform-tile__icon">
+                                    <svg viewBox="0 0 24 24" fill="white" width="24" height="24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                </div>
+                                <span>WhatsApp</span>
                             </div>
                         </div>
+
+                        <div class="dual-bloc__cta">
+                            <a href="contact.html" class="btn btn--primary">Booster ma marque</a>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
         <!-- ============================== -->
-        <!--     GOOGLE ADS STATS           -->
+        <!--    STATS COMBINÉES             -->
         <!-- ============================== -->
-        <section class="pole-section pole-section--light">
+        <section class="pole-section pole-section--green-tint">
             <div class="container">
-                <div class="stats-grid">
-                    <div class="stat-card reveal">
-                        <div class="stat-card__icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-                        <div class="stat-card__number">+150%</div>
-                        <div class="stat-card__label">Augmentation du trafic</div>
+                <div class="section__header reveal">
+                    <span class="section__badge">Résultats globaux</span>
+                    <h2 class="section__title">Ce que nos campagnes génèrent</h2>
+                </div>
+
+                <div class="combined-stats">
+                    <div class="combined-stat reveal">
+                        <div class="combined-stat__icon">
+                            <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                        </div>
+                        <span class="combined-stat__value" data-count="1.2" data-suffix="M€" data-decimals="1">0</span>
+                        <span class="combined-stat__label">CA généré en 2025</span>
                     </div>
-                    <div class="stat-card reveal">
-                        <div class="stat-card__icon"><svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
-                        <div class="stat-card__number">+80%</div>
-                        <div class="stat-card__label">Augmentation des conversions</div>
+                    <div class="combined-stat reveal">
+                        <div class="combined-stat__icon">
+                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <span class="combined-stat__value" data-count="50" data-suffix="+" data-decimals="0">0</span>
+                        <span class="combined-stat__label">Clients accompagnés</span>
                     </div>
-                    <div class="stat-card reveal">
-                        <div class="stat-card__icon"><svg viewBox="0 0 24 24"><path d="M17.2 7A7 7 0 0 0 6 12a7 7 0 0 0 11.2 5"/><line x1="4" y1="10" x2="13" y2="10"/><line x1="4" y1="14" x2="13" y2="14"/></svg></div>
-                        <div class="stat-card__number">7x</div>
-                        <div class="stat-card__label">ROAS moyen</div>
+                    <div class="combined-stat reveal">
+                        <div class="combined-stat__icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                        </div>
+                        <span class="combined-stat__value" data-count="6" data-suffix="x" data-decimals="0">0</span>
+                        <span class="combined-stat__label">ROAS moyen global</span>
                     </div>
-                    <div class="stat-card reveal">
-                        <div class="stat-card__icon"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
-                        <div class="stat-card__number">-30%</div>
-                        <div class="stat-card__label">CPA moyen</div>
+                    <div class="combined-stat reveal">
+                        <div class="combined-stat__icon">
+                            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        </div>
+                        <span class="combined-stat__value" data-count="98" data-suffix="%" data-decimals="0">0</span>
+                        <span class="combined-stat__label">Campagnes rentables</span>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- ============================== -->
-        <!--   GOOGLE ADS REALISATIONS      -->
+        <!--    SERVICES LIÉS / OUTILS      -->
         <!-- ============================== -->
-        <section class="pole-section pole-section--white">
+        <section class="pole-section pole-section--primary-soft">
             <div class="container">
-                <div class="section__header">
-                    <span class="section__badge badge--google">Réalisations</span>
-                    <h2 class="section__title">Nos résultats Google Ads</h2>
-                </div>
-
-                <div class="realisations-showcase">
-                    <div class="realisations-showcase__track">
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
-                            </div>
-                            <div class="realisation-card__screenshot" style="background: #e8f0fe;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Search + Shopping</span>
-                                <h3 class="realisation-card__name">E-commerce Mode</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">+220%</span><span class="realisation-card__metric-label">ROAS</span></div>
-                            </div>
-                        </div>
-
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
-                            </div>
-                            <div class="realisation-card__screenshot" style="background: #e6f4ea;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Performance Max</span>
-                                <h3 class="realisation-card__name">Lead Gen B2B</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">+180%</span><span class="realisation-card__metric-label">Leads</span></div>
-                            </div>
-                        </div>
-
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
-                            </div>
-                            <div class="realisation-card__screenshot" style="background: #fef7e0;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">YouTube Ads</span>
-                                <h3 class="realisation-card__name">Lancement Produit</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">2M</span><span class="realisation-card__metric-label">Vues</span></div>
-                            </div>
-                        </div>
-
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
-                            </div>
-                            <div class="realisation-card__screenshot" style="background: #fce8e6;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Search</span>
-                                <h3 class="realisation-card__name">Service Local</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">-40%</span><span class="realisation-card__metric-label">CPA</span></div>
-                            </div>
-                        </div>
-
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
-                            </div>
-                            <div class="realisation-card__screenshot" style="background: #e8eaf6;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Display</span>
-                                <h3 class="realisation-card__name">Notoriété SaaS</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">+95%</span><span class="realisation-card__metric-label">Impressions</span></div>
-                            </div>
-                        </div>
-
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
-                            </div>
-                            <div class="realisation-card__screenshot" style="background: #e0f2f1;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Shopping</span>
-                                <h3 class="realisation-card__name">Boutique Sport</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">x3</span><span class="realisation-card__metric-label">Revenus</span></div>
-                            </div>
-                        </div>
+                <div class="services-split reveal">
+                    <!-- Gauche : texte -->
+                    <div class="services-split__text">
+                        <span class="section__badge">Services inclus</span>
+                        <h2 class="section__title" style="text-align: left;">L'écosystème complet pour vos campagnes</h2>
+                        <p class="services-split__desc">Au-delà du pilotage publicitaire, nous assurons l'ensemble des services techniques nécessaires à la performance de vos campagnes.</p>
+                        <a href="data-tracking-pole.html" class="btn btn--primary">Découvrir Data & Tracking</a>
                     </div>
 
-                    <div class="realisations-showcase__controls">
-                        <button class="realisations-showcase__btn realisations-showcase__btn--prev" aria-label="Précédent">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-                        </button>
-                        <button class="realisations-showcase__btn realisations-showcase__btn--next" aria-label="Suivant">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================== -->
-        <!--       META ADS SECTION         -->
-        <!-- ============================== -->
-        <section class="pole-section pole-section--meta-tint" id="meta-ads">
-            <div class="container">
-                <div class="section__header">
-                    <span class="section__badge badge--meta">Meta Ads</span>
-                    <h2 class="section__title">Construisez votre marque sur les réseaux</h2>
-                    <p class="section__description">Facebook et Instagram offrent un potentiel immense pour toucher vos audiences, développer votre notoriété et générer des conversions.</p>
-                </div>
-
-                <h3 class="section__subtitle" style="text-align: center; margin-bottom: var(--spacing-lg);">Objectifs de campagne Meta</h3>
-
-                <div class="meta-campaigns-grid meta-campaigns-grid--full">
-                    <div class="meta-campaign-card reveal">
-                        <div class="meta-campaign-card__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </div>
-                        <h4 class="meta-campaign-card__title">Notoriété & Reach</h4>
-                        <p class="meta-campaign-card__text">Faites découvrir votre marque à des millions d'utilisateurs</p>
-                    </div>
-
-                    <div class="meta-campaign-card reveal">
-                        <div class="meta-campaign-card__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                                <polyline points="17 6 23 6 23 12"/>
-                            </svg>
-                        </div>
-                        <h4 class="meta-campaign-card__title">Trafic & Engagement</h4>
-                        <p class="meta-campaign-card__text">Attirez des visiteurs qualifiés vers votre site</p>
-                    </div>
-
-                    <div class="meta-campaign-card reveal">
-                        <div class="meta-campaign-card__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"/>
-                                <circle cx="12" cy="12" r="6"/>
-                                <circle cx="12" cy="12" r="2"/>
-                            </svg>
-                        </div>
-                        <h4 class="meta-campaign-card__title">Conversions & Ventes</h4>
-                        <p class="meta-campaign-card__text">Transformez l'intérêt en achats</p>
-                    </div>
-
-                    <div class="meta-campaign-card reveal">
-                        <div class="meta-campaign-card__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M23 21v-2a4 4 0 00-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 010 7.75"/>
-                            </svg>
-                        </div>
-                        <h4 class="meta-campaign-card__title">Leads & Formulaires</h4>
-                        <p class="meta-campaign-card__text">Collectez des prospects directement sur la plateforme</p>
-                    </div>
-                </div>
-
-                <div class="meta-placements" style="text-align: center; margin-top: var(--spacing-lg);">
-                    <p class="pole-split__small-text">Placements : Feed · Stories · Reels · Audience Network · Messenger</p>
-                    <p class="pole-split__small-text">Formats : Carrousel · Vidéo · Collection · Instant Experience</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================== -->
-        <!--       META ADS STATS           -->
-        <!-- ============================== -->
-        <section class="pole-section pole-section--light">
-            <div class="container">
-                <div class="stats-grid">
-                    <div class="stat-card reveal">
-                        <div class="stat-card__icon"><svg viewBox="0 0 24 24"><path d="M17.2 7A7 7 0 0 0 6 12a7 7 0 0 0 11.2 5"/><line x1="4" y1="10" x2="13" y2="10"/><line x1="4" y1="14" x2="13" y2="14"/></svg></div>
-                        <div class="stat-card__number">5x</div>
-                        <div class="stat-card__label">ROI moyen</div>
-                    </div>
-                    <div class="stat-card reveal">
-                        <div class="stat-card__icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-                        <div class="stat-card__number">+200%</div>
-                        <div class="stat-card__label">Visiteurs</div>
-                    </div>
-                    <div class="stat-card reveal">
-                        <div class="stat-card__icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-                        <div class="stat-card__number">+120%</div>
-                        <div class="stat-card__label">Croissance</div>
-                    </div>
-                    <div class="stat-card reveal">
-                        <div class="stat-card__icon"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
-                        <div class="stat-card__number">-25%</div>
-                        <div class="stat-card__label">CPA moyen</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================== -->
-        <!--    META ADS REALISATIONS       -->
-        <!-- ============================== -->
-        <section class="pole-section pole-section--white">
-            <div class="container">
-                <div class="section__header">
-                    <span class="section__badge badge--meta">Réalisations</span>
-                    <h2 class="section__title">Nos résultats Meta Ads</h2>
-                </div>
-
-                <div class="realisations-showcase">
-                    <div class="realisations-showcase__track">
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
+                    <!-- Droite : grille 2x2 -->
+                    <div class="services-split__grid">
+                        <div class="linked-service">
+                            <div class="linked-service__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="20" x2="12" y2="10"/>
+                                    <line x1="18" y1="20" x2="18" y2="4"/>
+                                    <line x1="6" y1="20" x2="6" y2="16"/>
+                                </svg>
                             </div>
-                            <div class="realisation-card__screenshot" style="background: #e7f3ff;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Instagram Ads</span>
-                                <h3 class="realisation-card__name">Marque Beauté</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">+340%</span><span class="realisation-card__metric-label">Engagement</span></div>
+                            <div class="linked-service__text">
+                                <h4>Google Analytics 4</h4>
+                                <p>Configuration et suivi de vos données de performance</p>
                             </div>
                         </div>
 
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
+                        <div class="linked-service">
+                            <div class="linked-service__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+                                    <line x1="7" y1="7" x2="7.01" y2="7"/>
+                                </svg>
                             </div>
-                            <div class="realisation-card__screenshot" style="background: #e3f2fd;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Facebook Leads</span>
-                                <h3 class="realisation-card__name">Immobilier</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">x5</span><span class="realisation-card__metric-label">Leads qualifiés</span></div>
+                            <div class="linked-service__text">
+                                <h4>Google Tag Manager</h4>
+                                <p>Gestion centralisée de vos balises et pixels</p>
                             </div>
                         </div>
 
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
+                        <div class="linked-service">
+                            <div class="linked-service__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="22" y1="12" x2="18" y2="12"/>
+                                    <line x1="6" y1="12" x2="2" y2="12"/>
+                                    <line x1="12" y1="6" x2="12" y2="2"/>
+                                    <line x1="12" y1="22" x2="12" y2="18"/>
+                                </svg>
                             </div>
-                            <div class="realisation-card__screenshot" style="background: #ede7f6;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Reels Ads</span>
-                                <h3 class="realisation-card__name">E-commerce Food</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">+180%</span><span class="realisation-card__metric-label">Ventes</span></div>
-                            </div>
-                        </div>
-
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
-                            </div>
-                            <div class="realisation-card__screenshot" style="background: #fce4ec;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Carrousel Ads</span>
-                                <h3 class="realisation-card__name">Mode & Accessoires</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">-35%</span><span class="realisation-card__metric-label">CPA</span></div>
+                            <div class="linked-service__text">
+                                <h4>Pixel Meta & CAPI</h4>
+                                <p>Tracking avancé pour Facebook et Instagram</p>
                             </div>
                         </div>
 
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
+                        <div class="linked-service">
+                            <div class="linked-service__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    <polyline points="9 12 11 14 15 10"/>
+                                </svg>
                             </div>
-                            <div class="realisation-card__screenshot" style="background: #fff3e0;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Stories Ads</span>
-                                <h3 class="realisation-card__name">Coaching Fitness</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">+260%</span><span class="realisation-card__metric-label">Inscriptions</span></div>
-                            </div>
-                        </div>
-
-                        <div class="realisation-card reveal">
-                            <div class="realisation-card__browser">
-                                <div class="realisation-card__browser-bar">
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                    <span class="realisation-card__dot"></span>
-                                </div>
-                            </div>
-                            <div class="realisation-card__screenshot" style="background: #e1f5fe;"></div>
-                            <div class="realisation-card__info">
-                                <span class="realisation-card__type">Audience Lookalike</span>
-                                <h3 class="realisation-card__name">Restaurant Chaîne</h3>
-                                <div class="realisation-card__metric"><span class="realisation-card__metric-value">x4</span><span class="realisation-card__metric-label">Réservations</span></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="realisations-showcase__controls">
-                        <button class="realisations-showcase__btn realisations-showcase__btn--prev" aria-label="Précédent">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-                        </button>
-                        <button class="realisations-showcase__btn realisations-showcase__btn--next" aria-label="Suivant">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================== -->
-        <!--      FORMATION SECTION         -->
-        <!-- ============================== -->
-        <section class="pole-section pole-section--white" id="formation">
-            <div class="container">
-                <div class="section__header">
-                    <span class="section__badge badge--formation">Formation SEA</span>
-                    <h2 class="section__title">Montez en compétences sur Google & Meta Ads</h2>
-                    <p class="section__description">Des formations pratiques et personnalisées pour maîtriser les plateformes publicitaires et piloter vos campagnes en autonomie.</p>
-                </div>
-
-                <div class="pole-split">
-                    <!-- LEFT: Formation Timeline -->
-                    <div class="pole-split__left">
-                        <div class="formation-timeline">
-                            <div class="formation-timeline__item reveal">
-                                <span class="formation-timeline__number">01</span>
-                                <div class="formation-timeline__content">
-                                    <h3 class="formation-timeline__title">Fondamentaux Google Ads</h3>
-                                    <p class="formation-timeline__text">Interface, structure des comptes, types de campagnes.</p>
-                                    <span class="formation-timeline__duration">1-2h</span>
-                                </div>
-                            </div>
-
-                            <div class="formation-timeline__item reveal">
-                                <span class="formation-timeline__number">02</span>
-                                <div class="formation-timeline__content">
-                                    <h3 class="formation-timeline__title">Stratégies d'enchères</h3>
-                                    <p class="formation-timeline__text">CPC, CPA cible, ROAS cible, Maximiser les conversions.</p>
-                                    <span class="formation-timeline__duration">1-2h</span>
-                                </div>
-                            </div>
-
-                            <div class="formation-timeline__item reveal">
-                                <span class="formation-timeline__number">03</span>
-                                <div class="formation-timeline__content">
-                                    <h3 class="formation-timeline__title">Fondamentaux Meta Ads</h3>
-                                    <p class="formation-timeline__text">Business Manager, audiences, placements.</p>
-                                    <span class="formation-timeline__duration">1-2h</span>
-                                </div>
-                            </div>
-
-                            <div class="formation-timeline__item reveal">
-                                <span class="formation-timeline__number">04</span>
-                                <div class="formation-timeline__content">
-                                    <h3 class="formation-timeline__title">Création publicitaire</h3>
-                                    <p class="formation-timeline__text">Visuels, copywriting, tests A/B créatifs.</p>
-                                    <span class="formation-timeline__duration">1-2h</span>
-                                </div>
-                            </div>
-
-                            <div class="formation-timeline__item reveal">
-                                <span class="formation-timeline__number">05</span>
-                                <div class="formation-timeline__content">
-                                    <h3 class="formation-timeline__title">Tracking & Analytics</h3>
-                                    <p class="formation-timeline__text">GTM, GA4, Pixel Meta, attribution.</p>
-                                    <span class="formation-timeline__duration">1-2h</span>
-                                </div>
-                            </div>
-
-                            <div class="formation-timeline__item reveal">
-                                <span class="formation-timeline__number">06</span>
-                                <div class="formation-timeline__content">
-                                    <h3 class="formation-timeline__title">Optimisation avancée</h3>
-                                    <p class="formation-timeline__text">Scaling, automatisation, stratégies avancées.</p>
-                                    <span class="formation-timeline__duration">1-2h</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- RIGHT: Media + Info Cards -->
-                    <div class="pole-split__right">
-                        <div class="media-zone">
-                            <div class="media-zone__placeholder">
-                                <button class="media-zone__play" aria-label="Voir la vidéo">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
-                                        <polygon points="10 8 16 12 10 16 10 8"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="formation-info-cards">
-                            <div class="glass-card glass-card--small reveal">
-                                <span class="glass-card__value">100% distanciel</span>
-                                <span class="glass-card__label">Visioconférence</span>
-                            </div>
-                            <div class="glass-card glass-card--small reveal">
-                                <span class="glass-card__value">30 jours</span>
-                                <span class="glass-card__label">Suivi post-formation</span>
-                            </div>
-                            <div class="glass-card glass-card--small reveal">
-                                <span class="glass-card__value">Tous niveaux</span>
-                                <span class="glass-card__label">Débutant à avancé</span>
+                            <div class="linked-service__text">
+                                <h4>Gestion de comptes</h4>
+                                <p>Résolution de problèmes, suspensions, accès et droits</p>
                             </div>
                         </div>
                     </div>
@@ -681,11 +482,199 @@
         </section>
 
         <!-- ============================== -->
-        <!--      ADVANTAGES SECTION        -->
+        <!--      RÉALISATIONS              -->
         <!-- ============================== -->
         <section class="pole-section pole-section--dark">
             <div class="container">
-                <div class="section__header">
+                <div class="section__header reveal">
+                    <span class="section__badge">Réalisations</span>
+                    <h2 class="section__title">Nos résultats clients</h2>
+                </div>
+
+                <div class="realisations-mixed">
+                    <!-- Card 1 - Google -->
+                    <div class="realisation-card--mini reveal">
+                        <div class="realisation-card__visual">
+                            <div class="realisation-card__visual-bg" style="background: linear-gradient(135deg, #e8f0fe 0%, #d2e3fc 100%);">
+                            </div>
+                            <span class="realisation-card__platform-badge realisation-card__platform-badge--google">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                                Google Ads
+                            </span>
+                        </div>
+                        <div class="realisation-card__body">
+                            <span class="realisation-card__type-tag">Search + Shopping</span>
+                            <h3 class="realisation-card__name">E-commerce Mode</h3>
+                            <div class="realisation-card__result">
+                                <span class="realisation-card__result-value">+220%</span>
+                                <span class="realisation-card__result-label">ROAS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 - Meta -->
+                    <div class="realisation-card--mini reveal">
+                        <div class="realisation-card__visual">
+                            <div class="realisation-card__visual-bg" style="background: linear-gradient(135deg, #e7f3ff 0%, #d0e8ff 100%);">
+                            </div>
+                            <span class="realisation-card__platform-badge realisation-card__platform-badge--meta">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                                Meta Ads
+                            </span>
+                        </div>
+                        <div class="realisation-card__body">
+                            <span class="realisation-card__type-tag">Instagram Ads</span>
+                            <h3 class="realisation-card__name">Marque Beauté</h3>
+                            <div class="realisation-card__result">
+                                <span class="realisation-card__result-value">+340%</span>
+                                <span class="realisation-card__result-label">Engagement</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 - Google -->
+                    <div class="realisation-card--mini reveal">
+                        <div class="realisation-card__visual">
+                            <div class="realisation-card__visual-bg" style="background: linear-gradient(135deg, #e6f4ea 0%, #ceead6 100%);">
+                            </div>
+                            <span class="realisation-card__platform-badge realisation-card__platform-badge--google">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                                Google Ads
+                            </span>
+                        </div>
+                        <div class="realisation-card__body">
+                            <span class="realisation-card__type-tag">Performance Max</span>
+                            <h3 class="realisation-card__name">Lead Gen B2B</h3>
+                            <div class="realisation-card__result">
+                                <span class="realisation-card__result-value">+180%</span>
+                                <span class="realisation-card__result-label">Leads</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 - Meta -->
+                    <div class="realisation-card--mini reveal">
+                        <div class="realisation-card__visual">
+                            <div class="realisation-card__visual-bg" style="background: linear-gradient(135deg, #ede7f6 0%, #d1c4e9 100%);">
+                            </div>
+                            <span class="realisation-card__platform-badge realisation-card__platform-badge--meta">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                                Meta Ads
+                            </span>
+                        </div>
+                        <div class="realisation-card__body">
+                            <span class="realisation-card__type-tag">Facebook Leads</span>
+                            <h3 class="realisation-card__name">Immobilier</h3>
+                            <div class="realisation-card__result">
+                                <span class="realisation-card__result-value">x5</span>
+                                <span class="realisation-card__result-label">Leads qualifiés</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 - Google -->
+                    <div class="realisation-card--mini reveal">
+                        <div class="realisation-card__visual">
+                            <div class="realisation-card__visual-bg" style="background: linear-gradient(135deg, #fef7e0 0%, #fde68a 100%);">
+                            </div>
+                            <span class="realisation-card__platform-badge realisation-card__platform-badge--google">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                                Google Ads
+                            </span>
+                        </div>
+                        <div class="realisation-card__body">
+                            <span class="realisation-card__type-tag">YouTube Ads</span>
+                            <h3 class="realisation-card__name">Lancement Produit</h3>
+                            <div class="realisation-card__result">
+                                <span class="realisation-card__result-value">2M</span>
+                                <span class="realisation-card__result-label">Vues</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 - Meta -->
+                    <div class="realisation-card--mini reveal">
+                        <div class="realisation-card__visual">
+                            <div class="realisation-card__visual-bg" style="background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);">
+                            </div>
+                            <span class="realisation-card__platform-badge realisation-card__platform-badge--meta">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                                Meta Ads
+                            </span>
+                        </div>
+                        <div class="realisation-card__body">
+                            <span class="realisation-card__type-tag">Reels Ads</span>
+                            <h3 class="realisation-card__name">E-commerce Food</h3>
+                            <div class="realisation-card__result">
+                                <span class="realisation-card__result-value">+180%</span>
+                                <span class="realisation-card__result-label">Ventes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== -->
+        <!--   AUTRES PLATEFORMES           -->
+        <!-- ============================== -->
+        <section class="pole-section pole-section--accent-tint">
+            <div class="container">
+                <div class="section__header reveal">
+                    <span class="section__badge">Multi-plateformes</span>
+                    <h2 class="section__title">Nous intervenons aussi sur</h2>
+                </div>
+
+                <div class="platforms-band">
+                    <div class="platforms-band__item reveal">
+                        <div class="platforms-band__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>
+                            </svg>
+                        </div>
+                        <span class="platforms-band__name">TikTok Ads</span>
+                    </div>
+
+                    <div class="platforms-band__item reveal">
+                        <div class="platforms-band__icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="color: #0A66C2;">
+                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                                <rect x="2" y="9" width="4" height="12"/>
+                                <circle cx="4" cy="4" r="2"/>
+                            </svg>
+                        </div>
+                        <span class="platforms-band__name">LinkedIn Ads</span>
+                    </div>
+
+                    <div class="platforms-band__item reveal">
+                        <div class="platforms-band__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#E60023" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="17" x2="12" y2="22"/>
+                                <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.89A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24z"/>
+                            </svg>
+                        </div>
+                        <span class="platforms-band__name">Pinterest Ads</span>
+                    </div>
+
+                    <div class="platforms-band__item reveal">
+                        <div class="platforms-band__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#FFFC00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="background: #000; border-radius: 50%; padding: 6px;">
+                                <path d="M12 2a10 10 0 0 0-3.16 19.5l1.66-5.5h-2.5l3-9h.5l-1 3h4l-1.5 5h2.5l-1.84 6.03A10 10 0 0 0 12 2z" fill="#FFFC00" stroke="none"/>
+                            </svg>
+                        </div>
+                        <span class="platforms-band__name">Snapchat Ads</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ============================== -->
+        <!--      ENGAGEMENTS               -->
+        <!-- ============================== -->
+        <section class="pole-section pole-section--dark">
+            <div class="container">
+                <div class="section__header reveal">
                     <span class="section__badge">Nos engagements</span>
                     <h2 class="section__title section__title--white">Pourquoi nous choisir ?</h2>
                 </div>
@@ -728,105 +717,75 @@
         </section>
 
         <!-- ============================== -->
-        <!--         FAQ SECTION            -->
+        <!--         FAQ                    -->
         <!-- ============================== -->
         <section class="pole-section pole-section--light">
             <div class="container">
-                <div class="section__header">
+                <div class="section__header reveal">
                     <h2 class="section__title">Questions fréquentes</h2>
                 </div>
 
                 <div class="faq-list">
-                    <details class="faq-item">
+                    <details class="faq-item reveal">
                         <summary class="faq-item__question">
-                            <span class="faq-item__origin faq-item__origin--google"></span>
-                            Quelle est votre expertise Google Ads ?
+                            Quelle est votre expertise en publicité digitale ?
                             <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <div class="faq-item__answer"><p>+5 ans d'expérience, certifié Google Partner. Gestion de campagnes Search, Shopping, Display, YouTube et Performance Max.</p></div>
+                        <div class="faq-item__answer"><p>+5 ans d'expérience, certifié Google Partner. Gestion de campagnes Google Ads (Search, Shopping, Display, YouTube, Performance Max) et Meta Ads (Facebook, Instagram). Plus de 1000 entreprises accompagnées.</p></div>
                     </details>
 
-                    <details class="faq-item">
+                    <details class="faq-item reveal">
                         <summary class="faq-item__question">
-                            <span class="faq-item__origin faq-item__origin--google"></span>
                             Comment suivez-vous les performances des campagnes ?
                             <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <div class="faq-item__answer"><p>Dashboard en temps réel, reporting hebdomadaire détaillé, et points stratégiques réguliers.</p></div>
+                        <div class="faq-item__answer"><p>Dashboard en temps réel, reporting hebdomadaire détaillé, et points stratégiques réguliers. Vous avez une visibilité complète sur vos investissements et résultats.</p></div>
                     </details>
 
-                    <details class="faq-item">
+                    <details class="faq-item reveal">
                         <summary class="faq-item__question">
-                            <span class="faq-item__origin faq-item__origin--meta"></span>
-                            Quelle est votre expérience en Meta Ads ?
+                            Quel budget minimum faut-il pour commencer ?
                             <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <div class="faq-item__answer"><p>+3 ans d'expérience chez Meta, plus de 1000 entreprises accompagnées sur Facebook et Instagram.</p></div>
+                        <div class="faq-item__answer"><p>Nous adaptons nos stratégies à votre budget. Nous vous conseillerons sur le budget optimal en fonction de vos objectifs et de votre marché.</p></div>
                     </details>
 
-                    <details class="faq-item">
+                    <details class="faq-item reveal">
                         <summary class="faq-item__question">
-                            <span class="faq-item__origin faq-item__origin--meta"></span>
-                            Vous concentrez-vous sur la performance ou la notoriété ?
-                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="faq-item__answer"><p>Les deux. Nous construisons des funnels complets : notoriété, considération, conversion.</p></div>
-                    </details>
-
-                    <details class="faq-item">
-                        <summary class="faq-item__question">
-                            <span class="faq-item__origin faq-item__origin--formation"></span>
-                            Comment se déroulent les formations ?
-                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="faq-item__answer"><p>100% en visioconférence, modules de 1 à 2h, théorie + pratique + test final.</p></div>
-                    </details>
-
-                    <details class="faq-item">
-                        <summary class="faq-item__question">
-                            <span class="faq-item__origin faq-item__origin--formation"></span>
-                            Quel est le suivi après la formation ?
-                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="faq-item__answer"><p>30 jours de support post-formation pour répondre à vos questions et consolider vos acquis.</p></div>
-                    </details>
-
-                    <details class="faq-item">
-                        <summary class="faq-item__question">
-                            <span class="faq-item__origin faq-item__origin--google"></span>
-                            Quels réseaux Google couvrez-vous ?
-                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                        </summary>
-                        <div class="faq-item__answer"><p>Tous : Search, Shopping, Display, YouTube, Discovery et Performance Max.</p></div>
-                    </details>
-
-                    <details class="faq-item">
-                        <summary class="faq-item__question">
-                            <span class="faq-item__origin faq-item__origin--meta"></span>
                             Proposez-vous un accompagnement international ?
                             <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                         </summary>
-                        <div class="faq-item__answer"><p>Oui, traductions et adaptations culturelles disponibles pour vos campagnes.</p></div>
+                        <div class="faq-item__answer"><p>Oui, nous proposons la traduction et l'adaptation de vos campagnes en anglais, italien, néerlandais, allemand et portugais.</p></div>
+                    </details>
+
+                    <details class="faq-item reveal">
+                        <summary class="faq-item__question">
+                            Comment se déroulent les formations ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="faq-item__answer"><p>100% en visioconférence, modules de 1 à 2h, théorie + pratique sur vos propres comptes. 30 jours de support post-formation inclus.</p></div>
+                    </details>
+
+                    <details class="faq-item reveal">
+                        <summary class="faq-item__question">
+                            En combien de temps peut-on voir des résultats ?
+                            <svg class="faq-item__chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="faq-item__answer"><p>Les premières optimisations sont visibles dès les 2 premières semaines. Les résultats significatifs arrivent généralement entre 1 et 3 mois selon votre secteur et vos objectifs.</p></div>
                     </details>
                 </div>
             </div>
         </section>
 
-        <!-- ============================== -->
-        <!--         CTA SECTION            -->
-        <!-- ============================== -->
-        <section class="section section--cta">
-            <div class="container">
-                <div class="cta-box">
-                    <h2 class="cta-box__title">Prêt à booster vos performances publicitaires ?</h2>
-                    <div class="cta-box__actions">
-                        <a href="contact.html" class="btn btn--white btn--large">Nous contacter</a>
-                        <a href="mailto:regen.agency@hotmail.com" class="cta-box__email">regen.agency@hotmail.com</a>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
+
+    <!-- Bannière CTA pré-footer -->
+    <div class="pre-footer-cta">
+        <div class="container pre-footer-cta__inner">
+            <p class="pre-footer-cta__text">Envie de booster vos campagnes ? Obtenez votre <strong>audit gratuit</strong></p>
+            <a href="contact.html" class="btn btn--primary pre-footer-cta__btn">Prendre rendez-vous</a>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
