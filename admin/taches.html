@@ -10,11 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: var(--font-primary);
@@ -24,7 +20,7 @@
         }
 
         .admin-wrapper {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 30px 20px 60px;
         }
@@ -46,15 +42,13 @@
         }
 
         .header-left img {
-            width: 48px;
-            height: 48px;
+            width: 48px; height: 48px;
             object-fit: contain;
         }
 
         .header-left h1 {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--color-primary);
         }
 
         .header-right {
@@ -79,36 +73,41 @@
             transition: opacity 0.2s, transform 0.2s;
         }
 
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-add { background: var(--gradient-logo); color: #fff; }
+        .btn-back { background: transparent; color: var(--color-primary); border: 2px solid #d1d5db; }
+        .btn-back:hover { border-color: var(--color-primary); }
+        .btn-logout { background: transparent; color: #ef4444; border: 2px solid #fecaca; }
+        .btn-logout:hover { background: #fef2f2; border-color: #ef4444; }
+
+        /* ── SECTION TITLES ── */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 40px 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--color-secondary);
         }
 
-        .btn-add {
-            background: var(--gradient-logo);
-            color: #fff;
+        .section-divider:first-of-type { margin-top: 0; }
+
+        .section-divider svg {
+            width: 24px; height: 24px;
+            stroke: var(--color-secondary);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        .btn-back {
-            background: transparent;
-            color: var(--color-primary);
-            border: 2px solid #d1d5db;
+        .section-divider h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            flex: 1;
         }
 
-        .btn-back:hover {
-            border-color: var(--color-primary);
-        }
-
-        .btn-logout {
-            background: transparent;
-            color: #ef4444;
-            border: 2px solid #fecaca;
-        }
-
-        .btn-logout:hover {
-            background: #fef2f2;
-            border-color: #ef4444;
-        }
+        .section-divider .btn { padding: 7px 14px; font-size: 0.8rem; }
 
         /* ── KANBAN BOARD ── */
         .kanban-board {
@@ -121,13 +120,11 @@
             background: #f0f3f1;
             border-radius: var(--radius-lg);
             padding: 16px;
-            min-height: 400px;
+            min-height: 300px;
             transition: background 0.2s;
         }
 
-        .kanban-column.drag-over {
-            background: #e2e8e4;
-        }
+        .kanban-column.drag-over { background: #e2e8e4; }
 
         .column-header {
             display: flex;
@@ -139,8 +136,7 @@
         }
 
         .column-dot {
-            width: 10px;
-            height: 10px;
+            width: 10px; height: 10px;
             border-radius: 50%;
             flex-shrink: 0;
         }
@@ -149,20 +145,14 @@
         .dot-progress { background: #f59e0b; }
         .dot-done { background: #2FB963; }
 
-        .column-label {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--color-primary);
-        }
+        .column-label { font-weight: 700; font-size: 0.95rem; }
 
         .column-count {
             margin-left: auto;
             background: rgba(0,0,0,0.08);
-            color: var(--color-primary);
             font-size: 0.75rem;
             font-weight: 700;
-            width: 24px;
-            height: 24px;
+            width: 24px; height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -187,15 +177,8 @@
             transition: box-shadow 0.2s, transform 0.15s;
         }
 
-        .task-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-1px);
-        }
-
-        .task-card.dragging {
-            opacity: 0.5;
-            cursor: grabbing;
-        }
+        .task-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+        .task-card.dragging { opacity: 0.5; cursor: grabbing; }
 
         .task-card-top {
             display: flex;
@@ -204,8 +187,7 @@
         }
 
         .priority-dot {
-            width: 8px;
-            height: 8px;
+            width: 8px; height: 8px;
             border-radius: 50%;
             flex-shrink: 0;
             margin-top: 6px;
@@ -215,99 +197,72 @@
         .priority-medium { background: #f59e0b; }
         .priority-low { background: #2FB963; }
 
-        .task-title {
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: var(--color-primary);
-            flex: 1;
-        }
+        .task-title { font-weight: 700; font-size: 0.9rem; flex: 1; }
 
         .task-delete {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #ccc;
-            font-size: 1rem;
-            line-height: 1;
-            padding: 2px 4px;
-            border-radius: 4px;
-            opacity: 0;
-            transition: opacity 0.2s, color 0.2s, background 0.2s;
+            background: none; border: none; cursor: pointer;
+            color: #ccc; font-size: 1rem; line-height: 1;
+            padding: 2px 4px; border-radius: 4px;
+            opacity: 0; transition: opacity 0.2s, color 0.2s, background 0.2s;
         }
 
-        .task-card:hover .task-delete {
-            opacity: 1;
+        .task-card:hover .task-delete { opacity: 1; }
+        .task-delete:hover { color: #ef4444; background: #fef2f2; }
+
+        .task-desc { color: #6b7280; font-size: 0.8rem; margin-top: 6px; line-height: 1.4; }
+
+        .task-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
         }
 
-        .task-delete:hover {
-            color: #ef4444;
-            background: #fef2f2;
-        }
+        .task-date { color: #9ca3af; font-size: 0.72rem; }
 
-        .task-desc {
-            color: #6b7280;
-            font-size: 0.8rem;
-            margin-top: 6px;
-            line-height: 1.4;
-        }
-
-        .task-date {
-            color: #9ca3af;
-            font-size: 0.72rem;
-            margin-top: 8px;
-        }
-
-        /* ── MODAL ── */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
+        .avatar {
+            width: 24px; height: 24px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .avatar-mathieu { background: #2FB963; }
+        .avatar-jaemeson { background: #6366f1; }
+        .avatar-none { background: #d1d5db; color: #666; }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
             z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0; visibility: hidden;
             transition: opacity 0.25s, visibility 0.25s;
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
 
         .modal {
             background: #fff;
             border-radius: var(--radius-lg);
             padding: 30px;
-            width: 90%;
-            max-width: 460px;
+            width: 90%; max-width: 460px;
             box-shadow: var(--shadow-xl);
             transform: translateY(20px);
             transition: transform 0.25s;
         }
 
-        .modal-overlay.active .modal {
-            transform: translateY(0);
-        }
+        .modal-overlay.active .modal { transform: translateY(0); }
+        .modal h2 { font-size: 1.2rem; margin-bottom: 20px; }
 
-        .modal h2 {
-            font-size: 1.2rem;
-            color: var(--color-primary);
-            margin-bottom: 20px;
-        }
-
-        .modal-field {
-            margin-bottom: 16px;
-        }
-
-        .modal-field label {
-            display: block;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: var(--color-primary);
-            margin-bottom: 6px;
-        }
+        .modal-field { margin-bottom: 16px; }
+        .modal-field label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; }
 
         .modal-field input,
         .modal-field textarea,
@@ -326,36 +281,201 @@
 
         .modal-field input:focus,
         .modal-field textarea:focus,
-        .modal-field select:focus {
-            border-color: var(--color-secondary);
+        .modal-field select:focus { border-color: var(--color-secondary); }
+        .modal-field textarea { resize: vertical; min-height: 80px; }
+
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+        .btn-cancel { background: transparent; color: var(--color-primary); border: 2px solid #d1d5db; }
+        .btn-cancel:hover { border-color: var(--color-primary); }
+        .btn-submit { background: var(--gradient-logo); color: #fff; }
+
+        /* ── PROSPECTS TABLE (Monday style) ── */
+        .prospects-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            background: #fff;
         }
 
-        .modal-field textarea {
-            resize: vertical;
-            min-height: 80px;
+        .prospects-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 900px;
         }
 
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 24px;
+        .prospects-table thead th {
+            background: #f3f4f6;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #6b7280;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
         }
 
-        .btn-cancel {
-            background: transparent;
-            color: var(--color-primary);
-            border: 2px solid #d1d5db;
+        .prospects-table thead th:first-child { padding-left: 18px; }
+
+        .prospects-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.15s;
         }
 
-        .btn-cancel:hover {
-            border-color: var(--color-primary);
+        .prospects-table tbody tr:hover {
+            background: #f9fafb;
         }
 
-        .btn-submit {
-            background: var(--gradient-logo);
+        .prospects-table tbody tr:nth-child(even) {
+            background: #fafbfc;
+        }
+
+        .prospects-table tbody tr:nth-child(even):hover {
+            background: #f3f5f4;
+        }
+
+        .prospects-table td {
+            padding: 10px 14px;
+            vertical-align: middle;
+        }
+
+        .prospects-table td:first-child { padding-left: 18px; }
+
+        /* Editable cells */
+        .cell-editable {
+            cursor: text;
+            padding: 6px 8px;
+            border-radius: 4px;
+            min-height: 28px;
+            transition: background 0.15s;
+        }
+
+        .cell-editable:hover { background: #f0f3f1; }
+
+        .cell-editable:focus {
+            outline: 2px solid var(--color-secondary);
+            background: #fff;
+        }
+
+        .cell-editable[data-placeholder]:empty::before {
+            content: attr(data-placeholder);
+            color: #ccc;
+            font-style: italic;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            min-width: 100px;
+            transition: opacity 0.2s;
+        }
+
+        .status-badge:hover { opacity: 0.85; }
+
+        .status-a_contacter { background: #e5e7eb; color: #374151; }
+        .status-en_discussion { background: #dbeafe; color: #1d4ed8; }
+        .status-proposition { background: #ffedd5; color: #c2410c; }
+        .status-gagne { background: #d1fae5; color: #065f46; }
+        .status-perdu { background: #fee2e2; color: #991b1b; }
+
+        /* Canal badges */
+        .canal-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .canal-badge:hover { opacity: 0.85; }
+
+        .canal-email { background: #ede9fe; color: #5b21b6; }
+        .canal-telephone { background: #dbeafe; color: #1d4ed8; }
+        .canal-linkedin { background: #e0f2fe; color: #0369a1; }
+        .canal-reseau { background: #d1fae5; color: #065f46; }
+
+        /* Avatar in table */
+        .avatar-sm {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
             color: #fff;
+            cursor: pointer;
+            transition: opacity 0.2s;
         }
+
+        .avatar-sm:hover { opacity: 0.85; }
+
+        /* Date input */
+        .date-input {
+            border: none;
+            background: transparent;
+            font-family: var(--font-primary);
+            font-size: 0.85rem;
+            color: var(--color-primary);
+            padding: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .date-input:hover { background: #f0f3f1; }
+        .date-input:focus { outline: 2px solid var(--color-secondary); background: #fff; }
+
+        /* Row delete */
+        .row-delete {
+            background: none; border: none;
+            cursor: pointer; color: #d1d5db;
+            font-size: 1.1rem; padding: 4px;
+            border-radius: 4px;
+            opacity: 0; transition: opacity 0.2s, color 0.2s;
+        }
+
+        tr:hover .row-delete { opacity: 1; }
+        .row-delete:hover { color: #ef4444; }
+
+        /* Dropdown for status/canal */
+        .dropdown-menu {
+            position: absolute;
+            background: #fff;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: 6px;
+            z-index: 500;
+            min-width: 160px;
+        }
+
+        .dropdown-menu button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            font-family: var(--font-primary);
+            font-size: 0.82rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.15s;
+        }
+
+        .dropdown-menu button:hover { background: #f3f4f6; }
 
         /* ── FOOTER ── */
         .admin-footer {
@@ -367,22 +487,10 @@
 
         /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
-            .kanban-board {
-                grid-template-columns: 1fr;
-            }
-
-            .kanban-column {
-                min-height: 200px;
-            }
-
-            .admin-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .header-right {
-                width: 100%;
-            }
+            .kanban-board { grid-template-columns: 1fr; }
+            .kanban-column { min-height: 200px; }
+            .admin-header { flex-direction: column; align-items: flex-start; }
+            .header-right { width: 100%; }
         }
     </style>
 </head>
@@ -397,17 +505,19 @@
                 <h1>Gestion des t&acirc;ches</h1>
             </div>
             <div class="header-right">
-                <button class="btn btn-add" id="btnAdd">
-                    <span>+</span> Ajouter
-                </button>
                 <a href="../connexion.html" class="btn btn-back">Retour</a>
                 <button class="btn btn-logout" id="btnLogout">D&eacute;connexion</button>
             </div>
         </header>
 
-        <!-- KANBAN BOARD -->
+        <!-- SECTION: KANBAN -->
+        <div class="section-divider">
+            <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <h2>T&acirc;ches quotidiennes</h2>
+            <button class="btn btn-add" id="btnAddTask"><span>+</span> Ajouter</button>
+        </div>
+
         <div class="kanban-board">
-            <!-- Column: À faire -->
             <div class="kanban-column" data-column="todo">
                 <div class="column-header">
                     <span class="column-dot dot-todo"></span>
@@ -416,8 +526,6 @@
                 </div>
                 <div class="column-cards" id="cards-todo"></div>
             </div>
-
-            <!-- Column: En cours -->
             <div class="kanban-column" data-column="progress">
                 <div class="column-header">
                     <span class="column-dot dot-progress"></span>
@@ -426,8 +534,6 @@
                 </div>
                 <div class="column-cards" id="cards-progress"></div>
             </div>
-
-            <!-- Column: Terminé -->
             <div class="kanban-column" data-column="done">
                 <div class="column-header">
                     <span class="column-dot dot-done"></span>
@@ -438,12 +544,37 @@
             </div>
         </div>
 
-        <!-- FOOTER -->
+        <!-- SECTION: PROSPECTS -->
+        <div class="section-divider">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <h2>Suivi des prospects</h2>
+            <button class="btn btn-add" id="btnAddProspect"><span>+</span> Nouveau prospect</button>
+        </div>
+
+        <div class="prospects-wrapper">
+            <table class="prospects-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Contact</th>
+                        <th>Entreprise</th>
+                        <th>Statut</th>
+                        <th>Canal</th>
+                        <th>Assign&eacute; &agrave;</th>
+                        <th>Dernier contact</th>
+                        <th>Notes</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="prospectsBody"></tbody>
+            </table>
+        </div>
+
         <footer class="admin-footer">Regen Agency &copy; 2025</footer>
     </div>
 
-    <!-- MODAL -->
-    <div class="modal-overlay" id="modalOverlay">
+    <!-- TASK MODAL -->
+    <div class="modal-overlay" id="taskModal">
         <div class="modal">
             <h2>Nouvelle t&acirc;che</h2>
             <div class="modal-field">
@@ -463,6 +594,14 @@
                 </select>
             </div>
             <div class="modal-field">
+                <label for="taskAssignee">Assign&eacute; &agrave;</label>
+                <select id="taskAssignee">
+                    <option value="">Non assign&eacute;</option>
+                    <option value="mathieu">Mathieu</option>
+                    <option value="jaemeson">Jaemeson</option>
+                </select>
+            </div>
+            <div class="modal-field">
                 <label for="taskColumn">Colonne</label>
                 <select id="taskColumn">
                     <option value="todo">&Agrave; faire</option>
@@ -471,159 +610,148 @@
                 </select>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-cancel" id="btnCancel">Annuler</button>
-                <button class="btn btn-submit" id="btnSubmit">Ajouter</button>
+                <button class="btn btn-cancel" id="taskCancel">Annuler</button>
+                <button class="btn btn-submit" id="taskSubmit">Ajouter</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ── AUTH CHECK ──
+    (function() {
+        // ── AUTH ──
         if (sessionStorage.getItem('regen_admin_auth') !== 'true') {
             window.location.href = '../connexion.html';
+            return;
         }
 
-        // ── STATE ──
-        const STORAGE_KEY = 'regen_admin_tasks';
-        let tasks = [];
+        // ── TEAM ──
+        var TEAM = {
+            mathieu: { name: 'Mathieu', initial: 'M', color: 'avatar-mathieu' },
+            jaemeson: { name: 'Jaemeson', initial: 'J', color: 'avatar-jaemeson' }
+        };
 
-        // ── DOM REFS ──
-        const modalOverlay = document.getElementById('modalOverlay');
-        const btnAdd = document.getElementById('btnAdd');
-        const btnCancel = document.getElementById('btnCancel');
-        const btnSubmit = document.getElementById('btnSubmit');
-        const btnLogout = document.getElementById('btnLogout');
-        const taskTitle = document.getElementById('taskTitle');
-        const taskDesc = document.getElementById('taskDesc');
-        const taskPriority = document.getElementById('taskPriority');
-        const taskColumn = document.getElementById('taskColumn');
+        var STATUSES = {
+            a_contacter: 'À contacter',
+            en_discussion: 'En discussion',
+            proposition: 'Proposition envoyée',
+            gagne: 'Gagné',
+            perdu: 'Perdu'
+        };
 
-        // ── PERSISTENCE ──
+        var CANALS = {
+            email: 'Email',
+            telephone: 'Téléphone',
+            linkedin: 'LinkedIn',
+            reseau: 'Réseau'
+        };
+
+        // ── HELPERS ──
+        function esc(t) {
+            var d = document.createElement('div');
+            d.textContent = t || '';
+            return d.innerHTML;
+        }
+
+        function uid() {
+            return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+        }
+
+        function avatarHtml(key, size) {
+            var cls = size === 'sm' ? 'avatar-sm' : 'avatar';
+            if (!key || !TEAM[key]) return '<span class="' + cls + ' avatar-none">?</span>';
+            var t = TEAM[key];
+            return '<span class="' + cls + ' ' + t.color + '">' + t.initial + '</span>';
+        }
+
+        // ══════════════════════
+        // KANBAN - Tasks
+        // ══════════════════════
+        var TASKS_KEY = 'regen_admin_tasks';
+        var tasks = [];
+
         function loadTasks() {
-            try {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                tasks = stored ? JSON.parse(stored) : [];
-            } catch (e) {
-                tasks = [];
-            }
+            try { tasks = JSON.parse(localStorage.getItem(TASKS_KEY)) || []; }
+            catch(e) { tasks = []; }
         }
 
-        function saveTasks() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-        }
+        function saveTasks() { localStorage.setItem(TASKS_KEY, JSON.stringify(tasks)); }
 
-        // ── RENDER ──
-        function renderBoard() {
-            const columns = ['todo', 'progress', 'done'];
-            columns.forEach(function(col) {
+        function renderKanban() {
+            ['todo', 'progress', 'done'].forEach(function(col) {
                 var container = document.getElementById('cards-' + col);
                 var countEl = document.getElementById('count-' + col);
                 var colTasks = tasks.filter(function(t) { return t.column === col; });
-
                 countEl.textContent = colTasks.length;
                 container.innerHTML = '';
 
-                colTasks.forEach(function(task) {
+                colTasks.forEach(function(t) {
                     var card = document.createElement('div');
                     card.className = 'task-card';
                     card.draggable = true;
-                    card.dataset.id = task.id;
-
-                    var priorityClass = 'priority-' + task.priority;
-                    var dateStr = task.date || '';
-
+                    card.dataset.id = t.id;
                     card.innerHTML =
                         '<div class="task-card-top">' +
-                            '<span class="priority-dot ' + priorityClass + '"></span>' +
-                            '<span class="task-title">' + escapeHtml(task.title) + '</span>' +
-                            '<button class="task-delete" data-id="' + task.id + '" title="Supprimer">&times;</button>' +
+                            '<span class="priority-dot priority-' + t.priority + '"></span>' +
+                            '<span class="task-title">' + esc(t.title) + '</span>' +
+                            '<button class="task-delete" data-id="' + t.id + '">&times;</button>' +
                         '</div>' +
-                        (task.desc ? '<div class="task-desc">' + escapeHtml(task.desc) + '</div>' : '') +
-                        '<div class="task-date">' + escapeHtml(dateStr) + '</div>';
-
+                        (t.desc ? '<div class="task-desc">' + esc(t.desc) + '</div>' : '') +
+                        '<div class="task-meta">' +
+                            '<span class="task-date">' + esc(t.date) + '</span>' +
+                            avatarHtml(t.assignee) +
+                        '</div>';
                     container.appendChild(card);
                 });
             });
-
-            bindDragEvents();
+            bindKanbanEvents();
         }
 
-        function escapeHtml(text) {
-            var div = document.createElement('div');
-            div.appendChild(document.createTextNode(text));
-            return div.innerHTML;
-        }
-
-        // ── ADD TASK ──
-        function addTask(title, desc, priority, column) {
-            var now = new Date();
-            var dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            var task = {
-                id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+        function addTask(title, desc, priority, assignee, column) {
+            tasks.push({
+                id: uid(),
                 title: title,
                 desc: desc,
                 priority: priority,
+                assignee: assignee,
                 column: column,
-                date: dateStr
-            };
-            tasks.push(task);
+                date: new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+            });
             saveTasks();
-            renderBoard();
+            renderKanban();
         }
 
-        // ── DELETE TASK ──
         function deleteTask(id) {
             tasks = tasks.filter(function(t) { return t.id !== id; });
             saveTasks();
-            renderBoard();
+            renderKanban();
         }
 
-        // ── MOVE TASK ──
-        function moveTask(id, newColumn) {
-            var task = tasks.find(function(t) { return t.id === id; });
-            if (task) {
-                task.column = newColumn;
-                saveTasks();
-                renderBoard();
-            }
+        function moveTask(id, newCol) {
+            var t = tasks.find(function(t) { return t.id === id; });
+            if (t) { t.column = newCol; saveTasks(); renderKanban(); }
         }
 
-        // ── DRAG & DROP ──
-        function bindDragEvents() {
-            var cards = document.querySelectorAll('.task-card');
-            cards.forEach(function(card) {
+        function bindKanbanEvents() {
+            document.querySelectorAll('.task-card').forEach(function(card) {
                 card.addEventListener('dragstart', function(e) {
                     e.dataTransfer.setData('text/plain', card.dataset.id);
                     card.classList.add('dragging');
                 });
-                card.addEventListener('dragend', function() {
-                    card.classList.remove('dragging');
-                });
+                card.addEventListener('dragend', function() { card.classList.remove('dragging'); });
             });
 
-            var columns = document.querySelectorAll('.kanban-column');
-            columns.forEach(function(col) {
-                col.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    col.classList.add('drag-over');
-                });
-                col.addEventListener('dragleave', function() {
-                    col.classList.remove('drag-over');
-                });
+            document.querySelectorAll('.kanban-column').forEach(function(col) {
+                col.addEventListener('dragover', function(e) { e.preventDefault(); col.classList.add('drag-over'); });
+                col.addEventListener('dragleave', function() { col.classList.remove('drag-over'); });
                 col.addEventListener('drop', function(e) {
                     e.preventDefault();
                     col.classList.remove('drag-over');
-                    var taskId = e.dataTransfer.getData('text/plain');
-                    var targetColumn = col.dataset.column;
-                    if (taskId && targetColumn) {
-                        moveTask(taskId, targetColumn);
-                    }
+                    var id = e.dataTransfer.getData('text/plain');
+                    if (id) moveTask(id, col.dataset.column);
                 });
             });
 
-            // Delete buttons
-            var deleteBtns = document.querySelectorAll('.task-delete');
-            deleteBtns.forEach(function(btn) {
+            document.querySelectorAll('.task-delete').forEach(function(btn) {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     deleteTask(btn.dataset.id);
@@ -631,51 +759,244 @@
             });
         }
 
-        // ── MODAL ──
-        function openModal() {
-            taskTitle.value = '';
-            taskDesc.value = '';
-            taskPriority.value = 'medium';
-            taskColumn.value = 'todo';
-            modalOverlay.classList.add('active');
-            setTimeout(function() { taskTitle.focus(); }, 100);
-        }
+        // Task Modal
+        var taskModal = document.getElementById('taskModal');
+        document.getElementById('btnAddTask').addEventListener('click', function() {
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDesc').value = '';
+            document.getElementById('taskPriority').value = 'medium';
+            document.getElementById('taskAssignee').value = '';
+            document.getElementById('taskColumn').value = 'todo';
+            taskModal.classList.add('active');
+            setTimeout(function() { document.getElementById('taskTitle').focus(); }, 100);
+        });
+        document.getElementById('taskCancel').addEventListener('click', function() { taskModal.classList.remove('active'); });
+        taskModal.addEventListener('click', function(e) { if (e.target === taskModal) taskModal.classList.remove('active'); });
 
-        function closeModal() {
-            modalOverlay.classList.remove('active');
-        }
-
-        btnAdd.addEventListener('click', openModal);
-        btnCancel.addEventListener('click', closeModal);
-
-        modalOverlay.addEventListener('click', function(e) {
-            if (e.target === modalOverlay) closeModal();
+        document.getElementById('taskSubmit').addEventListener('click', function() {
+            var title = document.getElementById('taskTitle').value.trim();
+            if (!title) { document.getElementById('taskTitle').style.borderColor = '#ef4444'; return; }
+            addTask(
+                title,
+                document.getElementById('taskDesc').value.trim(),
+                document.getElementById('taskPriority').value,
+                document.getElementById('taskAssignee').value,
+                document.getElementById('taskColumn').value
+            );
+            taskModal.classList.remove('active');
         });
 
-        btnSubmit.addEventListener('click', function() {
-            var title = taskTitle.value.trim();
-            if (!title) {
-                taskTitle.style.borderColor = '#ef4444';
-                taskTitle.focus();
-                return;
+        // ══════════════════════
+        // PROSPECTS TABLE
+        // ══════════════════════
+        var PROSPECTS_KEY = 'regen_admin_prospects';
+        var prospects = [];
+
+        function loadProspects() {
+            try { prospects = JSON.parse(localStorage.getItem(PROSPECTS_KEY)) || []; }
+            catch(e) { prospects = []; }
+        }
+
+        function saveProspects() { localStorage.setItem(PROSPECTS_KEY, JSON.stringify(prospects)); }
+
+        function renderProspects() {
+            var body = document.getElementById('prospectsBody');
+            body.innerHTML = '';
+
+            // Sort by status order
+            var statusOrder = ['a_contacter', 'en_discussion', 'proposition', 'gagne', 'perdu'];
+            var sorted = prospects.slice().sort(function(a, b) {
+                return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+            });
+
+            sorted.forEach(function(p) {
+                var tr = document.createElement('tr');
+                tr.dataset.id = p.id;
+
+                var statusLabel = STATUSES[p.status] || 'À contacter';
+                var canalLabel = CANALS[p.canal] || '';
+
+                tr.innerHTML =
+                    '<td style="width:30px;text-align:center;color:#d1d5db;cursor:grab;" class="drag-handle">⠿</td>' +
+                    '<td><div class="cell-editable" contenteditable="true" data-field="contact" data-id="' + p.id + '" data-placeholder="Nom du contact">' + esc(p.contact) + '</div></td>' +
+                    '<td><div class="cell-editable" contenteditable="true" data-field="entreprise" data-id="' + p.id + '" data-placeholder="Entreprise">' + esc(p.entreprise) + '</div></td>' +
+                    '<td><span class="status-badge status-' + p.status + '" data-field="status" data-id="' + p.id + '">' + esc(statusLabel) + '</span></td>' +
+                    '<td>' + (p.canal ? '<span class="canal-badge canal-' + p.canal + '" data-field="canal" data-id="' + p.id + '">' + esc(canalLabel) + '</span>' : '<span class="canal-badge" style="background:#f3f4f6;color:#999;" data-field="canal" data-id="' + p.id + '">—</span>') + '</td>' +
+                    '<td><span data-field="assignee" data-id="' + p.id + '">' + avatarHtml(p.assignee, 'sm') + '</span></td>' +
+                    '<td><input type="date" class="date-input" data-field="date_contact" data-id="' + p.id + '" value="' + (p.date_contact || '') + '"></td>' +
+                    '<td><div class="cell-editable" contenteditable="true" data-field="notes" data-id="' + p.id + '" data-placeholder="Notes...">' + esc(p.notes) + '</div></td>' +
+                    '<td><button class="row-delete" data-id="' + p.id + '">&times;</button></td>';
+
+                body.appendChild(tr);
+            });
+
+            bindProspectEvents();
+        }
+
+        function addProspect() {
+            prospects.push({
+                id: uid(),
+                contact: '',
+                entreprise: '',
+                status: 'a_contacter',
+                canal: '',
+                assignee: '',
+                date_contact: '',
+                notes: ''
+            });
+            saveProspects();
+            renderProspects();
+            // Focus first cell of new row
+            var cells = document.querySelectorAll('[data-field="contact"]');
+            if (cells.length) cells[cells.length - 1].focus();
+        }
+
+        function updateProspect(id, field, value) {
+            var p = prospects.find(function(p) { return p.id === id; });
+            if (p) { p[field] = value; saveProspects(); }
+        }
+
+        function deleteProspect(id) {
+            prospects = prospects.filter(function(p) { return p.id !== id; });
+            saveProspects();
+            renderProspects();
+        }
+
+        // Dropdown helper
+        var activeDropdown = null;
+
+        function showDropdown(anchorEl, options, onSelect) {
+            closeDropdown();
+            var rect = anchorEl.getBoundingClientRect();
+            var menu = document.createElement('div');
+            menu.className = 'dropdown-menu';
+            menu.style.position = 'fixed';
+            menu.style.top = (rect.bottom + 4) + 'px';
+            menu.style.left = rect.left + 'px';
+
+            options.forEach(function(opt) {
+                var btn = document.createElement('button');
+                btn.innerHTML = opt.html || esc(opt.label);
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    onSelect(opt.value);
+                    closeDropdown();
+                });
+                menu.appendChild(btn);
+            });
+
+            document.body.appendChild(menu);
+            activeDropdown = menu;
+
+            // Close on outside click
+            setTimeout(function() {
+                document.addEventListener('click', closeDropdown, { once: true });
+            }, 10);
+        }
+
+        function closeDropdown() {
+            if (activeDropdown) {
+                activeDropdown.remove();
+                activeDropdown = null;
             }
-            addTask(title, taskDesc.value.trim(), taskPriority.value, taskColumn.value);
-            closeModal();
-        });
+        }
 
-        taskTitle.addEventListener('input', function() {
-            taskTitle.style.borderColor = '#e5e7eb';
-        });
+        function bindProspectEvents() {
+            // Editable cells (text)
+            document.querySelectorAll('.cell-editable').forEach(function(cell) {
+                cell.addEventListener('blur', function() {
+                    var id = cell.dataset.id;
+                    var field = cell.dataset.field;
+                    updateProspect(id, field, cell.textContent.trim());
+                });
+                cell.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') { e.preventDefault(); cell.blur(); }
+                });
+            });
+
+            // Date inputs
+            document.querySelectorAll('.date-input').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    updateProspect(input.dataset.id, 'date_contact', input.value);
+                });
+            });
+
+            // Status dropdown
+            document.querySelectorAll('[data-field="status"]').forEach(function(badge) {
+                badge.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var id = badge.dataset.id;
+                    var opts = Object.keys(STATUSES).map(function(k) {
+                        return {
+                            value: k,
+                            html: '<span class="status-badge status-' + k + '" style="display:inline-block;min-width:unset;">' + STATUSES[k] + '</span>'
+                        };
+                    });
+                    showDropdown(badge, opts, function(val) {
+                        updateProspect(id, 'status', val);
+                        renderProspects();
+                    });
+                });
+            });
+
+            // Canal dropdown
+            document.querySelectorAll('[data-field="canal"]').forEach(function(badge) {
+                badge.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var id = badge.dataset.id;
+                    var opts = Object.keys(CANALS).map(function(k) {
+                        return {
+                            value: k,
+                            html: '<span class="canal-badge canal-' + k + '" style="display:inline-block;">' + CANALS[k] + '</span>'
+                        };
+                    });
+                    showDropdown(badge, opts, function(val) {
+                        updateProspect(id, 'canal', val);
+                        renderProspects();
+                    });
+                });
+            });
+
+            // Assignee dropdown
+            document.querySelectorAll('[data-field="assignee"]').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var id = el.dataset.id;
+                    var opts = [
+                        { value: '', html: '<span class="avatar-sm avatar-none" style="display:inline-flex;">?</span> Non assigné' },
+                        { value: 'mathieu', html: '<span class="avatar-sm avatar-mathieu" style="display:inline-flex;">M</span> Mathieu' },
+                        { value: 'jaemeson', html: '<span class="avatar-sm avatar-jaemeson" style="display:inline-flex;">J</span> Jaemeson' }
+                    ];
+                    showDropdown(el, opts, function(val) {
+                        updateProspect(id, 'assignee', val);
+                        renderProspects();
+                    });
+                });
+            });
+
+            // Delete row
+            document.querySelectorAll('.row-delete').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    deleteProspect(btn.dataset.id);
+                });
+            });
+        }
+
+        document.getElementById('btnAddProspect').addEventListener('click', addProspect);
 
         // ── LOGOUT ──
-        btnLogout.addEventListener('click', function() {
+        document.getElementById('btnLogout').addEventListener('click', function() {
             sessionStorage.removeItem('regen_admin_auth');
             window.location.href = '../connexion.html';
         });
 
         // ── INIT ──
         loadTasks();
-        renderBoard();
+        renderKanban();
+        loadProspects();
+        renderProspects();
+    })();
     </script>
 </body>
 </html>
