@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Gestion des tâches - Regen Agency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--color-light);
+            min-height: 100vh;
+            color: var(--color-primary);
+        }
+
+        .admin-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        /* ── HEADER ── */
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-left img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        .header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border-radius: var(--radius-full);
+            font-family: var(--font-primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-add {
+            background: var(--gradient-logo);
+            color: #fff;
+        }
+
+        .btn-back {
+            background: transparent;
+            color: var(--color-primary);
+            border: 2px solid #d1d5db;
+        }
+
+        .btn-back:hover {
+            border-color: var(--color-primary);
+        }
+
+        .btn-logout {
+            background: transparent;
+            color: #ef4444;
+            border: 2px solid #fecaca;
+        }
+
+        .btn-logout:hover {
+            background: #fef2f2;
+            border-color: #ef4444;
+        }
+
+        /* ── KANBAN BOARD ── */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .kanban-column {
+            background: #f0f3f1;
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            min-height: 400px;
+            transition: background 0.2s;
+        }
+
+        .kanban-column.drag-over {
+            background: #e2e8e4;
+        }
+
+        .column-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(0,0,0,0.06);
+        }
+
+        .column-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot-todo { background: #6b7280; }
+        .dot-progress { background: #f59e0b; }
+        .dot-done { background: #2FB963; }
+
+        .column-label {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--color-primary);
+        }
+
+        .column-count {
+            margin-left: auto;
+            background: rgba(0,0,0,0.08);
+            color: var(--color-primary);
+            font-size: 0.75rem;
+            font-weight: 700;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .column-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 60px;
+        }
+
+        /* ── TASK CARD ── */
+        .task-card {
+            background: #fff;
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            box-shadow: var(--shadow-sm);
+            cursor: grab;
+            position: relative;
+            transition: box-shadow 0.2s, transform 0.15s;
+        }
+
+        .task-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .task-card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .task-card-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .priority-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+
+        .priority-high { background: #ef4444; }
+        .priority-medium { background: #f59e0b; }
+        .priority-low { background: #2FB963; }
+
+        .task-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--color-primary);
+            flex: 1;
+        }
+
+        .task-delete {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #ccc;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.2s, color 0.2s, background 0.2s;
+        }
+
+        .task-card:hover .task-delete {
+            opacity: 1;
+        }
+
+        .task-delete:hover {
+            color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .task-desc {
+            color: #6b7280;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .task-date {
+            color: #9ca3af;
+            font-size: 0.72rem;
+            margin-top: 8px;
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s, visibility 0.25s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            width: 90%;
+            max-width: 460px;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(20px);
+            transition: transform 0.25s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal h2 {
+            font-size: 1.2rem;
+            color: var(--color-primary);
+            margin-bottom: 20px;
+        }
+
+        .modal-field {
+            margin-bottom: 16px;
+        }
+
+        .modal-field label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--color-primary);
+            margin-bottom: 6px;
+        }
+
+        .modal-field input,
+        .modal-field textarea,
+        .modal-field select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-primary);
+            font-size: 0.9rem;
+            color: var(--color-primary);
+            transition: border-color 0.2s;
+            outline: none;
+            background: #fff;
+        }
+
+        .modal-field input:focus,
+        .modal-field textarea:focus,
+        .modal-field select:focus {
+            border-color: var(--color-secondary);
+        }
+
+        .modal-field textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: var(--color-primary);
+            border: 2px solid #d1d5db;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--color-primary);
+        }
+
+        .btn-submit {
+            background: var(--gradient-logo);
+            color: #fff;
+        }
+
+        /* ── FOOTER ── */
+        .admin-footer {
+            text-align: center;
+            padding: 30px 0 10px;
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+
+            .kanban-column {
+                min-height: 200px;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-right {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-wrapper">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="header-left">
+                <img src="../assets/images/logo-icon.png" alt="Regen Agency">
+                <h1>Gestion des t&acirc;ches</h1>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-add" id="btnAdd">
+                    <span>+</span> Ajouter
+                </button>
+                <a href="../connexion.html" class="btn btn-back">Retour</a>
+                <button class="btn btn-logout" id="btnLogout">D&eacute;connexion</button>
+            </div>
+        </header>
+
+        <!-- KANBAN BOARD -->
+        <div class="kanban-board">
+            <!-- Column: À faire -->
+            <div class="kanban-column" data-column="todo">
+                <div class="column-header">
+                    <span class="column-dot dot-todo"></span>
+                    <span class="column-label">&Agrave; faire</span>
+                    <span class="column-count" id="count-todo">0</span>
+                </div>
+                <div class="column-cards" id="cards-todo"></div>
+            </div>
+
+            <!-- Column: En cours -->
+            <div class="kanban-column" data-column="progress">
+                <div class="column-header">
+                    <span class="column-dot dot-progress"></span>
+                    <span class="column-label">En cours</span>
+                    <span class="column-count" id="count-progress">0</span>
+                </div>
+                <div class="column-cards" id="cards-progress"></div>
+            </div>
+
+            <!-- Column: Terminé -->
+            <div class="kanban-column" data-column="done">
+                <div class="column-header">
+                    <span class="column-dot dot-done"></span>
+                    <span class="column-label">Termin&eacute;</span>
+                    <span class="column-count" id="count-done">0</span>
+                </div>
+                <div class="column-cards" id="cards-done"></div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="admin-footer">Regen Agency &copy; 2025</footer>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2>Nouvelle t&acirc;che</h2>
+            <div class="modal-field">
+                <label for="taskTitle">Titre</label>
+                <input type="text" id="taskTitle" placeholder="Titre de la t&acirc;che">
+            </div>
+            <div class="modal-field">
+                <label for="taskDesc">Description</label>
+                <textarea id="taskDesc" placeholder="D&eacute;crivez la t&acirc;che..."></textarea>
+            </div>
+            <div class="modal-field">
+                <label for="taskPriority">Priorit&eacute;</label>
+                <select id="taskPriority">
+                    <option value="low">Basse</option>
+                    <option value="medium" selected>Moyenne</option>
+                    <option value="high">Haute</option>
+                </select>
+            </div>
+            <div class="modal-field">
+                <label for="taskColumn">Colonne</label>
+                <select id="taskColumn">
+                    <option value="todo">&Agrave; faire</option>
+                    <option value="progress">En cours</option>
+                    <option value="done">Termin&eacute;</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" id="btnCancel">Annuler</button>
+                <button class="btn btn-submit" id="btnSubmit">Ajouter</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── AUTH CHECK ──
+        if (sessionStorage.getItem('regen_admin_auth') !== 'true') {
+            window.location.href = '../connexion.html';
+        }
+
+        // ── STATE ──
+        const STORAGE_KEY = 'regen_admin_tasks';
+        let tasks = [];
+
+        // ── DOM REFS ──
+        const modalOverlay = document.getElementById('modalOverlay');
+        const btnAdd = document.getElementById('btnAdd');
+        const btnCancel = document.getElementById('btnCancel');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const btnLogout = document.getElementById('btnLogout');
+        const taskTitle = document.getElementById('taskTitle');
+        const taskDesc = document.getElementById('taskDesc');
+        const taskPriority = document.getElementById('taskPriority');
+        const taskColumn = document.getElementById('taskColumn');
+
+        // ── PERSISTENCE ──
+        function loadTasks() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                tasks = stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                tasks = [];
+            }
+        }
+
+        function saveTasks() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        }
+
+        // ── RENDER ──
+        function renderBoard() {
+            const columns = ['todo', 'progress', 'done'];
+            columns.forEach(function(col) {
+                var container = document.getElementById('cards-' + col);
+                var countEl = document.getElementById('count-' + col);
+                var colTasks = tasks.filter(function(t) { return t.column === col; });
+
+                countEl.textContent = colTasks.length;
+                container.innerHTML = '';
+
+                colTasks.forEach(function(task) {
+                    var card = document.createElement('div');
+                    card.className = 'task-card';
+                    card.draggable = true;
+                    card.dataset.id = task.id;
+
+                    var priorityClass = 'priority-' + task.priority;
+                    var dateStr = task.date || '';
+
+                    card.innerHTML =
+                        '<div class="task-card-top">' +
+                            '<span class="priority-dot ' + priorityClass + '"></span>' +
+                            '<span class="task-title">' + escapeHtml(task.title) + '</span>' +
+                            '<button class="task-delete" data-id="' + task.id + '" title="Supprimer">&times;</button>' +
+                        '</div>' +
+                        (task.desc ? '<div class="task-desc">' + escapeHtml(task.desc) + '</div>' : '') +
+                        '<div class="task-date">' + escapeHtml(dateStr) + '</div>';
+
+                    container.appendChild(card);
+                });
+            });
+
+            bindDragEvents();
+        }
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
+        }
+
+        // ── ADD TASK ──
+        function addTask(title, desc, priority, column) {
+            var now = new Date();
+            var dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            var task = {
+                id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+                title: title,
+                desc: desc,
+                priority: priority,
+                column: column,
+                date: dateStr
+            };
+            tasks.push(task);
+            saveTasks();
+            renderBoard();
+        }
+
+        // ── DELETE TASK ──
+        function deleteTask(id) {
+            tasks = tasks.filter(function(t) { return t.id !== id; });
+            saveTasks();
+            renderBoard();
+        }
+
+        // ── MOVE TASK ──
+        function moveTask(id, newColumn) {
+            var task = tasks.find(function(t) { return t.id === id; });
+            if (task) {
+                task.column = newColumn;
+                saveTasks();
+                renderBoard();
+            }
+        }
+
+        // ── DRAG & DROP ──
+        function bindDragEvents() {
+            var cards = document.querySelectorAll('.task-card');
+            cards.forEach(function(card) {
+                card.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text/plain', card.dataset.id);
+                    card.classList.add('dragging');
+                });
+                card.addEventListener('dragend', function() {
+                    card.classList.remove('dragging');
+                });
+            });
+
+            var columns = document.querySelectorAll('.kanban-column');
+            columns.forEach(function(col) {
+                col.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    col.classList.add('drag-over');
+                });
+                col.addEventListener('dragleave', function() {
+                    col.classList.remove('drag-over');
+                });
+                col.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    col.classList.remove('drag-over');
+                    var taskId = e.dataTransfer.getData('text/plain');
+                    var targetColumn = col.dataset.column;
+                    if (taskId && targetColumn) {
+                        moveTask(taskId, targetColumn);
+                    }
+                });
+            });
+
+            // Delete buttons
+            var deleteBtns = document.querySelectorAll('.task-delete');
+            deleteBtns.forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    deleteTask(btn.dataset.id);
+                });
+            });
+        }
+
+        // ── MODAL ──
+        function openModal() {
+            taskTitle.value = '';
+            taskDesc.value = '';
+            taskPriority.value = 'medium';
+            taskColumn.value = 'todo';
+            modalOverlay.classList.add('active');
+            setTimeout(function() { taskTitle.focus(); }, 100);
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        btnAdd.addEventListener('click', openModal);
+        btnCancel.addEventListener('click', closeModal);
+
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) closeModal();
+        });
+
+        btnSubmit.addEventListener('click', function() {
+            var title = taskTitle.value.trim();
+            if (!title) {
+                taskTitle.style.borderColor = '#ef4444';
+                taskTitle.focus();
+                return;
+            }
+            addTask(title, taskDesc.value.trim(), taskPriority.value, taskColumn.value);
+            closeModal();
+        });
+
+        taskTitle.addEventListener('input', function() {
+            taskTitle.style.borderColor = '#e5e7eb';
+        });
+
+        // ── LOGOUT ──
+        btnLogout.addEventListener('click', function() {
+            sessionStorage.removeItem('regen_admin_auth');
+            window.location.href = '../connexion.html';
+        });
+
+        // ── INIT ──
+        loadTasks();
+        renderBoard();
+    </script>
+</body>
+</html>
