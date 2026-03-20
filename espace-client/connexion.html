@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - REGEN AGENCY</title>
+    <link rel="icon" href="../favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/espace-client.css">
+</head>
+<body>
+    <div class="rc-login">
+        <div class="rc-login__card">
+            <!-- Logo -->
+            <div class="rc-login__logo">
+                <img src="../assets/images/logo-regen.png" alt="REGEN AGENCY" onerror="this.style.display='none'">
+                <h1>REGEN AGENCY</h1>
+                <p>Espace Client</p>
+            </div>
+
+            <!-- Error message -->
+            <div class="rc-login__error" id="login-error"></div>
+
+            <!-- Login Form -->
+            <form class="rc-login__form" id="login-form">
+                <div class="rc-form-group">
+                    <label class="rc-form-label" for="login-email">Email</label>
+                    <input class="rc-input" type="email" id="login-email" placeholder="votre@email.com" required autocomplete="email">
+                </div>
+                <div class="rc-form-group">
+                    <label class="rc-form-label" for="login-password">Mot de passe</label>
+                    <input class="rc-input" type="password" id="login-password" placeholder="Votre mot de passe" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="rc-btn rc-btn--primary rc-btn--lg rc-login__submit" id="login-submit">
+                    Se connecter
+                </button>
+            </form>
+
+            <div class="rc-login__footer">
+                <a href="../index.html">Retour au site</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/regen-app.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        document.addEventListener('regen:ready', function () {
+            var form = document.getElementById('login-form');
+            var errorEl = document.getElementById('login-error');
+            var submitBtn = document.getElementById('login-submit');
+
+            if (!window.REGEN.supabase) {
+                errorEl.textContent = 'Configuration Supabase manquante. Contactez l\'administrateur.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                errorEl.classList.remove('visible');
+
+                var email = document.getElementById('login-email').value.trim();
+                var password = document.getElementById('login-password').value;
+
+                if (!email || !password) {
+                    errorEl.textContent = 'Veuillez remplir tous les champs.';
+                    errorEl.classList.add('visible');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Connexion...';
+
+                try {
+                    var result = await window.REGEN.supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                    if (result.error) {
+                        errorEl.textContent = result.error.message === 'Invalid login credentials'
+                            ? 'Email ou mot de passe incorrect.'
+                            : result.error.message;
+                        errorEl.classList.add('visible');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Se connecter';
+                        return;
+                    }
+
+                    // Success - redirect to dashboard
+                    window.location.href = 'dashboard.html';
+
+                } catch (err) {
+                    errorEl.textContent = 'Erreur de connexion. Veuillez reessayer.';
+                    errorEl.classList.add('visible');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Se connecter';
+                }
+            });
+        });
+    })();
+    </script>
+</body>
+</html>

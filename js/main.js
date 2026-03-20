@@ -729,6 +729,7 @@
         initSmoothScroll();
         initHeroSlider();
         initRealisationsMarquee();
+        initServicesTabs();
         initProcessLine();
         handleScroll();
 
@@ -833,6 +834,76 @@
     }
 
     // =====================================================
+    // SERVICES TABS — Tab navigation for services section
+    // =====================================================
+    function initServicesTabs() {
+        // Services Explorer (new grid + panel layout)
+        const explorer = document.querySelector('.services-explorer');
+        if (explorer) {
+            const items = explorer.querySelectorAll('.services-explorer__item');
+            const panels = explorer.querySelectorAll('.services-explorer__panel');
+
+            if (items.length && panels.length) {
+                items.forEach((item) => {
+                    item.addEventListener('click', () => {
+                        const targetId = item.getAttribute('data-service');
+
+                        // Deactivate all
+                        items.forEach(i => i.classList.remove('active'));
+                        panels.forEach(p => p.classList.remove('active'));
+
+                        // Activate clicked
+                        item.classList.add('active');
+                        const targetPanel = explorer.querySelector(`[data-panel="${targetId}"]`);
+                        if (targetPanel) {
+                            targetPanel.classList.add('active');
+                        }
+                    });
+                });
+
+                // Activate first by default
+                if (!explorer.querySelector('.services-explorer__item.active')) {
+                    items[0]?.classList.add('active');
+                    panels[0]?.classList.add('active');
+                }
+            }
+            return;
+        }
+
+        // Fallback: old services-tabs
+        const tabsContainer = document.querySelector('.services-tabs');
+        if (!tabsContainer) return;
+
+        const buttons = tabsContainer.querySelectorAll('.services-tabs__btn');
+        const panels = tabsContainer.querySelectorAll('.services-tabs__panel');
+
+        if (!buttons.length || !panels.length) return;
+
+        buttons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-tab');
+
+                // Deactivate all
+                buttons.forEach(b => b.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+
+                // Activate clicked
+                btn.classList.add('active');
+                const targetPanel = tabsContainer.querySelector(`#${targetId}`);
+                if (targetPanel) {
+                    targetPanel.classList.add('active');
+                }
+            });
+        });
+
+        // Activate first tab by default
+        if (!tabsContainer.querySelector('.services-tabs__btn.active')) {
+            buttons[0]?.classList.add('active');
+            panels[0]?.classList.add('active');
+        }
+    }
+
+    // =====================================================
     // PROCESS LINE — scroll-driven fill animation
     // =====================================================
     function initProcessLine() {
@@ -881,33 +952,55 @@
                 }
             });
 
-            // Piloter l'illustration : 7 steps → 4 phases visuelles
-            // Steps 1-2 → phase 1 (wireframe)
-            // Steps 3-4 → phase 2 (design)
-            // Step 5    → phase 3 (code)
-            // Steps 6-7 → phase 4 (live)
+            // Piloter l'illustration selon le nombre de steps et layers
             if (visual) {
+                const isDataPage = visual.classList.contains('process-visual--data');
                 let phase = 1;
-                if (activeCount >= 6) phase = 4;
-                else if (activeCount >= 5) phase = 3;
-                else if (activeCount >= 3) phase = 2;
-                else phase = 1;
 
-                const prevPhase = visual.getAttribute('data-phase') || '1';
+                if (isDataPage) {
+                    // Data page: 5 steps → 3 phases
+                    // Steps 1-2 → phase 1 (wireframe/audit)
+                    // Step 3    → phase 2 (code/config)
+                    // Steps 4-5 → phase 3 (live)
+                    if (activeCount >= 4) phase = 3;
+                    else if (activeCount >= 3) phase = 2;
+                    else phase = 1;
+                } else {
+                    // Site-marketing page: 7 steps → 4 phases
+                    // Steps 1-2 → phase 1 (wireframe)
+                    // Steps 3-4 → phase 2 (design)
+                    // Step 5    → phase 3 (code)
+                    // Steps 6-7 → phase 4 (live)
+                    if (activeCount >= 6) phase = 4;
+                    else if (activeCount >= 5) phase = 3;
+                    else if (activeCount >= 3) phase = 2;
+                    else phase = 1;
+                }
+
                 visual.setAttribute('data-phase', phase);
 
                 // Toggle active class for animation triggers
                 const layers = visual.querySelectorAll('.process-visual__layer');
                 layers.forEach(l => l.classList.remove('active'));
 
-                const activeLayerClass = ['wireframe', 'design', 'code', 'live'][phase - 1];
+                let activeLayerClass;
+                if (isDataPage) {
+                    activeLayerClass = ['wireframe', 'code', 'live'][phase - 1];
+                } else {
+                    activeLayerClass = ['wireframe', 'design', 'code', 'live'][phase - 1];
+                }
                 const activeLayer = visual.querySelector(`.process-visual__layer--${activeLayerClass}`);
                 if (activeLayer) activeLayer.classList.add('active');
 
                 // Update URL text dynamically
                 const urlText = visual.querySelector('.process-visual__url-text');
                 if (urlText) {
-                    const urls = ['votre-site.com', 'votre-site.com/maquette', 'localhost:3000', '🟢 votre-site.com'];
+                    let urls;
+                    if (isDataPage) {
+                        urls = ['analytics.google.com', 'tagmanager.google.com', '🟢 analytics.google.com'];
+                    } else {
+                        urls = ['votre-site.com', 'votre-site.com/maquette', 'localhost:3000', '🟢 votre-site.com'];
+                    }
                     urlText.textContent = urls[phase - 1] || urls[0];
                 }
             }

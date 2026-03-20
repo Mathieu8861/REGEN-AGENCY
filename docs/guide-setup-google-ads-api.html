@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Setup Google Ads API - REGEN AGENCY</title>
+    <style>
+        :root {
+            --green: #2FB963;
+            --dark: #173C3A;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-500: #6B7280;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --red: #EF4444;
+            --blue: #3B82F6;
+            --orange: #F59E0B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--gray-900);
+            background: var(--gray-50);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .header__logo {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: var(--dark);
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: var(--gray-500);
+        }
+
+        /* Summary box */
+        .summary {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+        }
+
+        .summary h2 {
+            font-size: 18px;
+            color: var(--dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary__list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .summary__list li {
+            font-size: 14px;
+            color: var(--gray-700);
+            padding: 8px 12px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .summary__list li span {
+            color: var(--gray-500);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: block;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        /* Steps */
+        .step {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .step__number {
+            position: absolute;
+            top: -14px;
+            left: 24px;
+            background: var(--green);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 16px;
+            border-radius: 20px;
+        }
+
+        .step h2 {
+            font-size: 20px;
+            color: var(--dark);
+            margin-bottom: 16px;
+            padding-top: 4px;
+        }
+
+        .step p {
+            font-size: 15px;
+            color: var(--gray-700);
+            margin-bottom: 16px;
+        }
+
+        .step ol, .step ul {
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+
+        .step li {
+            font-size: 15px;
+            color: var(--gray-700);
+            margin-bottom: 10px;
+        }
+
+        .step li strong {
+            color: var(--gray-900);
+        }
+
+        /* Screenshots / URL references */
+        .url-box {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--blue);
+            margin: 12px 0;
+            word-break: break-all;
+        }
+
+        .url-box a {
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        .url-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Warning box */
+        .warning {
+            background: #FEF3C7;
+            border: 1px solid #FCD34D;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: #92400E;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Info box */
+        .info {
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: #1E40AF;
+        }
+
+        /* Success box */
+        .success {
+            background: #ECFDF5;
+            border: 1px solid #A7F3D0;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: #065F46;
+        }
+
+        /* Code blocks */
+        code {
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            color: var(--dark);
+        }
+
+        pre {
+            background: var(--dark);
+            color: #E5E7EB;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 12px 0;
+        }
+
+        /* Credential collection form at the end */
+        .credential-checklist {
+            background: white;
+            border: 2px solid var(--green);
+            border-radius: 12px;
+            padding: 32px;
+            margin-top: 40px;
+        }
+
+        .credential-checklist h2 {
+            font-size: 22px;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .credential-checklist p {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-bottom: 24px;
+        }
+
+        .credential-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .credential-item input[type="checkbox"] {
+            margin-top: 4px;
+            width: 20px;
+            height: 20px;
+            accent-color: var(--green);
+        }
+
+        .credential-item__label {
+            flex: 1;
+        }
+
+        .credential-item__label strong {
+            display: block;
+            font-size: 15px;
+            color: var(--gray-900);
+            margin-bottom: 2px;
+        }
+
+        .credential-item__label span {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        .credential-item__example {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--gray-500);
+            background: var(--gray-50);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        /* Time estimate */
+        .time-estimate {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gray-100);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-bottom: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container { padding: 20px 16px; }
+            .header h1 { font-size: 24px; }
+            .step { padding: 24px 20px; }
+            .summary__list { grid-template-columns: 1fr; }
+        }
+
+        /* Print */
+        @media print {
+            body { background: white; }
+            .step { break-inside: avoid; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header__logo">REGEN AGENCY</div>
+        <h1>Guide Setup Google Ads API</h1>
+        <p>Configuration de l'API Google Ads pour la synchronisation automatique des campagnes</p>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary">
+        <h2>Ce qu'on a besoin au final</h2>
+        <ul class="summary__list">
+            <li>
+                <span>Client ID OAuth</span>
+                xxxx.apps.googleusercontent.com
+            </li>
+            <li>
+                <span>Client Secret OAuth</span>
+                GOCSPX-xxxxxxx
+            </li>
+            <li>
+                <span>Refresh Token</span>
+                1//0xxxxxxx
+            </li>
+            <li>
+                <span>Developer Token</span>
+                xxXXxxXXxx
+            </li>
+            <li>
+                <span>MCC ID (si applicable)</span>
+                123-456-7890
+            </li>
+            <li>
+                <span>Customer IDs clients</span>
+                111-222-3333 par client
+            </li>
+        </ul>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step">
+        <div class="step__number">Etape 1</div>
+        <h2>Creer un projet Google Cloud</h2>
+        <div class="time-estimate">~ 5 minutes</div>
+
+        <ol>
+            <li>Va sur la Google Cloud Console :
+                <div class="url-box">
+                    <a href="https://console.cloud.google.com" target="_blank">https://console.cloud.google.com</a>
+                </div>
+            </li>
+            <li>Connecte-toi avec le compte Google qui gere le MCC / les comptes ads</li>
+            <li>En haut, clique sur le <strong>selecteur de projet</strong> (a cote du logo Google Cloud)</li>
+            <li>Clique sur <strong>"Nouveau projet"</strong></li>
+            <li>
+                Nom du projet : <code>REGEN Agency - Ads Sync</code><br>
+                Organisation : laisse tel quel<br>
+                Clique <strong>"Creer"</strong>
+            </li>
+            <li>Attends quelques secondes, puis <strong>selectionne ce projet</strong> dans le selecteur</li>
+        </ol>
+
+        <div class="info">
+            <strong>Note :</strong> Si tu as deja un projet Google Cloud, tu peux l'utiliser. L'important c'est d'activer l'API Google Ads dedans.
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+        <div class="step__number">Etape 2</div>
+        <h2>Activer l'API Google Ads</h2>
+        <div class="time-estimate">~ 2 minutes</div>
+
+        <ol>
+            <li>Dans ton projet Google Cloud, va dans le menu hamburger (en haut a gauche) &rarr; <strong>"API et services"</strong> &rarr; <strong>"Bibliotheque"</strong></li>
+            <li>
+                Ou va directement ici :
+                <div class="url-box">
+                    <a href="https://console.cloud.google.com/apis/library/googleads.googleapis.com" target="_blank">https://console.cloud.google.com/apis/library/googleads.googleapis.com</a>
+                </div>
+            </li>
+            <li>Clique sur <strong>"Activer"</strong></li>
+            <li>Attends que ca se charge - tu verras un dashboard de l'API une fois active</li>
+        </ol>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step">
+        <div class="step__number">Etape 3</div>
+        <h2>Creer les identifiants OAuth 2.0</h2>
+        <div class="time-estimate">~ 10 minutes</div>
+
+        <p>C'est la partie la plus importante. On va creer les credentials qui permettent a notre serveur de se connecter a Google Ads.</p>
+
+        <h3 style="font-size: 16px; color: var(--dark); margin: 16px 0 8px;">3a. Configurer l'ecran de consentement OAuth</h3>
+        <ol>
+            <li>Va dans <strong>"API et services"</strong> &rarr; <strong>"Ecran de consentement OAuth"</strong></li>
+            <li>
+                Type d'utilisateur : <strong>"Externe"</strong> (meme si on l'utilise en interne)<br>
+                Clique <strong>"Creer"</strong>
+            </li>
+            <li>
+                Remplis les champs obligatoires :
+                <ul>
+                    <li>Nom de l'appli : <code>REGEN Ads Sync</code></li>
+                    <li>E-mail d'assistance : ton email</li>
+                    <li>E-mail du developpeur : ton email</li>
+                </ul>
+            </li>
+            <li>Clique <strong>"Enregistrer et continuer"</strong> sur toutes les etapes suivantes (Portees, Utilisateurs test, Resume)</li>
+        </ol>
+
+        <h3 style="font-size: 16px; color: var(--dark); margin: 16px 0 8px;">3b. Creer le Client OAuth</h3>
+        <ol>
+            <li>Va dans <strong>"API et services"</strong> &rarr; <strong>"Identifiants"</strong></li>
+            <li>Clique <strong>"+ CREER DES IDENTIFIANTS"</strong> &rarr; <strong>"ID client OAuth"</strong></li>
+            <li>
+                Type d'application : <strong>"Application Web"</strong><br>
+                Nom : <code>REGEN Ads Sync</code>
+            </li>
+            <li>
+                Dans <strong>"URI de redirection autorises"</strong>, ajoute :
+                <div class="url-box">https://developers.google.com/oauthplayground</div>
+                (On va l'utiliser a l'etape 5 pour generer le refresh token)
+            </li>
+            <li>Clique <strong>"Creer"</strong></li>
+            <li>
+                Une popup apparait avec tes credentials :
+                <ul>
+                    <li><strong>ID client</strong> : quelque chose comme <code>123456789-abc.apps.googleusercontent.com</code></li>
+                    <li><strong>Code secret du client</strong> : quelque chose comme <code>GOCSPX-xxxxxxxxxxxxxxxx</code></li>
+                </ul>
+            </li>
+        </ol>
+
+        <div class="warning">
+            <strong>Important !</strong>
+            Note bien ces deux valeurs (Client ID et Client Secret). Tu peux aussi les retrouver plus tard dans la page Identifiants.
+        </div>
+
+        <div class="success">
+            <strong>A noter :</strong><br>
+            <code>Client ID</code> = GOOGLE_ADS_CLIENT_ID<br>
+            <code>Client Secret</code> = GOOGLE_ADS_CLIENT_SECRET
+        </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step">
+        <div class="step__number">Etape 4</div>
+        <h2>Obtenir le Developer Token</h2>
+        <div class="time-estimate">~ 5 minutes</div>
+
+        <p>Le developer token est un identifiant specifique a Google Ads (pas Google Cloud). Il se trouve dans ton compte MCC.</p>
+
+        <ol>
+            <li>
+                Connecte-toi a Google Ads avec le compte MCC :
+                <div class="url-box">
+                    <a href="https://ads.google.com" target="_blank">https://ads.google.com</a>
+                </div>
+            </li>
+            <li>Assure-toi d'etre sur le <strong>compte administrateur (MCC)</strong>, pas un compte client</li>
+            <li>Clique sur <strong>"Outils et parametres"</strong> (icone cle a molette en haut)</li>
+            <li>Dans la section <strong>"Configuration"</strong>, clique sur <strong>"Centre API"</strong></li>
+            <li>Tu verras ton <strong>Developer Token</strong> affiche sur cette page</li>
+        </ol>
+
+        <div class="warning">
+            <strong>Niveau d'acces du Developer Token</strong><br>
+            Par defaut, le token est en mode "Test" (acces limite a 15 000 requetes/jour, uniquement sur les comptes de test).
+            Pour la production, il faut demander l'acces "Basic" via le formulaire de demande.
+            Cependant, pour commencer et tester, le mode "Test" suffit si on utilise les vrais comptes lies au MCC.
+        </div>
+
+        <div class="info">
+            <strong>Pas de Centre API ?</strong> Si tu ne vois pas "Centre API" dans les outils, c'est peut-etre que le compte n'est pas un MCC ou que l'acces API n'a pas ete active. Contacte le support Google Ads.
+        </div>
+
+        <div class="success">
+            <strong>A noter :</strong><br>
+            <code>Developer Token</code> = GOOGLE_ADS_DEVELOPER_TOKEN
+        </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step">
+        <div class="step__number">Etape 5</div>
+        <h2>Generer le Refresh Token</h2>
+        <div class="time-estimate">~ 10 minutes</div>
+
+        <p>Le refresh token permet a notre serveur de s'authentifier sans intervention humaine. On va utiliser l'OAuth Playground de Google pour le generer facilement.</p>
+
+        <ol>
+            <li>
+                Va sur l'OAuth Playground :
+                <div class="url-box">
+                    <a href="https://developers.google.com/oauthplayground" target="_blank">https://developers.google.com/oauthplayground</a>
+                </div>
+            </li>
+            <li>
+                En haut a droite, clique sur l'icone <strong>engrenage</strong> (Settings) et configure :
+                <ul>
+                    <li>Coche <strong>"Use your own OAuth credentials"</strong></li>
+                    <li><strong>OAuth Client ID</strong> : colle ton Client ID de l'etape 3</li>
+                    <li><strong>OAuth Client secret</strong> : colle ton Client Secret de l'etape 3</li>
+                </ul>
+                Ferme les settings.
+            </li>
+            <li>
+                Dans le panneau de gauche <strong>"Step 1 - Select & authorize APIs"</strong> :<br>
+                Cherche et selectionne le scope :
+                <div class="url-box">https://www.googleapis.com/auth/adwords</div>
+                Clique <strong>"Authorize APIs"</strong>
+            </li>
+            <li>
+                Google va te demander de te connecter. <strong>Connecte-toi avec le compte qui a acces au MCC / comptes Google Ads</strong>.
+            </li>
+            <li>
+                Accepte les autorisations demandees (meme si Google affiche un avertissement "appli non verifiee" - clique "Continuer")
+            </li>
+            <li>
+                Tu reviens sur l'OAuth Playground.<br>
+                Dans <strong>"Step 2 - Exchange authorization code for tokens"</strong> :<br>
+                Clique <strong>"Exchange authorization code for tokens"</strong>
+            </li>
+            <li>
+                Tu verras apparaitre :
+                <ul>
+                    <li><strong>Access token</strong> : (temporaire, on n'en a pas besoin)</li>
+                    <li><strong>Refresh token</strong> : <code>1//0eXXXXXXXXXXX...</code></li>
+                </ul>
+            </li>
+        </ol>
+
+        <div class="warning">
+            <strong>Important !</strong>
+            Le refresh token n'est affiche qu'une seule fois. Copie-le immediatement et garde-le en securite.
+            Si tu le perds, il faudra refaire cette etape.
+        </div>
+
+        <div class="success">
+            <strong>A noter :</strong><br>
+            <code>Refresh Token</code> = GOOGLE_ADS_REFRESH_TOKEN
+        </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step">
+        <div class="step__number">Etape 6</div>
+        <h2>Recuperer les Customer IDs</h2>
+        <div class="time-estimate">~ 5 minutes</div>
+
+        <p>Chaque compte Google Ads a un identifiant unique (Customer ID). On en a besoin pour chaque client qu'on veut synchroniser.</p>
+
+        <ol>
+            <li>
+                Dans Google Ads (<a href="https://ads.google.com" target="_blank">ads.google.com</a>), va dans le <strong>MCC</strong>
+            </li>
+            <li>Tu verras la liste de tous les comptes clients geres</li>
+            <li>
+                Pour chaque client, note le <strong>Customer ID</strong> (format : <code>XXX-XXX-XXXX</code>)<br>
+                Il est affiche en haut de page quand tu es dans un compte, ou dans la colonne "ID client" de la vue MCC
+            </li>
+            <li>
+                Note aussi l'<strong>ID du MCC</strong> lui-meme (visible en haut a droite quand tu es au niveau MCC)
+            </li>
+        </ol>
+
+        <p>Voici les comptes qu'on a besoin :</p>
+
+        <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--gray-200);">
+                    <th style="text-align: left; padding: 8px; font-size: 14px; color: var(--gray-500);">Client</th>
+                    <th style="text-align: left; padding: 8px; font-size: 14px; color: var(--gray-500);">Customer ID</th>
+                    <th style="text-align: left; padding: 8px; font-size: 14px; color: var(--gray-500);">Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 1px solid var(--gray-100);">
+                    <td style="padding: 10px 8px; font-size: 14px;">MCC REGEN</td>
+                    <td style="padding: 10px 8px; font-size: 14px; font-family: monospace;">___-___-____</td>
+                    <td style="padding: 10px 8px; font-size: 14px;">Compte administrateur</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--gray-100);">
+                    <td style="padding: 10px 8px; font-size: 14px;">OXO</td>
+                    <td style="padding: 10px 8px; font-size: 14px; font-family: monospace;">___-___-____</td>
+                    <td style="padding: 10px 8px; font-size: 14px;">Compte client</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--gray-100);">
+                    <td style="padding: 10px 8px; font-size: 14px;">Marcato</td>
+                    <td style="padding: 10px 8px; font-size: 14px; font-family: monospace;">___-___-____</td>
+                    <td style="padding: 10px 8px; font-size: 14px;">Compte client</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--gray-100);">
+                    <td style="padding: 10px 8px; font-size: 14px;">Nordic Ware</td>
+                    <td style="padding: 10px 8px; font-size: 14px; font-family: monospace;">___-___-____</td>
+                    <td style="padding: 10px 8px; font-size: 14px;">Compte client</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--gray-100);">
+                    <td style="padding: 10px 8px; font-size: 14px;">Bamix</td>
+                    <td style="padding: 10px 8px; font-size: 14px; font-family: monospace;">___-___-____</td>
+                    <td style="padding: 10px 8px; font-size: 14px;">Compte client</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 8px; font-size: 14px;">Vitamix</td>
+                    <td style="padding: 10px 8px; font-size: 14px; font-family: monospace;">___-___-____</td>
+                    <td style="padding: 10px 8px; font-size: 14px;">Compte client</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info">
+            Remplis ce tableau et envoie-le moi. Si certains clients ne sont pas sous le MCC (comptes ads independants), indique-le.
+        </div>
+    </div>
+
+    <!-- Recap / Checklist -->
+    <div class="credential-checklist">
+        <h2>Checklist - Ce qu'il me faut</h2>
+        <p>Coche chaque element quand tu l'as et envoie-moi le tout. Je me charge de configurer le serveur.</p>
+
+        <div class="credential-item">
+            <input type="checkbox" id="check1">
+            <div class="credential-item__label">
+                <strong>GOOGLE_ADS_CLIENT_ID</strong>
+                <span>L'ID client OAuth 2.0 (etape 3b)</span>
+                <div class="credential-item__example">Ex: 123456789-abc.apps.googleusercontent.com</div>
+            </div>
+        </div>
+
+        <div class="credential-item">
+            <input type="checkbox" id="check2">
+            <div class="credential-item__label">
+                <strong>GOOGLE_ADS_CLIENT_SECRET</strong>
+                <span>Le secret client OAuth 2.0 (etape 3b)</span>
+                <div class="credential-item__example">Ex: GOCSPX-xxxxxxxxxxxxxxxxxxxx</div>
+            </div>
+        </div>
+
+        <div class="credential-item">
+            <input type="checkbox" id="check3">
+            <div class="credential-item__label">
+                <strong>GOOGLE_ADS_REFRESH_TOKEN</strong>
+                <span>Le refresh token genere via OAuth Playground (etape 5)</span>
+                <div class="credential-item__example">Ex: 1//0eXXXXXXXXXXXXXXXXXXXXXXXXXX</div>
+            </div>
+        </div>
+
+        <div class="credential-item">
+            <input type="checkbox" id="check4">
+            <div class="credential-item__label">
+                <strong>GOOGLE_ADS_DEVELOPER_TOKEN</strong>
+                <span>Le developer token du MCC (etape 4)</span>
+                <div class="credential-item__example">Ex: abCdEfGhIjKlMnOp</div>
+            </div>
+        </div>
+
+        <div class="credential-item">
+            <input type="checkbox" id="check5">
+            <div class="credential-item__label">
+                <strong>MCC_ID</strong>
+                <span>L'ID du compte administrateur MCC (etape 6)</span>
+                <div class="credential-item__example">Ex: 123-456-7890</div>
+            </div>
+        </div>
+
+        <div class="credential-item">
+            <input type="checkbox" id="check6">
+            <div class="credential-item__label">
+                <strong>Customer IDs par client</strong>
+                <span>Le tableau rempli avec les IDs de chaque compte client (etape 6)</span>
+                <div class="credential-item__example">Ex: OXO = 111-222-3333, Marcato = 444-555-6666, ...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer note -->
+    <div style="text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--gray-200);">
+        <p style="font-size: 13px; color: var(--gray-500);">
+            <strong>Temps total estime : ~30-40 minutes</strong><br>
+            En cas de probleme, n'hesite pas a m'envoyer des screenshots.<br><br>
+            <span style="color: var(--green); font-weight: 600;">REGEN AGENCY</span> - Guide interne
+        </p>
+    </div>
+
+</div>
+
+</body>
+</html>

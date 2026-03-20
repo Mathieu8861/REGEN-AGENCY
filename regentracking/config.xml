@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+    <name>regentracking</name>
+    <displayName><![CDATA[REGEN Tracking - Order UTM Sources]]></displayName>
+    <version><![CDATA[1.0.0]]></version>
+    <description><![CDATA[Expose les landing pages et UTM sources des commandes via l'API Webservice PrestaShop pour REGEN AGENCY.]]></description>
+    <author><![CDATA[REGEN AGENCY]]></author>
+    <tab><![CDATA[analytics_stats]]></tab>
+    <is_configurable>0</is_configurable>
+    <need_instance>0</need_instance>
+    <limited_countries></limited_countries>
+</module>

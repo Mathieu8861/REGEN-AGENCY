@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import CSV - REGEN AGENCY</title>
+    <link rel="icon" href="../../favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/espace-client.css">
+</head>
+<body>
+    <div class="rc-app">
+        <!-- ─── Sidebar ─────────────────────── -->
+        <aside class="rc-sidebar">
+            <div class="rc-sidebar__header">
+                <a href="../dashboard.html" class="rc-sidebar__logo">
+                    <img src="../../assets/images/logo-regen.png" alt="REGEN" onerror="this.style.display='none'">
+                    <div>
+                        <span class="rc-sidebar__logo-text">REGEN</span>
+                        <span class="rc-sidebar__logo-sub">Espace Client</span>
+                    </div>
+                </a>
+            </div>
+            <div class="rc-sidebar__client">
+                <span class="rc-sidebar__client-label">Client</span>
+                <div id="regen-client-selector"></div>
+            </div>
+            <nav class="rc-sidebar__nav">
+                <div class="rc-sidebar__section">
+                    <div class="rc-sidebar__section-title">Analytics</div>
+                    <a href="../dashboard.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#9776;</span>Dashboard
+                    </a>
+                    <a href="../campaigns.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#9733;</span>Campagnes
+                    </a>
+                    <a href="../orders.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#128722;</span>Commandes
+                    </a>
+                </div>
+                <div class="rc-sidebar__section">
+                    <div class="rc-sidebar__section-title">Ressources</div>
+                    <a href="../reports.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#128196;</span>Rapports
+                    </a>
+                    <a href="../integrations.html" class="rc-sidebar__link" data-admin-only>
+                        <span class="rc-sidebar__link-icon">&#128268;</span>Integrations
+                    </a>
+                </div>
+                <div class="rc-sidebar__section" data-admin-only>
+                    <div class="rc-sidebar__section-title">Administration</div>
+                    <a href="clients.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#128101;</span>Clients
+                    </a>
+                    <a href="import.html" class="rc-sidebar__link active">
+                        <span class="rc-sidebar__link-icon">&#128228;</span>Import CSV
+                    </a>
+                </div>
+            </nav>
+            <div class="rc-sidebar__footer">
+                <div class="rc-sidebar__user">
+                    <div class="rc-sidebar__avatar" id="regen-user-avatar">?</div>
+                    <div class="rc-sidebar__user-info">
+                        <div class="rc-sidebar__user-name" id="regen-user-name">Chargement...</div>
+                        <span id="regen-user-role" class="rc-badge">...</span>
+                    </div>
+                </div>
+                <button class="rc-sidebar__logout" id="regen-logout-btn">&#x2190; Deconnexion</button>
+            </div>
+        </aside>
+
+        <!-- ─── Main Content ────────────────── -->
+        <main class="rc-main">
+            <header class="rc-header">
+                <div class="rc-header__left">
+                    <button class="rc-header__toggle" id="regen-sidebar-toggle">&#9776;</button>
+                    <h1 class="rc-header__title">Import CSV</h1>
+                </div>
+            </header>
+
+            <div class="rc-content">
+                <!-- Import Orders CSV -->
+                <div class="rc-card">
+                    <h2 class="rc-card__title">Importer des commandes (CSV PrestaShop)</h2>
+                    <p class="rc-text-muted rc-text-sm" style="margin-bottom: 16px;">
+                        Format attendu : CSV avec separateur point-virgule (;).<br>
+                        Colonnes : ID Commande, Reference, Date de commande, Total TTC, Page d'entree, Produit 1-5
+                    </p>
+
+                    <!-- Upload Zone -->
+                    <div class="rc-upload-zone" id="csv-upload-zone">
+                        <div class="rc-upload-zone__icon">&#128196;</div>
+                        <div class="rc-upload-zone__text">Glissez un fichier CSV ici ou cliquez pour selectionner</div>
+                        <div class="rc-upload-zone__hint">Formats acceptes : .csv</div>
+                        <input type="file" id="csv-file-input" accept=".csv" style="display:none">
+                    </div>
+
+                    <!-- Preview -->
+                    <div id="csv-preview" style="display:none; margin-top: 20px;">
+                        <div class="rc-flex-between rc-mb-16">
+                            <h3 class="rc-text-bold">Apercu (<span id="csv-row-count">0</span> commandes)</h3>
+                            <div class="rc-flex rc-gap-8">
+                                <button class="rc-btn rc-btn--secondary rc-btn--sm" id="csv-cancel-btn">Annuler</button>
+                                <button class="rc-btn rc-btn--primary rc-btn--sm" id="csv-import-btn">Importer</button>
+                            </div>
+                        </div>
+                        <div class="rc-table-wrap" style="max-height: 400px; overflow-y: auto;">
+                            <table class="rc-table" id="csv-preview-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Reference</th>
+                                        <th>Date</th>
+                                        <th>Total TTC</th>
+                                        <th>Canal detecte</th>
+                                        <th>Produits</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="csv-preview-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Import result -->
+                    <div id="csv-result" style="display:none; margin-top: 16px;"></div>
+                </div>
+
+                <!-- Manual Ad Spend Entry -->
+                <div class="rc-card" style="margin-top: 24px;">
+                    <h2 class="rc-card__title">Saisie manuelle - Depenses publicitaires</h2>
+                    <p class="rc-text-muted rc-text-sm" style="margin-bottom: 16px;">
+                        Ajoutez les depenses hebdomadaires par plateforme (comme dans votre Google Sheet).
+                    </p>
+
+                    <form id="spend-form">
+                        <div class="rc-grid-3" style="margin-bottom:16px;">
+                            <div class="rc-form-group">
+                                <label class="rc-form-label">Plateforme</label>
+                                <select class="rc-select" id="spend-platform">
+                                    <option value="google_ads">Google Ads</option>
+                                    <option value="meta_ads">Meta Ads</option>
+                                    <option value="tiktok_ads">TikTok Ads</option>
+                                    <option value="other">Autre</option>
+                                </select>
+                            </div>
+                            <div class="rc-form-group">
+                                <label class="rc-form-label">Semaine</label>
+                                <select class="rc-select" id="spend-week">
+                                    <!-- Generated by JS -->
+                                </select>
+                            </div>
+                            <div class="rc-form-group">
+                                <label class="rc-form-label">Annee</label>
+                                <select class="rc-select" id="spend-year">
+                                    <option value="2026">2026</option>
+                                    <option value="2025">2025</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="rc-grid-3" style="margin-bottom:16px;">
+                            <div class="rc-form-group">
+                                <label class="rc-form-label">Depense (EUR)</label>
+                                <input class="rc-input" type="number" step="0.01" id="spend-amount" placeholder="0.00" required>
+                            </div>
+                            <div class="rc-form-group">
+                                <label class="rc-form-label">CA genere (EUR)</label>
+                                <input class="rc-input" type="number" step="0.01" id="spend-revenue" placeholder="0.00">
+                            </div>
+                            <div class="rc-form-group">
+                                <label class="rc-form-label">Nb commandes</label>
+                                <input class="rc-input" type="number" id="spend-orders" placeholder="0">
+                            </div>
+                        </div>
+                        <button type="submit" class="rc-btn rc-btn--primary">Enregistrer</button>
+                    </form>
+
+                    <!-- Existing spend data -->
+                    <div id="spend-table-container" style="margin-top: 24px;"></div>
+                </div>
+
+                <!-- Import History -->
+                <div class="rc-card" style="margin-top: 24px;">
+                    <h2 class="rc-card__title">Historique des imports</h2>
+                    <div id="import-history">
+                        <div class="rc-loading"><div class="rc-spinner"></div><span>Chargement...</span></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/regen-app.js"></script>
+    <script src="../../js/regen-import.js"></script>
+</body>
+</html>

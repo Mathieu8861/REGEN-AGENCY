@@ -1,0 +1,15 @@
+{
+    "name": "regenagency/regentracking",
+    "description": "REGEN Tracking - Expose les UTM sources des commandes via l'API Webservice",
+    "license": "proprietary",
+    "type": "prestashop-module",
+    "autoload": {
+        "classmap": [
+            "regentracking.php",
+            "classes/"
+        ]
+    },
+    "require": {
+        "php": ">=7.2"
+    }
+}

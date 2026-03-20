@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrations - REGEN AGENCY</title>
+    <link rel="icon" href="../favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/espace-client.css">
+</head>
+<body>
+    <div class="rc-app">
+        <!-- ─── Sidebar ─────────────────────── -->
+        <aside class="rc-sidebar">
+            <div class="rc-sidebar__header">
+                <a href="dashboard.html" class="rc-sidebar__logo">
+                    <img src="../assets/images/logo-regen.png" alt="REGEN" onerror="this.style.display='none'">
+                    <div>
+                        <span class="rc-sidebar__logo-text">REGEN</span>
+                        <span class="rc-sidebar__logo-sub">Espace Client</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="rc-sidebar__client" data-admin-only>
+                <span class="rc-sidebar__client-label">Client</span>
+                <div id="regen-client-selector"></div>
+            </div>
+
+            <nav class="rc-sidebar__nav">
+                <div class="rc-sidebar__section" data-admin-only>
+                    <div class="rc-sidebar__section-title">Agence</div>
+                    <a href="overview.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#127968;</span>
+                        Overview
+                    </a>
+                </div>
+
+                <div class="rc-sidebar__section">
+                    <div class="rc-sidebar__section-title">Analytics</div>
+                    <a href="dashboard.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#9776;</span>
+                        Dashboard
+                    </a>
+                    <a href="campaigns.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#9733;</span>
+                        Campagnes
+                    </a>
+                    <a href="orders.html" class="rc-sidebar__link" data-admin-only>
+                        <span class="rc-sidebar__link-icon">&#128722;</span>
+                        Commandes
+                    </a>
+                </div>
+
+                <div class="rc-sidebar__section">
+                    <div class="rc-sidebar__section-title">Ressources</div>
+                    <a href="reports.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#128196;</span>
+                        Rapports
+                    </a>
+                    <a href="integrations.html" class="rc-sidebar__link active" data-admin-only>
+                        <span class="rc-sidebar__link-icon">&#128268;</span>
+                        Integrations
+                    </a>
+                </div>
+
+                <div class="rc-sidebar__section" data-admin-only>
+                    <div class="rc-sidebar__section-title">Administration</div>
+                    <a href="admin/clients.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#128101;</span>
+                        Clients
+                    </a>
+                    <a href="admin/import.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#128228;</span>
+                        Import CSV
+                    </a>
+                </div>
+            </nav>
+
+            <div class="rc-sidebar__footer">
+                <div class="rc-sidebar__user">
+                    <div class="rc-sidebar__avatar" id="regen-user-avatar">?</div>
+                    <div class="rc-sidebar__user-info">
+                        <div class="rc-sidebar__user-name" id="regen-user-name">Chargement...</div>
+                        <span id="regen-user-role" class="rc-badge">...</span>
+                    </div>
+                </div>
+                <button class="rc-sidebar__logout" id="regen-logout-btn">&#x2190; Deconnexion</button>
+            </div>
+        </aside>
+
+        <!-- ─── Main Content ────────────────── -->
+        <main class="rc-main">
+            <header class="rc-header">
+                <div class="rc-header__left">
+                    <button class="rc-header__toggle" id="regen-sidebar-toggle">&#9776;</button>
+                    <h1 class="rc-header__title">Integrations</h1>
+                </div>
+            </header>
+
+            <div class="rc-content">
+                <!-- E-commerce section -->
+                <div class="rc-card">
+                    <h2 class="rc-card__title">E-commerce</h2>
+                    <p class="rc-text-muted rc-text-sm" style="margin-bottom: 20px;">
+                        Connectez la boutique en ligne du client pour synchroniser automatiquement les commandes.
+                    </p>
+                    <div class="rc-integrations-grid" id="ecommerce-integrations">
+                        <div class="rc-loading">
+                            <div class="rc-spinner"></div>
+                            <span>Chargement...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ads section -->
+                <div class="rc-card" style="margin-top: 24px;">
+                    <h2 class="rc-card__title">Plateformes Publicitaires</h2>
+                    <p class="rc-text-muted rc-text-sm" style="margin-bottom: 20px;">
+                        Connectez les comptes publicitaires pour importer automatiquement les depenses et metriques.
+                    </p>
+                    <div class="rc-integrations-grid" id="ads-integrations">
+                        <div class="rc-loading">
+                            <div class="rc-spinner"></div>
+                            <span>Chargement...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuration panel (appears on click) -->
+                <div class="rc-card" id="integration-config" style="display:none; margin-top: 24px;">
+                    <div class="rc-flex-between rc-mb-16">
+                        <h2 class="rc-card__title" style="margin:0;" id="integration-config-title">Configuration</h2>
+                        <button class="rc-btn rc-btn--secondary rc-btn--sm" id="integration-config-close">Fermer</button>
+                    </div>
+                    <form id="integration-config-form">
+                        <input type="hidden" id="integration-config-platform">
+                        <div id="integration-config-fields"></div>
+                        <div class="rc-flex rc-gap-8" style="margin-top: 16px;">
+                            <button type="submit" class="rc-btn rc-btn--primary">Sauvegarder</button>
+                            <button type="button" class="rc-btn rc-btn--secondary" id="integration-test-btn">Tester la connexion</button>
+                            <button type="button" class="rc-btn rc-btn--secondary" id="integration-sync-btn">Sync maintenant</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/regen-app.js"></script>
+    <script src="../js/regen-integrations.js"></script>
+</body>
+</html>

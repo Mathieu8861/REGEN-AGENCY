@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview - REGEN AGENCY</title>
+    <link rel="icon" href="../favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/espace-client.css">
+</head>
+<body>
+    <div class="rc-app">
+        <!-- ─── Sidebar ─────────────────────── -->
+        <aside class="rc-sidebar" id="regen-sidebar">
+            <div class="rc-sidebar__header">
+                <a href="overview.html" class="rc-sidebar__logo">
+                    <img src="../assets/images/logo-regen.png" alt="REGEN" onerror="this.style.display='none'">
+                    <div>
+                        <span class="rc-sidebar__logo-text">REGEN</span>
+                        <span class="rc-sidebar__logo-sub">Espace Client</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Client selector (admin only) -->
+            <div class="rc-sidebar__client" data-admin-only>
+                <span class="rc-sidebar__client-label">Client</span>
+                <div id="regen-client-selector"></div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="rc-sidebar__nav">
+                <!-- Admin: Overview -->
+                <div class="rc-sidebar__section" data-admin-only>
+                    <div class="rc-sidebar__section-title">Agence</div>
+                    <a href="overview.html" class="rc-sidebar__link active">
+                        <span class="rc-sidebar__link-icon">&#127968;</span>
+                        Overview
+                    </a>
+                </div>
+
+                <!-- Per-client analytics -->
+                <div class="rc-sidebar__section">
+                    <div class="rc-sidebar__section-title">Analytics</div>
+                    <a href="dashboard.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#9776;</span>
+                        Dashboard
+                    </a>
+                    <a href="campaigns.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#9733;</span>
+                        Campagnes
+                    </a>
+                    <a href="orders.html" class="rc-sidebar__link" data-admin-only>
+                        <span class="rc-sidebar__link-icon">&#128722;</span>
+                        Commandes
+                    </a>
+                </div>
+
+                <div class="rc-sidebar__section">
+                    <div class="rc-sidebar__section-title">Ressources</div>
+                    <a href="reports.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#128196;</span>
+                        Rapports
+                    </a>
+                    <a href="integrations.html" class="rc-sidebar__link" data-admin-only>
+                        <span class="rc-sidebar__link-icon">&#128268;</span>
+                        Integrations
+                    </a>
+                </div>
+
+                <div class="rc-sidebar__section" data-admin-only>
+                    <div class="rc-sidebar__section-title">Administration</div>
+                    <a href="admin/clients.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#128101;</span>
+                        Clients
+                    </a>
+                    <a href="admin/import.html" class="rc-sidebar__link">
+                        <span class="rc-sidebar__link-icon">&#128228;</span>
+                        Import CSV
+                    </a>
+                </div>
+            </nav>
+
+            <!-- User -->
+            <div class="rc-sidebar__footer">
+                <div class="rc-sidebar__user">
+                    <div class="rc-sidebar__avatar" id="regen-user-avatar">?</div>
+                    <div class="rc-sidebar__user-info">
+                        <div class="rc-sidebar__user-name" id="regen-user-name">Chargement...</div>
+                        <span id="regen-user-role" class="rc-badge">...</span>
+                    </div>
+                </div>
+                <button class="rc-sidebar__logout" id="regen-logout-btn">&#x2190; Deconnexion</button>
+            </div>
+        </aside>
+
+        <!-- ─── Main Content ────────────────── -->
+        <main class="rc-main">
+            <header class="rc-header">
+                <div class="rc-header__left">
+                    <button class="rc-header__toggle" id="regen-sidebar-toggle">&#9776;</button>
+                    <h1 class="rc-header__title">Overview Agence</h1>
+                </div>
+                <div class="rc-header__right">
+                    <div class="rc-period-selector" id="period-selector">
+                        <button class="rc-period-btn" data-period="7">7j</button>
+                        <button class="rc-period-btn active" data-period="30">30j</button>
+                        <button class="rc-period-btn" data-period="90">90j</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="rc-content">
+                <!-- Global KPIs (all clients combined) -->
+                <div class="rc-kpi-grid" id="global-kpis">
+                    <div class="rc-kpi-card">
+                        <div class="rc-kpi-card__header">
+                            <span class="rc-kpi-card__label">CA Total Agence</span>
+                            <div class="rc-kpi-card__icon rc-kpi-card__icon--green">&#8364;</div>
+                        </div>
+                        <div class="rc-kpi-card__value" id="global-revenue">--</div>
+                    </div>
+                    <div class="rc-kpi-card">
+                        <div class="rc-kpi-card__header">
+                            <span class="rc-kpi-card__label">Depense Ads Totale</span>
+                            <div class="rc-kpi-card__icon rc-kpi-card__icon--blue">&#9733;</div>
+                        </div>
+                        <div class="rc-kpi-card__value" id="global-spend">--</div>
+                    </div>
+                    <div class="rc-kpi-card">
+                        <div class="rc-kpi-card__header">
+                            <span class="rc-kpi-card__label">ROAS Moyen</span>
+                            <div class="rc-kpi-card__icon rc-kpi-card__icon--green">&#215;</div>
+                        </div>
+                        <div class="rc-kpi-card__value" id="global-roas">--</div>
+                    </div>
+                    <div class="rc-kpi-card">
+                        <div class="rc-kpi-card__header">
+                            <span class="rc-kpi-card__label">Commandes Totales</span>
+                            <div class="rc-kpi-card__icon rc-kpi-card__icon--orange">&#35;</div>
+                        </div>
+                        <div class="rc-kpi-card__value" id="global-orders">--</div>
+                    </div>
+                </div>
+
+                <!-- Clients performance table -->
+                <div class="rc-table-wrap">
+                    <div class="rc-table-header">
+                        <h2 class="rc-table-title">Performance par Client</h2>
+                    </div>
+                    <table class="rc-table" id="clients-perf-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th class="rc-text-right">CA</th>
+                                <th class="rc-text-right">Depense Ads</th>
+                                <th class="rc-text-right">ROAS</th>
+                                <th class="rc-text-right">Commandes</th>
+                                <th class="rc-text-right">Panier Moy.</th>
+                                <th class="rc-text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clients-perf-body">
+                            <tr><td colspan="7"><div class="rc-loading"><div class="rc-spinner"></div><span>Chargement...</span></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/regen-app.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        var currentPeriod = 30;
+
+        document.addEventListener('regen:ready', init);
+
+        function init() {
+            if (!window.REGEN.supabase || !window.REGEN.currentProfile) return;
+
+            // Only admin/staff see overview
+            if (window.REGEN.currentProfile.role === 'client') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            setupPeriodSelector();
+            loadOverview();
+        }
+
+        function setupPeriodSelector() {
+            var selector = document.getElementById('period-selector');
+            if (!selector) return;
+            selector.querySelectorAll('.rc-period-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    selector.querySelectorAll('.rc-period-btn').forEach(function (b) { b.classList.remove('active'); });
+                    btn.classList.add('active');
+                    currentPeriod = parseInt(btn.getAttribute('data-period'));
+                    loadOverview();
+                });
+            });
+        }
+
+        async function loadOverview() {
+            var clients = window.REGEN.accessibleClients;
+            if (!clients || clients.length === 0) return;
+
+            var dateTo = new Date();
+            var dateFrom = new Date();
+            dateFrom.setDate(dateFrom.getDate() - currentPeriod);
+            var dateToStr = dateTo.toISOString().split('T')[0];
+            var dateFromStr = dateFrom.toISOString().split('T')[0];
+
+            var globalRevenue = 0, globalSpend = 0, globalOrders = 0;
+            var clientsData = [];
+
+            // Fetch data for each client
+            for (var i = 0; i < clients.length; i++) {
+                var client = clients[i];
+
+                var ordersResult = await window.REGEN.supabase
+                    .from('orders')
+                    .select('total_ttc')
+                    .eq('client_id', client.id)
+                    .gte('order_date', dateFromStr)
+                    .lte('order_date', dateToStr);
+
+                var spendResult = await window.REGEN.supabase
+                    .from('ad_weekly_spend')
+                    .select('spend')
+                    .eq('client_id', client.id);
+
+                var orders = ordersResult.data || [];
+                var spends = spendResult.data || [];
+
+                var revenue = orders.reduce(function (s, o) { return s + parseFloat(o.total_ttc || 0); }, 0);
+                var spend = spends.reduce(function (s, w) { return s + parseFloat(w.spend || 0); }, 0);
+                var ordersCount = orders.length;
+                var roas = spend > 0 ? revenue / spend : 0;
+                var basket = ordersCount > 0 ? revenue / ordersCount : 0;
+
+                globalRevenue += revenue;
+                globalSpend += spend;
+                globalOrders += ordersCount;
+
+                clientsData.push({
+                    client: client,
+                    revenue: revenue,
+                    spend: spend,
+                    orders: ordersCount,
+                    roas: roas,
+                    basket: basket
+                });
+            }
+
+            // Update global KPIs
+            var globalRoas = globalSpend > 0 ? globalRevenue / globalSpend : 0;
+            animateKPI('global-revenue', globalRevenue, window.REGEN.formatMoney);
+            animateKPI('global-spend', globalSpend, window.REGEN.formatMoney);
+            animateKPI('global-roas', globalRoas, window.REGEN.formatROAS);
+            animateKPI('global-orders', globalOrders, window.REGEN.formatNumber);
+
+            // Sort by revenue descending
+            clientsData.sort(function (a, b) { return b.revenue - a.revenue; });
+
+            // Build table
+            var tbody = document.getElementById('clients-perf-body');
+            if (!tbody) return;
+
+            if (clientsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7"><div class="rc-empty"><div class="rc-empty__title">Aucune donnee</div></div></td></tr>';
+                return;
+            }
+
+            // Group by group_name
+            var groups = {};
+            var ungrouped = [];
+            clientsData.forEach(function (d) {
+                var gn = d.client.group_name;
+                if (gn) {
+                    if (!groups[gn]) groups[gn] = { name: gn, clients: [], revenue: 0, spend: 0, orders: 0 };
+                    groups[gn].clients.push(d);
+                    groups[gn].revenue += d.revenue;
+                    groups[gn].spend += d.spend;
+                    groups[gn].orders += d.orders;
+                } else {
+                    ungrouped.push(d);
+                }
+            });
+
+            var html = '';
+
+            // Render grouped clients
+            Object.keys(groups).sort().forEach(function (gn) {
+                var group = groups[gn];
+                var groupRoas = group.spend > 0 ? group.revenue / group.spend : 0;
+                var groupBasket = group.orders > 0 ? group.revenue / group.orders : 0;
+
+                // Group header row
+                html += '<tr style="background: var(--rc-gray-50);">';
+                html += '<td class="rc-text-bold" style="font-size: 0.9rem;">';
+                html += '<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--rc-secondary);margin-right:8px;vertical-align:middle;"></span>';
+                html += '&#128193; ' + gn;
+                html += ' <span class="rc-text-muted rc-text-sm">(' + group.clients.length + ' marques)</span>';
+                html += '</td>';
+                html += '<td class="rc-text-right rc-text-bold">' + window.REGEN.formatMoney(group.revenue) + '</td>';
+                html += '<td class="rc-text-right">' + window.REGEN.formatMoney(group.spend) + '</td>';
+                html += '<td class="rc-text-right">' + window.REGEN.formatROAS(groupRoas) + '</td>';
+                html += '<td class="rc-text-right">' + group.orders + '</td>';
+                html += '<td class="rc-text-right">' + window.REGEN.formatMoney(groupBasket) + '</td>';
+                html += '<td></td>';
+                html += '</tr>';
+
+                // Individual clients in group (indented)
+                group.clients.sort(function (a, b) { return b.revenue - a.revenue; });
+                group.clients.forEach(function (d) {
+                    html += '<tr>';
+                    html += '<td class="rc-text-bold" style="padding-left: 32px;">';
+                    html += '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + (d.client.color || '#2FB963') + ';margin-right:8px;vertical-align:middle;"></span>';
+                    html += d.client.name;
+                    html += '</td>';
+                    html += '<td class="rc-text-right rc-text-bold">' + window.REGEN.formatMoney(d.revenue) + '</td>';
+                    html += '<td class="rc-text-right">' + window.REGEN.formatMoney(d.spend) + '</td>';
+                    html += '<td class="rc-text-right">' + window.REGEN.formatROAS(d.roas) + '</td>';
+                    html += '<td class="rc-text-right">' + d.orders + '</td>';
+                    html += '<td class="rc-text-right">' + window.REGEN.formatMoney(d.basket) + '</td>';
+                    html += '<td class="rc-text-right"><a href="dashboard.html" class="rc-btn rc-btn--secondary rc-btn--sm" onclick="localStorage.setItem(\'regen_selected_client\',\'' + d.client.id + '\')">Voir</a></td>';
+                    html += '</tr>';
+                });
+            });
+
+            // Render ungrouped clients
+            ungrouped.sort(function (a, b) { return b.revenue - a.revenue; });
+            ungrouped.forEach(function (d) {
+                html += '<tr>';
+                html += '<td class="rc-text-bold">';
+                html += '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + (d.client.color || '#2FB963') + ';margin-right:8px;vertical-align:middle;"></span>';
+                html += d.client.name;
+                html += '</td>';
+                html += '<td class="rc-text-right rc-text-bold">' + window.REGEN.formatMoney(d.revenue) + '</td>';
+                html += '<td class="rc-text-right">' + window.REGEN.formatMoney(d.spend) + '</td>';
+                html += '<td class="rc-text-right">' + window.REGEN.formatROAS(d.roas) + '</td>';
+                html += '<td class="rc-text-right">' + d.orders + '</td>';
+                html += '<td class="rc-text-right">' + window.REGEN.formatMoney(d.basket) + '</td>';
+                html += '<td class="rc-text-right"><a href="dashboard.html" class="rc-btn rc-btn--secondary rc-btn--sm" onclick="localStorage.setItem(\'regen_selected_client\',\'' + d.client.id + '\')">Voir</a></td>';
+                html += '</tr>';
+            });
+
+            // Totals
+            var totalBasket = globalOrders > 0 ? globalRevenue / globalOrders : 0;
+            html += '<tr class="rc-table--total">';
+            html += '<td><strong>Total Agence</strong></td>';
+            html += '<td class="rc-text-right">' + window.REGEN.formatMoney(globalRevenue) + '</td>';
+            html += '<td class="rc-text-right">' + window.REGEN.formatMoney(globalSpend) + '</td>';
+            html += '<td class="rc-text-right">' + window.REGEN.formatROAS(globalRoas) + '</td>';
+            html += '<td class="rc-text-right">' + globalOrders + '</td>';
+            html += '<td class="rc-text-right">' + window.REGEN.formatMoney(totalBasket) + '</td>';
+            html += '<td></td>';
+            html += '</tr>';
+
+            tbody.innerHTML = html;
+        }
+
+        function animateKPI(id, value, formatter) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            window.REGEN.animateCounter(el, value, function (v) {
+                return formatter(Math.round(v * 100) / 100);
+            });
+        }
+    })();
+    </script>
+</body>
+</html>
