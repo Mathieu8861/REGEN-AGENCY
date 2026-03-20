@@ -11,211 +11,894 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <style>
+        :root {
+            --green: #2FB963;
+            --green-light: #e8f9ef;
+            --dark: #1a2332;
+            --gray: #6b7280;
+            --gray-light: #f3f4f6;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: var(--font-primary);
-            background: var(--color-light);
+            font-family: 'Quicksand', sans-serif;
+            background: var(--gray-light);
             min-height: 100vh;
-            margin: 0;
-            padding: 40px 20px;
+            padding: 30px 20px;
         }
 
-        .page-container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
 
+        /* ─── Header ─── */
         .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; padding-bottom: 20px;
             border-bottom: 2px solid #e0e0e0;
         }
+        .page-header-left { display: flex; align-items: center; gap: 15px; }
+        .page-logo img { width: 40px; height: 40px; object-fit: contain; }
+        .page-title { font-size: 1.4rem; color: var(--dark); }
+        .page-title span { color: var(--green); }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
 
-        .page-header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .btn {
+            padding: 8px 18px; border-radius: 50px; font-family: inherit;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; text-decoration: none; display: inline-flex;
+            align-items: center; gap: 6px; border: 2px solid;
         }
+        .btn--back { background: transparent; color: var(--green); border-color: var(--green); }
+        .btn--back:hover { background: var(--green); color: white; }
+        .btn--primary { background: var(--green); color: white; border-color: var(--green); }
+        .btn--primary:hover { background: #27a356; }
+        .btn--danger { background: transparent; color: #ef4444; border-color: #fca5a5; }
+        .btn--danger:hover { background: #ef4444; color: white; }
+        .btn--sm { padding: 6px 14px; font-size: 0.75rem; }
 
-        .page-logo {
-            width: 40px;
-            height: 40px;
-        }
-
-        .page-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .page-title {
-            font-size: 1.4rem;
-            color: var(--color-primary);
-        }
-
-        .page-header-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-back, .btn-logout {
-            padding: 8px 18px;
-            border-radius: var(--radius-full);
-            font-family: var(--font-primary);
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-back {
-            background: transparent;
-            color: var(--color-primary);
-            border: 2px solid var(--color-primary);
-        }
-
-        .btn-back:hover {
-            background: var(--color-primary);
-            color: white;
-        }
-
-        .btn-logout {
-            background: transparent;
-            color: #999;
-            border: 2px solid #ddd;
-        }
-
-        .btn-logout:hover {
-            border-color: #ef4444;
-            color: #ef4444;
-        }
-
-        .btn-back svg, .btn-logout svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .placeholder-box {
-            background: white;
-            border-radius: var(--radius-xl);
-            padding: 60px 30px;
+        /* ─── Auth Section ─── */
+        .auth-box {
+            max-width: 400px; margin: 80px auto; background: white;
+            border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow);
             text-align: center;
-            box-shadow: var(--shadow-sm);
         }
-
-        .placeholder-icon {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto 20px;
-            color: var(--color-secondary);
+        .auth-box h2 { margin-bottom: 8px; color: var(--dark); }
+        .auth-box p { color: var(--gray); font-size: 0.9rem; margin-bottom: 24px; }
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--gray); margin-bottom: 6px; }
+        .form-input {
+            width: 100%; padding: 10px 14px; border: 2px solid #e5e7eb;
+            border-radius: var(--radius-sm); font-family: inherit; font-size: 0.9rem;
+            transition: border-color 0.3s;
         }
+        .form-input:focus { outline: none; border-color: var(--green); }
+        .auth-error { color: #ef4444; font-size: 0.8rem; margin-bottom: 12px; display: none; }
 
-        .placeholder-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
-            color: white;
-            font-size: 0.75rem;
+        /* ─── Client Selector ─── */
+        .client-bar {
+            display: flex; gap: 12px; align-items: center;
+            margin-bottom: 24px; flex-wrap: wrap;
+        }
+        .client-select {
+            padding: 10px 16px; border: 2px solid #e5e7eb; border-radius: var(--radius-sm);
+            font-family: inherit; font-size: 0.9rem; font-weight: 600;
+            background: white; cursor: pointer; min-width: 200px;
+        }
+        .client-select:focus { outline: none; border-color: var(--green); }
+
+        /* ─── Stats Cards ─── */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px; margin-bottom: 24px;
+        }
+        .stat-card {
+            background: white; border-radius: var(--radius); padding: 24px;
+            box-shadow: var(--shadow); text-align: center;
+        }
+        .stat-card__value {
+            font-size: 1.8rem; font-weight: 800; color: var(--dark);
+            margin-bottom: 4px;
+        }
+        .stat-card__label { font-size: 0.8rem; color: var(--gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card--green .stat-card__value { color: var(--green); }
+        .stat-card--blue .stat-card__value { color: #3b82f6; }
+        .stat-card--orange .stat-card__value { color: #f59e0b; }
+        .stat-card--purple .stat-card__value { color: #8b5cf6; }
+
+        /* ─── Cards ─── */
+        .card {
+            background: white; border-radius: var(--radius); padding: 24px;
+            box-shadow: var(--shadow); margin-bottom: 24px;
+        }
+        .card__title {
+            font-size: 1rem; font-weight: 700; color: var(--dark);
+            margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+        }
+        .card__title-icon { font-size: 1.2rem; }
+
+        /* ─── Upload Zone ─── */
+        .upload-zone {
+            border: 2px dashed #d1d5db; border-radius: var(--radius-sm);
+            padding: 40px 20px; text-align: center; cursor: pointer;
+            transition: all 0.3s; background: #fafafa;
+        }
+        .upload-zone:hover, .upload-zone--active {
+            border-color: var(--green); background: var(--green-light);
+        }
+        .upload-zone__icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .upload-zone__text { font-weight: 600; color: var(--dark); margin-bottom: 4px; }
+        .upload-zone__hint { font-size: 0.8rem; color: var(--gray); }
+
+        /* ─── Table ─── */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { text-align: left; padding: 10px 12px; color: var(--gray); font-weight: 600; border-bottom: 2px solid #e5e7eb; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.3px; }
+        td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; color: var(--dark); }
+        tr:hover td { background: #f9fafb; }
+        .text-right { text-align: right; }
+        .text-bold { font-weight: 700; }
+        .text-muted { color: var(--gray); }
+        .text-sm { font-size: 0.8rem; }
+        .text-green { color: var(--green); }
+        .text-success { color: #10b981; }
+        .text-danger { color: #ef4444; }
+
+        /* ─── Channel Badges ─── */
+        .channel-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 50px; font-size: 0.72rem;
             font-weight: 700;
-            padding: 6px 18px;
-            border-radius: var(--radius-full);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 16px;
         }
+        .channel-badge--google_ads { background: #fef3c7; color: #d97706; }
+        .channel-badge--meta_ads { background: #dbeafe; color: #2563eb; }
+        .channel-badge--direct { background: #f3f4f6; color: #6b7280; }
+        .channel-badge--email { background: #e0e7ff; color: #4f46e5; }
+        .channel-badge--referral { background: #fce7f3; color: #db2777; }
+        .channel-badge--organic { background: #d1fae5; color: #059669; }
+        .channel-badge--tiktok_ads { background: #fae8ff; color: #a855f7; }
 
-        .placeholder-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--color-primary);
-            margin-bottom: 10px;
+        /* ─── Tabs ─── */
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; }
+        .tab {
+            padding: 10px 20px; font-family: inherit; font-size: 0.85rem;
+            font-weight: 600; color: var(--gray); background: none; border: none;
+            cursor: pointer; border-bottom: 3px solid transparent;
+            margin-bottom: -2px; transition: all 0.3s;
         }
+        .tab:hover { color: var(--dark); }
+        .tab--active { color: var(--green); border-bottom-color: var(--green); }
+        .tab-content { display: none; }
+        .tab-content--active { display: block; }
 
-        .placeholder-desc {
-            color: #888;
-            font-size: 0.9rem;
-            max-width: 500px;
-            margin: 0 auto;
-            line-height: 1.6;
+        /* ─── Result Box ─── */
+        .result-box {
+            padding: 16px; border-radius: var(--radius-sm); margin-top: 16px;
         }
+        .result-box--success { background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .result-box--error { background: #fef2f2; border: 1px solid #fca5a5; }
 
-        .page-footer {
-            text-align: center;
-            padding-top: 40px;
-            color: #999;
-            font-size: 0.85rem;
+        /* ─── Loading ─── */
+        .spinner {
+            width: 24px; height: 24px; border: 3px solid #e5e7eb;
+            border-top-color: var(--green); border-radius: 50%;
+            animation: spin 0.8s linear infinite; display: inline-block;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading { display: flex; align-items: center; gap: 10px; color: var(--gray); padding: 20px; }
 
-        @media (max-width: 600px) {
-            .page-header {
-                flex-direction: column;
-                gap: 16px;
-                text-align: center;
-            }
-            .page-header-left { flex-direction: column; }
+        /* ─── Flex helpers ─── */
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .flex { display: flex; align-items: center; }
+        .gap-8 { gap: 8px; }
+        .mb-16 { margin-bottom: 16px; }
+
+        .hidden { display: none !important; }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .page-header { flex-direction: column; gap: 16px; }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div class="page-container">
+<div class="container">
 
-        <header class="page-header">
-            <div class="page-header-left">
-                <div class="page-logo">
-                    <img src="../assets/images/logo-icon.png" alt="Regen Agency">
-                </div>
-                <h1 class="page-title">Vue globale Clients</h1>
-            </div>
-            <div class="page-header-actions">
-                <a href="../connexion.html" class="btn-back">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                    Retour
-                </a>
-                <button class="btn-logout" id="logoutBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                    Déconnexion
-                </button>
-            </div>
-        </header>
+    <!-- Header -->
+    <header class="page-header">
+        <div class="page-header-left">
+            <div class="page-logo"><img src="../assets/images/logo-icon.png" alt="Regen Agency"></div>
+            <h1 class="page-title">Vue globale <span>Clients</span></h1>
+        </div>
+        <div class="header-actions">
+            <a href="../connexion.html" class="btn btn--back">&#8592; Retour Hub</a>
+            <button class="btn btn--danger btn--sm" id="logoutBtn">Deconnexion</button>
+        </div>
+    </header>
 
-        <div class="placeholder-box">
-            <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-            <div class="placeholder-badge">En cours de développement</div>
-            <p class="placeholder-title">Vue globale des espaces clients</p>
-            <p class="placeholder-desc">
-                Vous pourrez bientôt gérer tous vos clients depuis cette interface :
-                suivi des performances, documents partagés et résultats Ads.
-            </p>
+    <!-- ═══ Auth Gate ═══ -->
+    <div id="auth-section" class="auth-box">
+        <h2>Connexion Supabase</h2>
+        <p>Connectez-vous pour acceder aux donnees clients</p>
+        <div class="auth-error" id="auth-error"></div>
+        <form id="auth-form">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input class="form-input" type="email" id="auth-email" placeholder="votre@email.com" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mot de passe</label>
+                <input class="form-input" type="password" id="auth-password" placeholder="Mot de passe" required>
+            </div>
+            <button type="submit" class="btn btn--primary" style="width:100%; justify-content:center; margin-top:8px;">Se connecter</button>
+        </form>
+    </div>
+
+    <!-- ═══ Main App (hidden until auth) ═══ -->
+    <div id="app-section" class="hidden">
+
+        <!-- Client Selector -->
+        <div class="client-bar">
+            <label class="form-label" style="margin:0;">Client :</label>
+            <select class="client-select" id="client-select">
+                <option value="">Chargement...</option>
+            </select>
+            <span class="text-sm text-muted" id="client-info"></span>
         </div>
 
-        <footer class="page-footer">
-            <p>Regen Agency &copy; 2025 - Espace réservé</p>
-        </footer>
+        <!-- Stats -->
+        <div class="stats-grid" id="stats-grid">
+            <div class="stat-card stat-card--green">
+                <div class="stat-card__value" id="stat-ca">-</div>
+                <div class="stat-card__label">CA Total</div>
+            </div>
+            <div class="stat-card stat-card--blue">
+                <div class="stat-card__value" id="stat-orders">-</div>
+                <div class="stat-card__label">Commandes</div>
+            </div>
+            <div class="stat-card stat-card--orange">
+                <div class="stat-card__value" id="stat-ads">-</div>
+                <div class="stat-card__label">Depenses Ads</div>
+            </div>
+            <div class="stat-card stat-card--purple">
+                <div class="stat-card__value" id="stat-roas">-</div>
+                <div class="stat-card__label">ROAS</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab tab--active" data-tab="dashboard">Dashboard</button>
+            <button class="tab" data-tab="import">Import CSV</button>
+            <button class="tab" data-tab="orders">Commandes</button>
+            <button class="tab" data-tab="spend">Depenses Ads</button>
+        </div>
+
+        <!-- ── Tab: Dashboard ── -->
+        <div class="tab-content tab-content--active" id="tab-dashboard">
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128200;</span> Repartition par canal</h3>
+                <div id="channels-table">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128197;</span> Evolution journaliere</h3>
+                <div id="daily-table">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Tab: Import CSV ── -->
+        <div class="tab-content" id="tab-import">
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128228;</span> Importer des commandes (CSV)</h3>
+                <p class="text-muted text-sm mb-16">
+                    Format : CSV separateur point-virgule (;).<br>
+                    Colonnes : ID Commande ; Reference ; Date (DD-MM-YYYY) ; Total TTC ; Page d'entree ; Produits...
+                </p>
+                <div class="upload-zone" id="upload-zone">
+                    <div class="upload-zone__icon">&#128196;</div>
+                    <div class="upload-zone__text">Glissez un fichier CSV ici ou cliquez</div>
+                    <div class="upload-zone__hint">.csv uniquement</div>
+                    <input type="file" id="csv-input" accept=".csv" style="display:none">
+                </div>
+                <div id="csv-preview" class="hidden" style="margin-top:20px;">
+                    <div class="flex-between mb-16">
+                        <h4 class="text-bold">Apercu (<span id="csv-count">0</span> commandes)</h4>
+                        <div class="flex gap-8">
+                            <button class="btn btn--danger btn--sm" id="csv-cancel">Annuler</button>
+                            <button class="btn btn--primary btn--sm" id="csv-import">Importer</button>
+                        </div>
+                    </div>
+                    <div class="table-wrap" style="max-height:400px; overflow-y:auto;">
+                        <table>
+                            <thead><tr><th>ID</th><th>Ref</th><th>Date</th><th class="text-right">Total TTC</th><th>Canal</th><th>Produits</th></tr></thead>
+                            <tbody id="csv-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="csv-result" class="hidden"></div>
+            </div>
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128203;</span> Historique des imports</h3>
+                <div id="import-history">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Tab: Orders ── -->
+        <div class="tab-content" id="tab-orders">
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128722;</span> Dernieres commandes</h3>
+                <div id="orders-table">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Tab: Spend ── -->
+        <div class="tab-content" id="tab-spend">
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128176;</span> Saisie depenses publicitaires</h3>
+                <form id="spend-form">
+                    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-bottom:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Plateforme</label>
+                            <select class="form-input" id="spend-platform">
+                                <option value="google_ads">Google Ads</option>
+                                <option value="meta_ads">Meta Ads</option>
+                                <option value="tiktok_ads">TikTok Ads</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Semaine</label>
+                            <select class="form-input" id="spend-week"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Annee</label>
+                            <select class="form-input" id="spend-year">
+                                <option value="2026">2026</option>
+                                <option value="2025">2025</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-bottom:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Depense (EUR)</label>
+                            <input class="form-input" type="number" step="0.01" id="spend-amount" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CA genere (EUR)</label>
+                            <input class="form-input" type="number" step="0.01" id="spend-revenue" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nb commandes</label>
+                            <input class="form-input" type="number" id="spend-orders-count" placeholder="0">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn--primary">Enregistrer</button>
+                </form>
+            </div>
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128202;</span> Historique depenses</h3>
+                <div id="spend-history">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
-    <script>
-    (function() {
-        if (sessionStorage.getItem('regen_admin_auth') !== 'true') {
-            window.location.href = '../connexion.html';
+    <footer style="text-align:center; padding:30px 0; color:#999; font-size:0.8rem;">
+        Regen Agency &copy; 2025 - Espace reserve
+    </footer>
+</div>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+(function() {
+    'use strict';
+
+    // ── Config ──
+    var SUPABASE_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
+    var AGENCY_ID = '00000000-0000-0000-0000-000000000001';
+
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var currentClient = null;
+    var parsedOrders = [];
+
+    // ── Check admin password ──
+    if (sessionStorage.getItem('regen_admin_auth') !== 'true') {
+        window.location.href = '../connexion.html';
+        return;
+    }
+
+    // ── DOM refs ──
+    var authSection = document.getElementById('auth-section');
+    var appSection = document.getElementById('app-section');
+    var authForm = document.getElementById('auth-form');
+    var authError = document.getElementById('auth-error');
+
+    // ── Init: check Supabase session ──
+    sb.auth.getSession().then(function(res) {
+        if (res.data.session) {
+            showApp();
+        }
+    });
+
+    // ── Auth Form ──
+    authForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        authError.style.display = 'none';
+
+        var email = document.getElementById('auth-email').value;
+        var password = document.getElementById('auth-password').value;
+
+        var result = await sb.auth.signInWithPassword({ email: email, password: password });
+
+        if (result.error) {
+            authError.textContent = result.error.message;
+            authError.style.display = 'block';
             return;
         }
 
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            sessionStorage.removeItem('regen_admin_auth');
-            window.location.href = '../connexion.html';
+        showApp();
+    });
+
+    // ── Logout ──
+    document.getElementById('logoutBtn').addEventListener('click', async function() {
+        await sb.auth.signOut();
+        sessionStorage.removeItem('regen_admin_auth');
+        window.location.href = '../connexion.html';
+    });
+
+    // ═══════════════════════════════════════
+    // SHOW APP
+    // ═══════════════════════════════════════
+    async function showApp() {
+        authSection.classList.add('hidden');
+        appSection.classList.remove('hidden');
+
+        await loadClients();
+        setupTabs();
+        setupCSVUpload();
+        setupSpendForm();
+        populateWeeks();
+    }
+
+    // ── Load Clients ──
+    async function loadClients() {
+        var res = await sb.from('clients').select('*').eq('agency_id', AGENCY_ID).eq('is_active', true).order('name');
+        var clients = res.data || [];
+        var select = document.getElementById('client-select');
+
+        if (clients.length === 0) {
+            select.innerHTML = '<option value="">Aucun client</option>';
+            return;
+        }
+
+        var html = '';
+        clients.forEach(function(c) {
+            html += '<option value="' + c.id + '">' + c.name + (c.website ? ' (' + c.website.replace('https://', '') + ')' : '') + '</option>';
         });
-    })();
-    </script>
+        select.innerHTML = html;
+
+        currentClient = clients[0];
+        select.addEventListener('change', function() {
+            currentClient = clients.find(function(c) { return c.id === select.value; });
+            loadAllData();
+        });
+
+        loadAllData();
+    }
+
+    // ── Load All Data for selected client ──
+    function loadAllData() {
+        if (!currentClient) return;
+        document.getElementById('client-info').textContent = currentClient.platform || '';
+        loadStats();
+        loadChannels();
+        loadDaily();
+        loadOrders();
+        loadSpendHistory();
+        loadImportHistory();
+    }
+
+    // ── Stats ──
+    async function loadStats() {
+        var from = new Date(); from.setDate(from.getDate() - 90);
+        var fromStr = from.toISOString().split('T')[0];
+        var toStr = new Date().toISOString().split('T')[0];
+
+        // Orders
+        var ordRes = await sb.from('orders').select('total_ttc').eq('client_id', currentClient.id).gte('order_date', fromStr).lte('order_date', toStr);
+        var orders = ordRes.data || [];
+        var totalCA = orders.reduce(function(s, o) { return s + parseFloat(o.total_ttc || 0); }, 0);
+        var totalOrders = orders.length;
+
+        document.getElementById('stat-ca').textContent = formatMoney(totalCA);
+        document.getElementById('stat-orders').textContent = totalOrders;
+
+        // Ad spend (weekly manual)
+        var spendRes = await sb.from('ad_weekly_spend').select('spend').eq('client_id', currentClient.id);
+        var totalSpend = (spendRes.data || []).reduce(function(s, r) { return s + parseFloat(r.spend || 0); }, 0);
+
+        document.getElementById('stat-ads').textContent = formatMoney(totalSpend);
+        document.getElementById('stat-roas').textContent = totalSpend > 0 ? (totalCA / totalSpend).toFixed(2) + 'x' : '-';
+    }
+
+    // ── Channels ──
+    async function loadChannels() {
+        var container = document.getElementById('channels-table');
+        var res = await sb.from('orders').select('channel, total_ttc').eq('client_id', currentClient.id);
+        var orders = res.data || [];
+
+        if (orders.length === 0) { container.innerHTML = '<p class="text-muted text-sm">Aucune commande.</p>'; return; }
+
+        var channels = {};
+        orders.forEach(function(o) {
+            var ch = o.channel || 'direct';
+            if (!channels[ch]) channels[ch] = { count: 0, revenue: 0 };
+            channels[ch].count++;
+            channels[ch].revenue += parseFloat(o.total_ttc || 0);
+        });
+
+        var html = '<div class="table-wrap"><table><thead><tr><th>Canal</th><th class="text-right">Commandes</th><th class="text-right">CA</th><th class="text-right">Panier moyen</th></tr></thead><tbody>';
+        Object.keys(channels).sort(function(a, b) { return channels[b].revenue - channels[a].revenue; }).forEach(function(ch) {
+            var d = channels[ch];
+            var label = { google_ads:'Google Ads', meta_ads:'Meta Ads', tiktok_ads:'TikTok Ads', email:'Email', direct:'Direct', referral:'Referral', organic:'Organic', other:'Autre' }[ch] || ch;
+            html += '<tr><td><span class="channel-badge channel-badge--' + ch + '">' + label + '</span></td>';
+            html += '<td class="text-right">' + d.count + '</td>';
+            html += '<td class="text-right text-bold">' + formatMoney(d.revenue) + '</td>';
+            html += '<td class="text-right">' + formatMoney(d.revenue / d.count) + '</td></tr>';
+        });
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    }
+
+    // ── Daily ──
+    async function loadDaily() {
+        var container = document.getElementById('daily-table');
+        var res = await sb.from('orders').select('order_date, total_ttc').eq('client_id', currentClient.id).order('order_date', { ascending: false }).limit(200);
+        var orders = res.data || [];
+
+        if (orders.length === 0) { container.innerHTML = '<p class="text-muted text-sm">Aucune donnee.</p>'; return; }
+
+        var days = {};
+        orders.forEach(function(o) {
+            if (!days[o.order_date]) days[o.order_date] = { count: 0, revenue: 0 };
+            days[o.order_date].count++;
+            days[o.order_date].revenue += parseFloat(o.total_ttc || 0);
+        });
+
+        var html = '<div class="table-wrap" style="max-height:300px; overflow-y:auto;"><table><thead><tr><th>Date</th><th class="text-right">Commandes</th><th class="text-right">CA</th></tr></thead><tbody>';
+        Object.keys(days).sort().reverse().slice(0, 30).forEach(function(d) {
+            html += '<tr><td>' + formatDate(d) + '</td><td class="text-right">' + days[d].count + '</td><td class="text-right text-bold">' + formatMoney(days[d].revenue) + '</td></tr>';
+        });
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    }
+
+    // ── Orders ──
+    async function loadOrders() {
+        var container = document.getElementById('orders-table');
+        var res = await sb.from('orders').select('*').eq('client_id', currentClient.id).order('order_date', { ascending: false }).limit(50);
+        var orders = res.data || [];
+
+        if (orders.length === 0) { container.innerHTML = '<p class="text-muted text-sm">Aucune commande importee.</p>'; return; }
+
+        var html = '<div class="table-wrap" style="max-height:500px; overflow-y:auto;"><table><thead><tr><th>ID</th><th>Ref</th><th>Date</th><th class="text-right">Total TTC</th><th>Canal</th><th>Source</th></tr></thead><tbody>';
+        orders.forEach(function(o) {
+            var ch = o.channel || 'direct';
+            var label = { google_ads:'Google Ads', meta_ads:'Meta Ads', tiktok_ads:'TikTok Ads', email:'Email', direct:'Direct', referral:'Referral', organic:'Organic' }[ch] || ch;
+            html += '<tr><td>' + (o.external_id || '-') + '</td>';
+            html += '<td><code style="font-size:0.75rem; background:#f3f4f6; padding:2px 6px; border-radius:4px;">' + (o.reference || '-') + '</code></td>';
+            html += '<td>' + formatDate(o.order_date) + '</td>';
+            html += '<td class="text-right text-bold">' + formatMoney(o.total_ttc) + '</td>';
+            html += '<td><span class="channel-badge channel-badge--' + ch + '">' + label + '</span></td>';
+            html += '<td class="text-sm text-muted">' + (o.import_source || '-') + '</td></tr>';
+        });
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    // CSV IMPORT
+    // ═══════════════════════════════════════
+    function setupCSVUpload() {
+        var zone = document.getElementById('upload-zone');
+        var input = document.getElementById('csv-input');
+
+        zone.addEventListener('click', function() { input.click(); });
+        zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('upload-zone--active'); });
+        zone.addEventListener('dragleave', function() { zone.classList.remove('upload-zone--active'); });
+        zone.addEventListener('drop', function(e) {
+            e.preventDefault(); zone.classList.remove('upload-zone--active');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+        input.addEventListener('change', function() { if (input.files.length) handleFile(input.files[0]); });
+
+        document.getElementById('csv-cancel').addEventListener('click', function() {
+            parsedOrders = [];
+            document.getElementById('csv-preview').classList.add('hidden');
+            document.getElementById('csv-result').classList.add('hidden');
+            input.value = '';
+        });
+
+        document.getElementById('csv-import').addEventListener('click', importCSV);
+    }
+
+    function handleFile(file) {
+        if (!file.name.endsWith('.csv')) { alert('Fichier CSV uniquement.'); return; }
+        var reader = new FileReader();
+        reader.onload = function(e) { parseCSV(e.target.result); };
+        reader.readAsText(file, 'UTF-8');
+    }
+
+    function parseCSV(content) {
+        var lines = content.trim().split('\n');
+        if (lines.length < 2) { alert('CSV vide.'); return; }
+
+        parsedOrders = [];
+        for (var i = 1; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if (!line) continue;
+
+            var fields = parseCSVLine(line, ';');
+            if (fields.length < 4) continue;
+
+            var externalId = clean(fields[0]);
+            var reference = clean(fields[1]);
+            var dateStr = clean(fields[2]);
+            var totalStr = clean(fields[3]);
+            var sourceUrl = clean(fields[4] || '');
+
+            var products = [];
+            for (var j = 5; j < fields.length && j < 10; j++) {
+                var p = clean(fields[j]);
+                if (p) products.push(p);
+            }
+
+            // Date DD-MM-YYYY -> YYYY-MM-DD
+            var parts = dateStr.split('-');
+            var orderDate = parts.length === 3 ? parts[2] + '-' + parts[1] + '-' + parts[0] : null;
+
+            var total = parseFloat(totalStr.replace(/[^\d,.-]/g, '').replace(',', '.'));
+
+            if (externalId && orderDate && !isNaN(total)) {
+                parsedOrders.push({
+                    external_id: externalId,
+                    reference: reference,
+                    order_date: orderDate,
+                    total_ttc: total,
+                    source_url: sourceUrl,
+                    channel: detectChannel(sourceUrl),
+                    items: products.map(function(p) { return { name: p }; })
+                });
+            }
+        }
+
+        showPreview();
+    }
+
+    function parseCSVLine(line, delim) {
+        var fields = [], current = '', inQ = false;
+        for (var i = 0; i < line.length; i++) {
+            var c = line[i];
+            if (c === '"') inQ = !inQ;
+            else if (c === delim && !inQ) { fields.push(current); current = ''; }
+            else current += c;
+        }
+        fields.push(current);
+        return fields;
+    }
+
+    function clean(v) { return (v || '').replace(/^"|"$/g, '').trim(); }
+
+    function detectChannel(url) {
+        if (!url) return 'direct';
+        url = url.toLowerCase();
+        if (url.indexOf('gclid=') !== -1) return 'google_ads';
+        if (url.indexOf('fbclid=') !== -1 || url.indexOf('utm_source=facebook') !== -1) return 'meta_ads';
+        if (url.indexOf('ttclid=') !== -1) return 'tiktok_ads';
+        if (url.indexOf('utm_medium=email') !== -1) return 'email';
+        if (url.indexOf('utm_') !== -1) return 'referral';
+        return 'direct';
+    }
+
+    function showPreview() {
+        document.getElementById('csv-count').textContent = parsedOrders.length;
+        var html = '';
+        parsedOrders.forEach(function(o) {
+            var label = { google_ads:'Google Ads', meta_ads:'Meta Ads', direct:'Direct', email:'Email', referral:'Referral', tiktok_ads:'TikTok' }[o.channel] || o.channel;
+            var prods = o.items.map(function(i) { return i.name; }).join(', ');
+            if (prods.length > 60) prods = prods.substring(0, 60) + '...';
+            html += '<tr><td>' + o.external_id + '</td><td><code style="font-size:0.75rem;">' + o.reference + '</code></td>';
+            html += '<td>' + formatDate(o.order_date) + '</td><td class="text-right text-bold">' + formatMoney(o.total_ttc) + '</td>';
+            html += '<td><span class="channel-badge channel-badge--' + o.channel + '">' + label + '</span></td>';
+            html += '<td class="text-sm text-muted">' + (prods || '-') + '</td></tr>';
+        });
+        document.getElementById('csv-body').innerHTML = html;
+        document.getElementById('csv-preview').classList.remove('hidden');
+        document.getElementById('csv-result').classList.add('hidden');
+    }
+
+    async function importCSV() {
+        if (!currentClient) { alert('Selectionnez un client.'); return; }
+        if (!parsedOrders.length) return;
+
+        var btn = document.getElementById('csv-import');
+        btn.disabled = true; btn.textContent = 'Import en cours...';
+
+        try {
+            var res = await sb.rpc('import_orders_batch', {
+                p_client_id: currentClient.id,
+                p_orders: parsedOrders,
+                p_source: 'csv'
+            });
+
+            if (res.error) throw res.error;
+
+            var d = res.data;
+            var resultEl = document.getElementById('csv-result');
+            resultEl.innerHTML = '<div class="result-box result-box--success">'
+                + '<p class="text-bold text-success">Import termine !</p>'
+                + '<p>' + d.imported + ' commandes importees, ' + d.skipped + ' ignorees (doublons).</p>'
+                + '</div>';
+            resultEl.classList.remove('hidden');
+
+            parsedOrders = [];
+            document.getElementById('csv-preview').classList.add('hidden');
+            document.getElementById('csv-input').value = '';
+
+            loadAllData();
+        } catch(err) {
+            var resultEl = document.getElementById('csv-result');
+            resultEl.innerHTML = '<div class="result-box result-box--error"><p class="text-bold text-danger">Erreur</p><p>' + (err.message || err) + '</p></div>';
+            resultEl.classList.remove('hidden');
+        }
+
+        btn.disabled = false; btn.textContent = 'Importer';
+    }
+
+    // ═══════════════════════════════════════
+    // SPEND
+    // ═══════════════════════════════════════
+    function populateWeeks() {
+        var sel = document.getElementById('spend-week');
+        var now = new Date();
+        var currentWeek = getWeekNum(now);
+        var html = '';
+        for (var w = 1; w <= 53; w++) {
+            html += '<option value="' + w + '"' + (w === currentWeek ? ' selected' : '') + '>Semaine ' + w + '</option>';
+        }
+        sel.innerHTML = html;
+    }
+
+    function getWeekNum(d) {
+        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+        var y = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        return Math.ceil((((d - y) / 86400000) + 1) / 7);
+    }
+
+    function setupSpendForm() {
+        document.getElementById('spend-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!currentClient) { alert('Selectionnez un client.'); return; }
+
+            var spend = parseFloat(document.getElementById('spend-amount').value);
+            if (isNaN(spend) || spend <= 0) { alert('Montant invalide.'); return; }
+
+            try {
+                var res = await sb.from('ad_weekly_spend').upsert({
+                    client_id: currentClient.id,
+                    platform: document.getElementById('spend-platform').value,
+                    year: parseInt(document.getElementById('spend-year').value),
+                    week: parseInt(document.getElementById('spend-week').value),
+                    spend: spend,
+                    revenue: parseFloat(document.getElementById('spend-revenue').value) || 0,
+                    orders_count: parseInt(document.getElementById('spend-orders-count').value) || 0
+                }, { onConflict: 'client_id,platform,year,week' });
+
+                if (res.error) throw res.error;
+                alert('Depense enregistree !');
+                e.target.reset();
+                populateWeeks();
+                loadSpendHistory();
+                loadStats();
+            } catch(err) {
+                alert('Erreur: ' + (err.message || err));
+            }
+        });
+    }
+
+    async function loadSpendHistory() {
+        var container = document.getElementById('spend-history');
+        if (!currentClient) return;
+
+        var res = await sb.from('ad_weekly_spend').select('*').eq('client_id', currentClient.id).order('year', { ascending: false }).order('week', { ascending: false }).limit(20);
+        var data = res.data || [];
+
+        if (!data.length) { container.innerHTML = '<p class="text-muted text-sm">Aucune depense.</p>'; return; }
+
+        var html = '<div class="table-wrap"><table><thead><tr><th>Plateforme</th><th>Annee</th><th>Semaine</th><th class="text-right">Depense</th><th class="text-right">CA</th><th class="text-right">ROAS</th><th class="text-right">Commandes</th></tr></thead><tbody>';
+        data.forEach(function(r) {
+            var label = { google_ads:'Google Ads', meta_ads:'Meta Ads', tiktok_ads:'TikTok Ads' }[r.platform] || r.platform;
+            var roas = r.spend > 0 ? (r.revenue / r.spend).toFixed(2) + 'x' : '-';
+            html += '<tr><td><span class="channel-badge channel-badge--' + r.platform + '">' + label + '</span></td>';
+            html += '<td>' + r.year + '</td><td>S' + r.week + '</td>';
+            html += '<td class="text-right">' + formatMoney(r.spend) + '</td>';
+            html += '<td class="text-right">' + formatMoney(r.revenue) + '</td>';
+            html += '<td class="text-right text-bold">' + roas + '</td>';
+            html += '<td class="text-right">' + (r.orders_count || 0) + '</td></tr>';
+        });
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    }
+
+    async function loadImportHistory() {
+        var container = document.getElementById('import-history');
+        if (!currentClient) return;
+
+        var res = await sb.from('import_logs').select('*').eq('client_id', currentClient.id).order('created_at', { ascending: false }).limit(10);
+        var data = res.data || [];
+
+        if (!data.length) { container.innerHTML = '<p class="text-muted text-sm">Aucun import.</p>'; return; }
+
+        var html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Source</th><th>Statut</th><th class="text-right">Importees</th><th class="text-right">Ignorees</th></tr></thead><tbody>';
+        data.forEach(function(l) {
+            var badge = l.status === 'completed' ? '<span style="color:#10b981; font-weight:700;">OK</span>' : l.status === 'failed' ? '<span class="text-danger">Erreur</span>' : 'En cours';
+            html += '<tr><td>' + new Date(l.created_at).toLocaleDateString('fr-FR') + '</td>';
+            html += '<td>' + l.source + '</td><td>' + badge + '</td>';
+            html += '<td class="text-right">' + (l.rows_imported || 0) + '</td>';
+            html += '<td class="text-right">' + (l.rows_skipped || 0) + '</td></tr>';
+        });
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    // TABS
+    // ═══════════════════════════════════════
+    function setupTabs() {
+        document.querySelectorAll('.tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('tab--active'); });
+                document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('tab-content--active'); });
+                tab.classList.add('tab--active');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('tab-content--active');
+            });
+        });
+    }
+
+    // ═══════════════════════════════════════
+    // HELPERS
+    // ═══════════════════════════════════════
+    function formatMoney(n) {
+        return parseFloat(n || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' EUR';
+    }
+    function formatDate(d) {
+        if (!d) return '-';
+        var parts = d.split('-');
+        return parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : d;
+    }
+
+})();
+</script>
 
 </body>
 </html>
