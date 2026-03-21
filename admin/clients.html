@@ -80,33 +80,56 @@
         /* ─── Client Selector ─── */
         .client-bar {
             display: flex; gap: 12px; align-items: center;
-            margin-bottom: 24px; flex-wrap: wrap;
+            margin-bottom: 16px; flex-wrap: wrap;
+            background: white; padding: 16px 24px;
+            border-radius: var(--radius); box-shadow: var(--shadow);
         }
         .client-select {
             padding: 10px 16px; border: 2px solid #e5e7eb; border-radius: var(--radius-sm);
-            font-family: inherit; font-size: 0.9rem; font-weight: 600;
-            background: white; cursor: pointer; min-width: 200px;
+            font-family: inherit; font-size: 0.9rem; font-weight: 700;
+            background: white; cursor: pointer; min-width: 240px;
+            color: var(--dark);
         }
         .client-select:focus { outline: none; border-color: var(--green); }
+        .client-links { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        .client-links a {
+            font-size: 0.75rem; font-weight: 600; color: var(--green);
+            text-decoration: none; padding: 4px 10px; background: var(--green-light);
+            border-radius: 50px; transition: all 0.3s;
+        }
+        .client-links a:hover { background: var(--green); color: white; }
 
         /* ─── Stats Cards ─── */
         .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px; margin-bottom: 24px;
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 0; margin-bottom: 24px; background: white;
+            border-radius: var(--radius); box-shadow: var(--shadow);
+            overflow: hidden;
         }
         .stat-card {
-            background: white; border-radius: var(--radius); padding: 24px;
-            box-shadow: var(--shadow); text-align: center;
+            padding: 24px 20px; text-align: center;
+            border-right: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0;
+            position: relative;
         }
+        .stat-card:nth-child(3n) { border-right: none; }
+        .stat-card:nth-last-child(-n+3) { border-bottom: none; }
         .stat-card__value {
-            font-size: 1.8rem; font-weight: 800; color: var(--dark);
-            margin-bottom: 4px;
+            font-size: 1.6rem; font-weight: 800; color: var(--dark);
+            margin-bottom: 2px; line-height: 1.2;
         }
-        .stat-card__label { font-size: 0.8rem; color: var(--gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card__label {
+            font-size: 0.7rem; color: var(--gray); font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.8px;
+        }
+        .stat-card__trend {
+            font-size: 0.7rem; font-weight: 700; margin-top: 4px;
+        }
         .stat-card--green .stat-card__value { color: var(--green); }
         .stat-card--blue .stat-card__value { color: #3b82f6; }
         .stat-card--orange .stat-card__value { color: #f59e0b; }
         .stat-card--purple .stat-card__value { color: #8b5cf6; }
+        .stat-card--teal .stat-card__value { color: #0d9488; }
+        .stat-card--rose .stat-card__value { color: #e11d48; }
 
         /* ─── Cards ─── */
         .card {
@@ -249,10 +272,13 @@
         /* ─── Responsive ─── */
         @media (max-width: 768px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-card:nth-child(2n) { border-right: none; }
             .page-header { flex-direction: column; gap: 16px; }
+            .client-bar { flex-direction: column; align-items: stretch; }
+            .client-select { min-width: auto; }
         }
         @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -295,13 +321,14 @@
 
         <!-- Client Selector -->
         <div class="client-bar">
-            <label class="form-label" style="margin:0;">Client :</label>
             <select class="client-select" id="client-select">
                 <option value="">Chargement...</option>
             </select>
-            <span class="text-sm text-muted" id="client-info"></span>
-            <button class="btn btn--primary btn--sm" id="add-client-btn" style="margin-left:auto;">+ Nouveau client</button>
-            <button class="btn btn--sm" id="config-client-btn" style="background:#3b82f6; color:white; border-color:#3b82f6;">Config Ads</button>
+            <div class="client-links" id="client-info"></div>
+            <div style="margin-left:auto; display:flex; gap:8px;">
+                <button class="btn btn--primary btn--sm" id="add-client-btn">+ Nouveau client</button>
+                <button class="btn btn--sm" id="config-client-btn" style="background:#3b82f6; color:white; border-color:#3b82f6;">Config Ads</button>
+            </div>
         </div>
 
         <!-- Modal: Add Client -->
@@ -403,28 +430,28 @@
         <!-- Stats Cards -->
         <div class="stats-grid" id="stats-grid">
             <div class="stat-card stat-card--green">
-                <div class="stat-card__value" id="stat-ca">-</div>
                 <div class="stat-card__label">CA Total</div>
+                <div class="stat-card__value" id="stat-ca">-</div>
             </div>
             <div class="stat-card stat-card--blue">
-                <div class="stat-card__value" id="stat-orders">-</div>
                 <div class="stat-card__label">Commandes</div>
+                <div class="stat-card__value" id="stat-orders">-</div>
             </div>
             <div class="stat-card stat-card--orange">
-                <div class="stat-card__value" id="stat-ads">-</div>
                 <div class="stat-card__label">Depenses Ads</div>
+                <div class="stat-card__value" id="stat-ads">-</div>
             </div>
             <div class="stat-card stat-card--purple">
-                <div class="stat-card__value" id="stat-roas">-</div>
                 <div class="stat-card__label">ROAS</div>
+                <div class="stat-card__value" id="stat-roas">-</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-card__value" id="stat-aov">-</div>
+            <div class="stat-card stat-card--teal">
                 <div class="stat-card__label">Panier Moyen</div>
+                <div class="stat-card__value" id="stat-aov">-</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-card__value" id="stat-cpa">-</div>
+            <div class="stat-card stat-card--rose">
                 <div class="stat-card__label">CPA</div>
+                <div class="stat-card__value" id="stat-cpa">-</div>
             </div>
         </div>
 
@@ -770,10 +797,11 @@
         if (!currentClient) return;
         var notes = currentClient.notes || {};
         if (typeof notes === 'string') try { notes = JSON.parse(notes); } catch(e) { notes = {}; }
-        var infoHtml = '<span>' + (currentClient.platform || '') + '</span>';
-        if (notes.email) infoHtml += ' &middot; <a href="mailto:' + notes.email + '" style="color:var(--green);">' + notes.email + '</a>';
-        if (notes.backoffice_url) infoHtml += ' &middot; <a href="' + notes.backoffice_url + '" target="_blank" style="color:var(--green);">Back-office</a>';
-        if (notes.pappers_url) infoHtml += ' &middot; <a href="' + notes.pappers_url + '" target="_blank" style="color:var(--green);">Pappers</a>';
+        var infoHtml = '<a href="#" onclick="return false;" style="background:#f3f4f6; color:var(--gray); cursor:default;">' + (currentClient.platform || 'web') + '</a>';
+        if (notes.email) infoHtml += '<a href="mailto:' + notes.email + '">&#9993; ' + notes.email + '</a>';
+        if (notes.backoffice_url) infoHtml += '<a href="' + notes.backoffice_url + '" target="_blank">&#128274; Back-office</a>';
+        if (notes.pappers_url) infoHtml += '<a href="' + notes.pappers_url + '" target="_blank">&#128196; Pappers</a>';
+        if (currentClient.website) infoHtml += '<a href="' + currentClient.website + '" target="_blank">&#127760; Site</a>';
         document.getElementById('client-info').innerHTML = infoHtml;
         loadDashboard();
         loadOrders();
