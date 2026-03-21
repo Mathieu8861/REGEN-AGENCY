@@ -195,6 +195,55 @@
         .gap-8 { gap: 8px; }
         .mb-16 { margin-bottom: 16px; }
 
+        /* ─── Date Pills ─── */
+        .date-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+        .date-pill {
+            padding: 6px 14px; border: 2px solid #e5e7eb; border-radius: 50px;
+            font-family: inherit; font-size: 0.75rem; font-weight: 600;
+            color: var(--gray); background: white; cursor: pointer; transition: all 0.3s;
+        }
+        .date-pill:hover { border-color: var(--green); color: var(--green); }
+        .date-pill--active { background: var(--green); color: white; border-color: var(--green); }
+
+        /* ─── Attribution Table (TripleWhale style) ─── */
+        .attr-table { width: 100%; border-collapse: collapse; }
+        .attr-table th {
+            text-align: center; padding: 10px 8px; color: var(--gray);
+            font-weight: 700; font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 0.3px; border-bottom: 2px solid #e5e7eb;
+        }
+        .attr-table th:first-child { text-align: left; }
+        .attr-table td {
+            padding: 14px 8px; border-bottom: 1px solid #f3f4f6;
+            text-align: center; font-size: 0.85rem; color: var(--dark);
+        }
+        .attr-table td:first-child { text-align: left; }
+        .attr-table tr:hover td { background: #f9fafb; }
+        .attr-table .attr-source {
+            display: flex; align-items: center; gap: 8px; font-weight: 700;
+        }
+        .attr-table .attr-source-icon {
+            width: 28px; height: 28px; border-radius: 8px; display: flex;
+            align-items: center; justify-content: center; font-size: 0.85rem;
+            font-weight: 800; color: white; flex-shrink: 0;
+        }
+        .attr-icon--google { background: #fbbc04; }
+        .attr-icon--meta { background: #1877f2; }
+        .attr-icon--tiktok { background: #010101; }
+        .attr-icon--direct { background: #9ca3af; }
+        .attr-icon--email { background: #6366f1; }
+        .attr-icon--referral { background: #ec4899; }
+        .attr-icon--organic { background: #10b981; }
+        .attr-icon--snapchat { background: #fffc00; color: #000; }
+        .attr-table .attr-total td { font-weight: 800; background: #f9fafb; border-top: 2px solid #e5e7eb; }
+        .attr-roas-badge {
+            display: inline-block; padding: 3px 10px; border-radius: 50px;
+            font-weight: 700; font-size: 0.75rem;
+        }
+        .attr-roas--good { background: #d1fae5; color: #059669; }
+        .attr-roas--ok { background: #fef3c7; color: #d97706; }
+        .attr-roas--bad { background: #fee2e2; color: #ef4444; }
+
         .hidden { display: none !important; }
 
         /* ─── Responsive ─── */
@@ -329,7 +378,29 @@
             </div>
         </div>
 
-        <!-- Stats -->
+        <!-- Date Range Picker -->
+        <div class="card" style="margin-bottom:20px; padding:16px 24px;">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <span class="text-sm text-bold" style="color:var(--dark);">Periode :</span>
+                <div class="date-pills" id="date-pills">
+                    <button class="date-pill" data-range="today">Aujourd'hui</button>
+                    <button class="date-pill" data-range="7d">7 jours</button>
+                    <button class="date-pill date-pill--active" data-range="30d">30 jours</button>
+                    <button class="date-pill" data-range="this-month">Mois en cours</button>
+                    <button class="date-pill" data-range="last-month">Mois precedent</button>
+                    <button class="date-pill" data-range="custom">Personnalise</button>
+                </div>
+                <div id="custom-dates" class="hidden" style="display:flex; gap:8px; align-items:center;">
+                    <input type="date" class="form-input" id="date-from" style="width:auto; padding:6px 10px; font-size:0.8rem;">
+                    <span class="text-muted">-</span>
+                    <input type="date" class="form-input" id="date-to" style="width:auto; padding:6px 10px; font-size:0.8rem;">
+                    <button class="btn btn--primary btn--sm" id="apply-dates">OK</button>
+                </div>
+                <span class="text-sm text-muted" id="date-range-label" style="margin-left:auto;"></span>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
         <div class="stats-grid" id="stats-grid">
             <div class="stat-card stat-card--green">
                 <div class="stat-card__value" id="stat-ca">-</div>
@@ -347,37 +418,47 @@
                 <div class="stat-card__value" id="stat-roas">-</div>
                 <div class="stat-card__label">ROAS</div>
             </div>
-        </div>
-
-        <!-- Sync Status Bar -->
-        <div id="sync-bar" class="hidden" style="display:flex; align-items:center; gap:12px; margin-bottom:16px; padding:12px 20px; background:white; border-radius:var(--radius-sm); box-shadow:var(--shadow); flex-wrap:wrap;">
-            <span id="sync-status" class="text-sm"></span>
-            <div style="margin-left:auto; display:flex; gap:8px;">
-                <button class="btn btn--primary btn--sm" id="sync-gads-btn" style="display:none;">Sync Google Ads</button>
-                <button class="btn btn--sm" id="sync-meta-btn" style="display:none; background:#2563eb; color:white; border-color:#2563eb;">Sync Meta Ads</button>
+            <div class="stat-card">
+                <div class="stat-card__value" id="stat-aov">-</div>
+                <div class="stat-card__label">Panier Moyen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card__value" id="stat-cpa">-</div>
+                <div class="stat-card__label">CPA</div>
             </div>
         </div>
 
         <!-- Tabs -->
         <div class="tabs">
-            <button class="tab tab--active" data-tab="dashboard">Dashboard</button>
+            <button class="tab tab--active" data-tab="dashboard">Attribution</button>
+            <button class="tab" data-tab="weekly">Recap Hebdo</button>
             <button class="tab" data-tab="campaigns">Campagnes</button>
             <button class="tab" data-tab="import">Import CSV</button>
             <button class="tab" data-tab="orders">Commandes</button>
             <button class="tab" data-tab="spend">Depenses Ads</button>
         </div>
 
-        <!-- ── Tab: Dashboard ── -->
+        <!-- ── Tab: Attribution (TripleWhale style) ── -->
         <div class="tab-content tab-content--active" id="tab-dashboard">
             <div class="card">
-                <h3 class="card__title"><span class="card__title-icon">&#128200;</span> Repartition par canal</h3>
-                <div id="channels-table">
+                <h3 class="card__title"><span class="card__title-icon">&#128200;</span> Attribution par source</h3>
+                <div id="attribution-table">
                     <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
                 </div>
             </div>
             <div class="card">
                 <h3 class="card__title"><span class="card__title-icon">&#128197;</span> Evolution journaliere</h3>
                 <div id="daily-table">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Tab: Weekly Recap ── -->
+        <div class="tab-content" id="tab-weekly">
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128202;</span> Recap hebdomadaire</h3>
+                <div id="weekly-recap">
                     <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
                 </div>
             </div>
@@ -579,6 +660,7 @@
         appSection.classList.remove('hidden');
 
         await loadClients();
+        initDateRange();
         setupTabs();
         setupCSVUpload();
         setupSpendForm();
@@ -612,6 +694,77 @@
         loadAllData();
     }
 
+    // ── Date Range State ──
+    var dateRange = { from: null, to: null };
+
+    function initDateRange() {
+        // Default: 30 days
+        setDateRange('30d');
+
+        // Date pill clicks
+        document.querySelectorAll('.date-pill').forEach(function(pill) {
+            pill.addEventListener('click', function() {
+                document.querySelectorAll('.date-pill').forEach(function(p) { p.classList.remove('date-pill--active'); });
+                pill.classList.add('date-pill--active');
+                var range = pill.dataset.range;
+                if (range === 'custom') {
+                    document.getElementById('custom-dates').classList.remove('hidden');
+                } else {
+                    document.getElementById('custom-dates').classList.add('hidden');
+                    setDateRange(range);
+                    loadAllData();
+                }
+            });
+        });
+
+        // Custom date apply
+        document.getElementById('apply-dates').addEventListener('click', function() {
+            var from = document.getElementById('date-from').value;
+            var to = document.getElementById('date-to').value;
+            if (from && to) {
+                dateRange.from = from;
+                dateRange.to = to;
+                updateDateLabel();
+                loadAllData();
+            }
+        });
+    }
+
+    function setDateRange(range) {
+        var now = new Date();
+        var to = new Date(now);
+        var from = new Date(now);
+
+        switch(range) {
+            case 'today':
+                break;
+            case '7d':
+                from.setDate(from.getDate() - 6);
+                break;
+            case '30d':
+                from.setDate(from.getDate() - 29);
+                break;
+            case 'this-month':
+                from = new Date(now.getFullYear(), now.getMonth(), 1);
+                break;
+            case 'last-month':
+                from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                to = new Date(now.getFullYear(), now.getMonth(), 0);
+                break;
+        }
+
+        dateRange.from = formatISODate(from);
+        dateRange.to = formatISODate(to);
+        updateDateLabel();
+    }
+
+    function updateDateLabel() {
+        var label = document.getElementById('date-range-label');
+        if (label) {
+            label.textContent = formatDate(dateRange.from) + ' → ' + formatDate(dateRange.to);
+        }
+    }
+
     // ── Load All Data for selected client ──
     function loadAllData() {
         if (!currentClient) return;
@@ -622,93 +775,141 @@
         if (notes.backoffice_url) infoHtml += ' &middot; <a href="' + notes.backoffice_url + '" target="_blank" style="color:var(--green);">Back-office</a>';
         if (notes.pappers_url) infoHtml += ' &middot; <a href="' + notes.pappers_url + '" target="_blank" style="color:var(--green);">Pappers</a>';
         document.getElementById('client-info').innerHTML = infoHtml;
-        loadStats();
-        loadChannels();
-        loadDaily();
+        loadDashboard();
         loadOrders();
         loadSpendHistory();
         loadImportHistory();
-        loadCampaigns();
-        loadApiDailyMetrics();
-        loadSyncStatus();
+        loadWeeklyRecap();
     }
 
-    // ── Stats (merges API + manual spend) ──
-    async function loadStats() {
-        var from = new Date(); from.setDate(from.getDate() - 90);
-        var fromStr = from.toISOString().split('T')[0];
-        var toStr = new Date().toISOString().split('T')[0];
+    // ═══════════════════════════════════════
+    // DASHBOARD (TripleWhale style)
+    // ═══════════════════════════════════════
+    async function loadDashboard() {
+        var fromStr = dateRange.from;
+        var toStr = dateRange.to;
 
-        // Orders
-        var ordRes = await sb.from('orders').select('total_ttc').eq('client_id', currentClient.id).gte('order_date', fromStr).lte('order_date', toStr);
+        // Fetch orders in date range
+        var ordRes = await sb.from('orders').select('channel, total_ttc, order_date')
+            .eq('client_id', currentClient.id)
+            .gte('order_date', fromStr)
+            .lte('order_date', toStr);
         var orders = ordRes.data || [];
-        var totalCA = orders.reduce(function(s, o) { return s + parseFloat(o.total_ttc || 0); }, 0);
-        var totalOrders = orders.length;
 
-        document.getElementById('stat-ca').textContent = formatMoney(totalCA);
-        document.getElementById('stat-orders').textContent = totalOrders;
+        // Fetch spend data
+        var spendRes = await sb.from('ad_weekly_spend').select('*').eq('client_id', currentClient.id);
+        var spendData = spendRes.data || [];
 
-        // Try API spend first (ad_daily_metrics via RPC)
-        var apiSpend = 0;
-        var hasApiData = false;
-        try {
-            var apiRes = await sb.rpc('get_ad_spend_by_platform', {
-                p_client_id: currentClient.id,
-                p_date_from: fromStr,
-                p_date_to: toStr
-            });
-            if (apiRes.data && apiRes.data.length > 0) {
-                hasApiData = true;
-                apiSpend = apiRes.data.reduce(function(s, r) { return s + parseFloat(r.total_spend || 0); }, 0);
-            }
-        } catch(e) { /* RPC not available or no data */ }
-
-        // Fallback to manual spend if no API data
-        var totalSpend = apiSpend;
-        if (!hasApiData) {
-            var spendRes = await sb.from('ad_weekly_spend').select('spend').eq('client_id', currentClient.id);
-            totalSpend = (spendRes.data || []).reduce(function(s, r) { return s + parseFloat(r.spend || 0); }, 0);
-        }
-
-        document.getElementById('stat-ads').textContent = formatMoney(totalSpend) + (hasApiData ? ' (Live)' : '');
-        document.getElementById('stat-roas').textContent = totalSpend > 0 ? (totalCA / totalSpend).toFixed(2) + 'x' : '-';
-    }
-
-    // ── Channels ──
-    async function loadChannels() {
-        var container = document.getElementById('channels-table');
-        var res = await sb.from('orders').select('channel, total_ttc').eq('client_id', currentClient.id);
-        var orders = res.data || [];
-
-        if (orders.length === 0) { container.innerHTML = '<p class="text-muted text-sm">Aucune commande.</p>'; return; }
-
+        // Aggregate orders by channel
         var channels = {};
+        var totalCA = 0, totalOrders = 0;
         orders.forEach(function(o) {
             var ch = o.channel || 'direct';
-            if (!channels[ch]) channels[ch] = { count: 0, revenue: 0 };
+            if (!channels[ch]) channels[ch] = { count: 0, revenue: 0, spend: 0 };
             channels[ch].count++;
             channels[ch].revenue += parseFloat(o.total_ttc || 0);
+            totalCA += parseFloat(o.total_ttc || 0);
+            totalOrders++;
         });
 
-        var html = '<div class="table-wrap"><table><thead><tr><th>Canal</th><th class="text-right">Commandes</th><th class="text-right">CA</th><th class="text-right">Panier moyen</th></tr></thead><tbody>';
-        Object.keys(channels).sort(function(a, b) { return channels[b].revenue - channels[a].revenue; }).forEach(function(ch) {
-            var d = channels[ch];
-            var label = { google_ads:'Google Ads', meta_ads:'Meta Ads', tiktok_ads:'TikTok Ads', email:'Email', direct:'Direct', referral:'Referral', organic:'Organic', other:'Autre' }[ch] || ch;
-            html += '<tr><td><span class="channel-badge channel-badge--' + ch + '">' + label + '</span></td>';
-            html += '<td class="text-right">' + d.count + '</td>';
-            html += '<td class="text-right text-bold">' + formatMoney(d.revenue) + '</td>';
-            html += '<td class="text-right">' + formatMoney(d.revenue / d.count) + '</td></tr>';
+        // Map spend to channels (manual spend)
+        var totalSpend = 0;
+        spendData.forEach(function(s) {
+            var ch = s.platform;
+            if (!channels[ch]) channels[ch] = { count: 0, revenue: 0, spend: 0 };
+            channels[ch].spend += parseFloat(s.spend || 0);
+            totalSpend += parseFloat(s.spend || 0);
         });
+
+        // Update stat cards
+        var aov = totalOrders > 0 ? totalCA / totalOrders : 0;
+        var cpa = totalOrders > 0 && totalSpend > 0 ? totalSpend / totalOrders : 0;
+        document.getElementById('stat-ca').textContent = formatMoney(totalCA);
+        document.getElementById('stat-orders').textContent = totalOrders;
+        document.getElementById('stat-ads').textContent = totalSpend > 0 ? formatMoney(totalSpend) : '-';
+        document.getElementById('stat-roas').textContent = totalSpend > 0 ? (totalCA / totalSpend).toFixed(2) + 'x' : '-';
+        document.getElementById('stat-aov').textContent = formatMoney(aov);
+        document.getElementById('stat-cpa').textContent = totalSpend > 0 ? formatMoney(cpa) : '-';
+
+        // Build attribution table
+        buildAttributionTable(channels, totalCA, totalOrders, totalSpend);
+
+        // Build daily table
+        buildDailyTable(orders);
+    }
+
+    var SOURCE_CONFIG = {
+        google_ads: { label: 'Google Ads', icon: 'G', iconClass: 'attr-icon--google' },
+        meta_ads: { label: 'Meta Ads', icon: 'M', iconClass: 'attr-icon--meta' },
+        tiktok_ads: { label: 'TikTok Ads', icon: 'T', iconClass: 'attr-icon--tiktok' },
+        direct: { label: 'Direct', icon: 'D', iconClass: 'attr-icon--direct' },
+        email: { label: 'Email', icon: 'E', iconClass: 'attr-icon--email' },
+        referral: { label: 'Referral', icon: 'R', iconClass: 'attr-icon--referral' },
+        organic: { label: 'Organic', icon: 'O', iconClass: 'attr-icon--organic' }
+    };
+
+    function buildAttributionTable(channels, totalCA, totalOrders, totalSpend) {
+        var container = document.getElementById('attribution-table');
+        var keys = Object.keys(channels).sort(function(a, b) { return channels[b].revenue - channels[a].revenue; });
+
+        if (keys.length === 0) {
+            container.innerHTML = '<p class="text-muted text-sm">Aucune donnee pour cette periode.</p>';
+            return;
+        }
+
+        var html = '<div class="table-wrap"><table class="attr-table"><thead><tr>';
+        html += '<th style="text-align:left;">Source</th>';
+        html += '<th>ROAS</th>';
+        html += '<th>Commandes</th>';
+        html += '<th>CA</th>';
+        html += '<th>Spend</th>';
+        html += '<th>CPA</th>';
+        html += '<th>AOV</th>';
+        html += '</tr></thead><tbody>';
+
+        keys.forEach(function(ch) {
+            var d = channels[ch];
+            var cfg = SOURCE_CONFIG[ch] || { label: ch, icon: '?', iconClass: 'attr-icon--direct' };
+            var roas = d.spend > 0 ? (d.revenue / d.spend) : 0;
+            var cpa = d.count > 0 && d.spend > 0 ? d.spend / d.count : 0;
+            var aov = d.count > 0 ? d.revenue / d.count : 0;
+
+            var roasClass = roas >= 5 ? 'attr-roas--good' : roas >= 2 ? 'attr-roas--ok' : roas > 0 ? 'attr-roas--bad' : '';
+            var roasHtml = d.spend > 0 ? '<span class="attr-roas-badge ' + roasClass + '">' + roas.toFixed(2) + '</span>' : '-';
+
+            html += '<tr>';
+            html += '<td><div class="attr-source"><div class="attr-source-icon ' + cfg.iconClass + '">' + cfg.icon + '</div>' + cfg.label + '</div></td>';
+            html += '<td>' + roasHtml + '</td>';
+            html += '<td class="text-bold">' + d.count + '</td>';
+            html += '<td class="text-bold">' + formatMoney(d.revenue) + '</td>';
+            html += '<td>' + (d.spend > 0 ? formatMoney(d.spend) : '-') + '</td>';
+            html += '<td>' + (cpa > 0 ? formatMoney(cpa) : '-') + '</td>';
+            html += '<td>' + formatMoney(aov) + '</td>';
+            html += '</tr>';
+        });
+
+        // Total row
+        var totalRoas = totalSpend > 0 ? (totalCA / totalSpend) : 0;
+        var totalCpa = totalOrders > 0 && totalSpend > 0 ? totalSpend / totalOrders : 0;
+        var totalAov = totalOrders > 0 ? totalCA / totalOrders : 0;
+        var totalRoasClass = totalRoas >= 5 ? 'attr-roas--good' : totalRoas >= 2 ? 'attr-roas--ok' : totalRoas > 0 ? 'attr-roas--bad' : '';
+
+        html += '<tr class="attr-total">';
+        html += '<td>(' + keys.length + ' Sources)</td>';
+        html += '<td>' + (totalSpend > 0 ? '<span class="attr-roas-badge ' + totalRoasClass + '">' + totalRoas.toFixed(2) + '</span>' : '-') + '</td>';
+        html += '<td>' + totalOrders + '</td>';
+        html += '<td>' + formatMoney(totalCA) + '</td>';
+        html += '<td>' + (totalSpend > 0 ? formatMoney(totalSpend) : '-') + '</td>';
+        html += '<td>' + (totalCpa > 0 ? formatMoney(totalCpa) : '-') + '</td>';
+        html += '<td>' + formatMoney(totalAov) + '</td>';
+        html += '</tr>';
+
         html += '</tbody></table></div>';
         container.innerHTML = html;
     }
 
-    // ── Daily ──
-    async function loadDaily() {
+    function buildDailyTable(orders) {
         var container = document.getElementById('daily-table');
-        var res = await sb.from('orders').select('order_date, total_ttc').eq('client_id', currentClient.id).order('order_date', { ascending: false }).limit(200);
-        var orders = res.data || [];
-
         if (orders.length === 0) { container.innerHTML = '<p class="text-muted text-sm">Aucune donnee.</p>'; return; }
 
         var days = {};
@@ -718,10 +919,104 @@
             days[o.order_date].revenue += parseFloat(o.total_ttc || 0);
         });
 
-        var html = '<div class="table-wrap" style="max-height:300px; overflow-y:auto;"><table><thead><tr><th>Date</th><th class="text-right">Commandes</th><th class="text-right">CA</th></tr></thead><tbody>';
-        Object.keys(days).sort().reverse().slice(0, 30).forEach(function(d) {
-            html += '<tr><td>' + formatDate(d) + '</td><td class="text-right">' + days[d].count + '</td><td class="text-right text-bold">' + formatMoney(days[d].revenue) + '</td></tr>';
+        var html = '<div class="table-wrap" style="max-height:300px; overflow-y:auto;"><table><thead><tr><th>Date</th><th class="text-right">Commandes</th><th class="text-right">CA</th><th class="text-right">Panier moyen</th></tr></thead><tbody>';
+        Object.keys(days).sort().reverse().forEach(function(d) {
+            var avg = days[d].count > 0 ? days[d].revenue / days[d].count : 0;
+            html += '<tr><td>' + formatDate(d) + '</td><td class="text-right">' + days[d].count + '</td><td class="text-right text-bold">' + formatMoney(days[d].revenue) + '</td><td class="text-right">' + formatMoney(avg) + '</td></tr>';
         });
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    // WEEKLY RECAP (like Google Sheet)
+    // ═══════════════════════════════════════
+    async function loadWeeklyRecap() {
+        var container = document.getElementById('weekly-recap');
+        if (!currentClient) return;
+
+        // Get current month from date range
+        var refDate = new Date(dateRange.from);
+        var month = refDate.getMonth();
+        var year = refDate.getFullYear();
+        var weeks = getMonthWeeks(year, month);
+
+        // Fetch orders for this month
+        var monthStart = formatISODate(new Date(year, month, 1));
+        var monthEnd = formatISODate(new Date(year, month + 1, 0));
+
+        var ordRes = await sb.from('orders').select('channel, total_ttc, order_date')
+            .eq('client_id', currentClient.id)
+            .gte('order_date', monthStart)
+            .lte('order_date', monthEnd);
+        var orders = ordRes.data || [];
+
+        // Fetch spend for this month
+        var spendRes = await sb.from('ad_weekly_spend').select('*')
+            .eq('client_id', currentClient.id)
+            .eq('year', year);
+        var spendData = spendRes.data || [];
+
+        // Aggregate by week
+        var weekData = weeks.map(function(w, idx) {
+            var wOrders = orders.filter(function(o) {
+                var d = new Date(o.order_date);
+                return d >= w.start && d <= w.end;
+            });
+            var revenue = wOrders.reduce(function(s, o) { return s + parseFloat(o.total_ttc || 0); }, 0);
+            var count = wOrders.length;
+
+            // Find matching spend
+            var weekCode = (month + 1) * 10 + (idx + 1);
+            var weekSpend = spendData.filter(function(s) { return s.week === weekCode; });
+            var spend = weekSpend.reduce(function(s, r) { return s + parseFloat(r.spend || 0); }, 0);
+
+            return {
+                label: 'S' + (idx + 1) + ' (' + formatShortDate(w.start) + ' - ' + formatShortDate(w.end) + ')',
+                revenue: revenue,
+                count: count,
+                spend: spend,
+                roas: spend > 0 ? revenue / spend : 0,
+                aov: count > 0 ? revenue / count : 0
+            };
+        });
+
+        // Totals
+        var totals = weekData.reduce(function(t, w) {
+            t.revenue += w.revenue; t.count += w.count; t.spend += w.spend;
+            return t;
+        }, { revenue: 0, count: 0, spend: 0 });
+        totals.roas = totals.spend > 0 ? totals.revenue / totals.spend : 0;
+        totals.aov = totals.count > 0 ? totals.revenue / totals.count : 0;
+
+        var html = '<h4 class="text-sm text-muted mb-16">' + MONTH_NAMES[month] + ' ' + year + '</h4>';
+        html += '<div class="table-wrap"><table class="attr-table"><thead><tr>';
+        html += '<th style="text-align:left;">Semaine</th><th>Depense</th><th>CA</th><th>ROAS</th><th>Commandes</th><th>Panier Moyen</th>';
+        html += '</tr></thead><tbody>';
+
+        weekData.forEach(function(w) {
+            var roasClass = w.roas >= 5 ? 'attr-roas--good' : w.roas >= 2 ? 'attr-roas--ok' : w.roas > 0 ? 'attr-roas--bad' : '';
+            html += '<tr>';
+            html += '<td style="text-align:left; font-weight:600;">' + w.label + '</td>';
+            html += '<td>' + (w.spend > 0 ? formatMoney(w.spend) : '-') + '</td>';
+            html += '<td class="text-bold">' + formatMoney(w.revenue) + '</td>';
+            html += '<td>' + (w.roas > 0 ? '<span class="attr-roas-badge ' + roasClass + '">' + w.roas.toFixed(2) + '</span>' : '-') + '</td>';
+            html += '<td>' + w.count + '</td>';
+            html += '<td>' + (w.count > 0 ? formatMoney(w.aov) : '-') + '</td>';
+            html += '</tr>';
+        });
+
+        // Total row
+        var tRoasClass = totals.roas >= 5 ? 'attr-roas--good' : totals.roas >= 2 ? 'attr-roas--ok' : totals.roas > 0 ? 'attr-roas--bad' : '';
+        html += '<tr class="attr-total">';
+        html += '<td style="text-align:left;">Total</td>';
+        html += '<td>' + (totals.spend > 0 ? formatMoney(totals.spend) : '-') + '</td>';
+        html += '<td>' + formatMoney(totals.revenue) + '</td>';
+        html += '<td>' + (totals.roas > 0 ? '<span class="attr-roas-badge ' + tRoasClass + '">' + totals.roas.toFixed(2) + '</span>' : '-') + '</td>';
+        html += '<td>' + totals.count + '</td>';
+        html += '<td>' + (totals.count > 0 ? formatMoney(totals.aov) : '-') + '</td>';
+        html += '</tr>';
+
         html += '</tbody></table></div>';
         container.innerHTML = html;
     }
@@ -729,7 +1024,9 @@
     // ── Orders ──
     async function loadOrders() {
         var container = document.getElementById('orders-table');
-        var res = await sb.from('orders').select('*').eq('client_id', currentClient.id).order('order_date', { ascending: false }).limit(50);
+        var res = await sb.from('orders').select('*').eq('client_id', currentClient.id)
+            .gte('order_date', dateRange.from).lte('order_date', dateRange.to)
+            .order('order_date', { ascending: false }).limit(100);
         var orders = res.data || [];
 
         if (orders.length === 0) { container.innerHTML = '<p class="text-muted text-sm">Aucune commande importee.</p>'; return; }
