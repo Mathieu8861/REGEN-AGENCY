@@ -1024,23 +1024,29 @@
     // ── Orders ──
     async function loadOrders() {
         var container = document.getElementById('orders-table');
-        var res = await sb.from('orders').select('*').eq('client_id', currentClient.id)
+        var res = await sb.from('orders').select('*, order_items(product_name)').eq('client_id', currentClient.id)
             .gte('order_date', dateRange.from).lte('order_date', dateRange.to)
             .order('order_date', { ascending: false }).limit(100);
         var orders = res.data || [];
 
         if (orders.length === 0) { container.innerHTML = '<p class="text-muted text-sm">Aucune commande importee.</p>'; return; }
 
-        var html = '<div class="table-wrap" style="max-height:500px; overflow-y:auto;"><table><thead><tr><th>ID</th><th>Ref</th><th>Date</th><th class="text-right">Total TTC</th><th>Canal</th><th>Source</th></tr></thead><tbody>';
+        var html = '<div class="table-wrap" style="max-height:500px; overflow-y:auto;"><table><thead><tr><th>ID</th><th>Ref</th><th>Date</th><th class="text-right">Total TTC</th><th>Canal</th><th>Produit principal</th></tr></thead><tbody>';
         orders.forEach(function(o) {
             var ch = o.channel || 'direct';
             var label = { google_ads:'Google Ads', meta_ads:'Meta Ads', tiktok_ads:'TikTok Ads', email:'Email', direct:'Direct', referral:'Referral', organic:'Organic' }[ch] || ch;
+            // Get main product (first one, typically the most expensive)
+            var mainProduct = '-';
+            if (o.order_items && o.order_items.length > 0) {
+                mainProduct = o.order_items[0].product_name || '-';
+                if (mainProduct.length > 50) mainProduct = mainProduct.substring(0, 50) + '...';
+            }
             html += '<tr><td>' + (o.external_id || '-') + '</td>';
             html += '<td><code style="font-size:0.75rem; background:#f3f4f6; padding:2px 6px; border-radius:4px;">' + (o.reference || '-') + '</code></td>';
             html += '<td>' + formatDate(o.order_date) + '</td>';
             html += '<td class="text-right text-bold">' + formatMoney(o.total_ttc) + '</td>';
             html += '<td><span class="channel-badge channel-badge--' + ch + '">' + label + '</span></td>';
-            html += '<td class="text-sm text-muted">' + (o.import_source || '-') + '</td></tr>';
+            html += '<td class="text-sm text-muted">' + mainProduct + '</td></tr>';
         });
         html += '</tbody></table></div>';
         container.innerHTML = html;
