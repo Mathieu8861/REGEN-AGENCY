@@ -251,6 +251,70 @@
                 <option value="">Chargement...</option>
             </select>
             <span class="text-sm text-muted" id="client-info"></span>
+            <button class="btn btn--primary btn--sm" id="add-client-btn" style="margin-left:auto;">+ Nouveau client</button>
+            <button class="btn btn--sm" id="config-client-btn" style="background:#3b82f6; color:white; border-color:#3b82f6;">Config Ads</button>
+        </div>
+
+        <!-- Modal: Add Client -->
+        <div id="modal-add-client" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:flex; align-items:center; justify-content:center;">
+            <div style="background:white; border-radius:var(--radius); padding:32px; max-width:500px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+                <h3 style="margin-bottom:20px; color:var(--dark);">Ajouter un client</h3>
+                <form id="add-client-form">
+                    <div class="form-group">
+                        <label class="form-label">Nom du client *</label>
+                        <input class="form-input" type="text" id="new-client-name" placeholder="Ex: Scatair" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Site web</label>
+                        <input class="form-input" type="url" id="new-client-website" placeholder="https://www.example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Plateforme e-commerce</label>
+                        <select class="form-input" id="new-client-platform">
+                            <option value="prestashop">PrestaShop</option>
+                            <option value="shopify">Shopify</option>
+                            <option value="woocommerce">WooCommerce</option>
+                            <option value="magento">Magento</option>
+                            <option value="other">Autre</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+                        <button type="button" class="btn btn--danger btn--sm" id="cancel-add-client">Annuler</button>
+                        <button type="submit" class="btn btn--primary btn--sm">Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal: Config Ads -->
+        <div id="modal-config-ads" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:flex; align-items:center; justify-content:center;">
+            <div style="background:white; border-radius:var(--radius); padding:32px; max-width:500px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+                <h3 style="margin-bottom:6px; color:var(--dark);">Configuration Ads</h3>
+                <p class="text-sm text-muted" style="margin-bottom:20px;">Client : <strong id="config-client-name"></strong></p>
+
+                <div class="card" style="margin-bottom:16px; padding:16px; background:var(--gray-light);">
+                    <h4 style="font-size:0.85rem; margin-bottom:12px; color:var(--dark);">Google Ads</h4>
+                    <div class="form-group">
+                        <label class="form-label">Customer ID (ex: 123-456-7890)</label>
+                        <input class="form-input" type="text" id="config-gads-id" placeholder="123-456-7890">
+                    </div>
+                    <div id="gads-status" class="text-sm" style="margin-top:8px;"></div>
+                </div>
+
+                <div class="card" style="margin-bottom:16px; padding:16px; background:var(--gray-light);">
+                    <h4 style="font-size:0.85rem; margin-bottom:12px; color:var(--dark);">Meta Ads</h4>
+                    <div class="form-group">
+                        <label class="form-label">Ad Account ID (ex: act_123456789)</label>
+                        <input class="form-input" type="text" id="config-meta-id" placeholder="act_123456789">
+                    </div>
+                    <div id="meta-status" class="text-sm" style="margin-top:8px;"></div>
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" class="btn btn--danger btn--sm" id="cancel-config-ads">Fermer</button>
+                    <button type="button" class="btn btn--primary btn--sm" id="save-config-ads">Enregistrer</button>
+                </div>
+            </div>
         </div>
 
         <!-- Stats -->
@@ -502,6 +566,7 @@
         setupTabs();
         setupCSVUpload();
         setupSpendForm();
+        setupModals();
         populateWeeks();
     }
 
@@ -916,6 +981,146 @@
         });
         html += '</tbody></table></div>';
         container.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    // ADD CLIENT & CONFIG ADS MODALS
+    // ═══════════════════════════════════════
+    function setupModals() {
+        var addModal = document.getElementById('modal-add-client');
+        var configModal = document.getElementById('modal-config-ads');
+
+        // Open Add Client
+        document.getElementById('add-client-btn').addEventListener('click', function() {
+            addModal.classList.remove('hidden');
+            addModal.style.display = 'flex';
+        });
+
+        // Close Add Client
+        document.getElementById('cancel-add-client').addEventListener('click', function() {
+            addModal.classList.add('hidden');
+            addModal.style.display = 'none';
+        });
+
+        // Submit Add Client
+        document.getElementById('add-client-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            var name = document.getElementById('new-client-name').value.trim();
+            var website = document.getElementById('new-client-website').value.trim();
+            var platform = document.getElementById('new-client-platform').value;
+
+            if (!name) { alert('Nom requis.'); return; }
+
+            try {
+                // Create client
+                var res = await sb.from('clients').insert({
+                    name: name,
+                    website: website || null,
+                    platform: platform,
+                    agency_id: AGENCY_ID,
+                    is_active: true
+                }).select('id').single();
+
+                if (res.error) throw res.error;
+
+                // Link current user to client
+                var session = await sb.auth.getSession();
+                if (session.data.session) {
+                    await sb.from('client_users').insert({
+                        client_id: res.data.id,
+                        user_id: session.data.session.user.id
+                    });
+                }
+
+                alert('Client "' + name + '" ajoute !');
+                addModal.classList.add('hidden');
+                addModal.style.display = 'none';
+                e.target.reset();
+                await loadClients();
+            } catch(err) {
+                alert('Erreur : ' + (err.message || err));
+            }
+        });
+
+        // Open Config Ads
+        document.getElementById('config-client-btn').addEventListener('click', async function() {
+            if (!currentClient) { alert('Selectionnez un client.'); return; }
+
+            document.getElementById('config-client-name').textContent = currentClient.name;
+            configModal.classList.remove('hidden');
+            configModal.style.display = 'flex';
+
+            // Load existing integrations
+            var intRes = await sb.from('integrations').select('*').eq('client_id', currentClient.id);
+            var integrations = intRes.data || [];
+
+            var gadsInt = integrations.find(function(i) { return i.platform === 'google_ads'; });
+            var metaInt = integrations.find(function(i) { return i.platform === 'meta_ads'; });
+
+            document.getElementById('config-gads-id').value = gadsInt ? (gadsInt.credentials || {}).customer_id || '' : '';
+            document.getElementById('gads-status').innerHTML = gadsInt
+                ? '<span class="text-success">Connecte</span> — Derniere sync : ' + (gadsInt.last_sync ? new Date(gadsInt.last_sync).toLocaleString('fr-FR') : 'jamais')
+                : '<span class="text-muted">Non configure</span>';
+
+            document.getElementById('config-meta-id').value = metaInt ? (metaInt.credentials || {}).ad_account_id || '' : '';
+            document.getElementById('meta-status').innerHTML = metaInt
+                ? '<span class="text-success">Connecte</span> — Derniere sync : ' + (metaInt.last_sync ? new Date(metaInt.last_sync).toLocaleString('fr-FR') : 'jamais')
+                : '<span class="text-muted">Non configure</span>';
+        });
+
+        // Close Config Ads
+        document.getElementById('cancel-config-ads').addEventListener('click', function() {
+            configModal.classList.add('hidden');
+            configModal.style.display = 'none';
+        });
+
+        // Save Config Ads
+        document.getElementById('save-config-ads').addEventListener('click', async function() {
+            if (!currentClient) return;
+
+            var gadsId = document.getElementById('config-gads-id').value.trim();
+            var metaId = document.getElementById('config-meta-id').value.trim();
+
+            try {
+                // Google Ads
+                if (gadsId) {
+                    await saveIntegration(currentClient.id, 'google_ads', { customer_id: gadsId, access_type: 'mcc' });
+                }
+
+                // Meta Ads
+                if (metaId) {
+                    await saveIntegration(currentClient.id, 'meta_ads', { ad_account_id: metaId });
+                }
+
+                alert('Configuration sauvegardee !');
+                configModal.classList.add('hidden');
+                configModal.style.display = 'none';
+                loadAllData();
+            } catch(err) {
+                alert('Erreur : ' + (err.message || err));
+            }
+        });
+
+        // Close modals on backdrop click
+        [addModal, configModal].forEach(function(modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // ── Save Integration (select + insert or update) ──
+    async function saveIntegration(clientId, platform, credentials) {
+        var existing = await sb.from('integrations').select('id').eq('client_id', clientId).eq('platform', platform).maybeSingle();
+
+        if (existing.data) {
+            await sb.from('integrations').update({ credentials: credentials, status: 'active' }).eq('id', existing.data.id);
+        } else {
+            await sb.from('integrations').insert({ client_id: clientId, platform: platform, credentials: credentials, status: 'active' });
+        }
     }
 
     // ═══════════════════════════════════════
