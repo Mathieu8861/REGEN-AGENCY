@@ -453,7 +453,7 @@
             <div class="card">
                 <h3 class="card__title"><span class="card__title-icon">&#128176;</span> Saisie depenses publicitaires</h3>
                 <form id="spend-form">
-                    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-bottom:12px;">
+                    <div style="display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-bottom:12px;">
                         <div class="form-group">
                             <label class="form-label">Plateforme</label>
                             <select class="form-input" id="spend-platform">
@@ -463,7 +463,11 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Semaine</label>
+                            <label class="form-label">Mois</label>
+                            <select class="form-input" id="spend-month"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Semaine du mois</label>
                             <select class="form-input" id="spend-week"></select>
                         </div>
                         <div class="form-group">
@@ -579,7 +583,7 @@
         setupCSVUpload();
         setupSpendForm();
         setupModals();
-        populateWeeks();
+        populateMonths();
     }
 
     // ── Load Clients ──
@@ -972,35 +976,91 @@
     // ═══════════════════════════════════════
     // SPEND
     // ═══════════════════════════════════════
-    function populateWeeks() {
-        var sel = document.getElementById('spend-week');
-        var year = parseInt(document.getElementById('spend-year').value) || new Date().getFullYear();
-        var currentWeek = getWeekNum(new Date());
-        var currentYear = new Date().getFullYear();
+    var MONTH_NAMES = ['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
+
+    function populateMonths() {
+        var sel = document.getElementById('spend-month');
+        var now = new Date();
         var html = '';
-        for (var w = 1; w <= 53; w++) {
-            var dates = getWeekDates(year, w);
-            var label = 'S' + w + ' (' + formatShortDate(dates.start) + ' - ' + formatShortDate(dates.end) + ')';
-            var selected = (w === currentWeek && year === currentYear) ? ' selected' : '';
-            html += '<option value="' + w + '"' + selected + '>' + label + '</option>';
+        for (var m = 0; m < 12; m++) {
+            var selected = m === now.getMonth() ? ' selected' : '';
+            html += '<option value="' + m + '"' + selected + '>' + MONTH_NAMES[m] + '</option>';
         }
         sel.innerHTML = html;
-
-        // Update weeks when year changes
-        document.getElementById('spend-year').addEventListener('change', function() { populateWeeks(); });
+        sel.addEventListener('change', populateMonthWeeks);
+        document.getElementById('spend-year').addEventListener('change', populateMonthWeeks);
+        populateMonthWeeks();
     }
 
-    function getWeekDates(year, week) {
-        // ISO week: week 1 contains Jan 4th
-        var jan4 = new Date(year, 0, 4);
-        var dayOfWeek = jan4.getDay() || 7; // Mon=1 ... Sun=7
-        var mondayW1 = new Date(jan4);
-        mondayW1.setDate(jan4.getDate() - dayOfWeek + 1);
-        var start = new Date(mondayW1);
-        start.setDate(mondayW1.getDate() + (week - 1) * 7);
-        var end = new Date(start);
-        end.setDate(start.getDate() + 6);
-        return { start: start, end: end };
+    function populateMonthWeeks() {
+        var sel = document.getElementById('spend-week');
+        var month = parseInt(document.getElementById('spend-month').value);
+        var year = parseInt(document.getElementById('spend-year').value);
+        var weeks = getMonthWeeks(year, month);
+        var now = new Date();
+
+        var html = '';
+        for (var i = 0; i < weeks.length; i++) {
+            var w = weeks[i];
+            var label = 'S' + (i + 1) + ' (' + formatShortDate(w.start) + ' - ' + formatShortDate(w.end) + ')';
+            // Auto-select current week
+            var selected = (now >= w.start && now <= w.end) ? ' selected' : '';
+            // Store start date as value for unique key
+            var val = formatISODate(w.start);
+            html += '<option value="' + val + '"' + selected + '>' + label + '</option>';
+        }
+        sel.innerHTML = html;
+    }
+
+    // ── Calculate month weeks with orphan day merging ──
+    function getMonthWeeks(year, month) {
+        var firstDay = new Date(year, month, 1);
+        var lastDay = new Date(year, month + 1, 0); // last day of month
+        var totalDays = lastDay.getDate();
+
+        // Find first Monday on or after the 1st
+        var firstDow = firstDay.getDay(); // 0=Sun, 1=Mon...
+        var firstMonday;
+        if (firstDow === 1) {
+            firstMonday = 1;
+        } else if (firstDow === 0) {
+            firstMonday = 2; // Sunday -> next Monday
+        } else {
+            firstMonday = 1 + (8 - firstDow); // next Monday
+        }
+
+        // Build raw weeks (Mon-Sun)
+        var weeks = [];
+        var cursor = firstMonday;
+        while (cursor <= totalDays) {
+            var wStart = cursor;
+            var wEnd = Math.min(cursor + 6, totalDays);
+            weeks.push({ startDay: wStart, endDay: wEnd });
+            cursor += 7;
+        }
+
+        // Merge orphan days at start of month (before first Monday) into week 1
+        if (firstMonday > 1 && weeks.length > 0) {
+            weeks[0].startDay = 1;
+        }
+
+        // Merge orphan days at end: if last "week" has 1-2 days, merge with previous
+        if (weeks.length > 1) {
+            var lastWeek = weeks[weeks.length - 1];
+            var lastWeekDays = lastWeek.endDay - lastWeek.startDay + 1;
+            if (lastWeekDays <= 2) {
+                weeks[weeks.length - 2].endDay = lastWeek.endDay;
+                weeks.pop();
+            }
+        }
+
+        // Convert to Date objects
+        return weeks.map(function(w) {
+            return {
+                start: new Date(year, month, w.startDay),
+                end: new Date(year, month, w.endDay)
+            };
+        });
     }
 
     function formatShortDate(d) {
@@ -1009,11 +1069,8 @@
         return day + '/' + month;
     }
 
-    function getWeekNum(d) {
-        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-        var y = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-        return Math.ceil((((d - y) / 86400000) + 1) / 7);
+    function formatISODate(d) {
+        return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
     }
 
     function setupSpendForm() {
@@ -1024,12 +1081,20 @@
             var spend = parseFloat(document.getElementById('spend-amount').value);
             if (isNaN(spend) || spend <= 0) { alert('Montant invalide.'); return; }
 
+            var weekStartDate = document.getElementById('spend-week').value; // YYYY-MM-DD
+            var month = parseInt(document.getElementById('spend-month').value);
+            var year = parseInt(document.getElementById('spend-year').value);
+            // Encode week as month*10 + weekIndex (e.g. Mars S2 = 32)
+            var sel = document.getElementById('spend-week');
+            var weekIndex = sel.selectedIndex + 1;
+            var weekCode = (month + 1) * 10 + weekIndex; // e.g. March=3 -> 31, 32, 33, 34
+
             try {
                 var res = await sb.from('ad_weekly_spend').upsert({
                     client_id: currentClient.id,
                     platform: document.getElementById('spend-platform').value,
-                    year: parseInt(document.getElementById('spend-year').value),
-                    week: parseInt(document.getElementById('spend-week').value),
+                    year: year,
+                    week: weekCode,
                     spend: spend,
                     revenue: parseFloat(document.getElementById('spend-revenue').value) || 0,
                     orders_count: parseInt(document.getElementById('spend-orders-count').value) || 0
@@ -1037,14 +1102,26 @@
 
                 if (res.error) throw res.error;
                 alert('Depense enregistree !');
-                e.target.reset();
-                populateWeeks();
+                document.getElementById('spend-amount').value = '';
+                document.getElementById('spend-revenue').value = '';
+                document.getElementById('spend-orders-count').value = '';
                 loadSpendHistory();
                 loadStats();
             } catch(err) {
                 alert('Erreur: ' + (err.message || err));
             }
         });
+    }
+
+    // Decode weekCode back to readable label
+    function decodeWeekLabel(year, weekCode) {
+        var month = Math.floor(weekCode / 10) - 1; // 0-indexed month
+        var weekIdx = weekCode % 10;
+        if (month < 0 || month > 11) return 'S' + weekCode;
+        var weeks = getMonthWeeks(year, month);
+        var w = weeks[weekIdx - 1];
+        if (!w) return MONTH_NAMES[month] + ' S' + weekIdx;
+        return MONTH_NAMES[month] + ' S' + weekIdx + ' (' + formatShortDate(w.start) + ' - ' + formatShortDate(w.end) + ')';
     }
 
     async function loadSpendHistory() {
@@ -1056,12 +1133,13 @@
 
         if (!data.length) { container.innerHTML = '<p class="text-muted text-sm">Aucune depense.</p>'; return; }
 
-        var html = '<div class="table-wrap"><table><thead><tr><th>Plateforme</th><th>Annee</th><th>Semaine</th><th class="text-right">Depense</th><th class="text-right">CA</th><th class="text-right">ROAS</th><th class="text-right">Commandes</th></tr></thead><tbody>';
+        var html = '<div class="table-wrap"><table><thead><tr><th>Plateforme</th><th>Periode</th><th class="text-right">Depense</th><th class="text-right">CA</th><th class="text-right">ROAS</th><th class="text-right">Commandes</th></tr></thead><tbody>';
         data.forEach(function(r) {
             var label = { google_ads:'Google Ads', meta_ads:'Meta Ads', tiktok_ads:'TikTok Ads' }[r.platform] || r.platform;
             var roas = r.spend > 0 ? (r.revenue / r.spend).toFixed(2) + 'x' : '-';
+            var periodLabel = decodeWeekLabel(r.year, r.week);
             html += '<tr><td><span class="channel-badge channel-badge--' + r.platform + '">' + label + '</span></td>';
-            html += '<td>' + r.year + '</td><td>S' + r.week + '</td>';
+            html += '<td class="text-sm">' + periodLabel + ' ' + r.year + '</td>';
             html += '<td class="text-right">' + formatMoney(r.spend) + '</td>';
             html += '<td class="text-right">' + formatMoney(r.revenue) + '</td>';
             html += '<td class="text-right text-bold">' + roas + '</td>';
