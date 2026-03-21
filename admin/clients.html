@@ -782,6 +782,11 @@
         var lines = content.trim().split('\n');
         if (lines.length < 2) { alert('CSV vide.'); return; }
 
+        // ── Auto-detect columns from header ──
+        var headerFields = parseCSVLine(lines[0], ';').map(function(h) { return clean(h).toLowerCase(); });
+        var colMap = detectColumnMap(headerFields);
+        console.log('CSV columns detected:', colMap);
+
         parsedOrders = [];
         for (var i = 1; i < lines.length; i++) {
             var line = lines[i].trim();
@@ -790,21 +795,38 @@
             var fields = parseCSVLine(line, ';');
             if (fields.length < 4) continue;
 
-            var externalId = clean(fields[0]);
-            var reference = clean(fields[1]);
-            var dateStr = clean(fields[2]);
-            var totalStr = clean(fields[3]);
-            var sourceUrl = clean(fields[4] || '');
+            var externalId = clean(fields[colMap.id] || '');
+            var reference = clean(fields[colMap.ref] || '');
+            var dateStr = clean(fields[colMap.date] || '');
+            var totalStr = clean(fields[colMap.total] || '');
 
-            var products = [];
-            for (var j = 5; j < fields.length && j < 10; j++) {
-                var p = clean(fields[j]);
-                if (p) products.push(p);
+            // Source URL: prefer URI complete > Page atterrissage > Page d'entree
+            var sourceUrl = '';
+            if (colMap.uri !== -1) sourceUrl = clean(fields[colMap.uri] || '');
+            if (!sourceUrl && colMap.landing !== -1) sourceUrl = clean(fields[colMap.landing] || '');
+            if (!sourceUrl && colMap.source_url !== -1) sourceUrl = clean(fields[colMap.source_url] || '');
+
+            // Channel: prefer explicit Source column, else detect from URL
+            var channel = 'direct';
+            if (colMap.source_col !== -1) {
+                var srcVal = clean(fields[colMap.source_col] || '').toLowerCase();
+                if (srcVal.indexOf('google') !== -1) channel = 'google_ads';
+                else if (srcVal.indexOf('meta') !== -1 || srcVal.indexOf('facebook') !== -1 || srcVal.indexOf('instagram') !== -1) channel = 'meta_ads';
+                else if (srcVal.indexOf('tiktok') !== -1) channel = 'tiktok_ads';
+                else if (srcVal.indexOf('email') !== -1) channel = 'email';
+                else if (srcVal) channel = 'referral';
             }
+            if (channel === 'direct') channel = detectChannel(sourceUrl);
 
-            // Date DD-MM-YYYY -> YYYY-MM-DD
-            var parts = dateStr.split('-');
-            var orderDate = parts.length === 3 ? parts[2] + '-' + parts[1] + '-' + parts[0] : null;
+            // Products
+            var products = [];
+            colMap.products.forEach(function(idx) {
+                var p = clean(fields[idx] || '');
+                if (p) products.push(p);
+            });
+
+            // Date: handle DD-MM-YYYY or DD-MM-YYYY HH:MM
+            var orderDate = parseOrderDate(dateStr);
 
             var total = parseFloat(totalStr.replace(/[^\d,.-]/g, '').replace(',', '.'));
 
@@ -815,13 +837,56 @@
                     order_date: orderDate,
                     total_ttc: total,
                     source_url: sourceUrl,
-                    channel: detectChannel(sourceUrl),
+                    channel: channel,
                     items: products.map(function(p) { return { name: p }; })
                 });
             }
         }
 
         showPreview();
+    }
+
+    // ── Auto-detect column indices from header names ──
+    function detectColumnMap(headers) {
+        var map = { id: 0, ref: 1, date: 2, total: 3, source_url: 4, source_col: -1, landing: -1, uri: -1, products: [] };
+
+        for (var i = 0; i < headers.length; i++) {
+            var h = headers[i];
+            if (h.indexOf('id commande') !== -1 || h === 'id') map.id = i;
+            else if (h.indexOf('rence') !== -1 || h === 'reference' || h === 'ref') map.ref = i;
+            else if (h.indexOf('date') !== -1) map.date = i;
+            else if (h === 'total ttc' || h === 'total_ttc') map.total = i;
+            else if (h.indexOf('page d') !== -1 && h.indexOf('entr') !== -1) map.source_url = i;
+            else if (h === 'source') map.source_col = i;
+            else if (h.indexOf('page atterr') !== -1) map.landing = i;
+            else if (h.indexOf('uri compl') !== -1) map.uri = i;
+            else if (h.indexOf('produit') !== -1 && !h.indexOf('produits ttc') !== -1 && h !== 'produits ttc') map.products.push(i);
+        }
+
+        // If no product columns found, use columns 5-9 as fallback
+        if (map.products.length === 0) {
+            for (var j = 5; j < Math.min(headers.length, 10); j++) {
+                if (!headers[j] || headers[j].indexOf('produit') !== -1) map.products.push(j);
+            }
+        }
+
+        return map;
+    }
+
+    // ── Parse date: DD-MM-YYYY or DD-MM-YYYY HH:MM ──
+    function parseOrderDate(dateStr) {
+        if (!dateStr) return null;
+        // Remove time part if present
+        var datePart = dateStr.split(' ')[0];
+        var parts = datePart.split('-');
+        if (parts.length === 3) {
+            return parts[2] + '-' + parts[1] + '-' + parts[0]; // YYYY-MM-DD
+        }
+        // Try YYYY-MM-DD format already
+        if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
+            return dateStr.split(' ')[0];
+        }
+        return null;
     }
 
     function parseCSVLine(line, delim) {
