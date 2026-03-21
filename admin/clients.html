@@ -273,9 +273,19 @@
             </div>
         </div>
 
+        <!-- Sync Status Bar -->
+        <div id="sync-bar" class="hidden" style="display:flex; align-items:center; gap:12px; margin-bottom:16px; padding:12px 20px; background:white; border-radius:var(--radius-sm); box-shadow:var(--shadow); flex-wrap:wrap;">
+            <span id="sync-status" class="text-sm"></span>
+            <div style="margin-left:auto; display:flex; gap:8px;">
+                <button class="btn btn--primary btn--sm" id="sync-gads-btn" style="display:none;">Sync Google Ads</button>
+                <button class="btn btn--sm" id="sync-meta-btn" style="display:none; background:#2563eb; color:white; border-color:#2563eb;">Sync Meta Ads</button>
+            </div>
+        </div>
+
         <!-- Tabs -->
         <div class="tabs">
             <button class="tab tab--active" data-tab="dashboard">Dashboard</button>
+            <button class="tab" data-tab="campaigns">Campagnes</button>
             <button class="tab" data-tab="import">Import CSV</button>
             <button class="tab" data-tab="orders">Commandes</button>
             <button class="tab" data-tab="spend">Depenses Ads</button>
@@ -292,6 +302,22 @@
             <div class="card">
                 <h3 class="card__title"><span class="card__title-icon">&#128197;</span> Evolution journaliere</h3>
                 <div id="daily-table">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Tab: Campaigns ── -->
+        <div class="tab-content" id="tab-campaigns">
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#127919;</span> Campagnes publicitaires (API)</h3>
+                <div id="campaigns-data">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128200;</span> Metriques journalieres (API)</h3>
+                <div id="api-daily-metrics">
                     <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
                 </div>
             </div>
@@ -515,9 +541,12 @@
         loadOrders();
         loadSpendHistory();
         loadImportHistory();
+        loadCampaigns();
+        loadApiDailyMetrics();
+        loadSyncStatus();
     }
 
-    // ── Stats ──
+    // ── Stats (merges API + manual spend) ──
     async function loadStats() {
         var from = new Date(); from.setDate(from.getDate() - 90);
         var fromStr = from.toISOString().split('T')[0];
@@ -532,11 +561,29 @@
         document.getElementById('stat-ca').textContent = formatMoney(totalCA);
         document.getElementById('stat-orders').textContent = totalOrders;
 
-        // Ad spend (weekly manual)
-        var spendRes = await sb.from('ad_weekly_spend').select('spend').eq('client_id', currentClient.id);
-        var totalSpend = (spendRes.data || []).reduce(function(s, r) { return s + parseFloat(r.spend || 0); }, 0);
+        // Try API spend first (ad_daily_metrics via RPC)
+        var apiSpend = 0;
+        var hasApiData = false;
+        try {
+            var apiRes = await sb.rpc('get_ad_spend_by_platform', {
+                p_client_id: currentClient.id,
+                p_date_from: fromStr,
+                p_date_to: toStr
+            });
+            if (apiRes.data && apiRes.data.length > 0) {
+                hasApiData = true;
+                apiSpend = apiRes.data.reduce(function(s, r) { return s + parseFloat(r.total_spend || 0); }, 0);
+            }
+        } catch(e) { /* RPC not available or no data */ }
 
-        document.getElementById('stat-ads').textContent = formatMoney(totalSpend);
+        // Fallback to manual spend if no API data
+        var totalSpend = apiSpend;
+        if (!hasApiData) {
+            var spendRes = await sb.from('ad_weekly_spend').select('spend').eq('client_id', currentClient.id);
+            totalSpend = (spendRes.data || []).reduce(function(s, r) { return s + parseFloat(r.spend || 0); }, 0);
+        }
+
+        document.getElementById('stat-ads').textContent = formatMoney(totalSpend) + (hasApiData ? ' (Live)' : '');
         document.getElementById('stat-roas').textContent = totalSpend > 0 ? (totalCA / totalSpend).toFixed(2) + 'x' : '-';
     }
 
@@ -869,6 +916,205 @@
         });
         html += '</tbody></table></div>';
         container.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    // CAMPAIGNS & API METRICS
+    // ═══════════════════════════════════════
+    async function loadCampaigns() {
+        var container = document.getElementById('campaigns-data');
+        if (!currentClient) return;
+
+        // Get campaigns via ad_accounts -> ad_campaigns
+        var accRes = await sb.from('ad_accounts').select('id, platform, external_id, name').eq('client_id', currentClient.id);
+        var accounts = accRes.data || [];
+
+        if (accounts.length === 0) {
+            container.innerHTML = '<p class="text-muted text-sm">Aucune integration API configuree. Les donnees API apparaitront ici une fois Google Ads ou Meta Ads connecte.</p>';
+            return;
+        }
+
+        var allCampaigns = [];
+        for (var a = 0; a < accounts.length; a++) {
+            var campRes = await sb.from('ad_campaigns').select('id, external_id, name, status, platform').eq('ad_account_id', accounts[a].id);
+            var camps = campRes.data || [];
+            camps.forEach(function(c) { c._account_name = accounts[a].name; });
+            allCampaigns = allCampaigns.concat(camps);
+        }
+
+        if (allCampaigns.length === 0) {
+            container.innerHTML = '<p class="text-muted text-sm">Comptes ads connectes mais aucune campagne syncee. Cliquez "Sync" pour recuperer les donnees.</p>';
+            return;
+        }
+
+        // Get metrics for each campaign (last 30 days)
+        var from30 = new Date(); from30.setDate(from30.getDate() - 30);
+        var fromStr = from30.toISOString().split('T')[0];
+
+        var html = '<div class="table-wrap"><table><thead><tr><th>Campagne</th><th>Plateforme</th><th>Statut</th><th class="text-right">Depense (30j)</th><th class="text-right">Clics</th><th class="text-right">Impressions</th><th class="text-right">CPC</th><th class="text-right">Conversions</th></tr></thead><tbody>';
+
+        for (var c = 0; c < allCampaigns.length; c++) {
+            var camp = allCampaigns[c];
+            var metRes = await sb.from('ad_daily_metrics').select('spend, clicks, impressions, conversions, cpc').eq('campaign_id', camp.id).gte('date', fromStr);
+            var metrics = metRes.data || [];
+
+            var totSpend = 0, totClicks = 0, totImpr = 0, totConv = 0;
+            metrics.forEach(function(m) {
+                totSpend += parseFloat(m.spend || 0);
+                totClicks += parseInt(m.clicks || 0);
+                totImpr += parseInt(m.impressions || 0);
+                totConv += parseFloat(m.conversions || 0);
+            });
+
+            var avgCpc = totClicks > 0 ? (totSpend / totClicks) : 0;
+            var plabel = { google_ads: 'Google Ads', meta_ads: 'Meta Ads', tiktok_ads: 'TikTok Ads' }[camp.platform] || camp.platform;
+            var statusBadge = camp.status === 'enabled' || camp.status === 'active' ? '<span style="color:#10b981; font-weight:700;">Actif</span>' : '<span class="text-muted">' + (camp.status || '-') + '</span>';
+
+            html += '<tr>';
+            html += '<td class="text-bold">' + (camp.name || camp.external_id) + '</td>';
+            html += '<td><span class="channel-badge channel-badge--' + camp.platform + '">' + plabel + '</span></td>';
+            html += '<td>' + statusBadge + '</td>';
+            html += '<td class="text-right text-bold">' + formatMoney(totSpend) + '</td>';
+            html += '<td class="text-right">' + totClicks.toLocaleString('fr-FR') + '</td>';
+            html += '<td class="text-right">' + totImpr.toLocaleString('fr-FR') + '</td>';
+            html += '<td class="text-right">' + formatMoney(avgCpc) + '</td>';
+            html += '<td class="text-right">' + totConv.toFixed(1) + '</td>';
+            html += '</tr>';
+        }
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    }
+
+    async function loadApiDailyMetrics() {
+        var container = document.getElementById('api-daily-metrics');
+        if (!currentClient) return;
+
+        // Get all campaigns for this client
+        var accRes = await sb.from('ad_accounts').select('id').eq('client_id', currentClient.id);
+        var accounts = accRes.data || [];
+        if (accounts.length === 0) {
+            container.innerHTML = '<p class="text-muted text-sm">Aucune donnee API.</p>';
+            return;
+        }
+
+        var accountIds = accounts.map(function(a) { return a.id; });
+        var campRes = await sb.from('ad_campaigns').select('id, name, platform').in('ad_account_id', accountIds);
+        var campaigns = campRes.data || [];
+        if (campaigns.length === 0) {
+            container.innerHTML = '<p class="text-muted text-sm">Aucune campagne syncee.</p>';
+            return;
+        }
+
+        var campIds = campaigns.map(function(c) { return c.id; });
+        var campMap = {};
+        campaigns.forEach(function(c) { campMap[c.id] = c; });
+
+        var metRes = await sb.from('ad_daily_metrics').select('*').in('campaign_id', campIds).order('date', { ascending: false }).limit(100);
+        var metrics = metRes.data || [];
+
+        if (metrics.length === 0) {
+            container.innerHTML = '<p class="text-muted text-sm">Aucune metrique. Lancez une synchro.</p>';
+            return;
+        }
+
+        // Group by date
+        var byDate = {};
+        metrics.forEach(function(m) {
+            if (!byDate[m.date]) byDate[m.date] = { spend: 0, clicks: 0, impressions: 0, conversions: 0 };
+            byDate[m.date].spend += parseFloat(m.spend || 0);
+            byDate[m.date].clicks += parseInt(m.clicks || 0);
+            byDate[m.date].impressions += parseInt(m.impressions || 0);
+            byDate[m.date].conversions += parseFloat(m.conversions || 0);
+        });
+
+        var html = '<div class="table-wrap" style="max-height:300px; overflow-y:auto;"><table><thead><tr><th>Date</th><th class="text-right">Depense</th><th class="text-right">Clics</th><th class="text-right">Impressions</th><th class="text-right">CTR</th><th class="text-right">CPC</th><th class="text-right">Conversions</th></tr></thead><tbody>';
+
+        Object.keys(byDate).sort().reverse().forEach(function(d) {
+            var r = byDate[d];
+            var ctr = r.impressions > 0 ? ((r.clicks / r.impressions) * 100).toFixed(2) + '%' : '-';
+            var cpc = r.clicks > 0 ? formatMoney(r.spend / r.clicks) : '-';
+            html += '<tr>';
+            html += '<td>' + formatDate(d) + '</td>';
+            html += '<td class="text-right text-bold">' + formatMoney(r.spend) + '</td>';
+            html += '<td class="text-right">' + r.clicks.toLocaleString('fr-FR') + '</td>';
+            html += '<td class="text-right">' + r.impressions.toLocaleString('fr-FR') + '</td>';
+            html += '<td class="text-right">' + ctr + '</td>';
+            html += '<td class="text-right">' + cpc + '</td>';
+            html += '<td class="text-right">' + r.conversions.toFixed(1) + '</td>';
+            html += '</tr>';
+        });
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    // SYNC STATUS & BUTTONS
+    // ═══════════════════════════════════════
+    async function loadSyncStatus() {
+        var bar = document.getElementById('sync-bar');
+        var statusEl = document.getElementById('sync-status');
+        var gadsBtn = document.getElementById('sync-gads-btn');
+        var metaBtn = document.getElementById('sync-meta-btn');
+
+        if (!currentClient) { bar.classList.add('hidden'); return; }
+
+        // Check integrations
+        var intRes = await sb.from('integrations').select('*').eq('client_id', currentClient.id).in('platform', ['google_ads', 'meta_ads']);
+        var integrations = intRes.data || [];
+
+        if (integrations.length === 0) {
+            bar.classList.remove('hidden');
+            bar.style.display = 'flex';
+            statusEl.innerHTML = '<span style="color:var(--gray);">Aucune API connectee — utilisez la saisie manuelle ou l\'import CSV</span>';
+            gadsBtn.style.display = 'none';
+            metaBtn.style.display = 'none';
+            return;
+        }
+
+        bar.classList.remove('hidden');
+        bar.style.display = 'flex';
+
+        var statusParts = [];
+        integrations.forEach(function(int) {
+            var plabel = int.platform === 'google_ads' ? 'Google Ads' : 'Meta Ads';
+            var lastSync = int.last_sync ? new Date(int.last_sync).toLocaleString('fr-FR') : 'jamais';
+            var dot = int.status === 'active' ? '&#128994;' : int.status === 'error' ? '&#128308;' : '&#128993;';
+            statusParts.push(dot + ' ' + plabel + ' : ' + lastSync);
+
+            if (int.platform === 'google_ads') {
+                gadsBtn.style.display = 'inline-flex';
+                gadsBtn.onclick = function() { syncNow('sync-google-ads', int.id); };
+            }
+            if (int.platform === 'meta_ads') {
+                metaBtn.style.display = 'inline-flex';
+                metaBtn.onclick = function() { syncNow('sync-meta-ads', int.id); };
+            }
+        });
+
+        statusEl.innerHTML = statusParts.join(' &nbsp;|&nbsp; ');
+    }
+
+    async function syncNow(functionName, integrationId) {
+        var statusEl = document.getElementById('sync-status');
+        statusEl.innerHTML = '<div class="spinner" style="width:16px; height:16px; border-width:2px;"></div> Synchronisation en cours...';
+
+        try {
+            var res = await sb.functions.invoke(functionName, {
+                body: { client_id: currentClient.id, trigger: 'manual' }
+            });
+
+            if (res.error) throw res.error;
+
+            var data = res.data;
+            statusEl.innerHTML = '<span class="text-success text-bold">Sync OK !</span> ' + (data.total_campaigns || 0) + ' campagnes, ' + (data.total_metrics || 0) + ' metriques';
+
+            // Reload all data
+            setTimeout(function() { loadAllData(); }, 1500);
+        } catch(err) {
+            statusEl.innerHTML = '<span class="text-danger text-bold">Erreur sync :</span> ' + (err.message || err);
+        }
     }
 
     // ═══════════════════════════════════════
