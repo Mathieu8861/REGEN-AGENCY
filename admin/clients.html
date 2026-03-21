@@ -974,13 +974,39 @@
     // ═══════════════════════════════════════
     function populateWeeks() {
         var sel = document.getElementById('spend-week');
-        var now = new Date();
-        var currentWeek = getWeekNum(now);
+        var year = parseInt(document.getElementById('spend-year').value) || new Date().getFullYear();
+        var currentWeek = getWeekNum(new Date());
+        var currentYear = new Date().getFullYear();
         var html = '';
         for (var w = 1; w <= 53; w++) {
-            html += '<option value="' + w + '"' + (w === currentWeek ? ' selected' : '') + '>Semaine ' + w + '</option>';
+            var dates = getWeekDates(year, w);
+            var label = 'S' + w + ' (' + formatShortDate(dates.start) + ' - ' + formatShortDate(dates.end) + ')';
+            var selected = (w === currentWeek && year === currentYear) ? ' selected' : '';
+            html += '<option value="' + w + '"' + selected + '>' + label + '</option>';
         }
         sel.innerHTML = html;
+
+        // Update weeks when year changes
+        document.getElementById('spend-year').addEventListener('change', function() { populateWeeks(); });
+    }
+
+    function getWeekDates(year, week) {
+        // ISO week: week 1 contains Jan 4th
+        var jan4 = new Date(year, 0, 4);
+        var dayOfWeek = jan4.getDay() || 7; // Mon=1 ... Sun=7
+        var mondayW1 = new Date(jan4);
+        mondayW1.setDate(jan4.getDate() - dayOfWeek + 1);
+        var start = new Date(mondayW1);
+        start.setDate(mondayW1.getDate() + (week - 1) * 7);
+        var end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        return { start: start, end: end };
+    }
+
+    function formatShortDate(d) {
+        var day = ('0' + d.getDate()).slice(-2);
+        var month = ('0' + (d.getMonth() + 1)).slice(-2);
+        return day + '/' + month;
     }
 
     function getWeekNum(d) {
