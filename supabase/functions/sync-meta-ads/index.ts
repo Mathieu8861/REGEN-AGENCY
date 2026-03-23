@@ -52,8 +52,19 @@ interface CampaignInsight {
   conversions: number;
 }
 
+// ── CORS headers ────────────────────────
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 // ── Main Handler ────────────────────────
 serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: CORS_HEADERS });
+  }
+
   try {
     const body = await req.json().catch(() => ({}));
     const targetClientId = body.client_id || null;
@@ -320,7 +331,7 @@ function jsonResponse(data: unknown, status = 200) {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
+      ...CORS_HEADERS,
     },
   });
 }
