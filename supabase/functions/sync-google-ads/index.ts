@@ -32,7 +32,7 @@ const GOOGLE_CLIENT_SECRET = Deno.env.get("GOOGLE_ADS_CLIENT_SECRET") || "";
 const GOOGLE_REFRESH_TOKEN = Deno.env.get("GOOGLE_ADS_REFRESH_TOKEN") || "";
 const GOOGLE_DEVELOPER_TOKEN = Deno.env.get("GOOGLE_ADS_DEVELOPER_TOKEN") || "";
 
-const GOOGLE_ADS_API_VERSION = "v18"; // Update as needed
+const GOOGLE_ADS_API_VERSION = "v17"; // Google Ads API latest stable
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
