@@ -32,7 +32,7 @@ const GOOGLE_CLIENT_SECRET = Deno.env.get("GOOGLE_ADS_CLIENT_SECRET") || "";
 const GOOGLE_REFRESH_TOKEN = Deno.env.get("GOOGLE_ADS_REFRESH_TOKEN") || "";
 const GOOGLE_DEVELOPER_TOKEN = Deno.env.get("GOOGLE_ADS_DEVELOPER_TOKEN") || "";
 
-const GOOGLE_ADS_API_VERSION = "v17"; // Google Ads API latest stable
+const GOOGLE_ADS_API_VERSION = "v17"; // Google Ads API stable version
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
@@ -135,11 +135,18 @@ serve(async (req) => {
 
     console.log(`[sync-google-ads] Done. Campaigns: ${totalCampaigns}, Metrics: ${totalMetrics}`);
 
+    const allErrors = results.flatMap((r) => r.errors);
+
     return jsonResponse({
       message: "Sync completed",
       results,
       total_campaigns: totalCampaigns,
       total_metrics: totalMetrics,
+      errors: allErrors,
+      debug: {
+        integrations_found: integrations.length,
+        api_version: GOOGLE_ADS_API_VERSION,
+      },
     });
   } catch (err) {
     console.error("[sync-google-ads] Fatal error:", err);
