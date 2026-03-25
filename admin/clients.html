@@ -219,7 +219,7 @@
         .mb-16 { margin-bottom: 16px; }
 
         /* ─── Date Pills ─── */
-        .date-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+        .date-pills { display: flex; gap: 4px; flex-wrap: wrap; /* legacy, kept for compat */ }
         .date-pill {
             padding: 6px 14px; border: 2px solid #e5e7eb; border-radius: 50px;
             font-family: inherit; font-size: 0.75rem; font-weight: 600;
@@ -405,24 +405,13 @@
             </div>
         </div>
 
-        <!-- Date Range Picker -->
-        <div class="card" style="margin-bottom:20px; padding:16px 24px;">
-            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                <span class="text-sm text-bold" style="color:var(--dark);">Periode :</span>
-                <div class="date-pills" id="date-pills">
-                    <button class="date-pill" data-range="today">Aujourd'hui</button>
-                    <button class="date-pill" data-range="7d">7 jours</button>
-                    <button class="date-pill date-pill--active" data-range="30d">30 jours</button>
-                    <button class="date-pill" data-range="this-month">Mois en cours</button>
-                    <button class="date-pill" data-range="last-month">Mois precedent</button>
-                    <button class="date-pill" data-range="custom">Personnalise</button>
-                </div>
-                <div id="custom-dates" class="hidden" style="display:flex; gap:8px; align-items:center;">
-                    <input type="date" class="form-input" id="date-from" style="width:auto; padding:6px 10px; font-size:0.8rem;">
-                    <span class="text-muted">-</span>
-                    <input type="date" class="form-input" id="date-to" style="width:auto; padding:6px 10px; font-size:0.8rem;">
-                    <button class="btn btn--primary btn--sm" id="apply-dates">OK</button>
-                </div>
+        <!-- Month Selector -->
+        <div class="card" style="margin-bottom:20px; padding:14px 24px;">
+            <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                <span class="text-sm text-bold" style="color:var(--dark);">Mois :</span>
+                <button class="btn btn--sm" id="month-prev" style="padding:6px 12px; font-size:1rem; line-height:1;">&#8592;</button>
+                <span id="month-label" style="font-size:1rem; font-weight:800; color:var(--dark); min-width:160px; text-align:center;"></span>
+                <button class="btn btn--sm" id="month-next" style="padding:6px 12px; font-size:1rem; line-height:1;">&#8594;</button>
                 <span class="text-sm text-muted" id="date-range-label" style="margin-left:auto;"></span>
             </div>
         </div>
@@ -465,15 +454,14 @@
 
         <!-- Tabs -->
         <div class="tabs">
-            <button class="tab tab--active" data-tab="dashboard">Attribution</button>
-            <button class="tab" data-tab="weekly">Recap Hebdo</button>
+            <button class="tab tab--active" data-tab="dashboard">Vue mensuelle</button>
             <button class="tab" data-tab="campaigns">Campagnes</button>
             <button class="tab" data-tab="import">Import CSV</button>
             <button class="tab" data-tab="orders">Commandes</button>
-            <button class="tab" data-tab="spend">Depenses Ads</button>
+            <button class="tab" data-tab="spend">Saisie manuelle</button>
         </div>
 
-        <!-- ── Tab: Attribution (TripleWhale style) ── -->
+        <!-- ── Tab: Monthly Dashboard ── -->
         <div class="tab-content tab-content--active" id="tab-dashboard">
             <div class="card">
                 <h3 class="card__title"><span class="card__title-icon">&#128200;</span> Attribution par source</h3>
@@ -482,18 +470,14 @@
                 </div>
             </div>
             <div class="card">
-                <h3 class="card__title"><span class="card__title-icon">&#128197;</span> Evolution journaliere</h3>
-                <div id="daily-table">
+                <h3 class="card__title"><span class="card__title-icon">&#128202;</span> Recap hebdomadaire du mois</h3>
+                <div id="weekly-recap">
                     <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
                 </div>
             </div>
-        </div>
-
-        <!-- ── Tab: Weekly Recap ── -->
-        <div class="tab-content" id="tab-weekly">
             <div class="card">
-                <h3 class="card__title"><span class="card__title-icon">&#128202;</span> Recap hebdomadaire</h3>
-                <div id="weekly-recap">
+                <h3 class="card__title"><span class="card__title-icon">&#128197;</span> Detail journalier</h3>
+                <div id="daily-table">
                     <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
                 </div>
             </div>
@@ -729,74 +713,61 @@
         loadAllData();
     }
 
-    // ── Date Range State ──
+    // ── Month Navigation State ──
     var dateRange = { from: null, to: null };
+    var currentMonth = new Date(); // Tracks selected month
+
+    var MONTH_NAMES = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'];
 
     function initDateRange() {
-        // Default: 30 days
-        setDateRange('30d');
+        // Default: current month
+        setMonth(new Date());
 
-        // Date pill clicks
-        document.querySelectorAll('.date-pill').forEach(function(pill) {
-            pill.addEventListener('click', function() {
-                document.querySelectorAll('.date-pill').forEach(function(p) { p.classList.remove('date-pill--active'); });
-                pill.classList.add('date-pill--active');
-                var range = pill.dataset.range;
-                if (range === 'custom') {
-                    document.getElementById('custom-dates').classList.remove('hidden');
-                } else {
-                    document.getElementById('custom-dates').classList.add('hidden');
-                    setDateRange(range);
-                    loadAllData();
-                }
-            });
+        document.getElementById('month-prev').addEventListener('click', function() {
+            currentMonth.setMonth(currentMonth.getMonth() - 1);
+            setMonth(currentMonth);
+            loadAllData();
         });
 
-        // Custom date apply
-        document.getElementById('apply-dates').addEventListener('click', function() {
-            var from = document.getElementById('date-from').value;
-            var to = document.getElementById('date-to').value;
-            if (from && to) {
-                dateRange.from = from;
-                dateRange.to = to;
-                updateDateLabel();
+        document.getElementById('month-next').addEventListener('click', function() {
+            var now = new Date();
+            var next = new Date(currentMonth);
+            next.setMonth(next.getMonth() + 1);
+            // Don't go past current month
+            if (next.getFullYear() < now.getFullYear() || (next.getFullYear() === now.getFullYear() && next.getMonth() <= now.getMonth())) {
+                currentMonth = next;
+                setMonth(currentMonth);
                 loadAllData();
             }
         });
     }
 
-    function setDateRange(range) {
-        var now = new Date();
-        var to = new Date(now);
-        var from = new Date(now);
+    function setMonth(d) {
+        var year = d.getFullYear();
+        var month = d.getMonth();
+        var from = new Date(year, month, 1);
+        var to = new Date(year, month + 1, 0); // Last day of month
 
-        switch(range) {
-            case 'today':
-                break;
-            case '7d':
-                from.setDate(from.getDate() - 6);
-                break;
-            case '30d':
-                from.setDate(from.getDate() - 29);
-                break;
-            case 'this-month':
-                from = new Date(now.getFullYear(), now.getMonth(), 1);
-                break;
-            case 'last-month':
-                from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-                to = new Date(now.getFullYear(), now.getMonth(), 0);
-                break;
+        // If current month, cap to today
+        var now = new Date();
+        if (year === now.getFullYear() && month === now.getMonth()) {
+            to = now;
         }
 
         dateRange.from = formatISODate(from);
         dateRange.to = formatISODate(to);
-        updateDateLabel();
-    }
 
-    function updateDateLabel() {
-        var label = document.getElementById('date-range-label');
-        if (label) {
-            label.textContent = formatDate(dateRange.from) + ' → ' + formatDate(dateRange.to);
+        document.getElementById('month-label').textContent = MONTH_NAMES[month] + ' ' + year;
+        document.getElementById('date-range-label').textContent = formatDate(dateRange.from) + ' → ' + formatDate(dateRange.to);
+
+        // Disable next button if current month
+        var nextBtn = document.getElementById('month-next');
+        if (year === now.getFullYear() && month === now.getMonth()) {
+            nextBtn.style.opacity = '0.3';
+            nextBtn.style.pointerEvents = 'none';
+        } else {
+            nextBtn.style.opacity = '1';
+            nextBtn.style.pointerEvents = 'auto';
         }
     }
 

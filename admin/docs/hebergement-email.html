@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Guide complet : transfert de domaine, configuration DNS, creation de boites mail professionnelles, migration email. Regen Agency vous accompagne.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Hebergement, Domaine & Email Pro - Regen Agency">
+    <meta property="og:description" content="Accompagnement creation d'hebergement, transfert de domaine et gestion des boites mail professionnelles.">
+    <meta property="og:type" content="website">
+
+    <title>Hebergement, Domaine & Email Pro - Regen Agency</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#173C3A">
+
+    <style>
+        /* Page-specific styles */
+        .guide-hero {
+            padding: 160px 0 80px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, #0f2a29 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .guide-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(47, 185, 99, 0.08) 0%, transparent 70%);
+        }
+        .guide-hero__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(47, 185, 99, 0.15);
+            border: 1px solid rgba(47, 185, 99, 0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-secondary);
+            margin-bottom: 24px;
+        }
+        .guide-hero__title {
+            font-size: 2.75rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .guide-hero__subtitle {
+            font-size: 1.15rem;
+            opacity: 0.8;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Process section */
+        .process {
+            padding: 80px 0;
+        }
+        .process__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
+        }
+        .process-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 300ms ease;
+            position: relative;
+        }
+        .process-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+        .process-card__step {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+        .process-card__step--domain { background: linear-gradient(135deg, #2FB963, #05C08A); }
+        .process-card__step--dns { background: linear-gradient(135deg, #4285F4, #1a73e8); }
+        .process-card__step--email { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .process-card__step--migrate { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+        .process-card__step--outlook { background: linear-gradient(135deg, #0078d4, #005a9e); }
+        .process-card__step--seo { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        .process-card__title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 12px;
+        }
+        .process-card__text {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        /* Checklist */
+        .checklist {
+            padding: 80px 0;
+            background: var(--color-light);
+        }
+        .checklist__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
+        }
+        .checklist-card {
+            background: white;
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        .checklist-card__title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 20px;
+        }
+        .checklist-card__icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .checklist-card__icon--green { background: rgba(47, 185, 99, 0.12); color: var(--color-secondary); }
+        .checklist-card__icon--blue { background: rgba(66, 133, 244, 0.12); color: #4285F4; }
+        .checklist-card__icon--orange { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+        .checklist-card__icon--purple { background: rgba(99, 102, 241, 0.12); color: #6366f1; }
+
+        .checklist-card__list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .checklist-card__list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            font-size: 0.92rem;
+            color: #555;
+            line-height: 1.6;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+        .checklist-card__list li:last-child { border-bottom: none; }
+        .checklist-card__list li svg {
+            flex-shrink: 0;
+            margin-top: 2px;
+            color: var(--color-secondary);
+        }
+
+        /* Config reference */
+        .config-ref {
+            padding: 80px 0;
+        }
+        .config-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-top: 32px;
+            margin-bottom: 48px;
+        }
+        .config-table thead {
+            background: var(--color-primary);
+            color: white;
+        }
+        .config-table th {
+            padding: 16px 24px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .config-table td {
+            padding: 14px 24px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .config-table tbody tr {
+            background: white;
+            transition: background 200ms;
+        }
+        .config-table tbody tr:hover {
+            background: rgba(47, 185, 99, 0.04);
+        }
+        .config-table code {
+            background: rgba(47, 185, 99, 0.1);
+            color: var(--color-primary);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Alert boxes */
+        .alert-box {
+            display: flex;
+            gap: 16px;
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin: 24px 0;
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+        .alert-box--warning {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            color: #92400e;
+        }
+        .alert-box--danger {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #991b1b;
+        }
+        .alert-box--info {
+            background: rgba(66, 133, 244, 0.08);
+            border: 1px solid rgba(66, 133, 244, 0.2);
+            color: #1e40af;
+        }
+        .alert-box--success {
+            background: rgba(47, 185, 99, 0.08);
+            border: 1px solid rgba(47, 185, 99, 0.2);
+            color: #065f46;
+        }
+        .alert-box svg { flex-shrink: 0; margin-top: 2px; }
+
+        /* Resources links */
+        .resources {
+            padding: 80px 0;
+            background: var(--color-light);
+        }
+        .resources__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+        .resource-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 300ms ease;
+            text-decoration: none;
+            display: block;
+        }
+        .resource-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-secondary);
+        }
+        .resource-card__label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            opacity: 0.6;
+        }
+        .resource-card__name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 8px;
+        }
+        .resource-card__desc {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        .resource-card__arrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-secondary);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 0;
+            text-align: center;
+        }
+        .cta-section__box {
+            background: linear-gradient(135deg, var(--color-primary) 0%, #0f2a29 100%);
+            border-radius: 24px;
+            padding: 64px 48px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-section__box::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(47, 185, 99, 0.1) 0%, transparent 70%);
+        }
+        .cta-section__title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .cta-section__text {
+            font-size: 1.05rem;
+            opacity: 0.8;
+            max-width: 500px;
+            margin: 0 auto 32px;
+            line-height: 1.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .guide-hero { padding: 130px 0 60px; }
+            .guide-hero__title { font-size: 1.8rem; }
+            .guide-hero__subtitle { font-size: 1rem; }
+            .process__grid, .checklist__grid { grid-template-columns: 1fr; }
+            .config-table { font-size: 0.8rem; }
+            .config-table th, .config-table td { padding: 10px 14px; }
+            .cta-section__box { padding: 40px 24px; }
+            .cta-section__title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body class="loading">
+
+    <!-- Page Loader -->
+    <div class="page-loader">
+        <div class="page-loader__content">
+            <img src="assets/images/logo-icon.png" alt="Chargement" class="page-loader__logo">
+        </div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress"></div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header__container">
+            <nav class="nav">
+                <a href="/" class="nav__logo">
+                    <img src="assets/images/logo-full.png" alt="Regen Agency" class="nav__logo-img">
+                </a>
+
+                <ul class="nav__menu" id="nav-menu">
+                    <li><a href="index.html" class="nav__link">Accueil</a></li>
+                    <li class="nav__item--dropdown">
+                        <a href="services.html" class="nav__link nav__link--active">Services</a>
+                        <ul class="nav__dropdown">
+                            <li><a href="ads-sea.html">SEA / SMA</a></li>
+                            <li><a href="site-marketing.html">Web Site & Growth</a></li>
+                            <li><a href="data-tracking-pole.html">Data & Tracking</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="qui-sommes-nous.html" class="nav__link">L'equipe</a></li>
+                </ul>
+
+                <div class="nav__actions">
+                    <a href="connexion.html" class="btn btn--secondary nav__cta nav__cta--client">Espace Utilisateur</a>
+                    <a href="contact.html" class="btn btn--primary nav__cta">Prendre contact</a>
+                </div>
+
+                <button class="nav__toggle" id="nav-toggle" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main>
+
+        <!-- Hero -->
+        <section class="guide-hero">
+            <div class="container">
+                <span class="guide-hero__badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                    ACCOMPAGNEMENT TECHNIQUE
+                </span>
+                <h1 class="guide-hero__title reveal">Hebergement, Domaine<br>& Email Professionnel</h1>
+                <p class="guide-hero__subtitle reveal">De la creation de votre hebergement au transfert de domaine, en passant par la configuration de vos boites mail professionnelles. On s'occupe de tout.</p>
+            </div>
+        </section>
+
+        <!-- Process Steps -->
+        <section class="process">
+            <div class="container">
+                <div class="section__header" style="text-align: center; margin-bottom: 16px;">
+                    <span class="section__badge" style="background: rgba(47, 185, 99, 0.1); color: var(--color-secondary); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600;">LE PROCESSUS</span>
+                </div>
+                <h2 style="text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 16px; color: var(--color-dark);">Les etapes d'un accompagnement complet</h2>
+                <p style="text-align: center; color: #666; max-width: 600px; margin: 0 auto; line-height: 1.7;">Chaque projet suit un processus structure pour garantir une mise en production sans accroc.</p>
+
+                <div class="process__grid">
+                    <!-- Step 1 -->
+                    <div class="process-card reveal">
+                        <div class="process-card__step process-card__step--domain">1</div>
+                        <h3 class="process-card__title">Transfert de domaine</h3>
+                        <p class="process-card__text">Recuperation du code d'autorisation (authcode) aupres de l'ancien registrar, puis transfert vers OVH ou le registrar de votre choix. Verification de la propriete du domaine.</p>
+                        <div class="alert-box alert-box--warning">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <span>Le transfert de domaine ne concerne <strong>que le nom de domaine</strong>, pas l'hebergement email. Ce sont deux services separes.</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="process-card reveal">
+                        <div class="process-card__step process-card__step--dns">2</div>
+                        <h3 class="process-card__title">Configuration DNS</h3>
+                        <p class="process-card__text">Parametrage des enregistrements DNS pour pointer vers l'hebergeur du site (Vercel, Netlify, etc.) : A records, CNAME, et verification des MX records pour les emails.</p>
+                        <div class="alert-box alert-box--info">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <span>Propagation DNS : jusqu'a <strong>24-48h</strong> dans certains cas. Prevoir ce delai lors de la mise en production.</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="process-card reveal">
+                        <div class="process-card__step process-card__step--email">3</div>
+                        <h3 class="process-card__title">Creation des boites mail</h3>
+                        <p class="process-card__text">Creation des adresses email professionnelles sur OVH (MX Plan, Zimbra ou Email Pro). Choix de l'offre adaptee au volume d'emails du client.</p>
+                        <div class="alert-box alert-box--success">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <span><strong>MX Plan</strong> : 5 Go/compte (inclus). <strong>Zimbra Starter</strong> : 15 Go. <strong>Zimbra Pro</strong> : 50 Go.</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="process-card reveal">
+                        <div class="process-card__step process-card__step--migrate">4</div>
+                        <h3 class="process-card__title">Migration de l'historique</h3>
+                        <p class="process-card__text">Transfert de l'integralite des emails depuis l'ancien hebergeur via OVH Mail Migrator (IMAP vers IMAP). Conservation de l'arborescence des dossiers et pieces jointes.</p>
+                        <div class="alert-box alert-box--danger">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            <span><strong>Ne jamais reconfigurer Outlook</strong> avant la fin de la migration, sous peine de perdre la visibilite de l'historique.</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="process-card reveal">
+                        <div class="process-card__step process-card__step--outlook">5</div>
+                        <h3 class="process-card__title">Configuration Outlook</h3>
+                        <p class="process-card__text">Parametrage d'Outlook (classic) en IMAP sur chaque poste du client. Synchronisation des emails entre tous les postes. Test d'envoi et de reception.</p>
+                        <div class="alert-box alert-box--warning">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <span>Le <strong>nouvel Outlook (Windows)</strong> ne fonctionne pas avec OVH/Zimbra. Toujours utiliser <strong>Outlook (classic)</strong>.</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 6 -->
+                    <div class="process-card reveal">
+                        <div class="process-card__step process-card__step--seo">6</div>
+                        <h3 class="process-card__title">SEO & Redirections</h3>
+                        <p class="process-card__text">Configuration des redirections 301 entre les domaines, mise en place du robots.txt, sitemap.xml et des balises canonical. Soumission a Google Search Console.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Checklist -->
+        <section class="checklist">
+            <div class="container">
+                <div class="section__header" style="text-align: center; margin-bottom: 16px;">
+                    <span class="section__badge" style="background: rgba(66, 133, 244, 0.1); color: #4285F4; padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600;">CHECKLIST</span>
+                </div>
+                <h2 style="text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 16px; color: var(--color-dark);">Les points a ne pas oublier</h2>
+                <p style="text-align: center; color: #666; max-width: 600px; margin: 0 auto; line-height: 1.7;">Chaque detail compte pour eviter les mauvaises surprises.</p>
+
+                <div class="checklist__grid">
+                    <!-- Avant le transfert -->
+                    <div class="checklist-card reveal">
+                        <div class="checklist-card__title">
+                            <div class="checklist-card__icon checklist-card__icon--green">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            </div>
+                            Avant le transfert
+                        </div>
+                        <ul class="checklist-card__list">
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Verifier qui detient le domaine (client ou ancienne agence)</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Recuperer le code d'autorisation (authcode)</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Lister les adresses email existantes du client</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Estimer le volume de chaque boite mail (en Go)</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Sauvegarder l'historique emails (export PST ou acces webmail)</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Ne <strong>jamais</strong> resilier l'ancien hebergement avant la migration</li>
+                        </ul>
+                    </div>
+
+                    <!-- Configuration email -->
+                    <div class="checklist-card reveal">
+                        <div class="checklist-card__title">
+                            <div class="checklist-card__icon checklist-card__icon--blue">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            </div>
+                            Configuration email
+                        </div>
+                        <ul class="checklist-card__list">
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Choisir l'offre adaptee au volume (MX Plan, Zimbra, Email Pro)</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Verifier que les MX records pointent vers le bon service</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Creer les boites mail avant de lancer la migration</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Tester l'envoi et la reception avant de livrer au client</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Utiliser Outlook (classic) uniquement, pas le nouvel Outlook</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Fournir au client un document avec tous les parametres</li>
+                        </ul>
+                    </div>
+
+                    <!-- Erreurs courantes -->
+                    <div class="checklist-card reveal">
+                        <div class="checklist-card__title">
+                            <div class="checklist-card__icon checklist-card__icon--orange">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            </div>
+                            Erreurs courantes
+                        </div>
+                        <ul class="checklist-card__list">
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confondre transfert de domaine et transfert d'hebergement email</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Sous-estimer l'espace necessaire (quota depassee = emails perdus)</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Resilier l'ancien hebergeur avant d'avoir migre les emails</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Configurer Outlook avant la fin de la migration</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Utiliser le nouvel Outlook Windows (incompatible OVH/Zimbra)</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Oublier de verifier les MX records apres changement de service</li>
+                        </ul>
+                    </div>
+
+                    <!-- RGPD & Legal -->
+                    <div class="checklist-card reveal">
+                        <div class="checklist-card__title">
+                            <div class="checklist-card__icon checklist-card__icon--purple">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            RGPD & Legal
+                        </div>
+                        <ul class="checklist-card__list">
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Les donnees email appartiennent au client (RGPD art. 20)</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> L'ancienne agence est tenue de restituer les acces</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Un hebergement resilie reste actif jusqu'a la fin de l'abonnement</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Toujours transferer le domaine au nom du client</li>
+                            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Documenter chaque etape pour le client</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Config Reference Tables -->
+        <section class="config-ref">
+            <div class="container">
+                <div class="section__header" style="text-align: center; margin-bottom: 16px;">
+                    <span class="section__badge" style="background: rgba(245, 158, 11, 0.1); color: #d97706; padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600;">REFERENCE TECHNIQUE</span>
+                </div>
+                <h2 style="text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 16px; color: var(--color-dark);">Parametres de configuration</h2>
+                <p style="text-align: center; color: #666; max-width: 600px; margin: 0 auto; line-height: 1.7;">Les parametres a utiliser pour chaque service OVH.</p>
+
+                <!-- Outlook Config -->
+                <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: 48px; margin-bottom: 8px; color: var(--color-dark);">Configuration Outlook (Classic) — OVH</h3>
+                <table class="config-table">
+                    <thead>
+                        <tr>
+                            <th>Parametre</th>
+                            <th>Serveur</th>
+                            <th>Port</th>
+                            <th>Securite</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Serveur entrant (IMAP)</td>
+                            <td><code>ssl0.ovh.net</code></td>
+                            <td><code>993</code></td>
+                            <td>SSL/TLS</td>
+                        </tr>
+                        <tr>
+                            <td>Serveur sortant (SMTP)</td>
+                            <td><code>ssl0.ovh.net</code></td>
+                            <td><code>465</code></td>
+                            <td>SSL/TLS</td>
+                        </tr>
+                        <tr>
+                            <td>Serveur entrant (alt.)</td>
+                            <td><code>imap.mail.ovh.net</code></td>
+                            <td><code>993</code></td>
+                            <td>SSL/TLS</td>
+                        </tr>
+                        <tr>
+                            <td>Serveur sortant (alt.)</td>
+                            <td><code>smtp.mail.ovh.net</code></td>
+                            <td><code>465</code></td>
+                            <td>SSL/TLS</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- DNS Config -->
+                <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: 48px; margin-bottom: 8px; color: var(--color-dark);">Configuration DNS — Vercel</h3>
+                <table class="config-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Nom</th>
+                            <th>Valeur</th>
+                            <th>Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>A</code></td>
+                            <td>@</td>
+                            <td><code>76.76.21.21</code></td>
+                            <td>Domaine racine</td>
+                        </tr>
+                        <tr>
+                            <td><code>CNAME</code></td>
+                            <td>www</td>
+                            <td><code>cname.vercel-dns.com</code></td>
+                            <td>Sous-domaine www</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Offres OVH -->
+                <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: 48px; margin-bottom: 8px; color: var(--color-dark);">Offres email OVH — Comparatif</h3>
+                <table class="config-table">
+                    <thead>
+                        <tr>
+                            <th>Offre</th>
+                            <th>Espace</th>
+                            <th>Prix</th>
+                            <th>Recommandation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>MX Plan</code></td>
+                            <td>5 Go / compte</td>
+                            <td>Inclus avec domaine</td>
+                            <td>Nouveau compte, faible volume</td>
+                        </tr>
+                        <tr>
+                            <td><code>Zimbra Starter</code></td>
+                            <td>15 Go / compte</td>
+                            <td>~2 EUR/mois</td>
+                            <td>Historique moyen, usage pro</td>
+                        </tr>
+                        <tr>
+                            <td><code>Zimbra Pro</code></td>
+                            <td>50 Go / compte</td>
+                            <td>~4 EUR/mois</td>
+                            <td>Gros volume, pieces jointes lourdes</td>
+                        </tr>
+                        <tr>
+                            <td><code>Exchange</code></td>
+                            <td>50 Go / compte</td>
+                            <td>~6 EUR/mois</td>
+                            <td>Compatibilite Microsoft native</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert-box alert-box--info">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    <span><strong>Attention :</strong> MX 25/100/Full = nombre de <strong>comptes</strong>, pas l'espace en Go. Ne pas confondre lors de l'upgrade.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="resources">
+            <div class="container">
+                <div class="section__header" style="text-align: center; margin-bottom: 16px;">
+                    <span class="section__badge" style="background: rgba(99, 102, 241, 0.1); color: #6366f1; padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600;">RESSOURCES</span>
+                </div>
+                <h2 style="text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 16px; color: var(--color-dark);">Liens utiles</h2>
+                <p style="text-align: center; color: #666; max-width: 600px; margin: 0 auto; line-height: 1.7;">Tous les outils et interfaces dont vous aurez besoin.</p>
+
+                <div class="resources__grid">
+                    <a href="https://www.ovh.com/manager/" class="resource-card reveal" target="_blank" rel="noopener">
+                        <div class="resource-card__label">OVH</div>
+                        <div class="resource-card__name">OVH Manager</div>
+                        <div class="resource-card__desc">Gestion des domaines, DNS, hebergement et services email.</div>
+                        <span class="resource-card__arrow">Acceder <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+
+                    <a href="https://webmail.mail.ovh.net/" class="resource-card reveal" target="_blank" rel="noopener">
+                        <div class="resource-card__label">ZIMBRA</div>
+                        <div class="resource-card__name">Webmail Zimbra OVH</div>
+                        <div class="resource-card__desc">Acces webmail pour les comptes Zimbra Starter et Pro.</div>
+                        <span class="resource-card__arrow">Acceder <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+
+                    <a href="https://mail.ovh.net/" class="resource-card reveal" target="_blank" rel="noopener">
+                        <div class="resource-card__label">MX PLAN</div>
+                        <div class="resource-card__name">Webmail MX Plan OVH</div>
+                        <div class="resource-card__desc">Acces webmail pour les comptes MX Plan (Roundcube).</div>
+                        <span class="resource-card__arrow">Acceder <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+
+                    <a href="https://omm.ovh.net/" class="resource-card reveal" target="_blank" rel="noopener">
+                        <div class="resource-card__label">MIGRATION</div>
+                        <div class="resource-card__name">OVH Mail Migrator</div>
+                        <div class="resource-card__desc">Outil de migration IMAP pour transferer les emails entre serveurs.</div>
+                        <span class="resource-card__arrow">Acceder <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+
+                    <a href="https://vercel.com/dashboard" class="resource-card reveal" target="_blank" rel="noopener">
+                        <div class="resource-card__label">HEBERGEMENT</div>
+                        <div class="resource-card__name">Vercel Dashboard</div>
+                        <div class="resource-card__desc">Dashboard hebergement : deployments, domaines, logs.</div>
+                        <span class="resource-card__arrow">Acceder <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+
+                    <a href="https://search.google.com/search-console" class="resource-card reveal" target="_blank" rel="noopener">
+                        <div class="resource-card__label">SEO</div>
+                        <div class="resource-card__name">Google Search Console</div>
+                        <div class="resource-card__desc">Soumettre le sitemap, verifier l'indexation, surveiller les erreurs.</div>
+                        <span class="resource-card__arrow">Acceder <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+
+                    <a href="https://www.thunderbird.net/fr/" class="resource-card reveal" target="_blank" rel="noopener">
+                        <div class="resource-card__label">ALTERNATIVE</div>
+                        <div class="resource-card__name">Mozilla Thunderbird</div>
+                        <div class="resource-card__desc">Client mail gratuit, alternative a Outlook. Compatible OVH/Zimbra.</div>
+                        <span class="resource-card__arrow">Telecharger <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+
+                    <a href="https://parsec.app/downloads" class="resource-card reveal" target="_blank" rel="noopener">
+                        <div class="resource-card__label">SUPPORT</div>
+                        <div class="resource-card__name">Parsec (prise de controle)</div>
+                        <div class="resource-card__desc">Prise de controle a distance pour configurer les postes clients.</div>
+                        <span class="resource-card__arrow">Telecharger <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-section__box reveal">
+                    <h2 class="cta-section__title">Un projet de migration ou d'hebergement ?</h2>
+                    <p class="cta-section__text">On s'occupe de tout, du transfert de domaine a la configuration des boites mail sur chaque poste.</p>
+                    <a href="contact.html" class="btn btn--white btn--large">Prendre contact</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__brand">
+                    <a href="/" class="footer__logo">
+                        <img src="assets/images/logo-icon.png" alt="Regen Agency" class="footer__logo-icon">
+                        <span class="footer__logo-text">Regen Agency</span>
+                    </a>
+                </div>
+
+                <div class="footer__links">
+                    <div class="footer__col">
+                        <h4 class="footer__title">Services</h4>
+                        <ul class="footer__list">
+                            <li><a href="ads-sea.html">SEA / SMA</a></li>
+                            <li><a href="site-marketing.html">Web Site & Growth</a></li>
+                            <li><a href="data-tracking-pole.html">Data & Tracking</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__title">En savoir plus</h4>
+                        <ul class="footer__list">
+                            <li><a href="qui-sommes-nous.html">L'equipe</a></li>
+                            <li><a href="blog.html">Blog</a></li>
+                            <li><a href="mentions-legales.html">Mentions Legales</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__title">Support</h4>
+                        <ul class="footer__list">
+                            <li><a href="contact.html">Contactez nous</a></li>
+                            <li><a href="services.html#faq">FAQ</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer__social">
+                    <a href="https://www.facebook.com/RegenAgency" class="footer__social-link" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/regenagency_/" class="footer__social-link" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://www.linkedin.com/company/regenagency/" class="footer__social-link" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2025 Regen Agency, tous droits reserves.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+</body>
+</html>
