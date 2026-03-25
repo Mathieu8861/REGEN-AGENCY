@@ -32,7 +32,7 @@ const GOOGLE_CLIENT_SECRET = Deno.env.get("GOOGLE_ADS_CLIENT_SECRET") || "";
 const GOOGLE_REFRESH_TOKEN = Deno.env.get("GOOGLE_ADS_REFRESH_TOKEN") || "";
 const GOOGLE_DEVELOPER_TOKEN = Deno.env.get("GOOGLE_ADS_DEVELOPER_TOKEN") || "";
 
-const GOOGLE_ADS_API_VERSION = "v17"; // Google Ads API stable version
+const GOOGLE_ADS_API_VERSION = "v23"; // Google Ads API latest version (Jan 2026)
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
@@ -195,9 +195,9 @@ async function syncGoogleAdsAccount(
   const customerId = customer_id.replace(/-/g, "");
   const mccId = mcc_id ? mcc_id.replace(/-/g, "") : "";
 
-  // Date range: last 7 days (to capture retroactive conversions)
+  // Date range: last 90 days (to have full history for period filters)
   const dateTo = new Date(Date.now() - 86400000); // Yesterday
-  const dateFrom = new Date(dateTo.getTime() - 7 * 86400000); // 7 days before yesterday
+  const dateFrom = new Date(dateTo.getTime() - 90 * 86400000); // 90 days back
   const dateToStr = dateTo.toISOString().split("T")[0];
   const dateFromStr = dateFrom.toISOString().split("T")[0];
 
@@ -268,7 +268,6 @@ async function syncGoogleAdsAccount(
     do {
       const requestBody: Record<string, unknown> = {
         query: gaqlQuery,
-        pageSize: 10000,
       };
       if (pageToken) {
         requestBody.pageToken = pageToken;
