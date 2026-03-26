@@ -688,6 +688,111 @@
             </div>
         </section>
 
+        <!-- Webmail & Sauvegardes -->
+        <section style="padding: 80px 0; background: white;">
+            <div class="container">
+                <div class="section__header" style="text-align: center; margin-bottom: 16px;">
+                    <span class="section__badge" style="background: rgba(245, 158, 11, 0.1); color: #d97706; padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600;">IMPORTANT</span>
+                </div>
+                <h2 style="text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 16px; color: var(--color-dark);">Webmail & Sauvegardes</h2>
+                <p style="text-align: center; color: #666; max-width: 600px; margin: 0 auto; line-height: 1.7;">Connaitre les interfaces webmail de chaque hebergeur et les bonnes pratiques de sauvegarde.</p>
+
+                <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: 48px; margin-bottom: 8px; color: var(--color-dark);">Acces webmail par hebergeur</h3>
+
+                <table class="config-table">
+                    <thead>
+                        <tr>
+                            <th style="color: white !important;">Hebergeur</th>
+                            <th style="color: white !important;">URL Webmail</th>
+                            <th style="color: white !important;">Interface</th>
+                            <th style="color: white !important;">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>OVH MX Plan</strong></td>
+                            <td><code>mail.ovh.net</code></td>
+                            <td>Roundcube</td>
+                            <td style="color: #059669; font-weight: 600;">Actif</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OVH Zimbra</strong></td>
+                            <td><code>webmail.mail.ovh.net</code></td>
+                            <td>Zimbra</td>
+                            <td style="color: #059669; font-weight: 600;">Actif</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ionos</strong></td>
+                            <td><code>mail.ionos.fr</code></td>
+                            <td>Ionos Webmail</td>
+                            <td style="color: #059669; font-weight: 600;">Actif</td>
+                        </tr>
+                        <tr>
+                            <td><strong>O2switch</strong></td>
+                            <td><code>webmail.o2switch.net</code></td>
+                            <td>Roundcube</td>
+                            <td style="color: #059669; font-weight: 600;">Actif</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gandi</strong></td>
+                            <td><code>webmail.eu.com</code></td>
+                            <td>Roundcube</td>
+                            <td style="color: #ef4444; font-weight: 600;">Arrete</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert-box alert-box--warning">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <div>
+                        <strong>Un webmail n'est pas un outil de sauvegarde.</strong><br>
+                        C'est une interface pour consulter les emails sur le serveur. Si le service est resilie, le webmail ne fonctionne plus et les emails sont perdus. Il faut <strong>toujours</strong> sauvegarder avant toute resiliation.
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.3rem; font-weight: 700; margin-top: 48px; margin-bottom: 8px; color: var(--color-dark);">Methodes de sauvegarde fiables</h3>
+
+                <table class="config-table">
+                    <thead>
+                        <tr>
+                            <th style="color: white !important;">Methode</th>
+                            <th style="color: white !important;">Outil</th>
+                            <th style="color: white !important;">Format</th>
+                            <th style="color: white !important;">Remarques</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Export PST</strong></td>
+                            <td>Outlook (Classic)</td>
+                            <td><code>.pst</code></td>
+                            <td>Methode la plus fiable. Exporter via Fichier > Ouvrir et exporter > Importer/Exporter</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sync IMAP</strong></td>
+                            <td>Thunderbird</td>
+                            <td>Dossiers locaux</td>
+                            <td>Configurer le compte en IMAP, puis copier les emails dans les dossiers locaux</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Acces webmail</strong></td>
+                            <td>Roundcube / Zimbra</td>
+                            <td><code>.eml</code></td>
+                            <td>Sauvegarde email par email uniquement — pas adapte pour un gros volume</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert-box alert-box--danger">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    <div>
+                        <strong>Ne jamais resilier un hebergement email avant d'avoir sauvegarde.</strong><br>
+                        Toujours exporter en .pst via Outlook (Classic) ou synchroniser via Thunderbird <strong>avant</strong> toute resiliation ou changement de service.
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Resources -->
         <section class="resources">
             <div class="container">
