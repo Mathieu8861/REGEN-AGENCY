@@ -13,6 +13,7 @@
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { AGENCY_KNOWLEDGE_BASE } from "./knowledge-base.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -84,6 +85,40 @@ async function logActivity(
   });
 }
 
+async function fetchProspectDocuments(prospectId: string): Promise<string> {
+  const { data: docs } = await supabase
+    .from("prospect_documents")
+    .select("*")
+    .eq("prospect_id", prospectId)
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  if (!docs || docs.length === 0) return "Aucun document uploadé.";
+
+  const summaries: string[] = [];
+  for (const doc of docs) {
+    // For text-based files, try to download and read content
+    if (doc.file_type && (doc.file_type.includes("text") || doc.file_type.includes("csv"))) {
+      try {
+        const { data: fileData } = await supabase.storage
+          .from("prospect-documents")
+          .download(doc.file_path);
+        if (fileData) {
+          const text = await fileData.text();
+          summaries.push(`### Document: ${doc.file_name} (${doc.category})\n${text.slice(0, 2000)}`);
+          continue;
+        }
+      } catch (_) {
+        // Fall through to metadata only
+      }
+    }
+    // For non-text files (PDF, images), just include metadata
+    summaries.push(`### Document: ${doc.file_name} (catégorie: ${doc.category}, type: ${doc.file_type || "inconnu"}, taille: ${doc.file_size ? Math.round(doc.file_size / 1024) + " Ko" : "inconnue"})`);
+  }
+
+  return summaries.join("\n\n");
+}
+
 async function fetchPageContent(url: string): Promise<string> {
   try {
     const controller = new AbortController();
@@ -148,11 +183,16 @@ async function handleGenerateEmail(prospectId: string, language: string) {
     .order("created_at", { ascending: false })
     .limit(10);
 
-  // 5. Build prompt
+  // 5. Fetch documents
+  const docsContext = await fetchProspectDocuments(prospectId);
+
+  // 6. Build prompt
   const systemPrompt =
-    "Tu es un commercial expert en marketing digital chez Regen Agency, une agence spécialisée en Google Ads, Meta Ads, SEO et création de sites web. Rédige un email professionnel de proposition commerciale personnalisé. " +
+    "Tu es un commercial expert en marketing digital chez Regen Agency. " +
+    "Rédige un email professionnel de proposition commerciale personnalisé. " +
     "L'email doit être structuré avec un objet (sur la première ligne, préfixé par 'Objet: ') puis le corps du message. " +
-    "Sois professionnel, engageant et personnalisé en fonction des données du prospect.";
+    "Sois professionnel, engageant et personnalisé en fonction des données du prospect.\n\n" +
+    AGENCY_KNOWLEDGE_BASE;
 
   const userPrompt = `Voici les informations du prospect pour personnaliser l'email :
 
@@ -203,11 +243,14 @@ ${
     : "Aucune activité"
 }
 
+## Documents du prospect
+${docsContext}
+
 Langue de l'email : ${language === "en" ? "anglais" : "français"}
 
 Rédige l'email complet avec l'objet en première ligne (format "Objet: ...") puis le corps du message.`;
 
-  // 6. Call Claude
+  // 7. Call Claude
   const aiResponse = await callClaude(systemPrompt, userPrompt, 2000);
 
   // 7. Parse subject and body
@@ -285,9 +328,10 @@ async function handleAnalyzeLinks(prospectId: string) {
 
   // 3. Build prompt
   const systemPrompt =
-    "Tu es un analyste business chez Regen Agency, une agence spécialisée en marketing digital (Google Ads, Meta Ads, SEO, création de sites web). " +
+    "Tu es un analyste business chez Regen Agency. " +
     "Analyse les informations suivantes sur cette entreprise et extrait un résumé structuré. " +
-    "Sois précis, factuel et orienté business.";
+    "Sois précis, factuel et orienté business. Identifie les opportunités commerciales pour l'agence.\n\n" +
+    AGENCY_KNOWLEDGE_BASE;
 
   const userPrompt = `Analyse les pages web suivantes liées à un prospect et extrais les informations clés :
 
@@ -350,9 +394,10 @@ async function handleSummarizeTranscript(prospectId: string) {
 
   // 3. Build prompt
   const systemPrompt =
-    "Tu es un assistant commercial chez Regen Agency, une agence spécialisée en marketing digital (Google Ads, Meta Ads, SEO, création de sites web). " +
+    "Tu es un assistant commercial chez Regen Agency. " +
     "Résume cette conversation commerciale de manière structurée et actionnable. " +
-    "Sois concis mais complet.";
+    "Sois concis mais complet. Propose des actions concrètes basées sur les services de l'agence.\n\n" +
+    AGENCY_KNOWLEDGE_BASE;
 
   const userPrompt = `Voici le transcript d'un appel commercial avec un prospect. Résume-le de manière structurée :
 
