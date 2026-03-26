@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionnaire - Regen Agency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f0f3f1;
+            color: #173C3A;
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 16px 60px;
+        }
+
+        .form-page {
+            width: 100%;
+            max-width: 640px;
+        }
+
+        .logo-wrapper {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-wrapper img {
+            height: 56px;
+            width: auto;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(23, 60, 58, 0.08);
+            padding: 40px 36px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 24px 12px 40px;
+            }
+            .card {
+                padding: 28px 20px;
+                border-radius: 12px;
+            }
+        }
+
+        /* Loading */
+        .state { display: none; }
+        .state.active { display: block; }
+
+        .loading-wrapper {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #e8edeb;
+            border-top-color: #2FB963;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-wrapper p {
+            color: #6b7f7d;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* Error / Expired */
+        .error-wrapper, .expired-wrapper {
+            text-align: center;
+            padding: 48px 0;
+        }
+
+        .error-icon, .expired-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .error-icon {
+            background: #fdeaea;
+            color: #d94040;
+        }
+
+        .expired-icon {
+            background: #fff4e0;
+            color: #d4910a;
+        }
+
+        .error-wrapper h2, .expired-wrapper h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .error-wrapper p, .expired-wrapper p {
+            color: #6b7f7d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Form */
+        .form-header {
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e8edeb;
+        }
+
+        .form-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #173C3A;
+            margin-bottom: 6px;
+        }
+
+        .form-header p {
+            font-size: 14px;
+            color: #6b7f7d;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #173C3A;
+            margin-bottom: 6px;
+        }
+
+        .form-group label .required {
+            color: #d94040;
+            margin-left: 2px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="url"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #173C3A;
+            background: #f8faf9;
+            border: 1.5px solid #d5ddd9;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #2FB963;
+            box-shadow: 0 0 0 3px rgba(47, 185, 99, 0.12);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23173C3A' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
+        /* Checkbox group */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #2FB963;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checkbox-item span {
+            font-size: 14px;
+            font-weight: 500;
+            color: #173C3A;
+        }
+
+        /* File */
+        .file-input-wrapper {
+            position: relative;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            width: 100%;
+            padding: 10px 14px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7f7d;
+            background: #f8faf9;
+            border: 1.5px dashed #d5ddd9;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .file-input-wrapper input[type="file"]::file-selector-button {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            background: #173C3A;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            margin-right: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .file-input-wrapper input[type="file"]::file-selector-button:hover {
+            background: #2FB963;
+        }
+
+        /* Submit */
+        .submit-wrapper {
+            margin-top: 32px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px 24px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #2FB963 0%, #05C08A 100%);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.92;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-submit .btn-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        /* Validation error */
+        .field-error {
+            color: #d94040;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .form-group.has-error input,
+        .form-group.has-error textarea,
+        .form-group.has-error select {
+            border-color: #d94040;
+        }
+
+        /* Success */
+        .success-wrapper {
+            text-align: center;
+            padding: 48px 0;
+        }
+
+        .success-check {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2FB963 0%, #05C08A 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            animation: popIn 0.4s ease;
+        }
+
+        .success-check svg {
+            width: 36px;
+            height: 36px;
+            stroke: #fff;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-wrapper h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #173C3A;
+            margin-bottom: 8px;
+        }
+
+        .success-wrapper p {
+            font-size: 15px;
+            color: #6b7f7d;
+            line-height: 1.6;
+        }
+
+        /* Footer branding */
+        .powered-by {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 12px;
+            color: #a3b0ad;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-page">
+        <div class="logo-wrapper">
+            <img src="assets/images/logo-icon.png" alt="Regen Agency">
+        </div>
+
+        <div class="card">
+            <!-- Loading -->
+            <div id="state-loading" class="state active">
+                <div class="loading-wrapper">
+                    <div class="spinner"></div>
+                    <p>Chargement du formulaire...</p>
+                </div>
+            </div>
+
+            <!-- Error -->
+            <div id="state-error" class="state">
+                <div class="error-wrapper">
+                    <div class="error-icon">&#10005;</div>
+                    <h2>Lien invalide</h2>
+                    <p>Ce formulaire n'existe pas ou n'est plus disponible.<br>Veuillez contacter votre interlocuteur Regen Agency.</p>
+                </div>
+            </div>
+
+            <!-- Expired -->
+            <div id="state-expired" class="state">
+                <div class="expired-wrapper">
+                    <div class="expired-icon">&#9200;</div>
+                    <h2>Formulaire expir&eacute;</h2>
+                    <p>La date limite de ce formulaire est pass&eacute;e.<br>Veuillez contacter votre interlocuteur Regen Agency.</p>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div id="state-form" class="state">
+                <div class="form-header">
+                    <h1 id="form-title"></h1>
+                    <p id="form-description"></p>
+                </div>
+                <form id="prospect-form" novalidate>
+                    <div id="form-fields"></div>
+                    <div class="submit-wrapper">
+                        <button type="submit" class="btn-submit" id="btn-submit">
+                            Envoyer
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Success -->
+            <div id="state-success" class="state">
+                <div class="success-wrapper">
+                    <div class="success-check">
+                        <svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg>
+                    </div>
+                    <h2>Merci !</h2>
+                    <p>Votre r&eacute;ponse a bien &eacute;t&eacute; enregistr&eacute;e.<br>Nous reviendrons vers vous tr&egrave;s prochainement.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="powered-by">Propuls&eacute; par Regen Agency</div>
+    </div>
+
+    <script>
+        (function() {
+            // --- Config ---
+            var SUPABASE_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
+            var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
+
+            var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // --- State management ---
+            var formConfig = null;
+
+            function showState(id) {
+                var states = document.querySelectorAll('.state');
+                for (var i = 0; i < states.length; i++) {
+                    states[i].classList.remove('active');
+                }
+                document.getElementById('state-' + id).classList.add('active');
+            }
+
+            // --- Get token ---
+            function getToken() {
+                var params = new URLSearchParams(window.location.search);
+                return params.get('t');
+            }
+
+            // --- Init ---
+            async function init() {
+                var token = getToken();
+                if (!token) {
+                    showState('error');
+                    return;
+                }
+
+                try {
+                    var { data, error } = await sb
+                        .from('prospect_forms')
+                        .select('*')
+                        .eq('token', token)
+                        .eq('is_active', true)
+                        .single();
+
+                    if (error || !data) {
+                        showState('error');
+                        return;
+                    }
+
+                    // Check expiration
+                    if (data.expires_at) {
+                        var expiresAt = new Date(data.expires_at);
+                        if (expiresAt < new Date()) {
+                            showState('expired');
+                            return;
+                        }
+                    }
+
+                    formConfig = data;
+                    renderForm(data);
+                    showState('form');
+
+                } catch (err) {
+                    console.error('Init error:', err);
+                    showState('error');
+                }
+            }
+
+            // --- Render form ---
+            function renderForm(config) {
+                var titleEl = document.getElementById('form-title');
+                var descEl = document.getElementById('form-description');
+                var fieldsEl = document.getElementById('form-fields');
+
+                titleEl.textContent = config.title || 'Questionnaire';
+                if (config.description) {
+                    descEl.textContent = config.description;
+                } else {
+                    descEl.style.display = 'none';
+                }
+
+                var fields = config.form_fields || [];
+                var html = '';
+
+                for (var i = 0; i < fields.length; i++) {
+                    var f = fields[i];
+                    var reqAttr = f.required ? ' required' : '';
+                    var reqMark = f.required ? '<span class="required">*</span>' : '';
+
+                    html += '<div class="form-group" data-key="' + escHtml(f.key) + '">';
+                    html += '<label for="field-' + escHtml(f.key) + '">' + escHtml(f.label) + reqMark + '</label>';
+
+                    switch (f.type) {
+                        case 'text':
+                        case 'email':
+                        case 'tel':
+                        case 'url':
+                        case 'number':
+                            html += '<input type="' + f.type + '" id="field-' + escHtml(f.key) + '" name="' + escHtml(f.key) + '"' + reqAttr + '>';
+                            break;
+
+                        case 'textarea':
+                            html += '<textarea id="field-' + escHtml(f.key) + '" name="' + escHtml(f.key) + '" rows="4"' + reqAttr + '></textarea>';
+                            break;
+
+                        case 'select':
+                            html += '<select id="field-' + escHtml(f.key) + '" name="' + escHtml(f.key) + '"' + reqAttr + '>';
+                            html += '<option value="">-- S\u00e9lectionnez --</option>';
+                            if (f.options) {
+                                for (var j = 0; j < f.options.length; j++) {
+                                    html += '<option value="' + escHtml(f.options[j]) + '">' + escHtml(f.options[j]) + '</option>';
+                                }
+                            }
+                            html += '</select>';
+                            break;
+
+                        case 'checkbox':
+                            html += '<div class="checkbox-group">';
+                            if (f.options) {
+                                for (var j = 0; j < f.options.length; j++) {
+                                    var cbId = 'field-' + f.key + '-' + j;
+                                    html += '<label class="checkbox-item">';
+                                    html += '<input type="checkbox" id="' + escHtml(cbId) + '" name="' + escHtml(f.key) + '" value="' + escHtml(f.options[j]) + '">';
+                                    html += '<span>' + escHtml(f.options[j]) + '</span>';
+                                    html += '</label>';
+                                }
+                            }
+                            html += '</div>';
+                            break;
+
+                        case 'file':
+                            html += '<div class="file-input-wrapper">';
+                            html += '<input type="file" id="field-' + escHtml(f.key) + '" name="' + escHtml(f.key) + '"' + reqAttr + '>';
+                            html += '</div>';
+                            break;
+
+                        default:
+                            html += '<input type="text" id="field-' + escHtml(f.key) + '" name="' + escHtml(f.key) + '"' + reqAttr + '>';
+                    }
+
+                    html += '</div>';
+                }
+
+                fieldsEl.innerHTML = html;
+            }
+
+            function escHtml(str) {
+                if (!str) return '';
+                var div = document.createElement('div');
+                div.textContent = String(str);
+                return div.innerHTML;
+            }
+
+            // --- Validation ---
+            function validateForm() {
+                var fields = formConfig.form_fields || [];
+                var valid = true;
+
+                // Clear previous errors
+                var prevErrors = document.querySelectorAll('.field-error');
+                for (var i = 0; i < prevErrors.length; i++) prevErrors[i].remove();
+                var prevGroups = document.querySelectorAll('.form-group.has-error');
+                for (var i = 0; i < prevGroups.length; i++) prevGroups[i].classList.remove('has-error');
+
+                for (var i = 0; i < fields.length; i++) {
+                    var f = fields[i];
+                    if (!f.required) continue;
+
+                    var group = document.querySelector('.form-group[data-key="' + f.key + '"]');
+                    var value = getFieldValue(f);
+
+                    var isEmpty = false;
+                    if (f.type === 'checkbox') {
+                        isEmpty = !value || value.length === 0;
+                    } else if (f.type === 'file') {
+                        var fileInput = document.getElementById('field-' + f.key);
+                        isEmpty = !fileInput || !fileInput.files || fileInput.files.length === 0;
+                    } else {
+                        isEmpty = !value || (typeof value === 'string' && value.trim() === '');
+                    }
+
+                    if (isEmpty) {
+                        valid = false;
+                        if (group) {
+                            group.classList.add('has-error');
+                            var errEl = document.createElement('div');
+                            errEl.className = 'field-error';
+                            errEl.textContent = 'Ce champ est requis';
+                            group.appendChild(errEl);
+                        }
+                    }
+
+                    // Email format
+                    if (f.type === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                        valid = false;
+                        if (group) {
+                            group.classList.add('has-error');
+                            var errEl = document.createElement('div');
+                            errEl.className = 'field-error';
+                            errEl.textContent = 'Adresse email invalide';
+                            group.appendChild(errEl);
+                        }
+                    }
+                }
+
+                return valid;
+            }
+
+            // --- Get field values ---
+            function getFieldValue(field) {
+                if (field.type === 'checkbox') {
+                    var checked = document.querySelectorAll('input[name="' + field.key + '"]:checked');
+                    var values = [];
+                    for (var i = 0; i < checked.length; i++) {
+                        values.push(checked[i].value);
+                    }
+                    return values;
+                }
+
+                var el = document.getElementById('field-' + field.key);
+                if (!el) return null;
+                return el.value;
+            }
+
+            // --- File upload ---
+            async function uploadFile(field) {
+                var fileInput = document.getElementById('field-' + field.key);
+                if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
+
+                var file = fileInput.files[0];
+                var token = getToken();
+                var timestamp = Date.now();
+                var safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+                var filePath = 'public-forms/' + token + '/' + timestamp + '_' + safeName;
+
+                var { data, error } = await sb.storage
+                    .from('prospect-documents')
+                    .upload(filePath, file);
+
+                if (error) {
+                    console.error('Upload error:', error);
+                    throw new Error('Erreur lors de l\'envoi du fichier: ' + file.name);
+                }
+
+                return filePath;
+            }
+
+            // --- Submit ---
+            async function handleSubmit(e) {
+                e.preventDefault();
+
+                if (!validateForm()) {
+                    // Scroll to first error
+                    var firstErr = document.querySelector('.form-group.has-error');
+                    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+
+                var btn = document.getElementById('btn-submit');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="btn-spinner"></span>Envoi en cours...';
+
+                try {
+                    var fields = formConfig.form_fields || [];
+                    var responseData = {};
+
+                    for (var i = 0; i < fields.length; i++) {
+                        var f = fields[i];
+
+                        if (f.type === 'file') {
+                            var filePath = await uploadFile(f);
+                            if (filePath) {
+                                responseData[f.key] = filePath;
+                            }
+                        } else {
+                            var val = getFieldValue(f);
+                            if (val !== null && val !== '') {
+                                responseData[f.key] = val;
+                            }
+                        }
+                    }
+
+                    var { error } = await sb
+                        .from('prospect_form_responses')
+                        .insert({
+                            form_id: formConfig.id,
+                            prospect_id: formConfig.prospect_id,
+                            response_data: responseData
+                        });
+
+                    if (error) {
+                        console.error('Submit error:', error);
+                        throw new Error('Erreur lors de l\'envoi');
+                    }
+
+                    showState('success');
+
+                } catch (err) {
+                    console.error('Submit error:', err);
+                    btn.disabled = false;
+                    btn.textContent = 'Envoyer';
+                    alert('Une erreur est survenue. Veuillez r\u00e9essayer.');
+                }
+            }
+
+            // --- Bind submit ---
+            document.getElementById('prospect-form').addEventListener('submit', handleSubmit);
+
+            // --- Start ---
+            init();
+        })();
+    </script>
+</body>
+</html>

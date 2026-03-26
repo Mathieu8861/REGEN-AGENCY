@@ -28,7 +28,7 @@
 
     // ── Auth Pages (no guard needed) ─────────
     var AUTH_PAGES = ['connexion.html'];
-    var ADMIN_PAGES = ['admin/clients.html', 'admin/users.html', 'admin/import.html'];
+    var ADMIN_PAGES = ['admin/clients.html', 'admin/users.html', 'admin/import.html', 'admin/prospects.html'];
 
     function isAuthPage() {
         var path = window.location.pathname;

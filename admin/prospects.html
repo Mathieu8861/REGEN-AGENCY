@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Gestion des Prospects - Regen Agency</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #2FB963;
+            --green-light: #e8f9ef;
+            --dark: #1a2332;
+            --primary: #173C3A;
+            --accent: #05C08A;
+            --gray: #6b7280;
+            --gray-light: #f3f4f6;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #f0f3f1;
+            min-height: 100vh;
+            padding: 30px 20px;
+            color: var(--primary);
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* ─── Header ─── */
+        .page-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0; flex-wrap: wrap; gap: 12px;
+        }
+        .page-header-left { display: flex; align-items: center; gap: 15px; }
+        .page-title { font-size: 1.4rem; color: var(--dark); font-weight: 700; }
+        .page-title span { color: var(--green); }
+        .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+        .btn {
+            padding: 8px 18px; border-radius: 50px; font-family: inherit;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; text-decoration: none; display: inline-flex;
+            align-items: center; gap: 6px; border: 2px solid;
+        }
+        .btn--back { background: transparent; color: var(--green); border-color: var(--green); }
+        .btn--back:hover { background: var(--green); color: white; }
+        .btn--primary { background: var(--green); color: white; border-color: var(--green); }
+        .btn--primary:hover { background: #27a356; border-color: #27a356; }
+        .btn--danger { background: transparent; color: #ef4444; border-color: #fca5a5; }
+        .btn--danger:hover { background: #ef4444; color: white; border-color: #ef4444; }
+        .btn--ghost { background: transparent; color: var(--gray); border-color: #d1d5db; }
+        .btn--ghost:hover { border-color: var(--primary); color: var(--primary); }
+        .btn--sm { padding: 6px 14px; font-size: 0.75rem; }
+        .btn--icon { padding: 6px 10px; min-width: 34px; justify-content: center; }
+        .btn--accent { background: var(--accent); color: white; border-color: var(--accent); }
+        .btn--accent:hover { opacity: 0.9; }
+
+        .view-toggle { display: flex; border: 2px solid #d1d5db; border-radius: 50px; overflow: hidden; }
+        .view-toggle button {
+            padding: 6px 16px; font-family: inherit; font-size: 0.78rem; font-weight: 600;
+            border: none; cursor: pointer; background: transparent; color: var(--gray);
+            transition: all 0.3s;
+        }
+        .view-toggle button.active { background: var(--green); color: white; }
+
+        /* ─── Stats Bar ─── */
+        .stats-bar {
+            display: flex; gap: 0; margin-bottom: 24px; background: white;
+            border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+        }
+        .stat-item {
+            flex: 1; padding: 16px 12px; text-align: center;
+            border-right: 1px solid #f0f0f0;
+        }
+        .stat-item:last-child { border-right: none; }
+        .stat-item__value { font-size: 1.4rem; font-weight: 800; color: var(--dark); }
+        .stat-item__label { font-size: 0.68rem; color: var(--gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-item--green .stat-item__value { color: var(--green); }
+        .stat-item--blue .stat-item__value { color: #3b82f6; }
+        .stat-item--amber .stat-item__value { color: #f59e0b; }
+        .stat-item--red .stat-item__value { color: #ef4444; }
+
+        /* ─── Kanban ─── */
+        .kanban-board {
+            display: flex; gap: 14px; overflow-x: auto;
+            padding-bottom: 20px; min-height: 500px;
+        }
+        .kanban-board::-webkit-scrollbar { height: 6px; }
+        .kanban-board::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+        .kanban-column {
+            min-width: 260px; flex: 1; background: #f0f3f1;
+            border-radius: var(--radius-sm); padding: 14px;
+            transition: background 0.2s;
+        }
+        .kanban-column.drag-over { background: #e2e8e4; }
+
+        .column-header {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 14px; padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0,0,0,0.06);
+        }
+        .column-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .column-label { font-weight: 700; font-size: 0.88rem; }
+        .column-count {
+            margin-left: auto; background: rgba(0,0,0,0.08);
+            font-size: 0.72rem; font-weight: 700; width: 22px; height: 22px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+
+        .cards-container { display: flex; flex-direction: column; gap: 10px; min-height: 60px; }
+
+        .prospect-card {
+            background: white; border-radius: var(--radius-sm); padding: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06); cursor: pointer;
+            transition: box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .prospect-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-1px); }
+        .prospect-card.dragging { opacity: 0.5; }
+        .prospect-card__company { font-weight: 700; font-size: 0.88rem; color: var(--dark); margin-bottom: 2px; }
+        .prospect-card__contact { font-size: 0.78rem; color: var(--gray); margin-bottom: 8px; }
+        .prospect-card__meta {
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        }
+        .source-badge {
+            display: inline-flex; align-items: center; gap: 3px;
+            padding: 2px 8px; border-radius: 50px; font-size: 0.65rem;
+            font-weight: 700; background: var(--gray-light); color: var(--gray);
+        }
+        .priority-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .priority-dot--basse { background: #9ca3af; }
+        .priority-dot--moyenne { background: #f59e0b; }
+        .priority-dot--haute { background: #f97316; }
+        .priority-dot--urgente { background: #ef4444; }
+        .prospect-card__days { font-size: 0.68rem; color: var(--gray); margin-left: auto; }
+        .prospect-card__avatar {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: var(--primary); color: white; font-size: 0.6rem;
+            font-weight: 700; display: flex; align-items: center;
+            justify-content: center; margin-left: auto; flex-shrink: 0;
+        }
+
+        /* ─── Table View ─── */
+        .table-card {
+            background: white; border-radius: var(--radius); padding: 24px;
+            box-shadow: var(--shadow);
+        }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+        th {
+            text-align: left; padding: 10px 12px; color: var(--gray); font-weight: 600;
+            border-bottom: 2px solid #e5e7eb; font-size: 0.72rem;
+            text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;
+        }
+        td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; color: var(--dark); }
+        tr:hover td { background: #f9fafb; }
+        .stage-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: 700;
+        }
+        .priority-badge {
+            padding: 2px 8px; border-radius: 50px; font-size: 0.68rem; font-weight: 700;
+        }
+
+        /* ─── Panel ─── */
+        .panel-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); z-index: 1000;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .panel-overlay.open { opacity: 1; pointer-events: all; }
+
+        .prospect-panel {
+            position: fixed; top: 0; right: -65%; width: 65%; height: 100%;
+            background: white; z-index: 1001; overflow-y: auto;
+            transition: right 0.35s ease; box-shadow: -4px 0 30px rgba(0,0,0,0.12);
+        }
+        .prospect-panel.open { right: 0; }
+
+        .panel-header {
+            display: flex; align-items: center; gap: 12px;
+            padding: 20px 28px; border-bottom: 1px solid #e5e7eb;
+            position: sticky; top: 0; background: white; z-index: 10;
+            flex-wrap: wrap;
+        }
+        .panel-close {
+            width: 36px; height: 36px; border-radius: 50%; border: none;
+            background: var(--gray-light); cursor: pointer; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gray); transition: all 0.3s; flex-shrink: 0;
+        }
+        .panel-close:hover { background: #e5e7eb; color: var(--dark); }
+        .panel-company {
+            font-size: 1.15rem; font-weight: 700; color: var(--dark);
+            cursor: pointer; border-bottom: 1px dashed transparent;
+        }
+        .panel-company:hover { border-bottom-color: var(--gray); }
+        .panel-stage-select {
+            padding: 4px 12px; border-radius: 50px; font-family: inherit;
+            font-size: 0.75rem; font-weight: 700; border: 2px solid #e5e7eb;
+            cursor: pointer; background: white;
+        }
+        .panel-stage-select:focus { outline: none; border-color: var(--green); }
+        .panel-actions { margin-left: auto; display: flex; gap: 8px; }
+
+        .panel-body { padding: 24px 28px; }
+
+        /* Tabs */
+        .panel-tabs {
+            display: flex; gap: 2px; border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 24px; overflow-x: auto;
+        }
+        .panel-tab {
+            padding: 10px 16px; font-family: inherit; font-size: 0.8rem;
+            font-weight: 600; color: var(--gray); background: none; border: none;
+            cursor: pointer; border-bottom: 3px solid transparent;
+            margin-bottom: -2px; transition: all 0.3s; white-space: nowrap;
+        }
+        .panel-tab:hover { color: var(--dark); }
+        .panel-tab.active { color: var(--green); border-bottom-color: var(--green); }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        /* Form grid */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-grid--full { grid-column: 1 / -1; }
+        .form-group { margin-bottom: 0; }
+        .form-label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--gray); margin-bottom: 4px; }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 9px 12px; border: 2px solid #e5e7eb;
+            border-radius: var(--radius-sm); font-family: inherit; font-size: 0.85rem;
+            transition: border-color 0.3s; background: white; color: var(--dark);
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none; border-color: var(--green);
+        }
+        .form-textarea { resize: vertical; min-height: 80px; }
+
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+        .checkbox-label {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 0.8rem; font-weight: 500; cursor: pointer;
+            padding: 4px 10px; border-radius: 50px; border: 1px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+        .checkbox-label:has(input:checked) { background: var(--green-light); border-color: var(--green); color: var(--green); }
+        .checkbox-label input { display: none; }
+
+        /* Links list */
+        .link-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; background: var(--gray-light);
+            border-radius: var(--radius-sm); margin-bottom: 8px;
+        }
+        .link-item__icon { font-size: 1.1rem; flex-shrink: 0; }
+        .link-item__url {
+            font-size: 0.8rem; color: var(--green); text-decoration: none;
+            font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            flex: 1;
+        }
+        .link-item__url:hover { text-decoration: underline; }
+        .link-item__type {
+            font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+            border-radius: 50px; background: white; color: var(--gray);
+        }
+        .link-item__delete {
+            background: none; border: none; color: #ef4444; cursor: pointer;
+            font-size: 0.9rem; padding: 4px; transition: opacity 0.3s;
+        }
+        .link-item__delete:hover { opacity: 0.7; }
+
+        /* Timeline */
+        .timeline-entry {
+            display: flex; gap: 12px; padding: 14px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .timeline-entry:last-child { border-bottom: none; }
+        .timeline-icon {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+        .timeline-content { flex: 1; }
+        .timeline-title { font-weight: 700; font-size: 0.85rem; color: var(--dark); margin-bottom: 2px; }
+        .timeline-text { font-size: 0.8rem; color: var(--gray); line-height: 1.5; }
+        .timeline-meta { font-size: 0.7rem; color: #9ca3af; margin-top: 4px; display: flex; gap: 10px; align-items: center; }
+        .system-badge { font-size: 0.6rem; font-weight: 700; background: #e5e7eb; color: var(--gray); padding: 1px 6px; border-radius: 50px; }
+
+        /* Upload zone */
+        .upload-zone {
+            border: 2px dashed #d1d5db; border-radius: var(--radius-sm);
+            padding: 30px 20px; text-align: center; cursor: pointer;
+            transition: all 0.3s; background: #fafafa; margin-bottom: 16px;
+        }
+        .upload-zone:hover, .upload-zone.active { border-color: var(--green); background: var(--green-light); }
+        .upload-zone__icon { font-size: 2rem; margin-bottom: 6px; }
+        .upload-zone__text { font-weight: 600; color: var(--dark); font-size: 0.85rem; }
+        .upload-zone__hint { font-size: 0.75rem; color: var(--gray); }
+
+        .doc-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; background: var(--gray-light);
+            border-radius: var(--radius-sm); margin-bottom: 8px;
+        }
+        .doc-item__icon { font-size: 1.1rem; flex-shrink: 0; }
+        .doc-item__name { font-size: 0.82rem; font-weight: 600; color: var(--dark); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .doc-item__cat { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 50px; background: white; color: var(--gray); }
+        .doc-item__size { font-size: 0.7rem; color: var(--gray); }
+        .doc-item__date { font-size: 0.7rem; color: var(--gray); }
+        .doc-item__actions { display: flex; gap: 6px; }
+        .doc-item__actions button, .doc-item__actions a {
+            background: none; border: none; cursor: pointer; font-size: 0.85rem;
+            padding: 4px; transition: opacity 0.3s; text-decoration: none;
+        }
+        .doc-item__actions button:hover, .doc-item__actions a:hover { opacity: 0.7; }
+
+        /* Form link section */
+        .form-link-box {
+            background: var(--green-light); border-radius: var(--radius-sm);
+            padding: 16px; display: flex; align-items: center; gap: 12px;
+            margin-bottom: 16px;
+        }
+        .form-link-url {
+            flex: 1; font-size: 0.8rem; font-weight: 600; color: var(--green);
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .form-response-card {
+            background: var(--gray-light); border-radius: var(--radius-sm);
+            padding: 14px; margin-bottom: 10px; cursor: pointer;
+        }
+        .form-response-card__header {
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; font-size: 0.85rem;
+        }
+        .form-response-card__body { margin-top: 10px; font-size: 0.8rem; color: var(--gray); display: none; }
+        .form-response-card.expanded .form-response-card__body { display: block; }
+
+        /* AI summary card */
+        .ai-card {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+            border: 1px solid #bbf7d0; border-radius: var(--radius-sm);
+            padding: 16px; margin-top: 12px;
+        }
+        .ai-card__title { font-weight: 700; font-size: 0.82rem; color: var(--green); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .ai-card__content { font-size: 0.82rem; color: var(--dark); line-height: 1.6; white-space: pre-wrap; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: white; border-radius: var(--radius); padding: 32px;
+            width: 100%; max-width: 520px; box-shadow: 0 16px 60px rgba(0,0,0,0.15);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal__title { font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: 20px; }
+        .modal__footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+
+        /* Email modal */
+        .email-modal { max-width: 640px; }
+        .email-modal .form-textarea { min-height: 200px; font-size: 0.85rem; line-height: 1.6; }
+
+        /* Toast */
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+        .toast {
+            padding: 12px 20px; border-radius: var(--radius-sm); font-family: inherit;
+            font-size: 0.82rem; font-weight: 600; color: white; min-width: 220px;
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .toast--success { background: var(--green); }
+        .toast--error { background: #ef4444; }
+        .toast--info { background: #3b82f6; }
+        @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block; width: 20px; height: 20px;
+            border: 3px solid #e5e7eb; border-top-color: var(--green);
+            border-radius: 50%; animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-center { display: flex; justify-content: center; padding: 40px; }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--gray); }
+        .empty-state__icon { font-size: 2.5rem; margin-bottom: 8px; }
+        .empty-state__text { font-size: 0.85rem; font-weight: 600; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 16px 10px; }
+            .page-header { flex-direction: column; align-items: flex-start; }
+            .prospect-panel { width: 100%; right: -100%; }
+            .form-grid { grid-template-columns: 1fr; }
+            .stats-bar { flex-wrap: wrap; }
+            .stat-item { min-width: 33.33%; }
+            .panel-header { padding: 16px; }
+            .panel-body { padding: 16px; }
+            .kanban-column { min-width: 240px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <a href="../connexion.html" class="btn btn--back">&#8592; Retour</a>
+            <h1 class="page-title">Gestion des <span>Prospects</span></h1>
+        </div>
+        <div class="header-actions">
+            <div class="view-toggle">
+                <button class="active" onclick="setView('kanban')">Pipeline</button>
+                <button onclick="setView('table')">Tableau</button>
+            </div>
+            <button class="btn btn--primary" onclick="openNewProspectModal()">+ Nouveau prospect</button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar" id="statsBar">
+        <div class="stat-item"><div class="stat-item__value" id="statTotal">0</div><div class="stat-item__label">Total</div></div>
+        <div class="stat-item stat-item--blue"><div class="stat-item__value" id="statNew">0</div><div class="stat-item__label">Nouveaux</div></div>
+        <div class="stat-item stat-item--amber"><div class="stat-item__value" id="statInProgress">0</div><div class="stat-item__label">En cours</div></div>
+        <div class="stat-item stat-item--green"><div class="stat-item__value" id="statWon">0</div><div class="stat-item__label">Gagnes</div></div>
+        <div class="stat-item stat-item--red"><div class="stat-item__value" id="statLost">0</div><div class="stat-item__label">Perdus</div></div>
+    </div>
+
+    <!-- Kanban View -->
+    <div id="kanbanView">
+        <div class="kanban-board" id="kanbanBoard">
+            <div class="kanban-column" data-stage="nouveau" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave(event)">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#6b7280"></div>
+                    <span class="column-label">Nouveau</span>
+                    <span class="column-count" data-count="nouveau">0</span>
+                </div>
+                <div class="cards-container" data-stage="nouveau"></div>
+            </div>
+            <div class="kanban-column" data-stage="qualifie" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave(event)">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#3b82f6"></div>
+                    <span class="column-label">Qualifie</span>
+                    <span class="column-count" data-count="qualifie">0</span>
+                </div>
+                <div class="cards-container" data-stage="qualifie"></div>
+            </div>
+            <div class="kanban-column" data-stage="premier_echange" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave(event)">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#f59e0b"></div>
+                    <span class="column-label">1er echange</span>
+                    <span class="column-count" data-count="premier_echange">0</span>
+                </div>
+                <div class="cards-container" data-stage="premier_echange"></div>
+            </div>
+            <div class="kanban-column" data-stage="proposition_envoyee" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave(event)">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#8b5cf6"></div>
+                    <span class="column-label">Proposition envoyee</span>
+                    <span class="column-count" data-count="proposition_envoyee">0</span>
+                </div>
+                <div class="cards-container" data-stage="proposition_envoyee"></div>
+            </div>
+            <div class="kanban-column" data-stage="gagne" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave(event)">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#2FB963"></div>
+                    <span class="column-label">Gagne</span>
+                    <span class="column-count" data-count="gagne">0</span>
+                </div>
+                <div class="cards-container" data-stage="gagne"></div>
+            </div>
+            <div class="kanban-column" data-stage="perdu" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave(event)">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#ef4444"></div>
+                    <span class="column-label">Perdu</span>
+                    <span class="column-count" data-count="perdu">0</span>
+                </div>
+                <div class="cards-container" data-stage="perdu"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table View -->
+    <div id="tableView" style="display:none">
+        <div class="table-card">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Entreprise</th>
+                            <th>Contact</th>
+                            <th>Stage</th>
+                            <th>Source</th>
+                            <th>Priorite</th>
+                            <th>Assigne</th>
+                            <th>Cree le</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Panel Overlay -->
+<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+
+<!-- Prospect Detail Panel -->
+<div class="prospect-panel" id="prospectPanel">
+    <div class="panel-header">
+        <button class="panel-close" onclick="closePanel()">&times;</button>
+        <span class="panel-company" id="panelCompany" onclick="editCompanyName()">-</span>
+        <select class="panel-stage-select" id="panelStage" onchange="updatePanelStage()">
+            <option value="nouveau">Nouveau</option>
+            <option value="qualifie">Qualifie</option>
+            <option value="premier_echange">1er echange</option>
+            <option value="proposition_envoyee">Proposition envoyee</option>
+            <option value="gagne">Gagne</option>
+            <option value="perdu">Perdu</option>
+        </select>
+        <div class="panel-actions">
+            <button class="btn btn--accent btn--sm" onclick="openEmailModal()">Generer email</button>
+            <button class="btn btn--danger btn--sm" onclick="deleteCurrentProspect()">Supprimer</button>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="panel-tabs">
+            <button class="panel-tab active" onclick="switchTab('info')">Informations</button>
+            <button class="panel-tab" onclick="switchTab('links')">Liens</button>
+            <button class="panel-tab" onclick="switchTab('exchanges')">Echanges</button>
+            <button class="panel-tab" onclick="switchTab('documents')">Documents</button>
+            <button class="panel-tab" onclick="switchTab('form')">Formulaire</button>
+            <button class="panel-tab" onclick="switchTab('timeline')">Timeline</button>
+        </div>
+
+        <!-- Tab: Info -->
+        <div class="tab-pane active" id="tab-info">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Nom de l'entreprise</label>
+                    <input class="form-input" id="fCompanyName" placeholder="Nom de l'entreprise">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Site web</label>
+                    <input class="form-input" id="fCompanyWebsite" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Secteur</label>
+                    <input class="form-input" id="fCompanySector" placeholder="Ex: E-commerce, SaaS...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Taille</label>
+                    <select class="form-select" id="fCompanySize">
+                        <option value="">-- Selectionner --</option>
+                        <option value="tpe">TPE</option>
+                        <option value="pme">PME</option>
+                        <option value="eti">ETI</option>
+                        <option value="grand_groupe">Grand Groupe</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">SIRET</label>
+                    <input class="form-input" id="fCompanySiret" placeholder="N SIRET">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Adresse</label>
+                    <input class="form-input" id="fCompanyAddress" placeholder="Adresse">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prenom du contact</label>
+                    <input class="form-input" id="fContactFirst" placeholder="Prenom">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom du contact</label>
+                    <input class="form-input" id="fContactLast" placeholder="Nom">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input class="form-input" id="fContactEmail" type="email" placeholder="email@exemple.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Telephone</label>
+                    <input class="form-input" id="fContactPhone" type="tel" placeholder="06 00 00 00 00">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Poste</label>
+                    <input class="form-input" id="fContactPosition" placeholder="Ex: Directeur marketing">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Assigne a</label>
+                    <select class="form-select" id="fAssignedTo">
+                        <option value="">-- Non assigne --</option>
+                        <option value="mathieu">Mathieu</option>
+                        <option value="jaemeson">Jaemeson</option>
+                    </select>
+                </div>
+                <div class="form-group form-grid--full">
+                    <label class="form-label">Resume des besoins</label>
+                    <textarea class="form-textarea" id="fNeedsSummary" placeholder="Decrire les besoins du prospect..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Budget estime</label>
+                    <input class="form-input" id="fBudget" placeholder="Ex: 2000" type="number">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Priorite</label>
+                    <select class="form-select" id="fPriority">
+                        <option value="basse">Basse</option>
+                        <option value="moyenne">Moyenne</option>
+                        <option value="haute">Haute</option>
+                        <option value="urgente">Urgente</option>
+                    </select>
+                </div>
+                <div class="form-group form-grid--full">
+                    <label class="form-label">Services qui interessent</label>
+                    <div class="checkbox-group" id="fServices">
+                        <label class="checkbox-label"><input type="checkbox" value="google_ads"> Google Ads</label>
+                        <label class="checkbox-label"><input type="checkbox" value="meta_ads"> Meta Ads</label>
+                        <label class="checkbox-label"><input type="checkbox" value="seo"> SEO</label>
+                        <label class="checkbox-label"><input type="checkbox" value="creation_site"> Creation site web</label>
+                        <label class="checkbox-label"><input type="checkbox" value="tiktok_ads"> TikTok Ads</label>
+                        <label class="checkbox-label"><input type="checkbox" value="formation"> Formation</label>
+                        <label class="checkbox-label"><input type="checkbox" value="consulting"> Consulting</label>
+                        <label class="checkbox-label"><input type="checkbox" value="autre"> Autre</label>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+                <button class="btn btn--primary" onclick="saveProspectInfo()">Enregistrer</button>
+            </div>
+        </div>
+
+        <!-- Tab: Links -->
+        <div class="tab-pane" id="tab-links">
+            <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+                <select class="form-select" id="linkType" style="width:auto; min-width:160px;">
+                    <option value="website">Site web</option>
+                    <option value="linkedin_company">LinkedIn (entreprise)</option>
+                    <option value="linkedin_contact">LinkedIn (contact)</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="pappers">Pappers</option>
+                    <option value="societe_com">Societe.com</option>
+                    <option value="google_maps">Google Maps</option>
+                    <option value="autre">Autre</option>
+                </select>
+                <input class="form-input" id="linkUrl" placeholder="https://..." style="flex:1; min-width:200px;">
+                <button class="btn btn--primary btn--sm" onclick="addLink()">Ajouter</button>
+            </div>
+            <div id="linksList"></div>
+            <div style="margin-top:16px;">
+                <button class="btn btn--accent btn--sm" onclick="analyzeLinks()">Analyser avec IA</button>
+            </div>
+            <div id="linksAiResult"></div>
+        </div>
+
+        <!-- Tab: Exchanges -->
+        <div class="tab-pane" id="tab-exchanges">
+            <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">Transcript Firefly</h3>
+            <textarea class="form-textarea" id="transcriptText" style="min-height:120px;" placeholder="Coller le transcript ici..."></textarea>
+            <div style="display:flex; gap:8px; margin-top:10px;">
+                <button class="btn btn--primary btn--sm" onclick="saveTranscript()">Sauvegarder</button>
+                <button class="btn btn--accent btn--sm" onclick="summarizeTranscript()">Resumer avec IA</button>
+            </div>
+            <div id="transcriptSaved" style="margin-top:16px;"></div>
+            <div id="transcriptAiResult" style="margin-top:12px;"></div>
+        </div>
+
+        <!-- Tab: Documents -->
+        <div class="tab-pane" id="tab-documents">
+            <div class="upload-zone" id="docUploadZone" onclick="document.getElementById('docFileInput').click()">
+                <div class="upload-zone__icon">&#128206;</div>
+                <div class="upload-zone__text">Deposer un fichier ou cliquer</div>
+                <div class="upload-zone__hint">PDF, Word, images... (max 10 Mo)</div>
+            </div>
+            <input type="file" id="docFileInput" style="display:none" onchange="handleDocUpload(event)">
+            <div style="display:flex; gap:8px; margin-bottom:16px; align-items:center;">
+                <label class="form-label" style="margin-bottom:0;">Categorie :</label>
+                <select class="form-select" id="docCategory" style="width:auto;">
+                    <option value="brief">Brief</option>
+                    <option value="charte_graphique">Charte graphique</option>
+                    <option value="devis">Devis</option>
+                    <option value="proposition">Proposition</option>
+                    <option value="contrat">Contrat</option>
+                    <option value="analyse">Analyse</option>
+                    <option value="rapport">Rapport</option>
+                    <option value="autre">Autre</option>
+                </select>
+            </div>
+            <div id="documentsList"></div>
+        </div>
+
+        <!-- Tab: Form -->
+        <div class="tab-pane" id="tab-form">
+            <div id="formSection"></div>
+        </div>
+
+        <!-- Tab: Timeline -->
+        <div class="tab-pane" id="tab-timeline">
+            <div style="background:var(--gray-light); border-radius:var(--radius-sm); padding:16px; margin-bottom:20px;">
+                <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+                    <select class="form-select" id="activityType" style="width:auto; min-width:140px;">
+                        <option value="note">Note</option>
+                        <option value="appel">Appel</option>
+                        <option value="email_envoye">Email envoye</option>
+                        <option value="email_recu">Email recu</option>
+                        <option value="reunion">Reunion</option>
+                        <option value="tache">Tache</option>
+                    </select>
+                    <input class="form-input" id="activityTitle" placeholder="Titre" style="flex:1; min-width:160px;">
+                </div>
+                <textarea class="form-textarea" id="activityContent" placeholder="Details..." style="min-height:60px; margin-bottom:10px;"></textarea>
+                <button class="btn btn--primary btn--sm" onclick="addActivity()">Ajouter</button>
+            </div>
+            <div id="timelineList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: New Prospect -->
+<div class="modal-overlay" id="newProspectModal">
+    <div class="modal">
+        <h2 class="modal__title">Nouveau prospect</h2>
+        <div class="form-grid">
+            <div class="form-group form-grid--full">
+                <label class="form-label">Nom de l'entreprise *</label>
+                <input class="form-input" id="nCompanyName" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Prenom</label>
+                <input class="form-input" id="nContactFirst">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nom</label>
+                <input class="form-input" id="nContactLast">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input class="form-input" id="nContactEmail" type="email">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telephone</label>
+                <input class="form-input" id="nContactPhone" type="tel">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Source</label>
+                <select class="form-select" id="nSource">
+                    <option value="">-- Selectionner --</option>
+                    <option value="site_web">Site web</option>
+                    <option value="google_ads">Google Ads</option>
+                    <option value="meta_ads">Meta Ads</option>
+                    <option value="recommandation">Recommandation</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="demarchage">Demarchage</option>
+                    <option value="salon">Salon / Evenement</option>
+                    <option value="autre">Autre</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Assigne a</label>
+                <select class="form-select" id="nAssignedTo">
+                    <option value="">-- Non assigne --</option>
+                    <option value="mathieu">Mathieu</option>
+                    <option value="jaemeson">Jaemeson</option>
+                </select>
+            </div>
+            <div class="form-group form-grid--full">
+                <label class="form-label">Priorite</label>
+                <select class="form-select" id="nPriority">
+                    <option value="basse">Basse</option>
+                    <option value="moyenne" selected>Moyenne</option>
+                    <option value="haute">Haute</option>
+                    <option value="urgente">Urgente</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal__footer">
+            <button class="btn btn--ghost" onclick="closeNewProspectModal()">Annuler</button>
+            <button class="btn btn--primary" onclick="createProspect()">Creer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Email Generation -->
+<div class="modal-overlay" id="emailModal">
+    <div class="modal email-modal">
+        <h2 class="modal__title">Email genere par IA</h2>
+        <div id="emailLoading" class="loading-center"><div class="spinner"></div></div>
+        <div id="emailContent" style="display:none;">
+            <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">Objet</label>
+                <input class="form-input" id="emailSubject">
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label class="form-label">Corps</label>
+                <textarea class="form-textarea" id="emailBody" style="min-height:200px;"></textarea>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn--primary btn--sm" onclick="copyEmail()">Copier</button>
+                <a class="btn btn--accent btn--sm" id="emailMailto" href="#" target="_blank">Ouvrir dans Gmail</a>
+                <button class="btn btn--ghost btn--sm" onclick="saveDraft()">Sauvegarder brouillon</button>
+            </div>
+        </div>
+        <div class="modal__footer">
+            <button class="btn btn--ghost" onclick="closeEmailModal()">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function() {
+    'use strict';
+
+    // ── AUTH ──
+    var ADMIN_SESSION_KEY = 'regen_admin_auth';
+    if (sessionStorage.getItem(ADMIN_SESSION_KEY) !== 'true') {
+        window.location.href = '../connexion.html';
+    }
+
+    // ── SUPABASE CONFIG ──
+    var SUPABASE_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
+    var AGENCY_ID = '00000000-0000-0000-0000-000000000001';
+    var AI_URL = SUPABASE_URL + '/functions/v1/prospect-ai';
+
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ── STATE ──
+    var prospects = [];
+    var currentProspectId = null;
+    var currentProspect = null;
+    var currentView = 'kanban';
+
+    // ── HELPERS ──
+    var STAGES = [
+        { key: 'nouveau', label: 'Nouveau', color: '#6b7280' },
+        { key: 'qualifie', label: 'Qualifie', color: '#3b82f6' },
+        { key: 'premier_echange', label: '1er echange', color: '#f59e0b' },
+        { key: 'proposition_envoyee', label: 'Proposition envoyee', color: '#8b5cf6' },
+        { key: 'gagne', label: 'Gagne', color: '#2FB963' },
+        { key: 'perdu', label: 'Perdu', color: '#ef4444' }
+    ];
+
+    function getStageLabel(s) {
+        var f = STAGES.find(function(x) { return x.key === s; });
+        return f ? f.label : s;
+    }
+    function getStageColor(s) {
+        var f = STAGES.find(function(x) { return x.key === s; });
+        return f ? f.color : '#6b7280';
+    }
+
+    var SOURCES = {
+        site_web: 'Site web', google_ads: 'Google Ads', meta_ads: 'Meta Ads',
+        recommandation: 'Recommandation', linkedin: 'LinkedIn', demarchage: 'Demarchage',
+        salon: 'Salon', autre: 'Autre'
+    };
+    function getSourceLabel(s) { return SOURCES[s] || s || '-'; }
+
+    function getPriorityInfo(p) {
+        var map = {
+            basse: { label: 'Basse', color: '#9ca3af', bg: '#f3f4f6' },
+            moyenne: { label: 'Moyenne', color: '#f59e0b', bg: '#fef3c7' },
+            haute: { label: 'Haute', color: '#f97316', bg: '#ffedd5' },
+            urgente: { label: 'Urgente', color: '#ef4444', bg: '#fef2f2' }
+        };
+        return map[p] || map.basse;
+    }
+
+    function getActivityIcon(type) {
+        var map = {
+            note: { icon: '&#128221;', bg: '#f3f4f6', color: '#6b7280' },
+            appel: { icon: '&#128222;', bg: '#dbeafe', color: '#2563eb' },
+            email_envoye: { icon: '&#128228;', bg: '#d1fae5', color: '#059669' },
+            email_recu: { icon: '&#128229;', bg: '#e0e7ff', color: '#4f46e5' },
+            reunion: { icon: '&#128197;', bg: '#fef3c7', color: '#d97706' },
+            tache: { icon: '&#9989;', bg: '#fce7f3', color: '#db2777' },
+            status_change: { icon: '&#128260;', bg: '#f3f4f6', color: '#6b7280' },
+            form_response: { icon: '&#128203;', bg: '#d1fae5', color: '#059669' },
+            ai_analysis: { icon: '&#129302;', bg: '#ede9fe', color: '#7c3aed' }
+        };
+        return map[type] || map.note;
+    }
+
+    function getLinkIcon(type) {
+        var map = {
+            website: '&#127760;', linkedin_company: '&#128188;', linkedin_contact: '&#128100;',
+            facebook: '&#128218;', instagram: '&#128247;', tiktok: '&#127925;',
+            pappers: '&#128196;', societe_com: '&#127970;', google_maps: '&#128205;', autre: '&#128279;'
+        };
+        return map[type] || '&#128279;';
+    }
+
+    function formatRelativeDate(dateStr) {
+        if (!dateStr) return '-';
+        var d = new Date(dateStr);
+        var now = new Date();
+        var diff = Math.floor((now - d) / 1000);
+        if (diff < 60) return 'A l\'instant';
+        if (diff < 3600) return Math.floor(diff / 60) + ' min';
+        if (diff < 86400) return Math.floor(diff / 3600) + ' h';
+        var days = Math.floor(diff / 86400);
+        if (days === 1) return 'Hier';
+        if (days < 30) return days + ' j';
+        if (days < 365) return Math.floor(days / 30) + ' mois';
+        return Math.floor(days / 365) + ' an(s)';
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        return new Date(dateStr).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function daysSince(dateStr) {
+        if (!dateStr) return 0;
+        return Math.floor((new Date() - new Date(dateStr)) / 86400000);
+    }
+
+    function getInitials(name) {
+        if (!name) return '?';
+        return name.split(' ').map(function(w) { return w[0]; }).join('').toUpperCase().substring(0, 2);
+    }
+
+    function formatFileSize(bytes) {
+        if (!bytes) return '-';
+        if (bytes < 1024) return bytes + ' o';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' Ko';
+        return (bytes / 1048576).toFixed(1) + ' Mo';
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // ── TOAST ──
+    function toast(message, type) {
+        type = type || 'success';
+        var t = document.createElement('div');
+        t.className = 'toast toast--' + type;
+        t.textContent = message;
+        document.getElementById('toastContainer').appendChild(t);
+        setTimeout(function() { t.remove(); }, 3000);
+    }
+
+    // ── VIEW TOGGLE ──
+    function setView(view) {
+        currentView = view;
+        document.getElementById('kanbanView').style.display = view === 'kanban' ? '' : 'none';
+        document.getElementById('tableView').style.display = view === 'table' ? '' : 'none';
+        var btns = document.querySelectorAll('.view-toggle button');
+        btns.forEach(function(b) { b.classList.remove('active'); });
+        btns[view === 'kanban' ? 0 : 1].classList.add('active');
+    }
+    window.setView = setView;
+
+    // ── LOAD PROSPECTS ──
+    async function loadProspects() {
+        var res = await sb.from('prospects').select('*').eq('agency_id', AGENCY_ID).order('created_at', { ascending: false });
+        prospects = res.data || [];
+        renderKanban();
+        renderTable();
+        updateStats();
+    }
+
+    function updateStats() {
+        document.getElementById('statTotal').textContent = prospects.length;
+        document.getElementById('statNew').textContent = prospects.filter(function(p) { return p.stage === 'nouveau'; }).length;
+        var inProgress = prospects.filter(function(p) { return ['qualifie', 'premier_echange', 'proposition_envoyee'].indexOf(p.stage) !== -1; }).length;
+        document.getElementById('statInProgress').textContent = inProgress;
+        document.getElementById('statWon').textContent = prospects.filter(function(p) { return p.stage === 'gagne'; }).length;
+        document.getElementById('statLost').textContent = prospects.filter(function(p) { return p.stage === 'perdu'; }).length;
+    }
+
+    function renderKanban() {
+        STAGES.forEach(function(stage) {
+            var container = document.querySelector('.cards-container[data-stage="' + stage.key + '"]');
+            var countEl = document.querySelector('[data-count="' + stage.key + '"]');
+            var stageProspects = prospects.filter(function(p) { return p.stage === stage.key; });
+            countEl.textContent = stageProspects.length;
+            container.innerHTML = stageProspects.map(function(p) {
+                var pri = getPriorityInfo(p.priority);
+                var assigned = p.assigned_to ? getInitials(p.assigned_to) : '';
+                return '<div class="prospect-card" draggable="true" data-id="' + p.id + '" ' +
+                    'ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)" ' +
+                    'onclick="openPanel(\'' + p.id + '\')" style="border-left-color:' + stage.color + '">' +
+                    '<div class="prospect-card__company">' + escapeHtml(p.company_name) + '</div>' +
+                    '<div class="prospect-card__contact">' + escapeHtml((p.contact_first_name || '') + ' ' + (p.contact_last_name || '')).trim() + '</div>' +
+                    '<div class="prospect-card__meta">' +
+                        (p.source ? '<span class="source-badge">' + getSourceLabel(p.source) + '</span>' : '') +
+                        '<span class="priority-dot priority-dot--' + (p.priority || 'basse') + '" title="' + pri.label + '"></span>' +
+                        '<span class="prospect-card__days">' + daysSince(p.created_at) + ' j</span>' +
+                        (assigned ? '<span class="prospect-card__avatar">' + assigned + '</span>' : '') +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        });
+    }
+
+    function renderTable() {
+        var tbody = document.getElementById('tableBody');
+        tbody.innerHTML = prospects.map(function(p) {
+            var pri = getPriorityInfo(p.priority);
+            return '<tr onclick="openPanel(\'' + p.id + '\')" style="cursor:pointer">' +
+                '<td style="font-weight:700;">' + escapeHtml(p.company_name) + '</td>' +
+                '<td>' + escapeHtml((p.contact_first_name || '') + ' ' + (p.contact_last_name || '')).trim() + '</td>' +
+                '<td><span class="stage-pill" style="background:' + getStageColor(p.stage) + '20; color:' + getStageColor(p.stage) + '">' +
+                    '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:' + getStageColor(p.stage) + '"></span> ' +
+                    getStageLabel(p.stage) + '</span></td>' +
+                '<td><span class="source-badge">' + getSourceLabel(p.source) + '</span></td>' +
+                '<td><span class="priority-badge" style="background:' + pri.bg + ';color:' + pri.color + '">' + pri.label + '</span></td>' +
+                '<td>' + escapeHtml(p.assigned_to || '-') + '</td>' +
+                '<td style="white-space:nowrap">' + formatDate(p.created_at) + '</td>' +
+                '<td><button class="btn btn--danger btn--sm" onclick="event.stopPropagation();deleteProspect(\'' + p.id + '\')">Supprimer</button></td>' +
+            '</tr>';
+        }).join('');
+    }
+
+    // ── CREATE PROSPECT ──
+    async function createProspect() {
+        var name = document.getElementById('nCompanyName').value.trim();
+        if (!name) { toast('Le nom est requis', 'error'); return; }
+
+        var data = {
+            agency_id: AGENCY_ID,
+            company_name: name,
+            contact_first_name: document.getElementById('nContactFirst').value.trim() || null,
+            contact_last_name: document.getElementById('nContactLast').value.trim() || null,
+            contact_email: document.getElementById('nContactEmail').value.trim() || null,
+            contact_phone: document.getElementById('nContactPhone').value.trim() || null,
+            source: document.getElementById('nSource').value || null,
+            assigned_to: document.getElementById('nAssignedTo').value || null,
+            priority: document.getElementById('nPriority').value || 'moyenne',
+            stage: 'nouveau'
+        };
+
+        var res = await sb.from('prospects').insert([data]).select();
+        if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
+        toast('Prospect cree !');
+        closeNewProspectModal();
+        await loadProspects();
+    }
+    window.createProspect = createProspect;
+
+    // ── UPDATE PROSPECT ──
+    async function updateProspect(id, data) {
+        var res = await sb.from('prospects').update(data).eq('id', id).select();
+        if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return null; }
+        return res.data ? res.data[0] : null;
+    }
+
+    // ── DELETE PROSPECT ──
+    async function deleteProspect(id) {
+        if (!confirm('Supprimer ce prospect ? Cette action est irreversible.')) return;
+        await sb.from('prospect_activities').delete().eq('prospect_id', id);
+        await sb.from('prospect_links').delete().eq('prospect_id', id);
+        await sb.from('prospect_documents').delete().eq('prospect_id', id);
+        await sb.from('prospect_forms').delete().eq('prospect_id', id);
+        var res = await sb.from('prospects').delete().eq('id', id);
+        if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
+        toast('Prospect supprime');
+        closePanel();
+        await loadProspects();
+    }
+    window.deleteProspect = deleteProspect;
+
+    function deleteCurrentProspect() {
+        if (currentProspectId) deleteProspect(currentProspectId);
+    }
+    window.deleteCurrentProspect = deleteCurrentProspect;
+
+    // ── DRAG & DROP ──
+    var draggedId = null;
+
+    function handleDragStart(e) {
+        draggedId = e.target.dataset.id;
+        e.target.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    }
+    window.handleDragStart = handleDragStart;
+
+    function handleDragEnd(e) {
+        e.target.classList.remove('dragging');
+        document.querySelectorAll('.kanban-column').forEach(function(c) { c.classList.remove('drag-over'); });
+    }
+    window.handleDragEnd = handleDragEnd;
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        var col = e.target.closest('.kanban-column');
+        if (col) col.classList.add('drag-over');
+    }
+    window.handleDragOver = handleDragOver;
+
+    function handleDragLeave(e) {
+        var col = e.target.closest('.kanban-column');
+        if (col) col.classList.remove('drag-over');
+    }
+    window.handleDragLeave = handleDragLeave;
+
+    async function handleDrop(e) {
+        e.preventDefault();
+        var col = e.target.closest('.kanban-column');
+        if (!col || !draggedId) return;
+        col.classList.remove('drag-over');
+        var newStage = col.dataset.stage;
+        var prospect = prospects.find(function(p) { return p.id === draggedId; });
+        if (!prospect || prospect.stage === newStage) { draggedId = null; return; }
+        var oldStage = prospect.stage;
+        await moveProspect(draggedId, newStage, oldStage);
+        draggedId = null;
+    }
+    window.handleDrop = handleDrop;
+
+    async function moveProspect(id, newStage, oldStage) {
+        var updated = await updateProspect(id, { stage: newStage });
+        if (updated) {
+            await sb.from('prospect_activities').insert([{
+                prospect_id: id, agency_id: AGENCY_ID, type: 'status_change',
+                title: 'Stage modifie : ' + getStageLabel(oldStage) + ' -> ' + getStageLabel(newStage),
+                content: null, created_by: 'system'
+            }]);
+            await loadProspects();
+        }
+    }
+
+    // ── PANEL ──
+    async function openPanel(id) {
+        currentProspectId = id;
+        document.getElementById('panelOverlay').classList.add('open');
+        document.getElementById('prospectPanel').classList.add('open');
+        document.body.style.overflow = 'hidden';
+        switchTab('info');
+
+        var res = await sb.from('prospects').select('*').eq('id', id).single();
+        if (res.error) { toast('Erreur chargement', 'error'); return; }
+        currentProspect = res.data;
+        populatePanel(currentProspect);
+        loadLinks(id);
+        loadTimeline(id);
+        loadDocuments(id);
+        loadFormSection(id);
+        loadTranscript(id);
+    }
+    window.openPanel = openPanel;
+
+    function closePanel() {
+        document.getElementById('panelOverlay').classList.remove('open');
+        document.getElementById('prospectPanel').classList.remove('open');
+        document.body.style.overflow = '';
+        currentProspectId = null;
+        currentProspect = null;
+    }
+    window.closePanel = closePanel;
+
+    function populatePanel(p) {
+        document.getElementById('panelCompany').textContent = p.company_name || '-';
+        document.getElementById('panelStage').value = p.stage || 'nouveau';
+        document.getElementById('fCompanyName').value = p.company_name || '';
+        document.getElementById('fCompanyWebsite').value = p.company_website || '';
+        document.getElementById('fCompanySector').value = p.company_sector || '';
+        document.getElementById('fCompanySize').value = p.company_size || '';
+        document.getElementById('fCompanySiret').value = p.company_siret || '';
+        document.getElementById('fCompanyAddress').value = p.company_address || '';
+        document.getElementById('fContactFirst').value = p.contact_first_name || '';
+        document.getElementById('fContactLast').value = p.contact_last_name || '';
+        document.getElementById('fContactEmail').value = p.contact_email || '';
+        document.getElementById('fContactPhone').value = p.contact_phone || '';
+        document.getElementById('fContactPosition').value = p.contact_position || '';
+        document.getElementById('fAssignedTo').value = p.assigned_to || '';
+        document.getElementById('fNeedsSummary').value = p.needs_summary || '';
+        document.getElementById('fBudget').value = p.budget_estimate || '';
+        document.getElementById('fPriority').value = p.priority || 'basse';
+
+        // Services checkboxes
+        var services = p.services_interested || [];
+        document.querySelectorAll('#fServices input').forEach(function(cb) {
+            cb.checked = services.indexOf(cb.value) !== -1;
+        });
+    }
+
+    function editCompanyName() {
+        var name = prompt('Nom de l\'entreprise :', currentProspect ? currentProspect.company_name : '');
+        if (name && name.trim() && currentProspectId) {
+            updateProspect(currentProspectId, { company_name: name.trim() }).then(function() {
+                document.getElementById('panelCompany').textContent = name.trim();
+                document.getElementById('fCompanyName').value = name.trim();
+                loadProspects();
+            });
+        }
+    }
+    window.editCompanyName = editCompanyName;
+
+    async function updatePanelStage() {
+        if (!currentProspectId || !currentProspect) return;
+        var newStage = document.getElementById('panelStage').value;
+        var oldStage = currentProspect.stage;
+        if (newStage === oldStage) return;
+        await moveProspect(currentProspectId, newStage, oldStage);
+        currentProspect.stage = newStage;
+    }
+    window.updatePanelStage = updatePanelStage;
+
+    function switchTab(name) {
+        document.querySelectorAll('.panel-tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.tab-pane').forEach(function(t) { t.classList.remove('active'); });
+        var tabMap = { info: 0, links: 1, exchanges: 2, documents: 3, form: 4, timeline: 5 };
+        document.querySelectorAll('.panel-tab')[tabMap[name]].classList.add('active');
+        document.getElementById('tab-' + name).classList.add('active');
+    }
+    window.switchTab = switchTab;
+
+    // ── SAVE PROSPECT INFO ──
+    async function saveProspectInfo() {
+        if (!currentProspectId) return;
+        var services = [];
+        document.querySelectorAll('#fServices input:checked').forEach(function(cb) { services.push(cb.value); });
+
+        var data = {
+            company_name: document.getElementById('fCompanyName').value.trim(),
+            company_website: document.getElementById('fCompanyWebsite').value.trim() || null,
+            company_sector: document.getElementById('fCompanySector').value.trim() || null,
+            company_size: document.getElementById('fCompanySize').value || null,
+            company_siret: document.getElementById('fCompanySiret').value.trim() || null,
+            company_address: document.getElementById('fCompanyAddress').value.trim() || null,
+            contact_first_name: document.getElementById('fContactFirst').value.trim() || null,
+            contact_last_name: document.getElementById('fContactLast').value.trim() || null,
+            contact_email: document.getElementById('fContactEmail').value.trim() || null,
+            contact_phone: document.getElementById('fContactPhone').value.trim() || null,
+            contact_position: document.getElementById('fContactPosition').value.trim() || null,
+            assigned_to: document.getElementById('fAssignedTo').value || null,
+            needs_summary: document.getElementById('fNeedsSummary').value.trim() || null,
+            budget_estimate: document.getElementById('fBudget').value ? parseFloat(document.getElementById('fBudget').value) : null,
+            priority: document.getElementById('fPriority').value || 'basse',
+            services_interested: services
+        };
+
+        var updated = await updateProspect(currentProspectId, data);
+        if (updated) {
+            currentProspect = Object.assign(currentProspect, data);
+            document.getElementById('panelCompany').textContent = data.company_name;
+            toast('Informations enregistrees');
+            await loadProspects();
+        }
+    }
+    window.saveProspectInfo = saveProspectInfo;
+
+    // ── LINKS ──
+    async function loadLinks(prospectId) {
+        var res = await sb.from('prospect_links').select('*').eq('prospect_id', prospectId).order('created_at', { ascending: false });
+        var links = res.data || [];
+        var container = document.getElementById('linksList');
+        if (!links.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state__icon">&#128279;</div><div class="empty-state__text">Aucun lien ajoute</div></div>';
+            return;
+        }
+        container.innerHTML = links.map(function(l) {
+            return '<div class="link-item">' +
+                '<span class="link-item__icon">' + getLinkIcon(l.type) + '</span>' +
+                '<a class="link-item__url" href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener">' + escapeHtml(l.url) + '</a>' +
+                '<span class="link-item__type">' + escapeHtml(l.type) + '</span>' +
+                '<button class="link-item__delete" onclick="event.stopPropagation();deleteLink(\'' + l.id + '\')" title="Supprimer">&#10005;</button>' +
+            '</div>';
+        }).join('');
+    }
+
+    async function addLink() {
+        if (!currentProspectId) return;
+        var type = document.getElementById('linkType').value;
+        var url = document.getElementById('linkUrl').value.trim();
+        if (!url) { toast('URL requise', 'error'); return; }
+
+        var res = await sb.from('prospect_links').insert([{
+            prospect_id: currentProspectId, agency_id: AGENCY_ID, type: type, url: url
+        }]);
+        if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
+        document.getElementById('linkUrl').value = '';
+        toast('Lien ajoute');
+        loadLinks(currentProspectId);
+    }
+    window.addLink = addLink;
+
+    async function deleteLink(linkId) {
+        await sb.from('prospect_links').delete().eq('id', linkId);
+        toast('Lien supprime');
+        if (currentProspectId) loadLinks(currentProspectId);
+    }
+    window.deleteLink = deleteLink;
+
+    // ── TIMELINE / ACTIVITIES ──
+    async function loadTimeline(prospectId) {
+        var res = await sb.from('prospect_activities').select('*').eq('prospect_id', prospectId).order('created_at', { ascending: false });
+        var activities = res.data || [];
+        var container = document.getElementById('timelineList');
+        if (!activities.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state__icon">&#128340;</div><div class="empty-state__text">Aucune activite</div></div>';
+            return;
+        }
+        container.innerHTML = activities.map(function(a) {
+            var ai = getActivityIcon(a.type);
+            var isSystem = ['status_change', 'form_response', 'ai_analysis'].indexOf(a.type) !== -1;
+            return '<div class="timeline-entry">' +
+                '<div class="timeline-icon" style="background:' + ai.bg + ';color:' + ai.color + '">' + ai.icon + '</div>' +
+                '<div class="timeline-content">' +
+                    '<div class="timeline-title">' + escapeHtml(a.title) + '</div>' +
+                    (a.content ? '<div class="timeline-text">' + escapeHtml(a.content) + '</div>' : '') +
+                    '<div class="timeline-meta">' +
+                        '<span>' + formatRelativeDate(a.created_at) + '</span>' +
+                        (a.created_by ? '<span>' + escapeHtml(a.created_by) + '</span>' : '') +
+                        (isSystem ? '<span class="system-badge">systeme</span>' : '') +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    async function addActivity() {
+        if (!currentProspectId) return;
+        var type = document.getElementById('activityType').value;
+        var title = document.getElementById('activityTitle').value.trim();
+        var content = document.getElementById('activityContent').value.trim();
+        if (!title) { toast('Titre requis', 'error'); return; }
+
+        var res = await sb.from('prospect_activities').insert([{
+            prospect_id: currentProspectId, agency_id: AGENCY_ID,
+            type: type, title: title, content: content || null, created_by: 'admin'
+        }]);
+        if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
+        document.getElementById('activityTitle').value = '';
+        document.getElementById('activityContent').value = '';
+        toast('Activite ajoutee');
+        loadTimeline(currentProspectId);
+    }
+    window.addActivity = addActivity;
+
+    // ── DOCUMENTS ──
+    async function loadDocuments(prospectId) {
+        var res = await sb.from('prospect_documents').select('*').eq('prospect_id', prospectId).order('created_at', { ascending: false });
+        var docs = res.data || [];
+        var container = document.getElementById('documentsList');
+        if (!docs.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state__icon">&#128196;</div><div class="empty-state__text">Aucun document</div></div>';
+            return;
+        }
+        container.innerHTML = docs.map(function(d) {
+            var publicUrl = SUPABASE_URL + '/storage/v1/object/public/prospect-documents/' + d.file_path;
+            return '<div class="doc-item">' +
+                '<span class="doc-item__icon">&#128196;</span>' +
+                '<span class="doc-item__name">' + escapeHtml(d.file_name) + '</span>' +
+                '<span class="doc-item__cat">' + escapeHtml(d.category || 'autre') + '</span>' +
+                '<span class="doc-item__size">' + formatFileSize(d.file_size) + '</span>' +
+                '<span class="doc-item__date">' + formatDate(d.created_at) + '</span>' +
+                '<div class="doc-item__actions">' +
+                    '<a href="' + publicUrl + '" target="_blank" rel="noopener" title="Telecharger" style="color:var(--green)">&#11015;</a>' +
+                    '<button onclick="event.stopPropagation();deleteDocument(\'' + d.id + '\',\'' + escapeHtml(d.file_path) + '\')" title="Supprimer" style="color:#ef4444">&#10005;</button>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    async function handleDocUpload(e) {
+        var file = e.target.files[0];
+        if (!file || !currentProspectId) return;
+        if (file.size > 10 * 1024 * 1024) { toast('Fichier trop lourd (max 10 Mo)', 'error'); return; }
+
+        var category = document.getElementById('docCategory').value;
+        var filePath = AGENCY_ID + '/' + currentProspectId + '/' + Date.now() + '_' + file.name;
+
+        toast('Upload en cours...', 'info');
+        var storageRes = await sb.storage.from('prospect-documents').upload(filePath, file);
+        if (storageRes.error) { toast('Erreur upload: ' + storageRes.error.message, 'error'); return; }
+
+        var res = await sb.from('prospect_documents').insert([{
+            prospect_id: currentProspectId, agency_id: AGENCY_ID,
+            file_name: file.name, file_path: filePath,
+            file_size: file.size, category: category, mime_type: file.type
+        }]);
+        if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
+        toast('Document uploade !');
+        e.target.value = '';
+        loadDocuments(currentProspectId);
+    }
+    window.handleDocUpload = handleDocUpload;
+
+    async function deleteDocument(docId, filePath) {
+        if (!confirm('Supprimer ce document ?')) return;
+        await sb.storage.from('prospect-documents').remove([filePath]);
+        await sb.from('prospect_documents').delete().eq('id', docId);
+        toast('Document supprime');
+        if (currentProspectId) loadDocuments(currentProspectId);
+    }
+    window.deleteDocument = deleteDocument;
+
+    // Drag & drop on upload zone
+    (function() {
+        var zone = document.getElementById('docUploadZone');
+        zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('active'); });
+        zone.addEventListener('dragleave', function() { zone.classList.remove('active'); });
+        zone.addEventListener('drop', function(e) {
+            e.preventDefault(); zone.classList.remove('active');
+            if (e.dataTransfer.files.length) {
+                document.getElementById('docFileInput').files = e.dataTransfer.files;
+                handleDocUpload({ target: { files: e.dataTransfer.files, value: '' } });
+            }
+        });
+    })();
+
+    // ── FORMS ──
+    async function loadFormSection(prospectId) {
+        var container = document.getElementById('formSection');
+        var res = await sb.from('prospect_forms').select('*').eq('prospect_id', prospectId).order('created_at', { ascending: false });
+        var forms = res.data || [];
+
+        if (!forms.length) {
+            container.innerHTML = '<div class="empty-state">' +
+                '<div class="empty-state__icon">&#128203;</div>' +
+                '<div class="empty-state__text">Aucun formulaire</div>' +
+                '<button class="btn btn--primary btn--sm" style="margin-top:12px" onclick="generateFormLink()">Generer un lien</button>' +
+            '</div>';
+            return;
+        }
+
+        var form = forms[0];
+        var publicUrl = window.location.origin + '/form/' + form.id;
+        var html = '<div class="form-link-box">' +
+            '<span class="form-link-url" id="formUrl">' + publicUrl + '</span>' +
+            '<button class="btn btn--sm btn--primary" onclick="copyFormUrl()">Copier</button>' +
+            '<button class="btn btn--sm ' + (form.is_active ? 'btn--danger' : 'btn--accent') + '" onclick="toggleForm(\'' + form.id + '\',' + !form.is_active + ')">' +
+                (form.is_active ? 'Desactiver' : 'Activer') +
+            '</button>' +
+        '</div>';
+
+        // Load responses
+        var resResp = await sb.from('prospect_form_responses').select('*').eq('form_id', form.id).order('created_at', { ascending: false });
+        var responses = resResp.data || [];
+
+        if (responses.length) {
+            html += '<h3 style="font-size:0.9rem; font-weight:700; margin-bottom:10px;">' + responses.length + ' reponse(s)</h3>';
+            responses.forEach(function(r, i) {
+                html += '<div class="form-response-card" onclick="this.classList.toggle(\'expanded\')">' +
+                    '<div class="form-response-card__header">' +
+                        '<span>Reponse #' + (i + 1) + '</span>' +
+                        '<span style="font-size:0.75rem;color:var(--gray);font-weight:500">' + formatDate(r.created_at) + '</span>' +
+                    '</div>' +
+                    '<div class="form-response-card__body"><pre style="white-space:pre-wrap;font-family:inherit;font-size:0.8rem;">' + escapeHtml(JSON.stringify(r.response_data, null, 2)) + '</pre></div>' +
+                '</div>';
+            });
+        } else {
+            html += '<div style="text-align:center; padding:16px; color:var(--gray); font-size:0.85rem;">Aucune reponse pour le moment</div>';
+        }
+
+        container.innerHTML = html;
+    }
+
+    async function generateFormLink() {
+        if (!currentProspectId) return;
+        var res = await sb.from('prospect_forms').insert([{
+            prospect_id: currentProspectId, agency_id: AGENCY_ID, is_active: true
+        }]).select();
+        if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
+        toast('Formulaire cree !');
+        loadFormSection(currentProspectId);
+    }
+    window.generateFormLink = generateFormLink;
+
+    function copyFormUrl() {
+        var url = document.getElementById('formUrl').textContent;
+        navigator.clipboard.writeText(url).then(function() { toast('URL copiee !'); });
+    }
+    window.copyFormUrl = copyFormUrl;
+
+    async function toggleForm(formId, active) {
+        await sb.from('prospect_forms').update({ is_active: active }).eq('id', formId);
+        toast(active ? 'Formulaire active' : 'Formulaire desactive');
+        if (currentProspectId) loadFormSection(currentProspectId);
+    }
+    window.toggleForm = toggleForm;
+
+    // ── TRANSCRIPT ──
+    async function loadTranscript(prospectId) {
+        var container = document.getElementById('transcriptSaved');
+        var aiContainer = document.getElementById('transcriptAiResult');
+        var res = await sb.from('prospects').select('firefly_transcript, firefly_summary').eq('id', prospectId).single();
+        if (!res.data) return;
+
+        document.getElementById('transcriptText').value = res.data.firefly_transcript || '';
+
+        if (res.data.firefly_transcript) {
+            container.innerHTML = '<div style="background:var(--gray-light);border-radius:var(--radius-sm);padding:14px;font-size:0.82rem;color:var(--dark);max-height:200px;overflow-y:auto;white-space:pre-wrap;">' +
+                escapeHtml(res.data.firefly_transcript) + '</div>';
+        } else {
+            container.innerHTML = '';
+        }
+
+        if (res.data.firefly_summary) {
+            aiContainer.innerHTML = '<div class="ai-card">' +
+                '<div class="ai-card__title">&#129302; Resume IA</div>' +
+                '<div class="ai-card__content">' + escapeHtml(res.data.firefly_summary) + '</div>' +
+            '</div>';
+        } else {
+            aiContainer.innerHTML = '';
+        }
+    }
+
+    async function saveTranscript() {
+        if (!currentProspectId) return;
+        var text = document.getElementById('transcriptText').value.trim();
+        await updateProspect(currentProspectId, { firefly_transcript: text || null });
+        toast('Transcript sauvegarde');
+        loadTranscript(currentProspectId);
+    }
+    window.saveTranscript = saveTranscript;
+
+    // ── AI FUNCTIONS ──
+    async function callAI(action, data) {
+        try {
+            var resp = await fetch(AI_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                },
+                body: JSON.stringify({ action: action, data: data })
+            });
+            if (!resp.ok) throw new Error('Erreur HTTP ' + resp.status);
+            return await resp.json();
+        } catch (err) {
+            toast('Erreur IA: ' + err.message, 'error');
+            return null;
+        }
+    }
+
+    async function analyzeLinks() {
+        if (!currentProspectId) return;
+        var linksRes = await sb.from('prospect_links').select('*').eq('prospect_id', currentProspectId);
+        var links = linksRes.data || [];
+        if (!links.length) { toast('Ajoutez des liens d\'abord', 'error'); return; }
+
+        var container = document.getElementById('linksAiResult');
+        container.innerHTML = '<div class="loading-center"><div class="spinner"></div></div>';
+
+        var result = await callAI('analyze_links', {
+            prospect_id: currentProspectId,
+            prospect: currentProspect,
+            links: links
+        });
+
+        if (result && result.analysis) {
+            container.innerHTML = '<div class="ai-card" style="margin-top:12px;">' +
+                '<div class="ai-card__title">&#129302; Analyse IA</div>' +
+                '<div class="ai-card__content">' + escapeHtml(result.analysis) + '</div>' +
+            '</div>';
+            // Log in timeline
+            await sb.from('prospect_activities').insert([{
+                prospect_id: currentProspectId, agency_id: AGENCY_ID,
+                type: 'ai_analysis', title: 'Analyse IA des liens',
+                content: result.analysis, created_by: 'system'
+            }]);
+        } else {
+            container.innerHTML = '<div style="color:#ef4444;font-size:0.85rem;margin-top:12px;">Analyse non disponible</div>';
+        }
+    }
+    window.analyzeLinks = analyzeLinks;
+
+    async function summarizeTranscript() {
+        if (!currentProspectId) return;
+        var transcript = document.getElementById('transcriptText').value.trim();
+        if (!transcript) { toast('Collez un transcript d\'abord', 'error'); return; }
+
+        var container = document.getElementById('transcriptAiResult');
+        container.innerHTML = '<div class="loading-center"><div class="spinner"></div></div>';
+
+        var result = await callAI('summarize_transcript', {
+            prospect_id: currentProspectId,
+            prospect: currentProspect,
+            transcript: transcript
+        });
+
+        if (result && result.summary) {
+            await updateProspect(currentProspectId, { firefly_summary: result.summary });
+            container.innerHTML = '<div class="ai-card">' +
+                '<div class="ai-card__title">&#129302; Resume IA</div>' +
+                '<div class="ai-card__content">' + escapeHtml(result.summary) + '</div>' +
+            '</div>';
+            await sb.from('prospect_activities').insert([{
+                prospect_id: currentProspectId, agency_id: AGENCY_ID,
+                type: 'ai_analysis', title: 'Resume IA du transcript Firefly',
+                content: result.summary, created_by: 'system'
+            }]);
+            toast('Resume genere !');
+        } else {
+            container.innerHTML = '<div style="color:#ef4444;font-size:0.85rem;">Resume non disponible</div>';
+        }
+    }
+    window.summarizeTranscript = summarizeTranscript;
+
+    // ── EMAIL GENERATION ──
+    function openEmailModal() {
+        if (!currentProspect) return;
+        document.getElementById('emailModal').classList.add('open');
+        document.getElementById('emailLoading').style.display = 'flex';
+        document.getElementById('emailContent').style.display = 'none';
+        generateEmail();
+    }
+    window.openEmailModal = openEmailModal;
+
+    function closeEmailModal() {
+        document.getElementById('emailModal').classList.remove('open');
+    }
+    window.closeEmailModal = closeEmailModal;
+
+    async function generateEmail() {
+        var linksRes = await sb.from('prospect_links').select('*').eq('prospect_id', currentProspectId);
+        var activitiesRes = await sb.from('prospect_activities').select('*').eq('prospect_id', currentProspectId).order('created_at', { ascending: false }).limit(10);
+
+        var result = await callAI('generate_email', {
+            prospect_id: currentProspectId,
+            prospect: currentProspect,
+            links: linksRes.data || [],
+            activities: activitiesRes.data || []
+        });
+
+        document.getElementById('emailLoading').style.display = 'none';
+        document.getElementById('emailContent').style.display = 'block';
+
+        if (result && result.subject && result.body) {
+            document.getElementById('emailSubject').value = result.subject;
+            document.getElementById('emailBody').value = result.body;
+            updateMailtoLink();
+        } else {
+            document.getElementById('emailSubject').value = 'Proposition Regen Agency';
+            document.getElementById('emailBody').value = 'Bonjour,\n\n[Erreur de generation - veuillez rediger manuellement]\n\nCordialement,\nRegen Agency';
+            updateMailtoLink();
+        }
+    }
+
+    function updateMailtoLink() {
+        var to = currentProspect ? (currentProspect.contact_email || '') : '';
+        var subject = encodeURIComponent(document.getElementById('emailSubject').value);
+        var body = encodeURIComponent(document.getElementById('emailBody').value);
+        document.getElementById('emailMailto').href = 'mailto:' + to + '?subject=' + subject + '&body=' + body;
+    }
+
+    function copyEmail() {
+        var text = 'Objet: ' + document.getElementById('emailSubject').value + '\n\n' + document.getElementById('emailBody').value;
+        navigator.clipboard.writeText(text).then(function() { toast('Email copie !'); });
+    }
+    window.copyEmail = copyEmail;
+
+    async function saveDraft() {
+        if (!currentProspectId) return;
+        await sb.from('prospect_activities').insert([{
+            prospect_id: currentProspectId, agency_id: AGENCY_ID,
+            type: 'email_envoye', title: 'Brouillon: ' + document.getElementById('emailSubject').value,
+            content: document.getElementById('emailBody').value, created_by: 'admin'
+        }]);
+        toast('Brouillon sauvegarde dans la timeline');
+        closeEmailModal();
+        loadTimeline(currentProspectId);
+    }
+    window.saveDraft = saveDraft;
+
+    // Watch for edits on email fields to update mailto
+    document.getElementById('emailSubject').addEventListener('input', updateMailtoLink);
+    document.getElementById('emailBody').addEventListener('input', updateMailtoLink);
+
+    // ── MODALS ──
+    function openNewProspectModal() {
+        document.getElementById('newProspectModal').classList.add('open');
+        document.getElementById('nCompanyName').value = '';
+        document.getElementById('nContactFirst').value = '';
+        document.getElementById('nContactLast').value = '';
+        document.getElementById('nContactEmail').value = '';
+        document.getElementById('nContactPhone').value = '';
+        document.getElementById('nSource').value = '';
+        document.getElementById('nAssignedTo').value = '';
+        document.getElementById('nPriority').value = 'moyenne';
+    }
+    window.openNewProspectModal = openNewProspectModal;
+
+    function closeNewProspectModal() {
+        document.getElementById('newProspectModal').classList.remove('open');
+    }
+    window.closeNewProspectModal = closeNewProspectModal;
+
+    // Close modals on escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closePanel();
+            closeNewProspectModal();
+            closeEmailModal();
+        }
+    });
+
+    // ── INIT ──
+    loadProspects();
+
+})();
+</script>
+</body>
+</html>
