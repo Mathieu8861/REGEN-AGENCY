@@ -337,30 +337,71 @@ async function handleAnalyzeLinks(prospectId: string) {
 
 ${pagesContent.join("\n\n---\n\n")}
 
-Fournis une analyse structurée avec les sections suivantes :
-1. **Secteur d'activité** : quel est le domaine de l'entreprise ?
-2. **Taille estimée** : petite, moyenne ou grande entreprise (indices trouvés)
-3. **Indicateurs de chiffre d'affaires** : tout indice sur le volume d'activité
-4. **Présence digitale** : score de 1 à 10 avec justification (qualité du site, SEO apparent, réseaux sociaux, etc.)
-5. **Points forts** : ce que l'entreprise fait bien
-6. **Points faibles** : lacunes identifiées dans leur présence en ligne
-7. **Opportunités pour Regen Agency** : services que nous pourrions proposer et pourquoi`;
+IMPORTANT : Tu dois répondre en DEUX parties séparées par la ligne "---JSON---"
+
+PARTIE 1 : Analyse textuelle structurée avec :
+1. **Secteur d'activité**
+2. **Taille estimée** (TPE, PME, ETI ou Grand Groupe)
+3. **Indicateurs de chiffre d'affaires**
+4. **Présence digitale** (score 1-10 avec justification)
+5. **Points forts**
+6. **Points faibles**
+7. **Opportunités pour Regen Agency**
+
+---JSON---
+
+PARTIE 2 : Un objet JSON STRICT (sans commentaires, sans markdown) avec les champs extraits des pages analysées. Ne remplis QUE les champs dont tu es raisonnablement sûr. Utilise null pour les champs incertains :
+{
+  "company_sector": "string ou null",
+  "company_size": "tpe ou pme ou eti ou grand_groupe ou null",
+  "company_siret": "string ou null",
+  "company_address": "string ou null",
+  "company_website": "string ou null",
+  "contact_position": "string ou null",
+  "needs_summary": "string ou null",
+  "services_interested": ["google_ads","meta_ads","seo","creation_site","tiktok_ads","formation","consulting"] ou null
+}`;
 
   // 4. Call Claude
-  const aiResponse = await callClaude(systemPrompt, userPrompt, 1500);
+  const aiResponse = await callClaude(systemPrompt, userPrompt, 2000);
 
-  // 5. Log activity
+  // 5. Parse structured data and update prospect
+  let analysis = aiResponse;
+  let extractedFields: Record<string, unknown> = {};
+
+  const jsonSplit = aiResponse.split("---JSON---");
+  if (jsonSplit.length >= 2) {
+    analysis = jsonSplit[0].trim();
+    try {
+      const jsonStr = jsonSplit[1].trim().replace(/```json\n?/g, "").replace(/```/g, "").trim();
+      extractedFields = JSON.parse(jsonStr);
+      // Remove null values
+      Object.keys(extractedFields).forEach(k => {
+        if (extractedFields[k] === null || extractedFields[k] === undefined) {
+          delete extractedFields[k];
+        }
+      });
+      // Update prospect with extracted fields (only non-empty)
+      if (Object.keys(extractedFields).length > 0) {
+        await supabase.from("prospects").update(extractedFields).eq("id", prospectId);
+      }
+    } catch (_) {
+      console.error("Failed to parse extracted JSON from AI response");
+    }
+  }
+
+  // 6. Log activity
   await logActivity(
     prospectId,
     "Analyse IA des liens",
     "ai_analysis",
-    aiResponse,
+    analysis,
   );
 
-  // 6. Return
+  // 7. Return
   return jsonResponse({
     success: true,
-    data: { analysis: aiResponse },
+    data: { analysis, extracted_fields: extractedFields },
   });
 }
 
@@ -403,40 +444,80 @@ async function handleSummarizeTranscript(prospectId: string) {
 
 ${prospect.firefly_transcript}
 
-Fournis un résumé avec les sections suivantes :
+IMPORTANT : Tu dois répondre en DEUX parties séparées par la ligne "---JSON---"
+
+PARTIE 1 : Résumé structuré avec :
 1. **Points clés** : les informations essentielles de la conversation
 2. **Besoins exprimés** : ce que le prospect recherche
 3. **Budget mentionné** : tout indice sur le budget du prospect
 4. **Timeline souhaitée** : délais ou urgences mentionnés
 5. **Objections / Préoccupations** : freins ou hésitations du prospect
 6. **Prochaines étapes** : ce qui a été convenu pour la suite
-7. **Actions suggérées pour l'agence** : recommandations concrètes pour avancer avec ce prospect`;
+7. **Actions suggérées pour l'agence** : recommandations concrètes
+
+---JSON---
+
+PARTIE 2 : Un objet JSON STRICT (sans commentaires, sans markdown) avec les champs extraits de la conversation. Ne remplis QUE les champs mentionnés explicitement. Utilise null pour les champs non mentionnés :
+{
+  "needs_summary": "string résumant les besoins exprimés, ou null",
+  "budget_estimate": nombre en euros ou null,
+  "services_interested": ["google_ads","meta_ads","seo","creation_site","tiktok_ads","formation","consulting"] ou null,
+  "company_sector": "string ou null",
+  "company_size": "tpe ou pme ou eti ou grand_groupe ou null",
+  "contact_position": "string ou null",
+  "priority": "low ou medium ou high ou urgent ou null"
+}`;
 
   // 4. Call Claude
-  const aiResponse = await callClaude(systemPrompt, userPrompt, 1500);
+  const aiResponse = await callClaude(systemPrompt, userPrompt, 2000);
 
-  // 5. Save summary on prospect
+  // 5. Parse structured data
+  let summary = aiResponse;
+  let extractedFields: Record<string, unknown> = {};
+
+  const jsonSplit = aiResponse.split("---JSON---");
+  if (jsonSplit.length >= 2) {
+    summary = jsonSplit[0].trim();
+    try {
+      const jsonStr = jsonSplit[1].trim().replace(/```json\n?/g, "").replace(/```/g, "").trim();
+      extractedFields = JSON.parse(jsonStr);
+      // Remove null values
+      Object.keys(extractedFields).forEach(k => {
+        if (extractedFields[k] === null || extractedFields[k] === undefined) {
+          delete extractedFields[k];
+        }
+      });
+    } catch (_) {
+      console.error("Failed to parse extracted JSON from transcript summary");
+    }
+  }
+
+  // 6. Save summary + extracted fields on prospect
+  const updateData: Record<string, unknown> = { firefly_summary: summary };
+  if (Object.keys(extractedFields).length > 0) {
+    Object.assign(updateData, extractedFields);
+  }
   const { error: updateErr } = await supabase
     .from("prospects")
-    .update({ firefly_summary: aiResponse })
+    .update(updateData)
     .eq("id", prospectId);
 
   if (updateErr) {
     console.error("Error saving transcript summary:", updateErr);
   }
 
-  // 6. Log activity
+  // 7. Log activity
   await logActivity(
     prospectId,
     "Résumé Firefly généré par IA",
     "ai_analysis",
-    aiResponse,
+    summary,
   );
 
-  // 7. Return
+  // 8. Return
   return jsonResponse({
     success: true,
-    data: { summary: aiResponse },
+    data: { summary, extracted_fields: extractedFields },
   });
 }
 

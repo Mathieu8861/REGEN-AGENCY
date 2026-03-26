@@ -1592,14 +1592,15 @@
         if (result && result.analysis) {
             container.innerHTML = '<div class="ai-card" style="margin-top:12px;">' +
                 '<div class="ai-card__title">&#129302; Analyse IA</div>' +
-                '<div class="ai-card__content">' + escapeHtml(result.analysis) + '</div>' +
+                '<div class="ai-card__content" style="white-space:pre-wrap;">' + escapeHtml(result.analysis) + '</div>' +
             '</div>';
-            // Log in timeline
-            await sb.from('prospect_activities').insert([{
-                prospect_id: currentProspectId,
-                activity_type: 'ai_analysis', title: 'Analyse IA des liens',
-                content: result.analysis, created_by: 'system'
-            }]);
+            // Reload prospect data to show auto-filled fields
+            if (result.extracted_fields && Object.keys(result.extracted_fields).length > 0) {
+                toast('Informations mises a jour automatiquement !', 'success');
+                // Refresh prospect data
+                var refreshed = await sb.from('prospects').select('*').eq('id', currentProspectId).single();
+                if (refreshed.data) { currentProspect = refreshed.data; }
+            }
         } else {
             container.innerHTML = '<div style="color:#ef4444;font-size:0.85rem;margin-top:12px;">Analyse non disponible</div>';
         }
@@ -1621,17 +1622,18 @@
         });
 
         if (result && result.summary) {
-            await updateProspect(currentProspectId, { firefly_summary: result.summary });
             container.innerHTML = '<div class="ai-card">' +
                 '<div class="ai-card__title">&#129302; Resume IA</div>' +
-                '<div class="ai-card__content">' + escapeHtml(result.summary) + '</div>' +
+                '<div class="ai-card__content" style="white-space:pre-wrap;">' + escapeHtml(result.summary) + '</div>' +
             '</div>';
-            await sb.from('prospect_activities').insert([{
-                prospect_id: currentProspectId,
-                activity_type: 'ai_analysis', title: 'Resume IA du transcript Firefly',
-                content: result.summary, created_by: 'system'
-            }]);
-            toast('Resume genere !');
+            // Reload prospect data to show auto-filled fields
+            if (result.extracted_fields && Object.keys(result.extracted_fields).length > 0) {
+                toast('Resume genere + informations mises a jour !', 'success');
+                var refreshed = await sb.from('prospects').select('*').eq('id', currentProspectId).single();
+                if (refreshed.data) { currentProspect = refreshed.data; }
+            } else {
+                toast('Resume genere !');
+            }
         } else {
             container.innerHTML = '<div style="color:#ef4444;font-size:0.85rem;">Resume non disponible</div>';
         }
