@@ -1144,7 +1144,7 @@
         var updated = await updateProspect(id, { stage: newStage });
         if (updated) {
             await sb.from('prospect_activities').insert([{
-                prospect_id: id, agency_id: AGENCY_ID, type: 'status_change',
+                prospect_id: id, activity_type: 'status_change',
                 title: 'Stage modifie : ' + getStageLabel(oldStage) + ' -> ' + getStageLabel(newStage),
                 content: null, created_by: 'system'
             }]);
@@ -1299,7 +1299,7 @@
         if (!url) { toast('URL requise', 'error'); return; }
 
         var res = await sb.from('prospect_links').insert([{
-            prospect_id: currentProspectId, agency_id: AGENCY_ID, type: type, url: url
+            prospect_id: currentProspectId, link_type: type, url: url
         }]);
         if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
         document.getElementById('linkUrl').value = '';
@@ -1350,8 +1350,8 @@
         if (!title) { toast('Titre requis', 'error'); return; }
 
         var res = await sb.from('prospect_activities').insert([{
-            prospect_id: currentProspectId, agency_id: AGENCY_ID,
-            type: type, title: title, content: content || null, created_by: 'admin'
+            prospect_id: currentProspectId,
+            activity_type: type, title: title, content: content || null, created_by: 'admin'
         }]);
         if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
         document.getElementById('activityTitle').value = '';
@@ -1399,9 +1399,9 @@
         if (storageRes.error) { toast('Erreur upload: ' + storageRes.error.message, 'error'); return; }
 
         var res = await sb.from('prospect_documents').insert([{
-            prospect_id: currentProspectId, agency_id: AGENCY_ID,
+            prospect_id: currentProspectId,
             file_name: file.name, file_path: filePath,
-            file_size: file.size, category: category, mime_type: file.type
+            file_size: file.size, category: category, file_type: file.type
         }]);
         if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
         toast('Document uploade !');
@@ -1483,7 +1483,7 @@
     async function generateFormLink() {
         if (!currentProspectId) return;
         var res = await sb.from('prospect_forms').insert([{
-            prospect_id: currentProspectId, agency_id: AGENCY_ID, is_active: true
+            prospect_id: currentProspectId, is_active: true
         }]).select();
         if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
         toast('Formulaire cree !');
@@ -1580,8 +1580,8 @@
             '</div>';
             // Log in timeline
             await sb.from('prospect_activities').insert([{
-                prospect_id: currentProspectId, agency_id: AGENCY_ID,
-                type: 'ai_analysis', title: 'Analyse IA des liens',
+                prospect_id: currentProspectId,
+                activity_type: 'ai_analysis', title: 'Analyse IA des liens',
                 content: result.analysis, created_by: 'system'
             }]);
         } else {
@@ -1611,8 +1611,8 @@
                 '<div class="ai-card__content">' + escapeHtml(result.summary) + '</div>' +
             '</div>';
             await sb.from('prospect_activities').insert([{
-                prospect_id: currentProspectId, agency_id: AGENCY_ID,
-                type: 'ai_analysis', title: 'Resume IA du transcript Firefly',
+                prospect_id: currentProspectId,
+                activity_type: 'ai_analysis', title: 'Resume IA du transcript Firefly',
                 content: result.summary, created_by: 'system'
             }]);
             toast('Resume genere !');
@@ -1678,8 +1678,8 @@
     async function saveDraft() {
         if (!currentProspectId) return;
         await sb.from('prospect_activities').insert([{
-            prospect_id: currentProspectId, agency_id: AGENCY_ID,
-            type: 'email_envoye', title: 'Brouillon: ' + document.getElementById('emailSubject').value,
+            prospect_id: currentProspectId,
+            activity_type: 'email_sent', title: 'Brouillon: ' + document.getElementById('emailSubject').value,
             content: document.getElementById('emailBody').value, created_by: 'admin'
         }]);
         toast('Brouillon sauvegarde dans la timeline');
