@@ -1284,12 +1284,26 @@
         }
         container.innerHTML = links.map(function(l) {
             return '<div class="link-item">' +
-                '<span class="link-item__icon">' + getLinkIcon(l.type) + '</span>' +
+                '<span class="link-item__icon">' + getLinkIcon(l.link_type || l.type) + '</span>' +
                 '<a class="link-item__url" href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener">' + escapeHtml(l.url) + '</a>' +
-                '<span class="link-item__type">' + escapeHtml(l.type) + '</span>' +
+                '<span class="link-item__type">' + escapeHtml(l.link_type || l.type) + '</span>' +
                 '<button class="link-item__delete" onclick="event.stopPropagation();deleteLink(\'' + l.id + '\')" title="Supprimer">&#10005;</button>' +
             '</div>';
         }).join('');
+
+        // Reload last AI analysis from activities
+        var aiRes = await sb.from('prospect_activities').select('content, created_at')
+            .eq('prospect_id', prospectId).eq('activity_type', 'ai_analysis')
+            .like('title', '%liens%')
+            .order('created_at', { ascending: false }).limit(1);
+        var aiContainer = document.getElementById('linksAiResult');
+        if (aiRes.data && aiRes.data.length > 0 && aiContainer) {
+            var a = aiRes.data[0];
+            aiContainer.innerHTML = '<div class="ai-card" style="margin-top:12px;">' +
+                '<div class="ai-card__title">&#129302; Analyse IA <span style="font-size:0.75rem;color:#888;font-weight:400;">(' + formatRelativeDate(a.created_at) + ')</span></div>' +
+                '<div class="ai-card__content" style="white-space:pre-wrap;">' + escapeHtml(a.content) + '</div>' +
+            '</div>';
+        }
     }
 
     async function addLink() {
