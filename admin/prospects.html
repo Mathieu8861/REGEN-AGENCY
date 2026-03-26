@@ -625,10 +625,10 @@
                 <div class="form-group">
                     <label class="form-label">Priorite</label>
                     <select class="form-select" id="fPriority">
-                        <option value="basse">Basse</option>
-                        <option value="moyenne">Moyenne</option>
-                        <option value="haute">Haute</option>
-                        <option value="urgente">Urgente</option>
+                        <option value="low">Basse</option>
+                        <option value="medium">Moyenne</option>
+                        <option value="high">Haute</option>
+                        <option value="urgent">Urgente</option>
                     </select>
                 </div>
                 <div class="form-group form-grid--full">
@@ -788,10 +788,10 @@
             <div class="form-group form-grid--full">
                 <label class="form-label">Priorite</label>
                 <select class="form-select" id="nPriority">
-                    <option value="basse">Basse</option>
-                    <option value="moyenne" selected>Moyenne</option>
-                    <option value="haute">Haute</option>
-                    <option value="urgente">Urgente</option>
+                    <option value="low">Basse</option>
+                    <option value="medium" selected>Moyenne</option>
+                    <option value="high">Haute</option>
+                    <option value="urgent">Urgente</option>
                 </select>
             </div>
         </div>
@@ -884,12 +884,12 @@
 
     function getPriorityInfo(p) {
         var map = {
-            basse: { label: 'Basse', color: '#9ca3af', bg: '#f3f4f6' },
-            moyenne: { label: 'Moyenne', color: '#f59e0b', bg: '#fef3c7' },
-            haute: { label: 'Haute', color: '#f97316', bg: '#ffedd5' },
-            urgente: { label: 'Urgente', color: '#ef4444', bg: '#fef2f2' }
+            low: { label: 'Basse', color: '#9ca3af', bg: '#f3f4f6' },
+            medium: { label: 'Moyenne', color: '#f59e0b', bg: '#fef3c7' },
+            high: { label: 'Haute', color: '#f97316', bg: '#ffedd5' },
+            urgent: { label: 'Urgente', color: '#ef4444', bg: '#fef2f2' }
         };
-        return map[p] || map.basse;
+        return map[p] || map.medium;
     }
 
     function getActivityIcon(type) {
