@@ -677,14 +677,34 @@
 
         <!-- Tab: Exchanges -->
         <div class="tab-pane" id="tab-exchanges">
-            <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">Transcript Firefly</h3>
-            <textarea class="form-textarea" id="transcriptText" style="min-height:120px;" placeholder="Coller le transcript ici..."></textarea>
-            <div style="display:flex; gap:8px; margin-top:10px;">
-                <button class="btn btn--primary btn--sm" onclick="saveTranscript()">Sauvegarder</button>
-                <button class="btn btn--accent btn--sm" onclick="summarizeTranscript()">Resumer avec IA</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="font-size:0.95rem; font-weight:700; margin:0;">Echanges</h3>
+                <button class="btn btn--primary btn--sm" onclick="showNewExchangeForm()">+ Nouvel echange</button>
             </div>
-            <div id="transcriptSaved" style="margin-top:16px;"></div>
-            <div id="transcriptAiResult" style="margin-top:12px;"></div>
+
+            <!-- New exchange form (hidden by default) -->
+            <div id="newExchangeForm" style="display:none; background:var(--gray-light); border-radius:12px; padding:16px; margin-bottom:20px;">
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <div style="flex:1;">
+                        <label class="form-label">Titre de l'echange</label>
+                        <input class="form-input" id="exchangeTitle" placeholder="Ex: 1er appel decouverte, Visio de suivi...">
+                    </div>
+                    <div style="width:160px;">
+                        <label class="form-label">Date</label>
+                        <input class="form-input" id="exchangeDate" type="date">
+                    </div>
+                </div>
+                <label class="form-label">Transcript / Resume de l'echange</label>
+                <textarea class="form-textarea" id="exchangeContent" style="min-height:120px;" placeholder="Coller le transcript Firefly ou ecrire le resume de l'echange..."></textarea>
+                <div style="display:flex; gap:8px; margin-top:10px; justify-content:flex-end;">
+                    <button class="btn btn--ghost btn--sm" onclick="hideNewExchangeForm()">Annuler</button>
+                    <button class="btn btn--primary btn--sm" onclick="saveExchange()">Sauvegarder</button>
+                    <button class="btn btn--accent btn--sm" onclick="saveAndSummarize()">Sauvegarder + Resumer avec IA</button>
+                </div>
+            </div>
+
+            <!-- List of exchanges -->
+            <div id="exchangesList"></div>
         </div>
 
         <!-- Tab: Documents -->
@@ -1168,7 +1188,7 @@
         loadTimeline(id);
         loadDocuments(id);
         loadFormSection(id);
-        loadTranscript(id);
+        loadExchanges(id);
     }
     window.openPanel = openPanel;
 
@@ -1519,39 +1539,182 @@
     window.toggleForm = toggleForm;
 
     // ── TRANSCRIPT ──
-    async function loadTranscript(prospectId) {
-        var container = document.getElementById('transcriptSaved');
-        var aiContainer = document.getElementById('transcriptAiResult');
-        var res = await sb.from('prospects').select('firefly_transcript, firefly_summary').eq('id', prospectId).single();
-        if (!res.data) return;
+    // ── EXCHANGES (multi-échanges) ──
+    function showNewExchangeForm() {
+        document.getElementById('newExchangeForm').style.display = 'block';
+        document.getElementById('exchangeDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('exchangeTitle').value = '';
+        document.getElementById('exchangeContent').value = '';
+        document.getElementById('exchangeTitle').focus();
+    }
+    window.showNewExchangeForm = showNewExchangeForm;
 
-        document.getElementById('transcriptText').value = res.data.firefly_transcript || '';
+    function hideNewExchangeForm() {
+        document.getElementById('newExchangeForm').style.display = 'none';
+    }
+    window.hideNewExchangeForm = hideNewExchangeForm;
 
-        if (res.data.firefly_transcript) {
-            container.innerHTML = '<div style="background:var(--gray-light);border-radius:var(--radius-sm);padding:14px;font-size:0.82rem;color:var(--dark);max-height:200px;overflow-y:auto;white-space:pre-wrap;">' +
-                escapeHtml(res.data.firefly_transcript) + '</div>';
-        } else {
-            container.innerHTML = '';
+    async function loadExchanges(prospectId) {
+        var container = document.getElementById('exchangesList');
+        // Fetch all call/meeting activities for this prospect
+        var res = await sb.from('prospect_activities').select('*')
+            .eq('prospect_id', prospectId)
+            .in('activity_type', ['call', 'meeting', 'note'])
+            .order('created_at', { ascending: false });
+        var exchanges = res.data || [];
+
+        // Also fetch AI summaries linked to exchanges
+        var aiRes = await sb.from('prospect_activities').select('*')
+            .eq('prospect_id', prospectId)
+            .eq('activity_type', 'ai_analysis')
+            .like('title', '%Firefly%')
+            .order('created_at', { ascending: false });
+        var aiSummaries = aiRes.data || [];
+
+        if (!exchanges.length) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state__icon">&#128172;</div><div class="empty-state__text">Aucun echange enregistre</div><div style="font-size:0.8rem;color:#888;margin-top:6px;">Cliquez "+ Nouvel echange" pour ajouter un transcript Firefly ou un compte-rendu</div></div>';
+            return;
         }
 
-        if (res.data.firefly_summary) {
-            aiContainer.innerHTML = '<div class="ai-card">' +
-                '<div class="ai-card__title">&#129302; Resume IA</div>' +
-                '<div class="ai-card__content">' + escapeHtml(res.data.firefly_summary) + '</div>' +
-            '</div>';
-        } else {
-            aiContainer.innerHTML = '';
-        }
+        container.innerHTML = exchanges.map(function(ex, idx) {
+            var dateStr = ex.metadata && ex.metadata.exchange_date ? ex.metadata.exchange_date : formatRelativeDate(ex.created_at);
+            // Find AI summary that was created right after this exchange
+            var summary = null;
+            if (ex.metadata && ex.metadata.ai_summary) {
+                summary = ex.metadata.ai_summary;
+            }
+            // Also check standalone AI summaries
+            for (var i = 0; i < aiSummaries.length; i++) {
+                if (aiSummaries[i].metadata && aiSummaries[i].metadata.exchange_id === ex.id) {
+                    summary = aiSummaries[i].content;
+                    break;
+                }
+            }
+
+            var html = '<div class="exchange-card" style="background:white;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid #e5e7eb;">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">';
+            html += '<div style="font-weight:700;font-size:0.9rem;">' + escapeHtml(ex.title) + '</div>';
+            html += '<div style="display:flex;align-items:center;gap:8px;">';
+            html += '<span style="font-size:0.75rem;color:#888;">' + dateStr + '</span>';
+            if (!summary) {
+                html += '<button class="btn btn--accent btn--sm" style="font-size:0.7rem;padding:4px 10px;" onclick="summarizeExchange(\'' + ex.id + '\')">&#129302; Resumer</button>';
+            }
+            html += '<button style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:0.8rem;" onclick="deleteExchange(\'' + ex.id + '\')" title="Supprimer">&#10005;</button>';
+            html += '</div></div>';
+
+            // Transcript (collapsible if long)
+            var content = ex.content || '';
+            if (content.length > 300) {
+                html += '<div style="font-size:0.82rem;color:#555;max-height:100px;overflow:hidden;position:relative;" id="exc-' + ex.id + '">' +
+                    '<div style="white-space:pre-wrap;">' + escapeHtml(content) + '</div>' +
+                    '<div style="position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,white);"></div>' +
+                '</div>' +
+                '<button style="font-size:0.75rem;color:var(--green);background:none;border:none;cursor:pointer;margin-top:4px;" onclick="var el=document.getElementById(\'exc-' + ex.id + '\');el.style.maxHeight=el.style.maxHeight===\'none\'?\'100px\':\'none\';this.textContent=el.style.maxHeight===\'none\'?\'Reduire\':\'Voir tout\'">Voir tout</button>';
+            } else if (content) {
+                html += '<div style="font-size:0.82rem;color:#555;white-space:pre-wrap;">' + escapeHtml(content) + '</div>';
+            }
+
+            // AI Summary
+            if (summary) {
+                html += '<div class="ai-card" style="margin-top:10px;"><div class="ai-card__title" style="font-size:0.8rem;">&#129302; Resume IA</div>';
+                html += '<div class="ai-card__content" style="font-size:0.8rem;white-space:pre-wrap;">' + escapeHtml(summary) + '</div></div>';
+            }
+
+            html += '</div>';
+            return html;
+        }).join('');
     }
 
-    async function saveTranscript() {
+    async function saveExchange() {
         if (!currentProspectId) return;
-        var text = document.getElementById('transcriptText').value.trim();
-        await updateProspect(currentProspectId, { firefly_transcript: text || null });
-        toast('Transcript sauvegarde');
-        loadTranscript(currentProspectId);
+        var title = document.getElementById('exchangeTitle').value.trim();
+        var content = document.getElementById('exchangeContent').value.trim();
+        var date = document.getElementById('exchangeDate').value;
+        if (!title) { toast('Titre requis', 'error'); return; }
+        if (!content) { toast('Contenu requis', 'error'); return; }
+
+        var res = await sb.from('prospect_activities').insert([{
+            prospect_id: currentProspectId,
+            activity_type: 'call',
+            title: title,
+            content: content,
+            metadata: { exchange_date: date },
+            created_by: 'admin'
+        }]).select();
+        if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
+
+        // Also update the prospect's firefly_transcript with the latest exchange
+        await updateProspect(currentProspectId, { firefly_transcript: content });
+
+        hideNewExchangeForm();
+        toast('Echange sauvegarde !');
+        loadExchanges(currentProspectId);
     }
-    window.saveTranscript = saveTranscript;
+    window.saveExchange = saveExchange;
+
+    async function saveAndSummarize() {
+        await saveExchange();
+        // Get the last inserted exchange
+        var res = await sb.from('prospect_activities').select('id, content')
+            .eq('prospect_id', currentProspectId).eq('activity_type', 'call')
+            .order('created_at', { ascending: false }).limit(1);
+        if (res.data && res.data.length > 0) {
+            await summarizeExchange(res.data[0].id);
+        }
+    }
+    window.saveAndSummarize = saveAndSummarize;
+
+    async function summarizeExchange(exchangeId) {
+        // Fetch the exchange content
+        var res = await sb.from('prospect_activities').select('*').eq('id', exchangeId).single();
+        if (!res.data || !res.data.content) { toast('Pas de contenu a resumer', 'error'); return; }
+
+        toast('Resume en cours...', 'info');
+
+        // Update prospect's firefly_transcript temporarily for the AI
+        await updateProspect(currentProspectId, { firefly_transcript: res.data.content });
+
+        var result = await callAI('summarize_transcript', {
+            prospect_id: currentProspectId
+        });
+
+        if (result && result.summary) {
+            // Save AI summary linked to this exchange
+            await sb.from('prospect_activities').insert([{
+                prospect_id: currentProspectId,
+                activity_type: 'ai_analysis',
+                title: 'Resume IA Firefly - ' + res.data.title,
+                content: result.summary,
+                metadata: { exchange_id: exchangeId },
+                created_by: 'system'
+            }]);
+
+            // Also update the exchange metadata with the summary
+            var meta = res.data.metadata || {};
+            meta.ai_summary = result.summary;
+            await sb.from('prospect_activities').update({ metadata: meta }).eq('id', exchangeId);
+
+            if (result.extracted_fields && Object.keys(result.extracted_fields).length > 0) {
+                toast('Resume genere + informations mises a jour !', 'success');
+                var refreshed = await sb.from('prospects').select('*').eq('id', currentProspectId).single();
+                if (refreshed.data) { currentProspect = refreshed.data; }
+            } else {
+                toast('Resume genere !', 'success');
+            }
+            loadExchanges(currentProspectId);
+        } else {
+            toast('Resume non disponible', 'error');
+        }
+    }
+    window.summarizeExchange = summarizeExchange;
+
+    async function deleteExchange(exchangeId) {
+        if (!confirm('Supprimer cet echange ?')) return;
+        await sb.from('prospect_activities').delete().eq('id', exchangeId);
+        toast('Echange supprime');
+        loadExchanges(currentProspectId);
+    }
+    window.deleteExchange = deleteExchange;
 
     // ── AI FUNCTIONS ──
     async function callAI(action, extraData) {
