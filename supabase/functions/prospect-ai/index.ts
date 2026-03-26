@@ -77,10 +77,10 @@ async function logActivity(
 ) {
   await supabase.from("prospect_activities").insert({
     prospect_id: prospectId,
-    type,
+    activity_type: type,
     title,
     content: content ?? null,
-    created_at: new Date().toISOString(),
+    created_by: "system",
   });
 }
 
@@ -158,22 +158,22 @@ async function handleGenerateEmail(prospectId: string, language: string) {
 
 ## Informations entreprise
 - Nom entreprise : ${prospect.company_name ?? "Non renseigné"}
-- Secteur : ${prospect.sector ?? "Non renseigné"}
-- Site web : ${prospect.website ?? "Non renseigné"}
-- Ville : ${prospect.city ?? "Non renseigné"}
-- Pays : ${prospect.country ?? "Non renseigné"}
+- Secteur : ${prospect.company_sector ?? "Non renseigné"}
+- Site web : ${prospect.company_website ?? "Non renseigné"}
+- Taille : ${prospect.company_size ?? "Non renseigné"}
+- SIRET : ${prospect.company_siret ?? "Non renseigné"}
+- Adresse : ${prospect.company_address ?? "Non renseigné"}
 
 ## Contact
-- Nom : ${prospect.first_name ?? ""} ${prospect.last_name ?? ""}
-- Email : ${prospect.email ?? "Non renseigné"}
-- Téléphone : ${prospect.phone ?? "Non renseigné"}
-- Poste : ${prospect.job_title ?? "Non renseigné"}
+- Nom : ${prospect.contact_first_name ?? ""} ${prospect.contact_last_name ?? ""}
+- Email : ${prospect.contact_email ?? "Non renseigné"}
+- Téléphone : ${prospect.contact_phone ?? "Non renseigné"}
+- Poste : ${prospect.contact_position ?? "Non renseigné"}
 
 ## Besoins et contexte
-- Services intéressés : ${prospect.services_interested ?? "Non renseigné"}
-- Budget estimé : ${prospect.budget ?? "Non renseigné"}
-- Besoins exprimés : ${prospect.needs ?? "Non renseigné"}
-- Notes : ${prospect.notes ?? "Aucune"}
+- Services intéressés : ${(prospect.services_interested || []).join(", ") || "Non renseigné"}
+- Budget estimé : ${prospect.budget_estimate ?? "Non renseigné"} ${prospect.budget_currency ?? "EUR"}
+- Besoins exprimés : ${prospect.needs_summary ?? "Non renseigné"}
 - Résumé transcript : ${prospect.firefly_summary ?? "Aucun"}
 
 ## Liens associés
@@ -184,8 +184,8 @@ ${
   formResponses && formResponses.length > 0
     ? formResponses
         .map(
-          (r: Record<string, string>) =>
-            `- ${r.question ?? r.field_name}: ${r.answer ?? r.value}`,
+          (r: Record<string, unknown>) =>
+            `- Réponse: ${JSON.stringify(r.response_data)}`,
         )
         .join("\n")
     : "Aucune réponse"
@@ -197,7 +197,7 @@ ${
     ? activities
         .map(
           (a: Record<string, string>) =>
-            `- [${a.type}] ${a.title} (${a.created_at})`,
+            `- [${a.activity_type}] ${a.title} (${a.created_at})`,
         )
         .join("\n")
     : "Aucune activité"

@@ -1540,18 +1540,20 @@
     window.saveTranscript = saveTranscript;
 
     // ── AI FUNCTIONS ──
-    async function callAI(action, data) {
+    async function callAI(action, extraData) {
         try {
+            var payload = Object.assign({ action: action }, extraData || {});
             var resp = await fetch(AI_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
                 },
-                body: JSON.stringify({ action: action, data: data })
+                body: JSON.stringify(payload)
             });
-            if (!resp.ok) throw new Error('Erreur HTTP ' + resp.status);
-            return await resp.json();
+            var json = await resp.json();
+            if (!resp.ok) throw new Error(json.error || 'Erreur HTTP ' + resp.status);
+            return json.data || json;
         } catch (err) {
             toast('Erreur IA: ' + err.message, 'error');
             return null;
