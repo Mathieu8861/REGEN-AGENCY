@@ -1700,9 +1700,10 @@
         var html = '<div class="form-link-box">' +
             '<span class="form-link-url" id="formUrl">' + publicUrl + '</span>' +
             '<button class="btn btn--sm btn--primary" onclick="copyFormUrl()">Copier</button>' +
-            '<button class="btn btn--sm ' + (form.is_active ? 'btn--danger' : 'btn--accent') + '" onclick="toggleForm(\'' + form.id + '\',' + !form.is_active + ')">' +
-                (form.is_active ? 'Desactiver' : 'Activer') +
+            '<button class="btn btn--sm ' + (form.is_active ? 'btn--accent' : 'btn--primary') + '" onclick="toggleForm(\'' + form.id + '\',' + !form.is_active + ')">' +
+                (form.is_active ? 'Actif' : 'Inactif') +
             '</button>' +
+            '<button class="btn btn--sm btn--danger" onclick="deleteForm(\'' + form.id + '\')" style="margin-left:4px;">Supprimer</button>' +
         '</div>';
 
         // Load responses
@@ -1750,6 +1751,15 @@
         if (currentProspectId) loadFormSection(currentProspectId);
     }
     window.toggleForm = toggleForm;
+
+    async function deleteForm(formId) {
+        if (!confirm('Supprimer ce formulaire et toutes ses reponses ?')) return;
+        await sb.from('prospect_form_responses').delete().eq('form_id', formId);
+        await sb.from('prospect_forms').delete().eq('id', formId);
+        toast('Formulaire supprime');
+        if (currentProspectId) loadFormSection(currentProspectId);
+    }
+    window.deleteForm = deleteForm;
 
     // ── TRANSCRIPT ──
     // ── EXCHANGES (multi-échanges) ──
