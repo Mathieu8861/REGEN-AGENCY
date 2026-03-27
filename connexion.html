@@ -342,6 +342,67 @@
         }
 
         /* Nav cards grid */
+        /* Bandeau Profil Agence */
+        .agency-profile-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #173C3A 0%, #1a4a47 100%);
+            color: white;
+            padding: 20px 28px;
+            border-radius: 14px;
+            margin-bottom: 28px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(23, 60, 58, 0.3);
+        }
+        .agency-profile-banner:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(23, 60, 58, 0.4);
+        }
+        .agency-profile-banner__left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .agency-profile-banner__icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(47, 185, 99, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .agency-profile-banner__icon svg {
+            width: 22px;
+            height: 22px;
+            color: #2FB963;
+        }
+        .agency-profile-banner__title {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            color: white;
+        }
+        .agency-profile-banner__desc {
+            font-size: 13px;
+            opacity: 0.7;
+            margin: 0;
+            color: white;
+        }
+        .agency-profile-banner__cta {
+            background: #2FB963;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
         .hub-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -589,6 +650,23 @@
                 <button class="admin-hub-logout" id="logoutBtn">Déconnexion</button>
             </header>
 
+            <!-- Bandeau Profil Agence -->
+            <a href="admin/profil-agence.html" class="agency-profile-banner">
+                <div class="agency-profile-banner__left">
+                    <div class="agency-profile-banner__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="agency-profile-banner__title">Profil Agence</h3>
+                        <p class="agency-profile-banner__desc">Identite, services, tarifs & base de connaissances IA</p>
+                    </div>
+                </div>
+                <span class="agency-profile-banner__cta">Configurer &rarr;</span>
+            </a>
+
             <div class="hub-grid">
 
                 <!-- Documents internes -->
@@ -651,21 +729,6 @@
                     </div>
                     <h3 class="hub-card__title">Gestion des tâches</h3>
                     <p class="hub-card__desc">Kanban board interne</p>
-                    <div class="hub-card__arrow">
-                        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                    </div>
-                </a>
-
-                <!-- Profil Agence -->
-                <a href="admin/profil-agence.html" class="hub-card">
-                    <div class="hub-card__icon hub-card__icon--agency">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                            <polyline points="9 22 9 12 15 12 15 22"/>
-                        </svg>
-                    </div>
-                    <h3 class="hub-card__title">Profil Agence</h3>
-                    <p class="hub-card__desc">Identite, services, tarifs & base de connaissances IA</p>
                     <div class="hub-card__arrow">
                         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </div>
