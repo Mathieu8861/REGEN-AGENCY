@@ -363,7 +363,7 @@
         }
         .ai-card.collapsed .ai-card__title::after { transform: rotate(-90deg); }
         .ai-card__content {
-            font-size: 0.82rem; color: var(--dark); line-height: 1.6; white-space: pre-wrap;
+            font-size: 0.82rem; color: var(--dark); line-height: 1.6;
             max-height: 150px; overflow: hidden; position: relative;
             transition: max-height 0.3s ease;
         }
@@ -455,7 +455,17 @@
         .panel-section__title {
             font-weight: 700;
             font-size: 0.9rem;
+        }
+        .panel-section__subtitle {
+            font-size: 0.72rem;
+            color: #888;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+        .panel-section__title-group {
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         .panel-section__badge {
             font-size: 0.7rem;
@@ -521,6 +531,24 @@
         .completeness-pill--warn { background: #fef3c7; color: #d97706; }
         .completeness-pill--empty { background: #f3f4f6; color: #9ca3af; }
 
+        /* Quick info bar */
+        .panel-quick-info {
+            display: flex;
+            gap: 12px;
+            padding: 8px 20px;
+            background: #f8faf9;
+            border-bottom: 1px solid #e5e7eb;
+            flex-wrap: wrap;
+            font-size: 0.75rem;
+            color: #666;
+        }
+        .panel-quick-info__item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .panel-quick-info__item span { color: #333; font-weight: 600; }
+
         /* Synthesis card */
         .synthesis-card {
             background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
@@ -537,7 +565,6 @@
             font-size: 0.82rem;
             color: var(--dark);
             line-height: 1.6;
-            white-space: pre-wrap;
         }
 
         /* Responsive */
@@ -676,10 +703,13 @@
             <option value="perdu">Perdu</option>
         </select>
         <div class="panel-actions">
-            <button class="btn btn--accent btn--sm" onclick="openEmailModal()">Generer email</button>
+            <button class="btn btn--accent btn--sm" onclick="openEmailModal()">&#9993; Generer email</button>
             <button class="btn btn--danger btn--sm" onclick="deleteCurrentProspect()">Supprimer</button>
         </div>
     </div>
+
+    <!-- Quick Info -->
+    <div class="panel-quick-info" id="panelQuickInfo"></div>
 
     <!-- Completeness Bar -->
     <div class="completeness-bar" id="completenessBar">
@@ -695,7 +725,10 @@
         <div class="panel-section open" id="section-collecte">
             <div class="panel-section__header" onclick="toggleSection('section-collecte')">
                 <span class="panel-section__icon">&#128279;</span>
-                <span class="panel-section__title">Collecte</span>
+                <div class="panel-section__title-group">
+                    <span class="panel-section__title">Collecte</span>
+                    <span class="panel-section__subtitle">Liens web, reseaux sociaux, documents et fichiers du prospect</span>
+                </div>
                 <span class="panel-section__badge panel-section__badge--empty" id="badge-collecte">0 items</span>
                 <span class="panel-section__chevron">&#9654;</span>
             </div>
@@ -745,7 +778,7 @@
 
                 <!-- AI Analysis -->
                 <div style="margin-top:16px;">
-                    <button class="btn btn--accent btn--sm" onclick="analyzeLinks()">&#129302; Analyser avec IA</button>
+                    <button class="btn btn--accent btn--sm" onclick="analyzeLinks()">&#129302; Analyser les liens avec l'IA</button>
                 </div>
                 <div id="linksAiResult"></div>
             </div>
@@ -755,7 +788,10 @@
         <div class="panel-section open" id="section-informations">
             <div class="panel-section__header" onclick="toggleSection('section-informations')">
                 <span class="panel-section__icon">&#128202;</span>
-                <span class="panel-section__title">Informations</span>
+                <div class="panel-section__title-group">
+                    <span class="panel-section__title">Informations</span>
+                    <span class="panel-section__subtitle">Fiche d'identite de l'entreprise et du contact — remplie automatiquement par l'IA</span>
+                </div>
                 <span class="panel-section__badge panel-section__badge--empty" id="badge-informations">0/15</span>
                 <span class="panel-section__chevron">&#9654;</span>
             </div>
@@ -860,7 +896,10 @@
         <div class="panel-section open" id="section-contact">
             <div class="panel-section__header" onclick="toggleSection('section-contact')">
                 <span class="panel-section__icon">&#128236;</span>
-                <span class="panel-section__title">Contact</span>
+                <div class="panel-section__title-group">
+                    <span class="panel-section__title">Contact</span>
+                    <span class="panel-section__subtitle">Formulaire de renseignement a envoyer au prospect</span>
+                </div>
                 <span class="panel-section__badge panel-section__badge--empty" id="badge-contact">---</span>
                 <span class="panel-section__chevron">&#9654;</span>
             </div>
@@ -873,7 +912,10 @@
         <div class="panel-section open" id="section-echanges">
             <div class="panel-section__header" onclick="toggleSection('section-echanges')">
                 <span class="panel-section__icon">&#128172;</span>
-                <span class="panel-section__title">Echanges</span>
+                <div class="panel-section__title-group">
+                    <span class="panel-section__title">Echanges</span>
+                    <span class="panel-section__subtitle">Comptes-rendus d'appels, visios et conversations Firefly</span>
+                </div>
                 <span class="panel-section__badge panel-section__badge--empty" id="badge-echanges">0</span>
                 <span class="panel-section__chevron">&#9654;</span>
             </div>
@@ -912,13 +954,16 @@
         <div class="panel-section open" id="section-synthese">
             <div class="panel-section__header" onclick="toggleSection('section-synthese')">
                 <span class="panel-section__icon">&#129504;</span>
-                <span class="panel-section__title">Synthese IA</span>
+                <div class="panel-section__title-group">
+                    <span class="panel-section__title">Synthese IA</span>
+                    <span class="panel-section__subtitle">Vue d'ensemble generee par l'IA a partir de toutes les donnees collectees</span>
+                </div>
                 <span class="panel-section__badge panel-section__badge--empty" id="badge-synthese">---</span>
                 <span class="panel-section__chevron">&#9654;</span>
             </div>
             <div class="panel-section__content">
                 <div style="text-align:center; margin-bottom:16px;">
-                    <button class="btn btn--accent" onclick="generateSynthesis()" id="btnGenerateSynthesis">&#129302; Generer la synthese</button>
+                    <button class="btn btn--accent" onclick="generateSynthesis()" id="btnGenerateSynthesis">&#129504; Generer une synthese globale</button>
                 </div>
                 <div id="synthesisResult"></div>
             </div>
@@ -928,13 +973,16 @@
         <div class="panel-section open" id="section-proposition">
             <div class="panel-section__header" onclick="toggleSection('section-proposition')">
                 <span class="panel-section__icon">&#128231;</span>
-                <span class="panel-section__title">Proposition</span>
+                <div class="panel-section__title-group">
+                    <span class="panel-section__title">Proposition</span>
+                    <span class="panel-section__subtitle">Email et proposition commerciale a envoyer au prospect</span>
+                </div>
                 <span class="panel-section__badge panel-section__badge--empty" id="badge-proposition">---</span>
                 <span class="panel-section__chevron">&#9654;</span>
             </div>
             <div class="panel-section__content">
                 <div style="text-align:center; margin-bottom:16px;">
-                    <button class="btn btn--accent btn--sm" onclick="generateEmailInPanel()">&#128231; Generer email</button>
+                    <button class="btn btn--accent btn--sm" onclick="generateEmailInPanel()">&#9993; Generer l'email de proposition</button>
                 </div>
                 <div id="propositionContent" style="display:none;">
                     <div class="form-group" style="margin-bottom:12px;">
@@ -1189,6 +1237,16 @@
         return div.innerHTML;
     }
 
+    function formatAiText(text) {
+        if (!text) return '';
+        return escapeHtml(text)
+            .replace(/### (.*?)(\n|$)/g, '<div style="font-weight:700;font-size:0.88rem;margin:12px 0 4px;color:#173C3A;">$1</div>')
+            .replace(/## (.*?)(\n|$)/g, '<div style="font-weight:700;font-size:0.92rem;margin:14px 0 6px;color:#173C3A;">$1</div>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/^- (.*?)$/gm, '<div style="padding-left:12px;">&bull; $1</div>')
+            .replace(/\n/g, '<br>');
+    }
+
     // ── TOAST ──
     function toast(message, type) {
         type = type || 'success';
@@ -1398,6 +1456,19 @@
         if (res.error) { toast('Erreur chargement', 'error'); return; }
         currentProspect = res.data;
         populatePanel(currentProspect);
+
+        // Populate quick info bar
+        var qi = document.getElementById('panelQuickInfo');
+        if (qi && currentProspect) {
+            var p = currentProspect;
+            var items = [];
+            if (p.contact_email) items.push('<div class="panel-quick-info__item">&#128231; <span>' + escapeHtml(p.contact_email) + '</span></div>');
+            if (p.contact_phone) items.push('<div class="panel-quick-info__item">&#128222; <span>' + escapeHtml(p.contact_phone) + '</span></div>');
+            if (p.source) items.push('<div class="panel-quick-info__item">&#128205; <span>' + getSourceLabel(p.source) + '</span></div>');
+            if (p.assigned_to) items.push('<div class="panel-quick-info__item">&#128100; <span>' + escapeHtml(p.assigned_to) + '</span></div>');
+            qi.innerHTML = items.join('') || '<div style="color:#aaa;">Completez les informations du prospect</div>';
+        }
+
         loadLinks(id);
         loadTimeline(id);
         loadDocuments(id);
@@ -1556,7 +1627,7 @@
         var links = res.data || [];
         var container = document.getElementById('linksList');
         if (!links.length) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-state__icon">&#128279;</div><div class="empty-state__text">Aucun lien ajoute</div></div>';
+            container.innerHTML = '<div class="empty-state"><div class="empty-state__icon">&#128279;</div><div class="empty-state__text">Ajoutez les liens du prospect : site web, LinkedIn, Pappers, reseaux sociaux... L\'IA pourra ensuite les analyser automatiquement.</div></div>';
             return;
         }
         container.innerHTML = links.map(function(l) {
@@ -1578,7 +1649,7 @@
             var a = aiRes.data[0];
             aiContainer.innerHTML = '<div class="ai-card" style="margin-top:12px;">' +
                 '<div class="ai-card__title">&#129302; Analyse IA <span style="font-size:0.75rem;color:#888;font-weight:400;">(' + formatRelativeDate(a.created_at) + ')</span></div>' +
-                '<div class="ai-card__content" style="white-space:pre-wrap;">' + escapeHtml(a.content) + '</div>' +
+                '<div class="ai-card__content">' + formatAiText(a.content) + '</div>' +
             '</div>';
         }
     }
@@ -1658,7 +1729,7 @@
         var docs = res.data || [];
         var container = document.getElementById('documentsList');
         if (!docs.length) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-state__icon">&#128196;</div><div class="empty-state__text">Aucun document</div></div>';
+            container.innerHTML = '<div class="empty-state"><div class="empty-state__icon">&#128196;</div><div class="empty-state__text">Deposez ici les documents du prospect : brief, charte graphique, rapport d\'analyse...</div></div>';
             return;
         }
         container.innerHTML = docs.map(function(d) {
@@ -1733,8 +1804,8 @@
         if (!forms.length) {
             container.innerHTML = '<div class="empty-state">' +
                 '<div class="empty-state__icon">&#128203;</div>' +
-                '<div class="empty-state__text">Aucun formulaire</div>' +
-                '<button class="btn btn--primary btn--sm" style="margin-top:12px" onclick="generateFormLink()">Generer un lien</button>' +
+                '<div class="empty-state__text">Generez un formulaire de renseignement personnalise et envoyez le lien au prospect. Ses reponses apparaitront ici automatiquement.</div>' +
+                '<button class="btn btn--primary btn--sm" style="margin-top:12px" onclick="generateFormLink()">&#128236; Creer le formulaire</button>' +
             '</div>';
             return;
         }
@@ -1839,7 +1910,7 @@
         var aiSummaries = aiRes.data || [];
 
         if (!exchanges.length) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-state__icon">&#128172;</div><div class="empty-state__text">Aucun echange enregistre</div><div style="font-size:0.8rem;color:#888;margin-top:6px;">Cliquez "+ Nouvel echange" pour ajouter un transcript Firefly ou un compte-rendu</div></div>';
+            container.innerHTML = '<div class="empty-state"><div class="empty-state__icon">&#128172;</div><div class="empty-state__text">Enregistrez vos echanges avec le prospect : collez un transcript Firefly ou redigez un compte-rendu apres chaque appel/visio.</div></div>';
             return;
         }
 
@@ -1884,7 +1955,7 @@
             // AI Summary
             if (summary) {
                 html += '<div class="ai-card" style="margin-top:10px;"><div class="ai-card__title" style="font-size:0.8rem;">&#129302; Resume IA</div>';
-                html += '<div class="ai-card__content" style="font-size:0.8rem;white-space:pre-wrap;">' + escapeHtml(summary) + '</div></div>';
+                html += '<div class="ai-card__content" style="font-size:0.8rem;">' + formatAiText(summary) + '</div></div>';
             }
 
             html += '</div>';
@@ -2022,7 +2093,7 @@
         if (result && result.analysis) {
             container.innerHTML = '<div class="ai-card" style="margin-top:12px;">' +
                 '<div class="ai-card__title">&#129302; Analyse IA</div>' +
-                '<div class="ai-card__content" style="white-space:pre-wrap;">' + escapeHtml(result.analysis) + '</div>' +
+                '<div class="ai-card__content">' + formatAiText(result.analysis) + '</div>' +
             '</div>';
             // Reload prospect data to show auto-filled fields
             if (result.extracted_fields && Object.keys(result.extracted_fields).length > 0) {
@@ -2054,7 +2125,7 @@
         if (result && result.summary) {
             container.innerHTML = '<div class="ai-card">' +
                 '<div class="ai-card__title">&#129302; Resume IA</div>' +
-                '<div class="ai-card__content" style="white-space:pre-wrap;">' + escapeHtml(result.summary) + '</div>' +
+                '<div class="ai-card__content">' + formatAiText(result.summary) + '</div>' +
             '</div>';
             // Reload prospect data to show auto-filled fields
             if (result.extracted_fields && Object.keys(result.extracted_fields).length > 0) {
@@ -2075,7 +2146,7 @@
         var sections = {
             collecte: { label: 'Collecte', score: 0 },
             informations: { label: 'Infos', score: 0 },
-            contact: { label: 'Contact', score: 0 },
+            contact: { label: 'Formulaire', score: 0 },
             echanges: { label: 'Echanges', score: 0 },
             synthese: { label: 'Synthese', score: 0 },
             proposition: { label: 'Proposition', score: 0 }
@@ -2202,7 +2273,7 @@
             var s = res.data[0];
             container.innerHTML = '<div class="synthesis-card">' +
                 '<div class="synthesis-card__date">Derniere synthese : ' + formatRelativeDate(s.created_at) + '</div>' +
-                '<div class="synthesis-card__content">' + escapeHtml(s.content) + '</div>' +
+                '<div class="synthesis-card__content">' + formatAiText(s.content) + '</div>' +
             '</div>';
         } else {
             container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray); font-size:0.85rem;">Aucune synthese generee pour le moment.<br>Cliquez le bouton ci-dessus pour agreger toutes les donnees.</div>';
@@ -2246,7 +2317,7 @@
 
             container.innerHTML = '<div class="synthesis-card">' +
                 '<div class="synthesis-card__date">Generee a l\'instant</div>' +
-                '<div class="synthesis-card__content">' + escapeHtml(content) + '</div>' +
+                '<div class="synthesis-card__content">' + formatAiText(content) + '</div>' +
             '</div>';
             toast('Synthese generee !', 'success');
             updateCompleteness();
