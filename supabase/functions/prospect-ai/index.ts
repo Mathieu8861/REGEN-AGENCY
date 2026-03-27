@@ -381,9 +381,23 @@ PARTIE 2 : Un objet JSON STRICT (sans commentaires, sans markdown) avec les cham
           delete extractedFields[k];
         }
       });
-      // Update prospect with extracted fields (only non-empty)
+      // Update prospect with extracted fields — ONLY fill empty fields, never overwrite
       if (Object.keys(extractedFields).length > 0) {
-        await supabase.from("prospects").update(extractedFields).eq("id", prospectId);
+        const { data: current } = await supabase.from("prospects").select("*").eq("id", prospectId).single();
+        if (current) {
+          const safeUpdate: Record<string, unknown> = {};
+          for (const [key, val] of Object.entries(extractedFields)) {
+            const existing = current[key as keyof typeof current];
+            // Only fill if the current value is empty/null/undefined
+            if (existing === null || existing === undefined || existing === "" ||
+                (Array.isArray(existing) && existing.length === 0)) {
+              safeUpdate[key] = val;
+            }
+          }
+          if (Object.keys(safeUpdate).length > 0) {
+            await supabase.from("prospects").update(safeUpdate).eq("id", prospectId);
+          }
+        }
       }
     } catch (_) {
       console.error("Failed to parse extracted JSON from AI response");
@@ -492,10 +506,19 @@ PARTIE 2 : Un objet JSON STRICT (sans commentaires, sans markdown) avec les cham
     }
   }
 
-  // 6. Save summary + extracted fields on prospect
+  // 6. Save summary + extracted fields on prospect — ONLY fill empty fields
   const updateData: Record<string, unknown> = { firefly_summary: summary };
   if (Object.keys(extractedFields).length > 0) {
-    Object.assign(updateData, extractedFields);
+    const { data: current } = await supabase.from("prospects").select("*").eq("id", prospectId).single();
+    if (current) {
+      for (const [key, val] of Object.entries(extractedFields)) {
+        const existing = current[key as keyof typeof current];
+        if (existing === null || existing === undefined || existing === "" ||
+            (Array.isArray(existing) && existing.length === 0)) {
+          updateData[key] = val;
+        }
+      }
+    }
   }
   const { error: updateErr } = await supabase
     .from("prospects")
