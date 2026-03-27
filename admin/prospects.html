@@ -352,8 +352,30 @@
             border: 1px solid #bbf7d0; border-radius: var(--radius-sm);
             padding: 16px; margin-top: 12px;
         }
-        .ai-card__title { font-weight: 700; font-size: 0.82rem; color: var(--green); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        .ai-card__content { font-size: 0.82rem; color: var(--dark); line-height: 1.6; white-space: pre-wrap; }
+        .ai-card__title {
+            font-weight: 700; font-size: 0.82rem; color: var(--green);
+            margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+            cursor: pointer; user-select: none;
+        }
+        .ai-card__title:hover { opacity: 0.8; }
+        .ai-card__title::after {
+            content: '▾'; margin-left: auto; font-size: 0.9rem; transition: transform 0.2s;
+        }
+        .ai-card.collapsed .ai-card__title::after { transform: rotate(-90deg); }
+        .ai-card__content {
+            font-size: 0.82rem; color: var(--dark); line-height: 1.6; white-space: pre-wrap;
+            max-height: 150px; overflow: hidden; position: relative;
+            transition: max-height 0.3s ease;
+        }
+        .ai-card__content::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 40px; background: linear-gradient(transparent, #f0fdf4);
+            pointer-events: none;
+        }
+        .ai-card.expanded .ai-card__content { max-height: 5000px; }
+        .ai-card.expanded .ai-card__content::after { display: none; }
+        .ai-card.collapsed .ai-card__content { max-height: 0; padding: 0; margin: 0; }
+        .ai-card.collapsed .ai-card__content::after { display: none; }
 
         /* Modal */
         .modal-overlay {
@@ -1460,6 +1482,28 @@
         section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     window.scrollToSection = scrollToSection;
+
+    function toggleAiCard(el) {
+        var card = el.closest('.ai-card');
+        if (!card) return;
+        if (card.classList.contains('expanded')) {
+            card.classList.remove('expanded');
+        } else if (card.classList.contains('collapsed')) {
+            card.classList.remove('collapsed');
+            card.classList.add('expanded');
+        } else {
+            // First click: expand fully
+            card.classList.add('expanded');
+        }
+    }
+    window.toggleAiCard = toggleAiCard;
+
+    // Attach click handlers to all AI card titles (delegated)
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.ai-card__title')) {
+            toggleAiCard(e.target);
+        }
+    });
 
     function openAllSections() {
         document.querySelectorAll('.panel-section').forEach(function(s) {
