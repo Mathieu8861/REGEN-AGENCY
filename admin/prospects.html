@@ -2494,20 +2494,21 @@
     function downloadProposalPDF() {
         if (!currentProposalHTML) { toast('Aucune proposition a telecharger', 'error'); return; }
         var companyName = currentProspect ? currentProspect.company_name : 'Prospect';
-        var filename = 'Proposition_Regen_Agency_' + companyName.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
+        var filename = 'Proposition_Regen_Agency_' + companyName.replace(/[^a-zA-Z0-9\u00C0-\u024F]/g, '_') + '.pdf';
 
-        // Create a hidden container with full PDF styling
+        // Create hidden container
         var pdfContainer = document.createElement('div');
+        pdfContainer.style.cssText = 'position:fixed; left:-9999px; top:0; width:210mm;';
         pdfContainer.innerHTML = buildPDFTemplate(currentProposalHTML, companyName);
         document.body.appendChild(pdfContainer);
 
         var opt = {
-            margin: [10, 10, 15, 10],
+            margin: [0, 0, 0, 0],
             filename: filename,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true, width: 794 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            pagebreak: { mode: ['css'], before: '.pdf-page-break-before', after: '.pdf-page-break-after', avoid: '.pdf-no-break' }
         };
 
         html2pdf().set(opt).from(pdfContainer.firstElementChild).save().then(function() {
@@ -2522,23 +2523,60 @@
 
     function buildPDFTemplate(contentHTML, companyName) {
         var today = new Date();
-        var months = ['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+        var months = ['janvier','f\u00e9vrier','mars','avril','mai','juin','juillet','ao\u00fbt','septembre','octobre','novembre','d\u00e9cembre'];
         var dateStr = today.getDate() + ' ' + months[today.getMonth()] + ' ' + today.getFullYear();
-        return '<div style="font-family: Quicksand, Segoe UI, Arial, sans-serif; color: #202020; line-height: 1.6; max-width: 210mm;">' +
-            '<!-- Cover -->' +
-            '<div style="background: linear-gradient(135deg, #173C3A 0%, #1a4a47 100%); color: white; padding: 60px 40px; min-height: 250px; border-radius: 0; page-break-after: always;">' +
-                '<div style="font-size: 14px; opacity: 0.8; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;">REGEN AGENCY</div>' +
-                '<div style="font-size: 11px; opacity: 0.6; margin-bottom: 40px;">60 rue Francois 1er, 75008 Paris &bull; contact.regenagency@gmail.com</div>' +
-                '<div style="font-size: 28px; font-weight: 700; margin-bottom: 16px;">Proposition commerciale</div>' +
-                '<div style="font-size: 18px; font-weight: 600; color: #2FB963; margin-bottom: 8px;">' + companyName + '</div>' +
-                '<div style="font-size: 13px; opacity: 0.7;">' + dateStr + '</div>' +
-                '<div style="margin-top: 40px; border-top: 2px solid rgba(47,185,99,0.4); padding-top: 16px; font-size: 12px; opacity: 0.6;">Suite a nos echanges</div>' +
+        var footerText = 'REGEN AGENCY \u2022 SARL au capital de 200 \u20ac \u2022 SIRET 985 275 460 00014 \u2022 60 rue Fran\u00e7ois 1er, 75008 Paris \u2022 contact.regenagency@gmail.com';
+
+        // Inject global styles into content for tables, headings etc.
+        var styledContent = contentHTML
+            // Style all h2 headers
+            .replace(/<h2/g, '<h2 class="pdf-no-break" style="color:#173C3A; font-size:16px; font-weight:700; border-left:4px solid #2FB963; padding-left:12px; margin:28px 0 14px 0; page-break-after:avoid;"')
+            // Style all h3
+            .replace(/<h3/g, '<h3 class="pdf-no-break" style="color:#173C3A; font-size:13px; font-weight:600; margin:18px 0 8px 0; page-break-after:avoid;"')
+            // Style paragraphs
+            .replace(/<p>/g, '<p style="font-size:11px; line-height:1.7; margin:0 0 10px 0; color:#333;">')
+            // Style lists
+            .replace(/<ul>/g, '<ul style="font-size:11px; line-height:1.7; margin:8px 0 14px 0; padding-left:20px; color:#333;">')
+            .replace(/<ol>/g, '<ol style="font-size:11px; line-height:1.7; margin:8px 0 14px 0; padding-left:20px; color:#333;">')
+            .replace(/<li>/g, '<li style="margin-bottom:4px;">')
+            // Style tables
+            .replace(/<table/g, '<table class="pdf-no-break" style="width:100%; border-collapse:collapse; margin:14px 0; font-size:11px;"')
+            .replace(/<th/g, '<th style="background:#173C3A; color:white; padding:10px 14px; text-align:left; font-weight:600; font-size:11px; border:1px solid #173C3A;"')
+            .replace(/<td/g, '<td style="padding:9px 14px; border:1px solid #e8e8e8; font-size:11px; color:#333;"')
+            // Alternate row colors
+            .replace(/<tr>/g, function() { return '<tr>'; });
+
+        return '<div style="font-family: Segoe UI, Helvetica, Arial, sans-serif; color:#202020; width:794px; background:white;">' +
+            // ── Cover page ──
+            '<div style="background:#173C3A; color:white; padding:80px 50px 60px 50px; min-height:350px; page-break-after:always;">' +
+                '<div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:20px; margin-bottom:40px;">' +
+                    '<div style="font-size:12px; letter-spacing:3px; text-transform:uppercase; opacity:0.7;">REGEN AGENCY</div>' +
+                    '<div style="font-size:10px; opacity:0.4; margin-top:4px;">60 rue Fran\u00e7ois 1er, 75008 Paris \u2022 contact.regenagency@gmail.com</div>' +
+                '</div>' +
+                '<div style="margin-top:60px;">' +
+                    '<div style="font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#2FB963; margin-bottom:12px;">Proposition commerciale</div>' +
+                    '<div style="font-size:32px; font-weight:700; line-height:1.2; margin-bottom:16px;">' + companyName + '</div>' +
+                    '<div style="font-size:18px; font-weight:600; color:#2FB963; margin-bottom:4px;">\u00d7 Regen Agency</div>' +
+                '</div>' +
+                '<div style="margin-top:80px; border-top:1px solid rgba(255,255,255,0.15); padding-top:20px;">' +
+                    '<div style="font-size:12px; opacity:0.6;">' + dateStr + '</div>' +
+                    '<div style="font-size:11px; opacity:0.4; margin-top:4px;">Suite \u00e0 nos \u00e9changes</div>' +
+                '</div>' +
             '</div>' +
-            '<!-- Content -->' +
-            '<div style="padding: 30px 40px;">' + contentHTML + '</div>' +
-            '<!-- Footer -->' +
-            '<div style="padding: 20px 40px; border-top: 2px solid #173C3A; margin-top: 30px; font-size: 10px; color: #666;">' +
-                'REGEN AGENCY &bull; SARL au capital de 200 &euro; &bull; SIRET 985 275 460 00014 &bull; 60 rue Francois 1er, 75008 Paris &bull; contact.regenagency@gmail.com' +
+            // ── Content pages ──
+            '<div style="padding:40px 50px;">' +
+                // Page header repeated style
+                '<div style="border-bottom:1px solid #e0e0e0; padding-bottom:8px; margin-bottom:30px; display:flex; justify-content:space-between; font-size:9px; color:#999;">' +
+                    '<span>REGEN AGENCY \u2022 Proposition commerciale \u2013 ' + companyName + '</span>' +
+                '</div>' +
+                styledContent +
+            '</div>' +
+            // ── Last page footer ──
+            '<div style="background:#173C3A; color:white; padding:30px 50px; margin-top:40px;">' +
+                '<div style="font-size:14px; font-weight:600; margin-bottom:12px;">Nous restons \u00e0 votre enti\u00e8re disposition pour \u00e9changer sur cette proposition.</div>' +
+                '<div style="font-size:11px; opacity:0.7; margin-bottom:4px;">Mathieu Duval \u2022 Regen Agency</div>' +
+                '<div style="font-size:11px; opacity:0.7;">contact.regenagency@gmail.com \u2022 60 rue Fran\u00e7ois 1er, 75008 Paris</div>' +
+                '<div style="margin-top:16px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.2); font-size:9px; opacity:0.4;">' + footerText + '</div>' +
             '</div>' +
         '</div>';
     }
