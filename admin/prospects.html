@@ -1696,7 +1696,7 @@
         }
 
         var form = forms[0];
-        var publicUrl = window.location.origin + '/form/' + form.id;
+        var publicUrl = window.location.origin + '/prospect-form.html?t=' + form.token;
         var html = '<div class="form-link-box">' +
             '<span class="form-link-url" id="formUrl">' + publicUrl + '</span>' +
             '<button class="btn btn--sm btn--primary" onclick="copyFormUrl()">Copier</button>' +
