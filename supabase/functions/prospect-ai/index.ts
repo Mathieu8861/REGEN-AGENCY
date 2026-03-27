@@ -656,18 +656,16 @@ async function handleGenerateProposal(prospectId: string) {
   const exchanges = (activities || []).filter((a: Record<string, string>) => ["call", "meeting"].includes(a.activity_type));
   const aiAnalyses = (activities || []).filter((a: Record<string, string>) => a.activity_type === "ai_analysis");
 
-  // 2. Build prompt
+  // 2. Build prompt — now returns structured JSON for native jsPDF rendering
   const systemPrompt =
     "Tu es un directeur commercial senior chez Regen Agency. " +
-    "Tu rédiges des PROPOSITIONS COMMERCIALES professionnelles au format HTML. " +
+    "Tu rédiges des PROPOSITIONS COMMERCIALES professionnelles. " +
     "Le document doit être structuré, chiffré et convaincant. " +
-    "Tu dois IMPÉRATIVEMENT répondre en HTML valide (pas de markdown). " +
-    "Utilise des balises HTML : <h2>, <h3>, <p>, <ul>, <li>, <table>, <tr>, <td>, <th>, <strong>, <em>. " +
-    "Pour les tableaux de prix, utilise des <table> avec des bordures. " +
-    "N'inclus PAS de balises <html>, <head>, <body> — juste le contenu.\n\n" +
+    "Tu dois IMPÉRATIVEMENT répondre en JSON valide (pas de HTML, pas de markdown). " +
+    "Retourne UNIQUEMENT un objet JSON brut sans bloc de code, sans ```json, juste le JSON.\n\n" +
     AGENCY_KNOWLEDGE_BASE;
 
-  const userPrompt = `Génère une PROPOSITION COMMERCIALE complète en HTML pour ce prospect.
+  const userPrompt = `Génère une PROPOSITION COMMERCIALE complète en JSON structuré pour ce prospect.
 
 ## Données du prospect
 - Entreprise : ${prospect.company_name} | Secteur : ${prospect.company_sector || "?"} | Taille : ${prospect.company_size || "?"}
@@ -692,42 +690,118 @@ ${docsContext}
 
 ---
 
-STRUCTURE OBLIGATOIRE du document HTML :
+STRUCTURE JSON OBLIGATOIRE — retourne exactement cet format :
 
-<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">1. Votre situation actuelle</h2>
-Résumé de l'entreprise, son secteur, sa présence digitale actuelle (site web, SEO, publicité).
-
-<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">2. Besoins identifiés</h2>
-Liste numérotée des besoins détectés lors de nos échanges et analyses.
-
-<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">3. Solutions proposées</h2>
-Pour chaque service pertinent, décris la prestation en détail. Si applicable, propose des options (Option A / Option B).
-
-<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">4. Tarification</h2>
-Tableau HTML avec colonnes : Prestation | Montant HT
-Puis un récapitulatif avec total one-shot et total mensuel.
-Style du tableau : <table style="width:100%; border-collapse:collapse; margin:16px 0;"> avec <th style="background:#173C3A; color:white; padding:10px; text-align:left;"> et <td style="padding:10px; border-bottom:1px solid #e0e0e0;">
-
-<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">5. Conditions</h2>
-Durée d'engagement, modalités de paiement, délais de livraison.
-
-<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">6. Prochaines étapes</h2>
-Liste numérotée des actions pour démarrer la collaboration.
+{
+  "sections": [
+    {
+      "title": "Votre situation actuelle",
+      "subsections": [
+        { "subtitle": "L'entreprise", "text": "Description de l'entreprise, son secteur, son historique..." },
+        { "subtitle": "Votre site web", "bullets": ["Point 1 sur le site actuel", "Point 2..."] },
+        { "subtitle": "Votre référencement (SEO)", "bullets": ["Analyse SEO point 1", "Analyse SEO point 2"], "text_after": "Points d'attention : résumé des problèmes SEO identifiés." }
+      ]
+    },
+    {
+      "title": "Besoins identifiés",
+      "bullets": [
+        { "bold": "Moderniser le site web", "text": "Le design actuel ne reflète pas le standing de l'établissement..." },
+        { "bold": "Améliorer le référencement", "text": "Le site n'apparaît pas dans les premiers résultats..." }
+      ]
+    },
+    {
+      "title": "Solutions proposées",
+      "subsections": [
+        {
+          "subtitle": "Option A – Refonte complète sur-mesure",
+          "text": "Description de l'option A...",
+          "items": [
+            { "bold": "Design sur-mesure", "text": "Création d'un design unique..." },
+            { "bold": "Développement responsive", "text": "Site adapté mobile/tablette..." }
+          ]
+        },
+        {
+          "subtitle": "Option B – Refonte premium",
+          "text": "Description de l'option B..."
+        }
+      ]
+    },
+    {
+      "title": "Tarification",
+      "tables": [
+        {
+          "name": "Site web",
+          "columns": ["Prestation", "Option A", "Option B"],
+          "rows": [
+            ["Cadrage projet & maquettes", "500 €", "700 €"],
+            ["Design & intégration", "1 500 €", "2 200 €"],
+            ["Développement", "1 200 €", "1 800 €"]
+          ],
+          "total_row": ["TOTAL", "3 200 € HT", "4 700 € HT"]
+        }
+      ],
+      "recap_table": {
+        "name": "Récapitulatif global",
+        "columns": ["Poste", "Option A", "Option B"],
+        "rows": [
+          ["Site web (one-shot)", "3 200 € HT", "4 700 € HT"],
+          ["SEO mensuel", "350 €/mois HT", "500 €/mois HT"]
+        ],
+        "total_row": ["TOTAL", "3 200 € + 350 €/mois", "4 700 € + 500 €/mois"]
+      }
+    },
+    {
+      "title": "Contrat d'accompagnement",
+      "subsections": [
+        { "subtitle": "Durée & reconduction", "text": "Engagement initial de 6 mois, renouvelable tacitement..." },
+        { "subtitle": "Engagements du Prestataire", "bullets": ["Rapport mensuel de performance", "Support technique réactif", "Optimisations continues"] },
+        { "subtitle": "Modalités de paiement", "text": "50% à la commande, 50% à la livraison pour le site web. Facturation mensuelle pour le SEO." }
+      ]
+    },
+    {
+      "title": "Prochaines étapes",
+      "numbered_list": [
+        "Validation de l'option retenue (A ou B)",
+        "Signature du devis et versement de l'acompte",
+        "Réunion de cadrage et planning détaillé",
+        "Livraison des maquettes sous 2 semaines",
+        "Développement et mise en ligne sous 6 semaines"
+      ]
+    }
+  ]
+}
 
 IMPORTANT :
 - Les prix doivent être RÉALISTES et basés sur la grille tarifaire Regen Agency fournie dans la base de connaissances
 - Tous les montants en euros HT
-- Sois spécifique au prospect, pas générique
-- Le HTML doit être propre et stylé inline pour le rendu PDF`;
+- Sois spécifique au prospect (nom, secteur, besoins réels), pas générique
+- Adapte le nombre de sections et sous-sections selon les services pertinents pour ce prospect
+- Si le prospect n'a besoin que d'un site web, ne propose pas de section SEO/SEA et vice-versa
+- Retourne UNIQUEMENT le JSON, sans texte avant ou après, sans bloc de code markdown`;
 
   // 3. Call Claude
-  const aiResponse = await callClaude(systemPrompt, userPrompt, 4000);
+  const aiResponse = await callClaude(systemPrompt, userPrompt, 5000);
 
-  // 4. Log activity
-  await logActivity(prospectId, "Proposition commerciale générée", "ai_analysis", "Proposition PDF générée par IA");
+  // 4. Parse JSON — strip markdown code fences if present
+  let cleanJson = aiResponse.trim();
+  if (cleanJson.startsWith("```")) {
+    cleanJson = cleanJson.replace(/^```(?:json)?\s*/, "").replace(/\s*```$/, "");
+  }
 
-  // 5. Return
-  return jsonResponse({ success: true, data: { proposal_html: aiResponse } });
+  let proposalJson: unknown;
+  try {
+    proposalJson = JSON.parse(cleanJson);
+  } catch (_e) {
+    // Fallback: return raw text as HTML for backward compat
+    await logActivity(prospectId, "Proposition commerciale générée (fallback HTML)", "ai_analysis", "Proposition générée par IA — format JSON invalide, fallback HTML");
+    return jsonResponse({ success: true, data: { proposal_html: aiResponse } });
+  }
+
+  // 5. Log activity
+  await logActivity(prospectId, "Proposition commerciale générée", "ai_analysis", "Proposition PDF générée par IA (format JSON structuré)");
+
+  // 6. Return structured JSON
+  return jsonResponse({ success: true, data: { proposal_json: proposalJson } });
 }
 
 // ── Main handler ─────────────────────────

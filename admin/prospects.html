@@ -1146,7 +1146,8 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
 (function() {
     'use strict';
@@ -2439,7 +2440,8 @@
     window.savePropositionDraft = savePropositionDraft;
 
     // ── PROPOSAL (PDF) GENERATION ──
-    var currentProposalHTML = '';
+    var currentProposalData = null; // structured JSON from AI
+    var currentProposalHTML = ''; // for backward compat (editor)
 
     async function generateProposal() {
         if (!currentProspect) return;
@@ -2451,8 +2453,19 @@
 
         try {
             var result = await callAI('generate_proposal', { prospect_id: currentProspectId });
-            if (result && result.proposal_html) {
+            if (result && result.proposal_json) {
+                var parsed = typeof result.proposal_json === 'string' ? JSON.parse(result.proposal_json) : result.proposal_json;
+                currentProposalData = parsed;
+                currentProposalHTML = JSON.stringify(parsed, null, 2);
+                document.getElementById('proposalPreview').innerHTML = renderProposalPreview(parsed);
+                document.getElementById('proposalRawContent').value = currentProposalHTML;
+                document.getElementById('proposalResult').style.display = 'block';
+                updateCompleteness();
+                toast('Proposition commerciale generee !', 'success');
+            } else if (result && result.proposal_html) {
+                // Fallback for old HTML format
                 currentProposalHTML = result.proposal_html;
+                currentProposalData = null;
                 document.getElementById('proposalPreview').innerHTML = currentProposalHTML;
                 document.getElementById('proposalRawContent').value = currentProposalHTML;
                 document.getElementById('proposalResult').style.display = 'block';
@@ -2477,8 +2490,17 @@
     window.editProposal = editProposal;
 
     function applyProposalEdit() {
-        currentProposalHTML = document.getElementById('proposalRawContent').value;
-        document.getElementById('proposalPreview').innerHTML = currentProposalHTML;
+        var raw = document.getElementById('proposalRawContent').value;
+        currentProposalHTML = raw;
+        try {
+            var parsed = JSON.parse(raw);
+            currentProposalData = parsed;
+            document.getElementById('proposalPreview').innerHTML = renderProposalPreview(parsed);
+        } catch(e) {
+            // Not valid JSON, treat as raw HTML (legacy)
+            currentProposalData = null;
+            document.getElementById('proposalPreview').innerHTML = raw;
+        }
         document.getElementById('proposalEditor').style.display = 'none';
         document.getElementById('proposalResult').style.display = 'block';
         toast('Modifications appliquees');
@@ -2491,95 +2513,518 @@
     }
     window.cancelProposalEdit = cancelProposalEdit;
 
+    // ── Render structured proposal JSON as HTML preview ──
+    function renderProposalPreview(data) {
+        if (!data || !data.sections) return '<p style="color:#999;">Aucune donnee de proposition.</p>';
+        var html = '';
+        var sectionNum = 0;
+        data.sections.forEach(function(section) {
+            sectionNum++;
+            html += '<h2 style="color:#173C3A; font-size:16px; font-weight:700; border-left:4px solid #2FB963; padding-left:12px; margin:28px 0 14px 0;">' + sectionNum + '. ' + escapeHtml(section.title) + '</h2>';
+
+            // Top-level text
+            if (section.text) {
+                html += '<p style="font-size:13px; line-height:1.7; color:#333; margin:0 0 10px 0;">' + escapeHtml(section.text) + '</p>';
+            }
+
+            // Top-level bullets
+            if (section.bullets) {
+                html += '<ul style="font-size:13px; line-height:1.7; margin:8px 0 14px 0; padding-left:20px; color:#333;">';
+                section.bullets.forEach(function(b) {
+                    if (typeof b === 'string') {
+                        html += '<li style="margin-bottom:4px;">' + escapeHtml(b) + '</li>';
+                    } else if (b.bold) {
+                        html += '<li style="margin-bottom:4px;"><strong>' + escapeHtml(b.bold) + '</strong>' + (b.text ? ' \u2013 ' + escapeHtml(b.text) : '') + '</li>';
+                    }
+                });
+                html += '</ul>';
+            }
+
+            // Numbered list
+            if (section.numbered_list) {
+                html += '<ol style="font-size:13px; line-height:1.7; margin:8px 0 14px 0; padding-left:20px; color:#333;">';
+                section.numbered_list.forEach(function(item) {
+                    html += '<li style="margin-bottom:4px;">' + escapeHtml(item) + '</li>';
+                });
+                html += '</ol>';
+            }
+
+            // Subsections
+            if (section.subsections) {
+                section.subsections.forEach(function(sub) {
+                    html += '<h3 style="color:#173C3A; font-size:13px; font-weight:600; margin:18px 0 8px 0;">' + escapeHtml(sub.subtitle) + '</h3>';
+                    if (sub.text) html += '<p style="font-size:13px; line-height:1.7; color:#333; margin:0 0 10px 0;">' + escapeHtml(sub.text) + '</p>';
+                    if (sub.bullets) {
+                        html += '<ul style="font-size:13px; line-height:1.7; margin:8px 0 14px 0; padding-left:20px; color:#333;">';
+                        sub.bullets.forEach(function(b) {
+                            if (typeof b === 'string') html += '<li style="margin-bottom:4px;">' + escapeHtml(b) + '</li>';
+                            else if (b.bold) html += '<li style="margin-bottom:4px;"><strong>' + escapeHtml(b.bold) + '</strong>' + (b.text ? ' \u2013 ' + escapeHtml(b.text) : '') + '</li>';
+                        });
+                        html += '</ul>';
+                    }
+                    if (sub.text_after) html += '<p style="font-size:13px; line-height:1.7; color:#333; margin:0 0 10px 0;">' + escapeHtml(sub.text_after) + '</p>';
+                    if (sub.items) {
+                        html += '<ul style="font-size:13px; line-height:1.7; margin:8px 0 14px 0; padding-left:20px; color:#333;">';
+                        sub.items.forEach(function(item) {
+                            if (typeof item === 'string') html += '<li style="margin-bottom:4px;">' + escapeHtml(item) + '</li>';
+                            else if (item.bold) html += '<li style="margin-bottom:4px;"><strong>' + escapeHtml(item.bold) + '</strong>' + (item.text ? ' \u2013 ' + escapeHtml(item.text) : '') + '</li>';
+                        });
+                        html += '</ul>';
+                    }
+                });
+            }
+
+            // Tables
+            if (section.tables) {
+                section.tables.forEach(function(tbl) {
+                    if (tbl.name) html += '<h4 style="color:#173C3A; font-size:12px; font-weight:600; margin:14px 0 6px 0;">' + escapeHtml(tbl.name) + '</h4>';
+                    html += '<table style="width:100%; border-collapse:collapse; margin:8px 0 14px 0; font-size:12px;">';
+                    if (tbl.columns) {
+                        html += '<tr>';
+                        tbl.columns.forEach(function(col) { html += '<th style="background:#173C3A; color:white; padding:8px 12px; text-align:left; font-weight:600;">' + escapeHtml(col) + '</th>'; });
+                        html += '</tr>';
+                    }
+                    if (tbl.rows) {
+                        tbl.rows.forEach(function(row, idx) {
+                            var bg = idx % 2 === 1 ? ' background:#f7f7f7;' : '';
+                            html += '<tr>';
+                            row.forEach(function(cell) { html += '<td style="padding:8px 12px; border:1px solid #e0e0e0;' + bg + '">' + escapeHtml(cell) + '</td>'; });
+                            html += '</tr>';
+                        });
+                    }
+                    if (tbl.total_row) {
+                        html += '<tr>';
+                        tbl.total_row.forEach(function(cell) { html += '<td style="padding:8px 12px; border:1px solid #e0e0e0; font-weight:700; background:#f0f8f4;">' + escapeHtml(cell) + '</td>'; });
+                        html += '</tr>';
+                    }
+                    html += '</table>';
+                });
+            }
+            if (section.recap_table) {
+                var rt = section.recap_table;
+                if (rt.name) html += '<h4 style="color:#173C3A; font-size:12px; font-weight:600; margin:14px 0 6px 0;">' + escapeHtml(rt.name) + '</h4>';
+                html += '<table style="width:100%; border-collapse:collapse; margin:8px 0 14px 0; font-size:12px;">';
+                if (rt.columns) { html += '<tr>'; rt.columns.forEach(function(col) { html += '<th style="background:#173C3A; color:white; padding:8px 12px; text-align:left; font-weight:600;">' + escapeHtml(col) + '</th>'; }); html += '</tr>'; }
+                if (rt.rows) { rt.rows.forEach(function(row, idx) { var bg = idx % 2 === 1 ? ' background:#f7f7f7;' : ''; html += '<tr>'; row.forEach(function(cell) { html += '<td style="padding:8px 12px; border:1px solid #e0e0e0;' + bg + '">' + escapeHtml(cell) + '</td>'; }); html += '</tr>'; }); }
+                if (rt.total_row) { html += '<tr>'; rt.total_row.forEach(function(cell) { html += '<td style="padding:8px 12px; border:1px solid #e0e0e0; font-weight:700; background:#f0f8f4;">' + escapeHtml(cell) + '</td>'; }); html += '</tr>'; }
+                html += '</table>';
+            }
+        });
+        return html;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── jsPDF-based PDF generation ──
     function downloadProposalPDF() {
-        if (!currentProposalHTML) { toast('Aucune proposition a telecharger', 'error'); return; }
+        if (!currentProposalData && !currentProposalHTML) { toast('Aucune proposition a telecharger', 'error'); return; }
         var companyName = currentProspect ? currentProspect.company_name : 'Prospect';
         var filename = 'Proposition_Regen_Agency_' + companyName.replace(/[^a-zA-Z0-9\u00C0-\u024F]/g, '_') + '.pdf';
 
-        // Create hidden container
-        var pdfContainer = document.createElement('div');
-        pdfContainer.style.cssText = 'position:fixed; left:-9999px; top:0; width:210mm;';
-        pdfContainer.innerHTML = buildPDFTemplate(currentProposalHTML, companyName);
-        document.body.appendChild(pdfContainer);
+        // If no structured data, try to parse from editor
+        var data = currentProposalData;
+        if (!data) {
+            try { data = JSON.parse(currentProposalHTML); } catch(e) {
+                toast('Format de proposition invalide pour le PDF natif. Regenerez la proposition.', 'error');
+                return;
+            }
+        }
 
-        var opt = {
-            margin: [0, 0, 0, 0],
-            filename: filename,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, letterRendering: true, width: 794 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: ['css'], before: '.pdf-page-break-before', after: '.pdf-page-break-after', avoid: '.pdf-no-break' }
-        };
+        try {
+            var jsPDF = window.jspdf.jsPDF;
+            var doc = new jsPDF('p', 'mm', 'a4');
+            var pageW = 210, pageH = 297;
+            var marginL = 20, marginR = 20, marginTop = 25, marginBot = 25;
+            var contentW = pageW - marginL - marginR;
+            var maxY = pageH - marginBot;
 
-        html2pdf().set(opt).from(pdfContainer.firstElementChild).save().then(function() {
-            document.body.removeChild(pdfContainer);
+            var today = new Date();
+            var months = ['janvier','f\u00e9vrier','mars','avril','mai','juin','juillet','ao\u00fbt','septembre','octobre','novembre','d\u00e9cembre'];
+            var dateStr = today.getDate() + ' ' + months[today.getMonth()] + ' ' + today.getFullYear();
+            var headerText = 'REGEN AGENCY \u2022 SARL au capital de 200 \u20ac \u2022 SIRET 985 275 460 00014 \u2022 60 rue Fran\u00e7ois 1er, 75008 Paris \u2022 contact.regenagency@gmail.com';
+            var pageNum = 1;
+
+            // ── Helper: check Y and add new page if needed ──
+            function checkY(needed) {
+                if (y + needed > maxY) {
+                    doc.addPage();
+                    pageNum++;
+                    drawContentHeader();
+                    y = marginTop + 12;
+                }
+            }
+
+            // ── Draw content page header + page number ──
+            function drawContentHeader() {
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7);
+                doc.setTextColor(153, 153, 153);
+                doc.text(headerText, marginL, 12);
+                doc.text('Page ' + pageNum, pageW - marginR, 12, { align: 'right' });
+                doc.setDrawColor(220, 220, 220);
+                doc.line(marginL, 14, pageW - marginR, 14);
+            }
+
+            // ══════════════════════════════════════
+            // PAGE 1: COVER
+            // ══════════════════════════════════════
+            doc.setFillColor(23, 60, 58);
+            doc.rect(0, 0, pageW, pageH, 'F');
+
+            // Top line
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(255, 255, 255);
+            doc.setGState(new doc.GState({ opacity: 0.6 }));
+            doc.text('REGEN AGENCY \u2022 60 rue Fran\u00e7ois 1er, 75008 Paris \u2022 contact.regenagency@gmail.com', pageW / 2, 25, { align: 'center' });
+            doc.setGState(new doc.GState({ opacity: 1 }));
+
+            // Separator line
+            doc.setDrawColor(255, 255, 255);
+            doc.setGState(new doc.GState({ opacity: 0.15 }));
+            doc.line(marginL, 32, pageW - marginR, 32);
+            doc.setGState(new doc.GState({ opacity: 1 }));
+
+            // "Proposition commerciale" label
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(11);
+            doc.setTextColor(47, 185, 99);
+            doc.text('PROPOSITION COMMERCIALE', pageW / 2, 110, { align: 'center' });
+
+            // Company name
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(28);
+            doc.setTextColor(255, 255, 255);
+            var companyLines = doc.splitTextToSize(companyName, contentW);
+            doc.text(companyLines, pageW / 2, 130, { align: 'center' });
+            var companyEndY = 130 + companyLines.length * 12;
+
+            // "x Regen Agency"
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.setTextColor(47, 185, 99);
+            doc.text('\u00d7 Regen Agency', pageW / 2, companyEndY + 8, { align: 'center' });
+
+            // Bottom separator
+            doc.setDrawColor(255, 255, 255);
+            doc.setGState(new doc.GState({ opacity: 0.15 }));
+            doc.line(marginL, 230, pageW - marginR, 230);
+            doc.setGState(new doc.GState({ opacity: 1 }));
+
+            // Date
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(11);
+            doc.setTextColor(255, 255, 255);
+            doc.setGState(new doc.GState({ opacity: 0.7 }));
+            doc.text(dateStr, pageW / 2, 242, { align: 'center' });
+            doc.setGState(new doc.GState({ opacity: 0.45 }));
+            doc.setFontSize(10);
+            doc.text('Suite \u00e0 nos \u00e9changes', pageW / 2, 250, { align: 'center' });
+            doc.setGState(new doc.GState({ opacity: 1 }));
+
+            // ══════════════════════════════════════
+            // CONTENT PAGES
+            // ══════════════════════════════════════
+            doc.addPage();
+            pageNum++;
+            drawContentHeader();
+            var y = marginTop + 12;
+            var sectionNum = 0;
+
+            if (data.sections) {
+                data.sections.forEach(function(section) {
+                    sectionNum++;
+
+                    // ── Section title ──
+                    checkY(18);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                    doc.setTextColor(23, 60, 58);
+                    doc.text(sectionNum + '. ' + section.title, marginL, y);
+                    // Green underline
+                    y += 2;
+                    doc.setDrawColor(47, 185, 99);
+                    doc.setLineWidth(0.7);
+                    doc.line(marginL, y, marginL + doc.getTextWidth(sectionNum + '. ' + section.title), y);
+                    doc.setLineWidth(0.2);
+                    y += 8;
+
+                    // ── Top-level text ──
+                    if (section.text) {
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(10);
+                        doc.setTextColor(51, 51, 51);
+                        var lines = doc.splitTextToSize(section.text, contentW);
+                        lines.forEach(function(line) {
+                            checkY(5);
+                            doc.text(line, marginL, y);
+                            y += 5;
+                        });
+                        y += 3;
+                    }
+
+                    // ── Top-level bullets ──
+                    if (section.bullets) {
+                        section.bullets.forEach(function(b) {
+                            var txt = typeof b === 'string' ? b : (b.bold ? b.bold + (b.text ? ' \u2013 ' + b.text : '') : (b.text || ''));
+                            var bLines = doc.splitTextToSize(txt, contentW - 8);
+                            checkY(bLines.length * 5 + 2);
+                            // Green bullet
+                            doc.setTextColor(47, 185, 99);
+                            doc.setFont('helvetica', 'bold');
+                            doc.setFontSize(10);
+                            doc.text('\u2022', marginL, y);
+                            // Bold part
+                            if (typeof b === 'object' && b.bold) {
+                                doc.setTextColor(51, 51, 51);
+                                doc.setFont('helvetica', 'bold');
+                                doc.text(b.bold, marginL + 6, y);
+                                var boldW = doc.getTextWidth(b.bold);
+                                if (b.text) {
+                                    doc.setFont('helvetica', 'normal');
+                                    var rest = ' \u2013 ' + b.text;
+                                    var firstLineAvail = contentW - 8 - boldW;
+                                    if (firstLineAvail > 10) {
+                                        var restLines = doc.splitTextToSize(rest, contentW - 8);
+                                        doc.text(restLines[0], marginL + 6 + boldW, y);
+                                        y += 5;
+                                        for (var rl = 1; rl < restLines.length; rl++) {
+                                            checkY(5);
+                                            doc.text(restLines[rl], marginL + 6, y);
+                                            y += 5;
+                                        }
+                                    } else {
+                                        y += 5;
+                                        var restLines2 = doc.splitTextToSize(rest, contentW - 8);
+                                        restLines2.forEach(function(rl2) { checkY(5); doc.text(rl2, marginL + 6, y); y += 5; });
+                                    }
+                                } else {
+                                    y += 5;
+                                }
+                            } else {
+                                doc.setTextColor(51, 51, 51);
+                                doc.setFont('helvetica', 'normal');
+                                bLines.forEach(function(bl, idx) {
+                                    if (idx > 0) checkY(5);
+                                    doc.text(bl, marginL + 6, y);
+                                    y += 5;
+                                });
+                            }
+                            y += 1;
+                        });
+                        y += 3;
+                    }
+
+                    // ── Numbered list ──
+                    if (section.numbered_list) {
+                        section.numbered_list.forEach(function(item, idx) {
+                            var numStr = (idx + 1) + '.';
+                            var iLines = doc.splitTextToSize(item, contentW - 10);
+                            checkY(iLines.length * 5 + 2);
+                            doc.setFont('helvetica', 'bold');
+                            doc.setFontSize(10);
+                            doc.setTextColor(47, 185, 99);
+                            doc.text(numStr, marginL, y);
+                            doc.setFont('helvetica', 'normal');
+                            doc.setTextColor(51, 51, 51);
+                            iLines.forEach(function(il, ilIdx) {
+                                if (ilIdx > 0) checkY(5);
+                                doc.text(il, marginL + 8, y);
+                                y += 5;
+                            });
+                            y += 1;
+                        });
+                        y += 3;
+                    }
+
+                    // ── Subsections ──
+                    if (section.subsections) {
+                        section.subsections.forEach(function(sub) {
+                            checkY(12);
+                            doc.setFont('helvetica', 'bold');
+                            doc.setFontSize(11);
+                            doc.setTextColor(23, 60, 58);
+                            doc.text(sub.subtitle, marginL, y);
+                            y += 6;
+
+                            if (sub.text) {
+                                doc.setFont('helvetica', 'normal');
+                                doc.setFontSize(10);
+                                doc.setTextColor(51, 51, 51);
+                                var sLines = doc.splitTextToSize(sub.text, contentW);
+                                sLines.forEach(function(sl) { checkY(5); doc.text(sl, marginL, y); y += 5; });
+                                y += 2;
+                            }
+
+                            if (sub.bullets) {
+                                sub.bullets.forEach(function(b) {
+                                    var txt2 = typeof b === 'string' ? b : (b.bold ? b.bold + (b.text ? ' \u2013 ' + b.text : '') : (b.text || ''));
+                                    var bL2 = doc.splitTextToSize(txt2, contentW - 8);
+                                    checkY(bL2.length * 5 + 2);
+                                    doc.setTextColor(47, 185, 99);
+                                    doc.setFont('helvetica', 'bold');
+                                    doc.setFontSize(10);
+                                    doc.text('\u2022', marginL, y);
+                                    doc.setTextColor(51, 51, 51);
+                                    doc.setFont('helvetica', 'normal');
+                                    bL2.forEach(function(bl2, bi) {
+                                        if (bi > 0) checkY(5);
+                                        doc.text(bl2, marginL + 6, y);
+                                        y += 5;
+                                    });
+                                    y += 1;
+                                });
+                                y += 2;
+                            }
+
+                            if (sub.text_after) {
+                                doc.setFont('helvetica', 'normal');
+                                doc.setFontSize(10);
+                                doc.setTextColor(51, 51, 51);
+                                var taLines = doc.splitTextToSize(sub.text_after, contentW);
+                                taLines.forEach(function(tal) { checkY(5); doc.text(tal, marginL, y); y += 5; });
+                                y += 2;
+                            }
+
+                            if (sub.items) {
+                                sub.items.forEach(function(item) {
+                                    var txt3 = typeof item === 'string' ? item : (item.bold ? item.bold + (item.text ? ' \u2013 ' + item.text : '') : (item.text || ''));
+                                    var bL3 = doc.splitTextToSize(txt3, contentW - 8);
+                                    checkY(bL3.length * 5 + 2);
+                                    doc.setTextColor(47, 185, 99);
+                                    doc.setFont('helvetica', 'bold');
+                                    doc.setFontSize(10);
+                                    doc.text('\u2022', marginL, y);
+                                    doc.setTextColor(51, 51, 51);
+                                    doc.setFont('helvetica', 'normal');
+                                    bL3.forEach(function(bl3, bi3) {
+                                        if (bi3 > 0) checkY(5);
+                                        doc.text(bl3, marginL + 6, y);
+                                        y += 5;
+                                    });
+                                    y += 1;
+                                });
+                                y += 2;
+                            }
+                        });
+                    }
+
+                    // ── Tables (autotable) ──
+                    if (section.tables) {
+                        section.tables.forEach(function(tbl) {
+                            if (tbl.name) {
+                                checkY(10);
+                                doc.setFont('helvetica', 'bold');
+                                doc.setFontSize(11);
+                                doc.setTextColor(23, 60, 58);
+                                doc.text(tbl.name, marginL, y);
+                                y += 6;
+                            }
+                            if (tbl.columns && tbl.rows) {
+                                var bodyRows = tbl.rows.slice();
+                                if (tbl.total_row) bodyRows.push(tbl.total_row);
+                                doc.autoTable({
+                                    startY: y,
+                                    head: [tbl.columns],
+                                    body: bodyRows,
+                                    margin: { left: marginL, right: marginR },
+                                    theme: 'grid',
+                                    headStyles: { fillColor: [23, 60, 58], textColor: 255, fontStyle: 'bold', fontSize: 9, font: 'helvetica' },
+                                    bodyStyles: { fontSize: 9, textColor: [51, 51, 51], font: 'helvetica' },
+                                    alternateRowStyles: { fillColor: [245, 245, 245] },
+                                    didParseCell: function(hookData) {
+                                        // Bold total row
+                                        if (tbl.total_row && hookData.section === 'body' && hookData.row.index === bodyRows.length - 1) {
+                                            hookData.cell.styles.fontStyle = 'bold';
+                                            hookData.cell.styles.fillColor = [232, 249, 239];
+                                        }
+                                    },
+                                    didDrawPage: function() {
+                                        pageNum = doc.internal.getNumberOfPages();
+                                        drawContentHeader();
+                                    }
+                                });
+                                y = doc.lastAutoTable.finalY + 8;
+                            }
+                        });
+                    }
+
+                    // ── Recap table ──
+                    if (section.recap_table) {
+                        var rt = section.recap_table;
+                        if (rt.name) {
+                            checkY(10);
+                            doc.setFont('helvetica', 'bold');
+                            doc.setFontSize(11);
+                            doc.setTextColor(23, 60, 58);
+                            doc.text(rt.name, marginL, y);
+                            y += 6;
+                        }
+                        if (rt.columns && rt.rows) {
+                            var rtBody = rt.rows.slice();
+                            if (rt.total_row) rtBody.push(rt.total_row);
+                            doc.autoTable({
+                                startY: y,
+                                head: [rt.columns],
+                                body: rtBody,
+                                margin: { left: marginL, right: marginR },
+                                theme: 'grid',
+                                headStyles: { fillColor: [23, 60, 58], textColor: 255, fontStyle: 'bold', fontSize: 9, font: 'helvetica' },
+                                bodyStyles: { fontSize: 9, textColor: [51, 51, 51], font: 'helvetica' },
+                                alternateRowStyles: { fillColor: [245, 245, 245] },
+                                didParseCell: function(hookData) {
+                                    if (rt.total_row && hookData.section === 'body' && hookData.row.index === rtBody.length - 1) {
+                                        hookData.cell.styles.fontStyle = 'bold';
+                                        hookData.cell.styles.fillColor = [232, 249, 239];
+                                    }
+                                },
+                                didDrawPage: function() {
+                                    pageNum = doc.internal.getNumberOfPages();
+                                    drawContentHeader();
+                                }
+                            });
+                            y = doc.lastAutoTable.finalY + 8;
+                        }
+                    }
+
+                    y += 4; // spacing between sections
+                });
+            }
+
+            // ══════════════════════════════════════
+            // CLOSING PAGE
+            // ══════════════════════════════════════
+            checkY(60);
+            y += 10;
+            doc.setFillColor(23, 60, 58);
+            doc.rect(0, y - 5, pageW, 65, 'F');
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(13);
+            doc.setTextColor(255, 255, 255);
+            doc.text('Nous restons \u00e0 votre enti\u00e8re disposition', pageW / 2, y + 8, { align: 'center' });
+            doc.text('pour \u00e9changer sur cette proposition.', pageW / 2, y + 15, { align: 'center' });
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setGState(new doc.GState({ opacity: 0.8 }));
+            doc.text('Mathieu Duval \u2022 Regen Agency', pageW / 2, y + 28, { align: 'center' });
+            doc.text('contact.regenagency@gmail.com', pageW / 2, y + 34, { align: 'center' });
+            doc.text('60 rue Fran\u00e7ois 1er, 75008 Paris', pageW / 2, y + 40, { align: 'center' });
+            doc.setGState(new doc.GState({ opacity: 1 }));
+
+            // ── Save ──
+            doc.save(filename);
             toast('PDF telecharge !', 'success');
-        }).catch(function(err) {
-            document.body.removeChild(pdfContainer);
+        } catch(err) {
+            console.error('PDF generation error:', err);
             toast('Erreur PDF: ' + err.message, 'error');
-        });
+        }
     }
     window.downloadProposalPDF = downloadProposalPDF;
-
-    function buildPDFTemplate(contentHTML, companyName) {
-        var today = new Date();
-        var months = ['janvier','f\u00e9vrier','mars','avril','mai','juin','juillet','ao\u00fbt','septembre','octobre','novembre','d\u00e9cembre'];
-        var dateStr = today.getDate() + ' ' + months[today.getMonth()] + ' ' + today.getFullYear();
-        var footerText = 'REGEN AGENCY \u2022 SARL au capital de 200 \u20ac \u2022 SIRET 985 275 460 00014 \u2022 60 rue Fran\u00e7ois 1er, 75008 Paris \u2022 contact.regenagency@gmail.com';
-
-        // Inject global styles into content for tables, headings etc.
-        var styledContent = contentHTML
-            // Style all h2 headers
-            .replace(/<h2/g, '<h2 class="pdf-no-break" style="color:#173C3A; font-size:16px; font-weight:700; border-left:4px solid #2FB963; padding-left:12px; margin:28px 0 14px 0; page-break-after:avoid;"')
-            // Style all h3
-            .replace(/<h3/g, '<h3 class="pdf-no-break" style="color:#173C3A; font-size:13px; font-weight:600; margin:18px 0 8px 0; page-break-after:avoid;"')
-            // Style paragraphs
-            .replace(/<p>/g, '<p style="font-size:11px; line-height:1.7; margin:0 0 10px 0; color:#333;">')
-            // Style lists
-            .replace(/<ul>/g, '<ul style="font-size:11px; line-height:1.7; margin:8px 0 14px 0; padding-left:20px; color:#333;">')
-            .replace(/<ol>/g, '<ol style="font-size:11px; line-height:1.7; margin:8px 0 14px 0; padding-left:20px; color:#333;">')
-            .replace(/<li>/g, '<li style="margin-bottom:4px;">')
-            // Style tables
-            .replace(/<table/g, '<table class="pdf-no-break" style="width:100%; border-collapse:collapse; margin:14px 0; font-size:11px;"')
-            .replace(/<th/g, '<th style="background:#173C3A; color:white; padding:10px 14px; text-align:left; font-weight:600; font-size:11px; border:1px solid #173C3A;"')
-            .replace(/<td/g, '<td style="padding:9px 14px; border:1px solid #e8e8e8; font-size:11px; color:#333;"')
-            // Alternate row colors
-            .replace(/<tr>/g, function() { return '<tr>'; });
-
-        return '<div style="font-family: Segoe UI, Helvetica, Arial, sans-serif; color:#202020; width:794px; background:white;">' +
-            // ── Cover page ──
-            '<div style="background:#173C3A; color:white; padding:80px 50px 60px 50px; min-height:350px; page-break-after:always;">' +
-                '<div style="border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:20px; margin-bottom:40px;">' +
-                    '<div style="font-size:12px; letter-spacing:3px; text-transform:uppercase; opacity:0.7;">REGEN AGENCY</div>' +
-                    '<div style="font-size:10px; opacity:0.4; margin-top:4px;">60 rue Fran\u00e7ois 1er, 75008 Paris \u2022 contact.regenagency@gmail.com</div>' +
-                '</div>' +
-                '<div style="margin-top:60px;">' +
-                    '<div style="font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#2FB963; margin-bottom:12px;">Proposition commerciale</div>' +
-                    '<div style="font-size:32px; font-weight:700; line-height:1.2; margin-bottom:16px;">' + companyName + '</div>' +
-                    '<div style="font-size:18px; font-weight:600; color:#2FB963; margin-bottom:4px;">\u00d7 Regen Agency</div>' +
-                '</div>' +
-                '<div style="margin-top:80px; border-top:1px solid rgba(255,255,255,0.15); padding-top:20px;">' +
-                    '<div style="font-size:12px; opacity:0.6;">' + dateStr + '</div>' +
-                    '<div style="font-size:11px; opacity:0.4; margin-top:4px;">Suite \u00e0 nos \u00e9changes</div>' +
-                '</div>' +
-            '</div>' +
-            // ── Content pages ──
-            '<div style="padding:40px 50px;">' +
-                // Page header repeated style
-                '<div style="border-bottom:1px solid #e0e0e0; padding-bottom:8px; margin-bottom:30px; display:flex; justify-content:space-between; font-size:9px; color:#999;">' +
-                    '<span>REGEN AGENCY \u2022 Proposition commerciale \u2013 ' + companyName + '</span>' +
-                '</div>' +
-                styledContent +
-            '</div>' +
-            // ── Last page footer ──
-            '<div style="background:#173C3A; color:white; padding:30px 50px; margin-top:40px;">' +
-                '<div style="font-size:14px; font-weight:600; margin-bottom:12px;">Nous restons \u00e0 votre enti\u00e8re disposition pour \u00e9changer sur cette proposition.</div>' +
-                '<div style="font-size:11px; opacity:0.7; margin-bottom:4px;">Mathieu Duval \u2022 Regen Agency</div>' +
-                '<div style="font-size:11px; opacity:0.7;">contact.regenagency@gmail.com \u2022 60 rue Fran\u00e7ois 1er, 75008 Paris</div>' +
-                '<div style="margin-top:16px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.2); font-size:9px; opacity:0.4;">' + footerText + '</div>' +
-            '</div>' +
-        '</div>';
-    }
 
     // ── EMAIL GENERATION ──
     function openEmailModal() {
