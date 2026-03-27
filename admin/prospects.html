@@ -753,17 +753,20 @@
                 </div>
                 <div id="linksList"></div>
 
-                <!-- Documents area -->
-                <h4 style="font-size:0.82rem; font-weight:700; margin:20px 0 10px; color:var(--gray);">Documents</h4>
-                <div class="upload-zone" id="docUploadZone" onclick="document.getElementById('docFileInput').click()">
-                    <div class="upload-zone__icon">&#128206;</div>
-                    <div class="upload-zone__text">Deposer un fichier ou cliquer</div>
-                    <div class="upload-zone__hint">PDF, Word, images... (max 10 Mo)</div>
+                <!-- AI Analysis button for links -->
+                <div style="margin-top:12px; margin-bottom:4px;">
+                    <button class="btn btn--accent btn--sm" onclick="analyzeLinks()">&#129302; Analyser les liens avec l'IA</button>
                 </div>
-                <input type="file" id="docFileInput" style="display:none" onchange="handleDocUpload(event)">
-                <div style="display:flex; gap:8px; margin-bottom:16px; align-items:center;">
-                    <label class="form-label" style="margin-bottom:0;">Categorie :</label>
-                    <select class="form-select" id="docCategory" style="width:auto;">
+                <div id="linksAiResult"></div>
+
+                <!-- Separator -->
+                <div style="border-top:1px solid #e5e7eb; margin:20px 0; position:relative;">
+                    <span style="position:absolute;top:-10px;left:16px;background:white;padding:0 10px;font-size:0.78rem;font-weight:700;color:#888;">Documents</span>
+                </div>
+
+                <!-- Upload row (compact) -->
+                <div style="display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap:wrap;">
+                    <select class="form-select" id="docCategory" style="width:auto; min-width:130px;">
                         <option value="brief">Brief</option>
                         <option value="charte_graphique">Charte graphique</option>
                         <option value="devis">Devis</option>
@@ -773,14 +776,10 @@
                         <option value="rapport">Rapport</option>
                         <option value="autre">Autre</option>
                     </select>
+                    <button class="btn btn--primary btn--sm" onclick="document.getElementById('docFileInput').click()" style="white-space:nowrap;">&#128206; Ajouter un document</button>
+                    <input type="file" id="docFileInput" style="display:none" onchange="handleDocUpload(event)">
                 </div>
                 <div id="documentsList"></div>
-
-                <!-- AI Analysis -->
-                <div style="margin-top:16px;">
-                    <button class="btn btn--accent btn--sm" onclick="analyzeLinks()">&#129302; Analyser les liens avec l'IA</button>
-                </div>
-                <div id="linksAiResult"></div>
             </div>
         </div>
 
@@ -1184,13 +1183,28 @@
         return map[type] || map.note;
     }
 
+    var LINK_TYPES = {
+        website: { label: 'Site web', icon: '🌐', color: '#2FB963' },
+        linkedin_company: { label: 'LinkedIn', icon: 'in', color: '#0A66C2' },
+        linkedin_contact: { label: 'LinkedIn', icon: 'in', color: '#0A66C2' },
+        facebook: { label: 'Facebook', icon: 'f', color: '#1877F2' },
+        instagram: { label: 'Instagram', icon: 'IG', color: '#E4405F' },
+        tiktok: { label: 'TikTok', icon: 'TT', color: '#000000' },
+        pappers: { label: 'Pappers', icon: 'P', color: '#5B21B6' },
+        societe_com: { label: 'Societe.com', icon: 'S', color: '#059669' },
+        google_maps: { label: 'Maps', icon: 'G', color: '#EA4335' },
+        autre: { label: 'Autre', icon: '🔗', color: '#6b7280' }
+    };
     function getLinkIcon(type) {
-        var map = {
-            website: '&#127760;', linkedin_company: '&#128188;', linkedin_contact: '&#128100;',
-            facebook: '&#128218;', instagram: '&#128247;', tiktok: '&#127925;',
-            pappers: '&#128196;', societe_com: '&#127970;', google_maps: '&#128205;', autre: '&#128279;'
-        };
-        return map[type] || '&#128279;';
+        var info = LINK_TYPES[type] || LINK_TYPES.autre;
+        if (info.icon.length <= 3 && !info.icon.match(/[^\w]/)) {
+            return '<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:' + info.color + ';color:white;font-size:0.65rem;font-weight:800;">' + info.icon + '</span>';
+        }
+        return '<span style="font-size:1.1rem;">' + info.icon + '</span>';
+    }
+    function getLinkLabel(type) {
+        var info = LINK_TYPES[type] || LINK_TYPES.autre;
+        return info.label;
     }
 
     function formatRelativeDate(dateStr) {
@@ -1631,10 +1645,12 @@
             return;
         }
         container.innerHTML = links.map(function(l) {
+            var lt = l.link_type || l.type || 'autre';
+            var info = LINK_TYPES[lt] || LINK_TYPES.autre;
             return '<div class="link-item">' +
-                '<span class="link-item__icon">' + getLinkIcon(l.link_type || l.type) + '</span>' +
+                '<span class="link-item__icon">' + getLinkIcon(lt) + '</span>' +
                 '<a class="link-item__url" href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener">' + escapeHtml(l.url) + '</a>' +
-                '<span class="link-item__type">' + escapeHtml(l.link_type || l.type) + '</span>' +
+                '<span class="link-item__type" style="background:' + info.color + '15;color:' + info.color + ';border:1px solid ' + info.color + '30;">' + escapeHtml(info.label) + '</span>' +
                 '<button class="link-item__delete" onclick="event.stopPropagation();deleteLink(\'' + l.id + '\')" title="Supprimer">&#10005;</button>' +
             '</div>';
         }).join('');
@@ -1781,13 +1797,13 @@
     }
     window.deleteDocument = deleteDocument;
 
-    // Drag & drop on upload zone
+    // Drag & drop on the collecte section
     (function() {
-        var zone = document.getElementById('docUploadZone');
-        zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('active'); });
-        zone.addEventListener('dragleave', function() { zone.classList.remove('active'); });
-        zone.addEventListener('drop', function(e) {
-            e.preventDefault(); zone.classList.remove('active');
+        var section = document.getElementById('section-collecte');
+        if (!section) return;
+        section.addEventListener('dragover', function(e) { e.preventDefault(); });
+        section.addEventListener('drop', function(e) {
+            e.preventDefault();
             if (e.dataTransfer.files.length) {
                 document.getElementById('docFileInput').files = e.dataTransfer.files;
                 handleDocUpload({ target: { files: e.dataTransfer.files, value: '' } });
