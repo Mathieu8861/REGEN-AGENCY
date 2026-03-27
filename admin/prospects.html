@@ -976,20 +976,51 @@
             </div>
         </div>
 
-        <!-- Section 6: Proposition (Email + commercial) -->
+        <!-- Section 6: Proposition commerciale -->
         <div class="panel-section open" id="section-proposition">
             <div class="panel-section__header" onclick="toggleSection('section-proposition')">
-                <span class="panel-section__icon">&#128231;</span>
+                <span class="panel-section__icon">&#128196;</span>
                 <div class="panel-section__title-group">
-                    <span class="panel-section__title">Proposition</span>
-                    <span class="panel-section__subtitle">Email et proposition commerciale a envoyer au prospect</span>
+                    <span class="panel-section__title">Proposition commerciale</span>
+                    <span class="panel-section__subtitle">Generez un devis PDF professionnel a partir des donnees collectees</span>
                 </div>
                 <span class="panel-section__badge panel-section__badge--empty" id="badge-proposition">---</span>
                 <span class="panel-section__chevron">&#9654;</span>
             </div>
             <div class="panel-section__content">
+                <!-- Generate proposal -->
+                <div style="text-align:center; margin-bottom:20px;">
+                    <p style="color:#666; font-size:13px; margin-bottom:12px;">L'IA genere une proposition commerciale complete basee sur la synthese, les besoins identifies et les tarifs Regen Agency.</p>
+                    <button class="btn btn--accent" onclick="generateProposal()" id="btnGenerateProposal">&#128196; Generer la proposition commerciale</button>
+                </div>
+                <!-- Proposal result -->
+                <div id="proposalResult" style="display:none;">
+                    <div style="display:flex; gap:8px; justify-content:flex-end; margin-bottom:12px;">
+                        <button class="btn btn--primary btn--sm" onclick="downloadProposalPDF()">&#128196; Telecharger PDF</button>
+                        <button class="btn btn--ghost btn--sm" onclick="editProposal()">&#9998; Modifier</button>
+                    </div>
+                    <div id="proposalPreview" style="background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:24px; max-height:500px; overflow-y:auto;"></div>
+                </div>
+                <!-- Proposal editor (hidden by default) -->
+                <div id="proposalEditor" style="display:none;">
+                    <textarea class="form-textarea" id="proposalRawContent" style="min-height:300px; font-family:monospace; font-size:12px;"></textarea>
+                    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
+                        <button class="btn btn--primary btn--sm" onclick="applyProposalEdit()">Appliquer</button>
+                        <button class="btn btn--ghost btn--sm" onclick="cancelProposalEdit()">Annuler</button>
+                    </div>
+                </div>
+                <div id="proposalLoading" style="display:none;">
+                    <div class="loading-center"><div class="spinner"></div></div>
+                </div>
+
+                <!-- Separator -->
+                <hr style="margin:24px 0; border:none; border-top:1px dashed #ccc;">
+
+                <!-- Email section -->
+                <h4 style="color:#173C3A; margin-bottom:12px;">&#9993; Email d'accompagnement</h4>
+                <p style="color:#666; font-size:13px; margin-bottom:12px;">Email a envoyer avec la proposition commerciale en piece jointe.</p>
                 <div style="text-align:center; margin-bottom:16px;">
-                    <button class="btn btn--accent btn--sm" onclick="generateEmailInPanel()">&#9993; Generer l'email de proposition</button>
+                    <button class="btn btn--outline btn--sm" onclick="generateEmailInPanel()">Generer l'email</button>
                 </div>
                 <div id="propositionContent" style="display:none;">
                     <div class="form-group" style="margin-bottom:12px;">
@@ -998,12 +1029,11 @@
                     </div>
                     <div class="form-group" style="margin-bottom:12px;">
                         <label class="form-label">Corps de l'email</label>
-                        <textarea class="form-textarea" id="propositionBody" style="min-height:200px;" placeholder="Contenu de l'email..."></textarea>
+                        <textarea class="form-textarea" id="propositionBody" style="min-height:150px;" placeholder="Contenu de l'email..."></textarea>
                     </div>
                     <div style="display:flex; gap:8px; justify-content:flex-end;">
                         <button class="btn btn--primary btn--sm" onclick="copyPropositionEmail()">Copier</button>
                         <a class="btn btn--accent btn--sm" id="propositionMailto" href="#" target="_blank" style="text-decoration:none;">Ouvrir Gmail</a>
-                        <button class="btn btn--ghost btn--sm" onclick="savePropositionDraft()">Sauvegarder brouillon</button>
                     </div>
                 </div>
                 <div id="propositionLoading" style="display:none;">
@@ -1116,6 +1146,7 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 (function() {
     'use strict';
@@ -2406,6 +2437,111 @@
         loadTimeline(currentProspectId);
     }
     window.savePropositionDraft = savePropositionDraft;
+
+    // ── PROPOSAL (PDF) GENERATION ──
+    var currentProposalHTML = '';
+
+    async function generateProposal() {
+        if (!currentProspect) return;
+        document.getElementById('proposalResult').style.display = 'none';
+        document.getElementById('proposalEditor').style.display = 'none';
+        document.getElementById('proposalLoading').style.display = 'block';
+        document.getElementById('btnGenerateProposal').disabled = true;
+        document.getElementById('btnGenerateProposal').textContent = 'Generation en cours...';
+
+        try {
+            var result = await callAI('generate_proposal', { prospect_id: currentProspectId });
+            if (result && result.proposal_html) {
+                currentProposalHTML = result.proposal_html;
+                document.getElementById('proposalPreview').innerHTML = currentProposalHTML;
+                document.getElementById('proposalRawContent').value = currentProposalHTML;
+                document.getElementById('proposalResult').style.display = 'block';
+                updateCompleteness();
+                toast('Proposition commerciale generee !', 'success');
+            } else {
+                toast('Erreur lors de la generation', 'error');
+            }
+        } catch (e) {
+            toast('Erreur IA: ' + e.message, 'error');
+        }
+        document.getElementById('proposalLoading').style.display = 'none';
+        document.getElementById('btnGenerateProposal').disabled = false;
+        document.getElementById('btnGenerateProposal').innerHTML = '&#128196; Regenerer la proposition';
+    }
+    window.generateProposal = generateProposal;
+
+    function editProposal() {
+        document.getElementById('proposalResult').style.display = 'none';
+        document.getElementById('proposalEditor').style.display = 'block';
+    }
+    window.editProposal = editProposal;
+
+    function applyProposalEdit() {
+        currentProposalHTML = document.getElementById('proposalRawContent').value;
+        document.getElementById('proposalPreview').innerHTML = currentProposalHTML;
+        document.getElementById('proposalEditor').style.display = 'none';
+        document.getElementById('proposalResult').style.display = 'block';
+        toast('Modifications appliquees');
+    }
+    window.applyProposalEdit = applyProposalEdit;
+
+    function cancelProposalEdit() {
+        document.getElementById('proposalEditor').style.display = 'none';
+        document.getElementById('proposalResult').style.display = 'block';
+    }
+    window.cancelProposalEdit = cancelProposalEdit;
+
+    function downloadProposalPDF() {
+        if (!currentProposalHTML) { toast('Aucune proposition a telecharger', 'error'); return; }
+        var companyName = currentProspect ? currentProspect.company_name : 'Prospect';
+        var filename = 'Proposition_Regen_Agency_' + companyName.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
+
+        // Create a hidden container with full PDF styling
+        var pdfContainer = document.createElement('div');
+        pdfContainer.innerHTML = buildPDFTemplate(currentProposalHTML, companyName);
+        document.body.appendChild(pdfContainer);
+
+        var opt = {
+            margin: [10, 10, 15, 10],
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        html2pdf().set(opt).from(pdfContainer.firstElementChild).save().then(function() {
+            document.body.removeChild(pdfContainer);
+            toast('PDF telecharge !', 'success');
+        }).catch(function(err) {
+            document.body.removeChild(pdfContainer);
+            toast('Erreur PDF: ' + err.message, 'error');
+        });
+    }
+    window.downloadProposalPDF = downloadProposalPDF;
+
+    function buildPDFTemplate(contentHTML, companyName) {
+        var today = new Date();
+        var months = ['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+        var dateStr = today.getDate() + ' ' + months[today.getMonth()] + ' ' + today.getFullYear();
+        return '<div style="font-family: Quicksand, Segoe UI, Arial, sans-serif; color: #202020; line-height: 1.6; max-width: 210mm;">' +
+            '<!-- Cover -->' +
+            '<div style="background: linear-gradient(135deg, #173C3A 0%, #1a4a47 100%); color: white; padding: 60px 40px; min-height: 250px; border-radius: 0; page-break-after: always;">' +
+                '<div style="font-size: 14px; opacity: 0.8; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;">REGEN AGENCY</div>' +
+                '<div style="font-size: 11px; opacity: 0.6; margin-bottom: 40px;">60 rue Francois 1er, 75008 Paris &bull; contact.regenagency@gmail.com</div>' +
+                '<div style="font-size: 28px; font-weight: 700; margin-bottom: 16px;">Proposition commerciale</div>' +
+                '<div style="font-size: 18px; font-weight: 600; color: #2FB963; margin-bottom: 8px;">' + companyName + '</div>' +
+                '<div style="font-size: 13px; opacity: 0.7;">' + dateStr + '</div>' +
+                '<div style="margin-top: 40px; border-top: 2px solid rgba(47,185,99,0.4); padding-top: 16px; font-size: 12px; opacity: 0.6;">Suite a nos echanges</div>' +
+            '</div>' +
+            '<!-- Content -->' +
+            '<div style="padding: 30px 40px;">' + contentHTML + '</div>' +
+            '<!-- Footer -->' +
+            '<div style="padding: 20px 40px; border-top: 2px solid #173C3A; margin-top: 30px; font-size: 10px; color: #666;">' +
+                'REGEN AGENCY &bull; SARL au capital de 200 &euro; &bull; SIRET 985 275 460 00014 &bull; 60 rue Francois 1er, 75008 Paris &bull; contact.regenagency@gmail.com' +
+            '</div>' +
+        '</div>';
+    }
 
     // ── EMAIL GENERATION ──
     function openEmailModal() {

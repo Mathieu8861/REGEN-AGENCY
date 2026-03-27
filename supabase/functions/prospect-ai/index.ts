@@ -564,9 +564,10 @@ async function handleGenerateSynthesis(prospectId: string) {
   // 3. Build comprehensive prompt
   const systemPrompt =
     "Tu es un directeur commercial senior chez Regen Agency. " +
-    "Ta mission est de produire une synthèse globale et stratégique de toutes les informations disponibles sur un prospect. " +
-    "Cette synthèse servira de base pour rédiger la proposition commerciale. " +
-    "Sois structuré, factuel et orienté action.\n\n" +
+    "Ta mission est de produire un RÉCAPITULATIF FACTUEL de la situation actuelle avec ce prospect. " +
+    "Ce n'est PAS un email, PAS une proposition commerciale. C'est un document INTERNE pour l'équipe. " +
+    "Tu résumes ce qu'on sait, ce qui a été fait, et ce qui reste à faire. " +
+    "Sois structuré, factuel et concis. Utilise des bullet points.\n\n" +
     AGENCY_KNOWLEDGE_BASE;
 
   const userPrompt = `Produis une SYNTHÈSE GLOBALE de ce prospect en agrégeant TOUTES les sources d'information ci-dessous.
@@ -602,14 +603,33 @@ ${notes.map((n: Record<string, string>) => `- ${n.title}: ${n.content || ""}`).j
 
 ---
 
-Rédige une synthèse structurée avec :
-1. **Profil de l'entreprise** : résumé de qui ils sont, ce qu'ils font, leur taille et positionnement
-2. **Situation digitale actuelle** : site web, SEO, publicité, réseaux sociaux (basé sur les analyses)
-3. **Besoins identifiés** : liste priorisée des besoins exprimés et détectés
-4. **Budget et timeline** : ce qu'on sait du budget et des délais
-5. **Points d'attention** : objections, risques, particularités à prendre en compte
-6. **Recommandation stratégique** : quels services proposer, dans quel ordre, avec quelle approche
-7. **Prochaines étapes** : actions concrètes à mener`;
+Rédige un RÉCAP INTERNE (pas un email, pas une proposition) structuré ainsi :
+
+## 🏢 L'entreprise
+Qui sont-ils, ce qu'ils font, taille, positionnement marché
+
+## 🌐 Situation digitale
+État actuel du site web, SEO, publicité en ligne, réseaux sociaux (basé sur les analyses des liens)
+
+## 🎯 Besoins identifiés
+Liste à puces des besoins exprimés par le prospect et détectés par l'analyse
+
+## 💰 Budget & Délais
+Ce qu'on sait du budget et de la timeline souhaitée
+
+## 💬 Historique des échanges
+Résumé chronologique de tous les échanges (appels, emails, formulaires)
+
+## ⚠️ Points d'attention
+Objections, risques, particularités à garder en tête
+
+## ✅ Actions réalisées
+Ce qui a déjà été fait avec ce prospect
+
+## 📋 Prochaines étapes
+Ce qu'il reste à faire concrètement
+
+Sois CONCIS. Utilise des bullet points. Si une info n'est pas disponible, écris "Non renseigné" plutôt que d'inventer.`;
 
   // 4. Call Claude
   const aiResponse = await callClaude(systemPrompt, userPrompt, 3000);
@@ -619,6 +639,95 @@ Rédige une synthèse structurée avec :
 
   // 6. Return
   return jsonResponse({ success: true, data: { synthesis: aiResponse } });
+}
+
+// ── Action: generate_proposal ──────────
+
+async function handleGenerateProposal(prospectId: string) {
+  // 1. Fetch ALL data
+  const { data: prospect } = await supabase.from("prospects").select("*").eq("id", prospectId).single();
+  if (!prospect) return jsonResponse({ success: false, error: "Prospect non trouvé" }, 404);
+
+  const { data: links } = await supabase.from("prospect_links").select("*").eq("prospect_id", prospectId);
+  const { data: activities } = await supabase.from("prospect_activities").select("*").eq("prospect_id", prospectId).order("created_at", { ascending: false }).limit(30);
+  const { data: formResponses } = await supabase.from("prospect_form_responses").select("*").eq("prospect_id", prospectId);
+  const docsContext = await fetchProspectDocuments(prospectId);
+
+  const exchanges = (activities || []).filter((a: Record<string, string>) => ["call", "meeting"].includes(a.activity_type));
+  const aiAnalyses = (activities || []).filter((a: Record<string, string>) => a.activity_type === "ai_analysis");
+
+  // 2. Build prompt
+  const systemPrompt =
+    "Tu es un directeur commercial senior chez Regen Agency. " +
+    "Tu rédiges des PROPOSITIONS COMMERCIALES professionnelles au format HTML. " +
+    "Le document doit être structuré, chiffré et convaincant. " +
+    "Tu dois IMPÉRATIVEMENT répondre en HTML valide (pas de markdown). " +
+    "Utilise des balises HTML : <h2>, <h3>, <p>, <ul>, <li>, <table>, <tr>, <td>, <th>, <strong>, <em>. " +
+    "Pour les tableaux de prix, utilise des <table> avec des bordures. " +
+    "N'inclus PAS de balises <html>, <head>, <body> — juste le contenu.\n\n" +
+    AGENCY_KNOWLEDGE_BASE;
+
+  const userPrompt = `Génère une PROPOSITION COMMERCIALE complète en HTML pour ce prospect.
+
+## Données du prospect
+- Entreprise : ${prospect.company_name} | Secteur : ${prospect.company_sector || "?"} | Taille : ${prospect.company_size || "?"}
+- Site web : ${prospect.company_website || "?"}
+- Adresse : ${prospect.company_address || "?"}
+- Contact : ${prospect.contact_first_name || ""} ${prospect.contact_last_name || ""} | Poste : ${prospect.contact_position || "?"}
+- Besoins : ${prospect.needs_summary || "Non renseigné"}
+- Budget estimé : ${prospect.budget_estimate || "?"} ${prospect.budget_currency || "EUR"}
+- Services intéressés : ${(prospect.services_interested || []).join(", ") || "?"}
+
+## Analyses IA
+${aiAnalyses.map((a: Record<string, string>) => a.content?.slice(0, 500)).join("\n\n") || "Aucune"}
+
+## Échanges
+${exchanges.map((e: Record<string, string>) => `${e.title}: ${(e.content || "").slice(0, 300)}`).join("\n") || "Aucun"}
+
+## Réponses formulaire
+${formResponses && formResponses.length > 0 ? formResponses.map((r: Record<string, unknown>) => JSON.stringify(r.response_data)).join("\n") : "Aucune"}
+
+## Documents
+${docsContext}
+
+---
+
+STRUCTURE OBLIGATOIRE du document HTML :
+
+<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">1. Votre situation actuelle</h2>
+Résumé de l'entreprise, son secteur, sa présence digitale actuelle (site web, SEO, publicité).
+
+<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">2. Besoins identifiés</h2>
+Liste numérotée des besoins détectés lors de nos échanges et analyses.
+
+<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">3. Solutions proposées</h2>
+Pour chaque service pertinent, décris la prestation en détail. Si applicable, propose des options (Option A / Option B).
+
+<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">4. Tarification</h2>
+Tableau HTML avec colonnes : Prestation | Montant HT
+Puis un récapitulatif avec total one-shot et total mensuel.
+Style du tableau : <table style="width:100%; border-collapse:collapse; margin:16px 0;"> avec <th style="background:#173C3A; color:white; padding:10px; text-align:left;"> et <td style="padding:10px; border-bottom:1px solid #e0e0e0;">
+
+<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">5. Conditions</h2>
+Durée d'engagement, modalités de paiement, délais de livraison.
+
+<h2 style="color:#173C3A; border-bottom:2px solid #2FB963; padding-bottom:8px;">6. Prochaines étapes</h2>
+Liste numérotée des actions pour démarrer la collaboration.
+
+IMPORTANT :
+- Les prix doivent être RÉALISTES et basés sur la grille tarifaire Regen Agency fournie dans la base de connaissances
+- Tous les montants en euros HT
+- Sois spécifique au prospect, pas générique
+- Le HTML doit être propre et stylé inline pour le rendu PDF`;
+
+  // 3. Call Claude
+  const aiResponse = await callClaude(systemPrompt, userPrompt, 4000);
+
+  // 4. Log activity
+  await logActivity(prospectId, "Proposition commerciale générée", "ai_analysis", "Proposition PDF générée par IA");
+
+  // 5. Return
+  return jsonResponse({ success: true, data: { proposal_html: aiResponse } });
 }
 
 // ── Main handler ─────────────────────────
@@ -672,11 +781,14 @@ serve(async (req) => {
       case "generate_synthesis":
         return await handleGenerateSynthesis(prospect_id);
 
+      case "generate_proposal":
+        return await handleGenerateProposal(prospect_id);
+
       default:
         return jsonResponse(
           {
             success: false,
-            error: `Action inconnue: '${action}'. Actions disponibles: generate_email, analyze_links, summarize_transcript, generate_synthesis`,
+            error: `Action inconnue: '${action}'. Actions disponibles: generate_email, analyze_links, summarize_transcript, generate_synthesis, generate_proposal`,
           },
           400,
         );
