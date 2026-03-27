@@ -488,6 +488,12 @@
             padding: 2px 8px;
             border-radius: 12px;
             font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .completeness-pill:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
         }
         .completeness-pill--ok { background: #d1fae5; color: #059669; }
         .completeness-pill--warn { background: #fef3c7; color: #d97706; }
@@ -1443,6 +1449,18 @@
     }
     window.toggleSection = toggleSection;
 
+    function scrollToSection(sectionId) {
+        var section = document.getElementById(sectionId);
+        if (!section) return;
+        // Open the section if closed
+        if (!section.classList.contains('open')) {
+            section.classList.add('open');
+        }
+        // Smooth scroll to it
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    window.scrollToSection = scrollToSection;
+
     function openAllSections() {
         document.querySelectorAll('.panel-section').forEach(function(s) {
             s.classList.add('open');
@@ -2069,7 +2087,7 @@
                 var s = sections[k];
                 var cls = s.score >= 80 ? 'completeness-pill--ok' : (s.score > 0 ? 'completeness-pill--warn' : 'completeness-pill--empty');
                 var icon = s.score >= 80 ? ' &#10003;' : (s.score > 0 ? ' &#9888;' : ' &#10005;');
-                return '<span class="completeness-pill ' + cls + '">' + s.label + icon + '</span>';
+                return '<span class="completeness-pill ' + cls + '" onclick="scrollToSection(\'section-' + k + '\')">' + s.label + icon + '</span>';
             }).join('');
         }
 
