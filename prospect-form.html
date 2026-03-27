@@ -28,7 +28,7 @@
 
         .form-page {
             width: 100%;
-            max-width: 640px;
+            max-width: 680px;
         }
 
         .logo-wrapper {
@@ -48,20 +48,11 @@
             padding: 40px 36px;
         }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 24px 12px 40px;
-            }
-            .card {
-                padding: 28px 20px;
-                border-radius: 12px;
-            }
-        }
-
-        /* Loading */
+        /* States */
         .state { display: none; }
         .state.active { display: block; }
 
+        /* Loading */
         .loading-wrapper {
             text-align: center;
             padding: 60px 0;
@@ -104,15 +95,8 @@
             font-size: 28px;
         }
 
-        .error-icon {
-            background: #fdeaea;
-            color: #d94040;
-        }
-
-        .expired-icon {
-            background: #fff4e0;
-            color: #d4910a;
-        }
+        .error-icon { background: #fdeaea; color: #d94040; }
+        .expired-icon { background: #fff4e0; color: #d4910a; }
 
         .error-wrapper h2, .expired-wrapper h2 {
             font-size: 20px;
@@ -126,7 +110,7 @@
             line-height: 1.5;
         }
 
-        /* Form */
+        /* Form header */
         .form-header {
             margin-bottom: 28px;
             padding-bottom: 20px;
@@ -146,8 +130,31 @@
             line-height: 1.5;
         }
 
+        /* Section titles */
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #173C3A;
+            margin-bottom: 4px;
+            margin-top: 32px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #6b7f7d;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: #e8edeb;
+            margin: 32px 0;
+        }
+
+        /* Form groups */
         .form-group {
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
@@ -158,7 +165,7 @@
             margin-bottom: 6px;
         }
 
-        .form-group label .required {
+        .form-group label .req {
             color: #d94040;
             margin-left: 2px;
         }
@@ -167,7 +174,6 @@
         .form-group input[type="email"],
         .form-group input[type="tel"],
         .form-group input[type="url"],
-        .form-group input[type="number"],
         .form-group textarea,
         .form-group select {
             width: 100%;
@@ -192,7 +198,7 @@
 
         .form-group textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 90px;
         }
 
         .form-group select {
@@ -204,68 +210,192 @@
             padding-right: 36px;
         }
 
-        /* Checkbox group */
-        .checkbox-group {
-            display: flex;
-            flex-direction: column;
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #a3b0ad;
+        }
+
+        /* Validation */
+        .field-error {
+            color: #d94040;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .form-group.has-error input,
+        .form-group.has-error textarea,
+        .form-group.has-error select {
+            border-color: #d94040;
+        }
+
+        /* Service cards grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
 
-        .checkbox-item {
+        .service-card {
             display: flex;
             align-items: center;
             gap: 10px;
+            padding: 12px 14px;
+            background: #f8faf9;
+            border: 2px solid #e8edeb;
+            border-radius: 12px;
             cursor: pointer;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #2FB963;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .checkbox-item span {
-            font-size: 14px;
-            font-weight: 500;
-            color: #173C3A;
-        }
-
-        /* File */
-        .file-input-wrapper {
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            user-select: none;
             position: relative;
         }
 
-        .file-input-wrapper input[type="file"] {
-            width: 100%;
-            padding: 10px 14px;
-            font-family: 'Quicksand', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            color: #6b7f7d;
-            background: #f8faf9;
-            border: 1.5px dashed #d5ddd9;
-            border-radius: 10px;
-            cursor: pointer;
+        .service-card:hover {
+            border-color: #c0d0cb;
+            background: #f2f6f4;
         }
 
-        .file-input-wrapper input[type="file"]::file-selector-button {
-            font-family: 'Quicksand', sans-serif;
+        .service-card.checked {
+            border-color: #2FB963;
+            background: #eefbf3;
+            box-shadow: 0 0 0 3px rgba(47, 185, 99, 0.10);
+        }
+
+        .service-card input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .service-card .card-icon {
+            font-size: 22px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .service-card .card-label {
             font-size: 13px;
             font-weight: 600;
-            color: #fff;
-            background: #173C3A;
-            border: none;
-            border-radius: 6px;
-            padding: 6px 14px;
-            margin-right: 12px;
-            cursor: pointer;
-            transition: background 0.2s;
+            color: #173C3A;
+            line-height: 1.3;
         }
 
-        .file-input-wrapper input[type="file"]::file-selector-button:hover {
+        .service-card .card-check {
+            margin-left: auto;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid #d5ddd9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .service-card.checked .card-check {
             background: #2FB963;
+            border-color: #2FB963;
+        }
+
+        .service-card .card-check svg {
+            width: 14px;
+            height: 14px;
+            stroke: #fff;
+            stroke-width: 3;
+            fill: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .service-card.checked .card-check svg {
+            opacity: 1;
+        }
+
+        /* Conditional sections */
+        .conditional-section {
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+            margin-top: 0;
+        }
+
+        .conditional-section.visible {
+            max-height: 2000px;
+            opacity: 1;
+            margin-top: 20px;
+        }
+
+        .conditional-inner {
+            border-left: 4px solid #2FB963;
+            background: #fafcfb;
+            border-radius: 0 12px 12px 0;
+            padding: 20px 20px 8px;
+        }
+
+        .conditional-inner .section-label {
+            font-size: 15px;
+            font-weight: 700;
+            color: #173C3A;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .conditional-inner .section-label .label-icon {
+            font-size: 18px;
+        }
+
+        /* Per-service border colors */
+        #section-google_ads .conditional-inner { border-left-color: #4285F4; }
+        #section-meta_ads .conditional-inner { border-left-color: #0081FB; }
+        #section-seo .conditional-inner { border-left-color: #2FB963; }
+        #section-creation_site .conditional-inner { border-left-color: #173C3A; }
+        #section-tiktok_ads .conditional-inner { border-left-color: #010101; }
+        #section-formation .conditional-inner { border-left-color: #F5A623; }
+        #section-consulting .conditional-inner { border-left-color: #8B5CF6; }
+        #section-autre .conditional-inner { border-left-color: #6b7f7d; }
+
+        /* Checkbox group (inside conditional sections) */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .checkbox-group label {
+            display: inline-flex !important;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #fff;
+            border: 1.5px solid #d5ddd9;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .checkbox-group label:hover {
+            border-color: #2FB963;
+        }
+
+        .checkbox-group label.cb-checked {
+            border-color: #2FB963;
+            background: #eefbf3;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #2FB963;
+            cursor: pointer;
+            flex-shrink: 0;
         }
 
         /* Submit */
@@ -275,7 +405,7 @@
 
         .btn-submit {
             width: 100%;
-            padding: 13px 24px;
+            padding: 14px 24px;
             font-family: 'Quicksand', sans-serif;
             font-size: 15px;
             font-weight: 700;
@@ -287,13 +417,8 @@
             transition: opacity 0.2s, transform 0.1s;
         }
 
-        .btn-submit:hover {
-            opacity: 0.92;
-        }
-
-        .btn-submit:active {
-            transform: scale(0.98);
-        }
+        .btn-submit:hover { opacity: 0.92; }
+        .btn-submit:active { transform: scale(0.98); }
 
         .btn-submit:disabled {
             opacity: 0.6;
@@ -311,20 +436,6 @@
             animation: spin 0.7s linear infinite;
             vertical-align: middle;
             margin-right: 8px;
-        }
-
-        /* Validation error */
-        .field-error {
-            color: #d94040;
-            font-size: 12px;
-            font-weight: 500;
-            margin-top: 4px;
-        }
-
-        .form-group.has-error input,
-        .form-group.has-error textarea,
-        .form-group.has-error select {
-            border-color: #d94040;
         }
 
         /* Success */
@@ -374,13 +485,57 @@
             line-height: 1.6;
         }
 
-        /* Footer branding */
+        /* Footer */
         .powered-by {
             text-align: center;
             margin-top: 24px;
             font-size: 12px;
             color: #a3b0ad;
             font-weight: 500;
+        }
+
+        /* Progress bar at top of card */
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            border-radius: 4px;
+            background: #e8edeb;
+            transition: background 0.3s;
+        }
+
+        .progress-step.done {
+            background: linear-gradient(90deg, #2FB963, #05C08A);
+        }
+
+        .progress-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #a3b0ad;
+            white-space: nowrap;
+        }
+
+        /* Responsive */
+        @media (max-width: 560px) {
+            body {
+                padding: 24px 10px 40px;
+            }
+            .card {
+                padding: 28px 18px;
+                border-radius: 12px;
+            }
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            .service-card .card-label {
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -421,13 +576,464 @@
             <div id="state-form" class="state">
                 <div class="form-header">
                     <h1 id="form-title"></h1>
-                    <p id="form-description"></p>
                 </div>
+
+                <!-- Progress -->
+                <div class="progress-bar">
+                    <div class="progress-step done" id="prog-1"></div>
+                    <div class="progress-step" id="prog-2"></div>
+                    <div class="progress-step" id="prog-3"></div>
+                    <span class="progress-label" id="prog-label">1 / 3</span>
+                </div>
+
                 <form id="prospect-form" novalidate>
-                    <div id="form-fields"></div>
+
+                    <!-- ============ PART 1: Basic info ============ -->
+                    <div id="part-basic">
+                        <div class="section-title">Informations de contact</div>
+                        <div class="section-subtitle">Parlez-nous de vous et de votre entreprise.</div>
+
+                        <div class="form-group">
+                            <label for="f-company">Nom de l'entreprise <span class="req">*</span></label>
+                            <input type="text" id="f-company" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="f-website">Site web</label>
+                            <input type="url" id="f-website" placeholder="https://www.example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="f-name">Votre nom complet <span class="req">*</span></label>
+                            <input type="text" id="f-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="f-email">Email de contact <span class="req">*</span></label>
+                            <input type="email" id="f-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="f-phone">T&eacute;l&eacute;phone</label>
+                            <input type="tel" id="f-phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="f-position">Votre poste dans l'entreprise</label>
+                            <input type="text" id="f-position">
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <!-- ============ PART 2: Services selection ============ -->
+                    <div id="part-services">
+                        <div class="section-title">Quels services vous int&eacute;ressent ?</div>
+                        <div class="section-subtitle">Cochez les services qui correspondent &agrave; vos besoins. Des questions suppl&eacute;mentaires apparaitront pour chaque service s&eacute;lectionn&eacute;.</div>
+
+                        <div class="services-grid">
+                            <label class="service-card" data-service="google_ads">
+                                <input type="checkbox" name="services" value="google_ads">
+                                <span class="card-icon">&#128270;</span>
+                                <span class="card-label">Google Ads</span>
+                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
+                            </label>
+                            <label class="service-card" data-service="meta_ads">
+                                <input type="checkbox" name="services" value="meta_ads">
+                                <span class="card-icon">&#128241;</span>
+                                <span class="card-label">Meta Ads - Facebook &amp; Instagram</span>
+                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
+                            </label>
+                            <label class="service-card" data-service="seo">
+                                <input type="checkbox" name="services" value="seo">
+                                <span class="card-icon">&#128200;</span>
+                                <span class="card-label">SEO - R&eacute;f&eacute;rencement naturel</span>
+                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
+                            </label>
+                            <label class="service-card" data-service="creation_site">
+                                <input type="checkbox" name="services" value="creation_site">
+                                <span class="card-icon">&#128187;</span>
+                                <span class="card-label">Cr&eacute;ation / Refonte de site web</span>
+                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
+                            </label>
+                            <label class="service-card" data-service="tiktok_ads">
+                                <input type="checkbox" name="services" value="tiktok_ads">
+                                <span class="card-icon">&#127925;</span>
+                                <span class="card-label">TikTok Ads</span>
+                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
+                            </label>
+                            <label class="service-card" data-service="formation">
+                                <input type="checkbox" name="services" value="formation">
+                                <span class="card-icon">&#127891;</span>
+                                <span class="card-label">Formation</span>
+                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
+                            </label>
+                            <label class="service-card" data-service="consulting">
+                                <input type="checkbox" name="services" value="consulting">
+                                <span class="card-icon">&#128161;</span>
+                                <span class="card-label">Consulting / Audit</span>
+                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
+                            </label>
+                            <label class="service-card" data-service="autre">
+                                <input type="checkbox" name="services" value="autre">
+                                <span class="card-icon">&#128203;</span>
+                                <span class="card-label">Autre</span>
+                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
+                            </label>
+                        </div>
+
+                        <!-- ============ CONDITIONAL SECTIONS ============ -->
+
+                        <!-- Google Ads -->
+                        <div id="section-google_ads" class="conditional-section">
+                            <div class="conditional-inner">
+                                <div class="section-label"><span class="label-icon">&#128270;</span> Google Ads</div>
+                                <div class="form-group">
+                                    <label for="f-ga-account">Avez-vous d&eacute;j&agrave; un compte Google Ads ?</label>
+                                    <select id="f-ga-account">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Oui</option>
+                                        <option>Non</option>
+                                        <option>Je ne sais pas</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-ga-budget">Budget publicitaire mensuel envisag&eacute; ?</label>
+                                    <select id="f-ga-budget">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>&lt; 500 EUR</option>
+                                        <option>500-1000 EUR</option>
+                                        <option>1000-3000 EUR</option>
+                                        <option>3000-5000 EUR</option>
+                                        <option>&gt; 5000 EUR</option>
+                                        <option>A d&eacute;finir</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-ga-goal">Objectif principal</label>
+                                    <select id="f-ga-goal">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Ventes en ligne</option>
+                                        <option>G&eacute;n&eacute;ration de leads</option>
+                                        <option>Notori&eacute;t&eacute; / Visibilit&eacute;</option>
+                                        <option>Trafic en magasin</option>
+                                        <option>Appels t&eacute;l&eacute;phoniques</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-ga-url">URL du site &agrave; promouvoir</label>
+                                    <input type="url" id="f-ga-url" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Meta Ads -->
+                        <div id="section-meta_ads" class="conditional-section">
+                            <div class="conditional-inner">
+                                <div class="section-label"><span class="label-icon">&#128241;</span> Meta Ads</div>
+                                <div class="form-group">
+                                    <label for="f-ma-bm">Avez-vous d&eacute;j&agrave; un Business Manager Meta ?</label>
+                                    <select id="f-ma-bm">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Oui</option>
+                                        <option>Non</option>
+                                        <option>Je ne sais pas</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-ma-budget">Budget publicitaire mensuel envisag&eacute; ?</label>
+                                    <select id="f-ma-budget">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>&lt; 500 EUR</option>
+                                        <option>500-1000 EUR</option>
+                                        <option>1000-3000 EUR</option>
+                                        <option>3000-5000 EUR</option>
+                                        <option>&gt; 5000 EUR</option>
+                                        <option>A d&eacute;finir</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-ma-goal">Objectif principal</label>
+                                    <select id="f-ma-goal">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Ventes en ligne</option>
+                                        <option>G&eacute;n&eacute;ration de leads</option>
+                                        <option>Notori&eacute;t&eacute; / Visibilit&eacute;</option>
+                                        <option>Engagement sur les r&eacute;seaux</option>
+                                        <option>Trafic en magasin</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-ma-fb">Lien de votre page Facebook</label>
+                                    <input type="url" id="f-ma-fb" placeholder="https://facebook.com/...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-ma-ig">Lien de votre compte Instagram</label>
+                                    <input type="url" id="f-ma-ig" placeholder="https://instagram.com/...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SEO -->
+                        <div id="section-seo" class="conditional-section">
+                            <div class="conditional-inner">
+                                <div class="section-label"><span class="label-icon">&#128200;</span> SEO</div>
+                                <div class="form-group">
+                                    <label for="f-seo-existing">Avez-vous d&eacute;j&agrave; travaill&eacute; votre SEO ?</label>
+                                    <select id="f-seo-existing">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Oui, un peu</option>
+                                        <option>Oui, avec une agence</option>
+                                        <option>Non, jamais</option>
+                                        <option>Je ne sais pas</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-seo-zone">Zone g&eacute;ographique cible</label>
+                                    <select id="f-seo-zone">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Locale (ville/r&eacute;gion)</option>
+                                        <option>Nationale</option>
+                                        <option>Internationale</option>
+                                        <option>A d&eacute;finir</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-seo-blog">Avez-vous un blog ?</label>
+                                    <select id="f-seo-blog">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Oui, actif</option>
+                                        <option>Oui, mais inactif</option>
+                                        <option>Non</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-seo-keywords">Mots-cl&eacute;s ou requ&ecirc;tes cibles</label>
+                                    <textarea id="f-seo-keywords" rows="3" placeholder="Ex: plombier Paris, restaurant gastronomique Lyon..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Creation site -->
+                        <div id="section-creation_site" class="conditional-section">
+                            <div class="conditional-inner">
+                                <div class="section-label"><span class="label-icon">&#128187;</span> Cr&eacute;ation / Refonte de site</div>
+                                <div class="form-group">
+                                    <label for="f-cs-has-site">Avez-vous un site actuellement ?</label>
+                                    <select id="f-cs-has-site">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Oui</option>
+                                        <option>Non</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-cs-url">Si oui, URL du site actuel</label>
+                                    <input type="url" id="f-cs-url" placeholder="https://...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-cs-type">Type de site souhait&eacute;</label>
+                                    <select id="f-cs-type">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Site vitrine</option>
+                                        <option>E-commerce</option>
+                                        <option>Blog / M&eacute;dia</option>
+                                        <option>Application web</option>
+                                        <option>Landing page</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fonctionnalit&eacute;s souhait&eacute;es</label>
+                                    <div class="checkbox-group" id="f-cs-features">
+                                        <label><input type="checkbox" value="Reservation en ligne"> R&eacute;servation en ligne</label>
+                                        <label><input type="checkbox" value="E-commerce / Paiement"> E-commerce / Paiement</label>
+                                        <label><input type="checkbox" value="Blog"> Blog</label>
+                                        <label><input type="checkbox" value="Multilingue"> Multilingue</label>
+                                        <label><input type="checkbox" value="Espace client"> Espace client</label>
+                                        <label><input type="checkbox" value="Formulaire avance"> Formulaire avanc&eacute;</label>
+                                        <label><input type="checkbox" value="Chat en ligne"> Chat en ligne</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-cs-pages">Nombre de pages estim&eacute;</label>
+                                    <select id="f-cs-pages">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>1-5 pages</option>
+                                        <option>5-10 pages</option>
+                                        <option>10-20 pages</option>
+                                        <option>20+ pages</option>
+                                        <option>Je ne sais pas</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-cs-branding">Avez-vous une charte graphique ?</label>
+                                    <select id="f-cs-branding">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Oui</option>
+                                        <option>Non</option>
+                                        <option>En cours de cr&eacute;ation</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TikTok Ads -->
+                        <div id="section-tiktok_ads" class="conditional-section">
+                            <div class="conditional-inner">
+                                <div class="section-label"><span class="label-icon">&#127925;</span> TikTok Ads</div>
+                                <div class="form-group">
+                                    <label for="f-tt-account">Avez-vous un compte TikTok Business ?</label>
+                                    <select id="f-tt-account">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Oui</option>
+                                        <option>Non</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-tt-budget">Budget publicitaire mensuel envisag&eacute; ?</label>
+                                    <select id="f-tt-budget">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>&lt; 500 EUR</option>
+                                        <option>500-1000 EUR</option>
+                                        <option>1000-3000 EUR</option>
+                                        <option>3000-5000 EUR</option>
+                                        <option>&gt; 5000 EUR</option>
+                                        <option>A d&eacute;finir</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-tt-video">Avez-vous d&eacute;j&agrave; du contenu vid&eacute;o ?</label>
+                                    <select id="f-tt-video">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Oui, beaucoup</option>
+                                        <option>Quelques vid&eacute;os</option>
+                                        <option>Non, rien</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formation -->
+                        <div id="section-formation" class="conditional-section">
+                            <div class="conditional-inner">
+                                <div class="section-label"><span class="label-icon">&#127891;</span> Formation</div>
+                                <div class="form-group">
+                                    <label>Sur quel(s) sujet(s) ?</label>
+                                    <div class="checkbox-group" id="f-fo-subjects">
+                                        <label><input type="checkbox" value="Google Ads"> Google Ads</label>
+                                        <label><input type="checkbox" value="Meta Ads"> Meta Ads</label>
+                                        <label><input type="checkbox" value="SEO"> SEO</label>
+                                        <label><input type="checkbox" value="Analytics / Reporting"> Analytics / Reporting</label>
+                                        <label><input type="checkbox" value="Creation de contenu"> Cr&eacute;ation de contenu</label>
+                                        <label><input type="checkbox" value="Strategie digitale"> Strat&eacute;gie digitale</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-fo-people">Nombre de personnes &agrave; former</label>
+                                    <select id="f-fo-people">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>1</option>
+                                        <option>2-5</option>
+                                        <option>5-10</option>
+                                        <option>10+</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-fo-format">Format pr&eacute;f&eacute;r&eacute;</label>
+                                    <select id="f-fo-format">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Pr&eacute;sentiel</option>
+                                        <option>Visioconf&eacute;rence</option>
+                                        <option>Les deux</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Consulting -->
+                        <div id="section-consulting" class="conditional-section">
+                            <div class="conditional-inner">
+                                <div class="section-label"><span class="label-icon">&#128161;</span> Consulting / Audit</div>
+                                <div class="form-group">
+                                    <label for="f-co-type">Type d'accompagnement souhait&eacute;</label>
+                                    <select id="f-co-type">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Audit de l'existant</option>
+                                        <option>Strat&eacute;gie digitale</option>
+                                        <option>Accompagnement ponctuel</option>
+                                        <option>Accompagnement continu</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Domaines &agrave; auditer</label>
+                                    <div class="checkbox-group" id="f-co-domains">
+                                        <label><input type="checkbox" value="Site web"> Site web</label>
+                                        <label><input type="checkbox" value="SEO"> SEO</label>
+                                        <label><input type="checkbox" value="Google Ads"> Google Ads</label>
+                                        <label><input type="checkbox" value="Meta Ads"> Meta Ads</label>
+                                        <label><input type="checkbox" value="Analytics"> Analytics</label>
+                                        <label><input type="checkbox" value="Reseaux sociaux"> R&eacute;seaux sociaux</label>
+                                        <label><input type="checkbox" value="E-commerce"> E-commerce</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Autre -->
+                        <div id="section-autre" class="conditional-section">
+                            <div class="conditional-inner">
+                                <div class="section-label"><span class="label-icon">&#128203;</span> Autre</div>
+                                <div class="form-group">
+                                    <label for="f-autre-desc">D&eacute;crivez votre besoin <span class="req">*</span></label>
+                                    <textarea id="f-autre-desc" rows="4" placeholder="D&eacute;crivez votre besoin le plus pr&eacute;cis&eacute;ment possible..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <!-- ============ PART 4: General questions ============ -->
+                    <div id="part-general">
+                        <div class="section-title">Pour finir</div>
+                        <div class="section-subtitle">Quelques derni&egrave;res informations pour mieux cerner votre projet.</div>
+
+                        <div class="form-group">
+                            <label for="f-gen-budget">Budget global mensuel envisag&eacute; pour le digital</label>
+                            <select id="f-gen-budget">
+                                <option value="">-- S&eacute;lectionnez --</option>
+                                <option>&lt; 500 EUR</option>
+                                <option>500-1000 EUR</option>
+                                <option>1000-2000 EUR</option>
+                                <option>2000-5000 EUR</option>
+                                <option>&gt; 5000 EUR</option>
+                                <option>A d&eacute;finir ensemble</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="f-gen-timeline">D&eacute;lai souhait&eacute;</label>
+                            <select id="f-gen-timeline">
+                                <option value="">-- S&eacute;lectionnez --</option>
+                                <option>Urgent (&lt; 1 mois)</option>
+                                <option>Court terme (1-3 mois)</option>
+                                <option>Moyen terme (3-6 mois)</option>
+                                <option>Pas de rush</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="f-gen-source">Comment avez-vous connu Regen Agency ?</label>
+                            <select id="f-gen-source">
+                                <option value="">-- S&eacute;lectionnez --</option>
+                                <option>Recommandation</option>
+                                <option>LinkedIn</option>
+                                <option>Google</option>
+                                <option>R&eacute;seaux sociaux</option>
+                                <option>Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="f-gen-notes">Informations compl&eacute;mentaires</label>
+                            <textarea id="f-gen-notes" rows="4" placeholder="Ajoutez toute information que vous jugez utile..."></textarea>
+                        </div>
+                    </div>
+
                     <div class="submit-wrapper">
                         <button type="submit" class="btn-submit" id="btn-submit">
-                            Envoyer
+                            Envoyer mes r&eacute;ponses
                         </button>
                     </div>
                 </form>
@@ -440,7 +1046,7 @@
                         <svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg>
                     </div>
                     <h2>Merci !</h2>
-                    <p>Votre r&eacute;ponse a bien &eacute;t&eacute; enregistr&eacute;e.<br>Nous reviendrons vers vous tr&egrave;s prochainement.</p>
+                    <p>Vos r&eacute;ponses ont bien &eacute;t&eacute; enregistr&eacute;es.<br>Notre &eacute;quipe reviendra vers vous tr&egrave;s prochainement.</p>
                 </div>
             </div>
         </div>
@@ -455,10 +1061,9 @@
             var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
 
             var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-            // --- State management ---
             var formConfig = null;
 
+            // --- State management ---
             function showState(id) {
                 var states = document.querySelectorAll('.state');
                 for (var i = 0; i < states.length; i++) {
@@ -467,19 +1072,14 @@
                 document.getElementById('state-' + id).classList.add('active');
             }
 
-            // --- Get token ---
             function getToken() {
-                var params = new URLSearchParams(window.location.search);
-                return params.get('t');
+                return new URLSearchParams(window.location.search).get('t');
             }
 
             // --- Init ---
             async function init() {
                 var token = getToken();
-                if (!token) {
-                    showState('error');
-                    return;
-                }
+                if (!token) { showState('error'); return; }
 
                 try {
                     var { data, error } = await sb
@@ -489,22 +1089,18 @@
                         .eq('is_active', true)
                         .single();
 
-                    if (error || !data) {
-                        showState('error');
-                        return;
-                    }
+                    if (error || !data) { showState('error'); return; }
 
-                    // Check expiration
                     if (data.expires_at) {
-                        var expiresAt = new Date(data.expires_at);
-                        if (expiresAt < new Date()) {
+                        if (new Date(data.expires_at) < new Date()) {
                             showState('expired');
                             return;
                         }
                     }
 
                     formConfig = data;
-                    renderForm(data);
+                    document.getElementById('form-title').textContent = data.title || 'Questionnaire';
+                    document.title = (data.title || 'Questionnaire') + ' - Regen Agency';
                     showState('form');
 
                 } catch (err) {
@@ -513,183 +1109,241 @@
                 }
             }
 
-            // --- Render form ---
-            function renderForm(config) {
-                var titleEl = document.getElementById('form-title');
-                var descEl = document.getElementById('form-description');
-                var fieldsEl = document.getElementById('form-fields');
+            // --- Service card toggle ---
+            var serviceCards = document.querySelectorAll('.service-card');
+            for (var i = 0; i < serviceCards.length; i++) {
+                (function(card) {
+                    var cb = card.querySelector('input[type="checkbox"]');
+                    var svc = card.getAttribute('data-service');
+                    var section = document.getElementById('section-' + svc);
 
-                titleEl.textContent = config.title || 'Questionnaire';
-                if (config.description) {
-                    descEl.textContent = config.description;
-                } else {
-                    descEl.style.display = 'none';
-                }
-
-                var fields = config.form_fields || [];
-                var html = '';
-
-                for (var i = 0; i < fields.length; i++) {
-                    var f = fields[i];
-                    var reqAttr = f.required ? ' required' : '';
-                    var reqMark = f.required ? '<span class="required">*</span>' : '';
-
-                    html += '<div class="form-group" data-key="' + escHtml(f.key) + '">';
-                    html += '<label for="field-' + escHtml(f.key) + '">' + escHtml(f.label) + reqMark + '</label>';
-
-                    switch (f.type) {
-                        case 'text':
-                        case 'email':
-                        case 'tel':
-                        case 'url':
-                        case 'number':
-                            html += '<input type="' + f.type + '" id="field-' + escHtml(f.key) + '" name="' + escHtml(f.key) + '"' + reqAttr + '>';
-                            break;
-
-                        case 'textarea':
-                            html += '<textarea id="field-' + escHtml(f.key) + '" name="' + escHtml(f.key) + '" rows="4"' + reqAttr + '></textarea>';
-                            break;
-
-                        case 'select':
-                            html += '<select id="field-' + escHtml(f.key) + '" name="' + escHtml(f.key) + '"' + reqAttr + '>';
-                            html += '<option value="">-- S\u00e9lectionnez --</option>';
-                            if (f.options) {
-                                for (var j = 0; j < f.options.length; j++) {
-                                    html += '<option value="' + escHtml(f.options[j]) + '">' + escHtml(f.options[j]) + '</option>';
-                                }
-                            }
-                            html += '</select>';
-                            break;
-
-                        case 'checkbox':
-                            html += '<div class="checkbox-group">';
-                            if (f.options) {
-                                for (var j = 0; j < f.options.length; j++) {
-                                    var cbId = 'field-' + f.key + '-' + j;
-                                    html += '<label class="checkbox-item">';
-                                    html += '<input type="checkbox" id="' + escHtml(cbId) + '" name="' + escHtml(f.key) + '" value="' + escHtml(f.options[j]) + '">';
-                                    html += '<span>' + escHtml(f.options[j]) + '</span>';
-                                    html += '</label>';
-                                }
-                            }
-                            html += '</div>';
-                            break;
-
-                        case 'file':
-                            html += '<div class="file-input-wrapper">';
-                            html += '<input type="file" id="field-' + escHtml(f.key) + '" name="' + escHtml(f.key) + '"' + reqAttr + '>';
-                            html += '</div>';
-                            break;
-
-                        default:
-                            html += '<input type="text" id="field-' + escHtml(f.key) + '" name="' + escHtml(f.key) + '"' + reqAttr + '>';
-                    }
-
-                    html += '</div>';
-                }
-
-                fieldsEl.innerHTML = html;
+                    cb.addEventListener('change', function() {
+                        if (cb.checked) {
+                            card.classList.add('checked');
+                            if (section) section.classList.add('visible');
+                        } else {
+                            card.classList.remove('checked');
+                            if (section) section.classList.remove('visible');
+                        }
+                        updateProgress();
+                    });
+                })(serviceCards[i]);
             }
 
-            function escHtml(str) {
-                if (!str) return '';
-                var div = document.createElement('div');
-                div.textContent = String(str);
-                return div.innerHTML;
+            // --- Checkbox group styling ---
+            var cbGroups = document.querySelectorAll('.checkbox-group');
+            for (var g = 0; g < cbGroups.length; g++) {
+                var labels = cbGroups[g].querySelectorAll('label');
+                for (var l = 0; l < labels.length; l++) {
+                    (function(lbl) {
+                        var inp = lbl.querySelector('input[type="checkbox"]');
+                        if (inp) {
+                            inp.addEventListener('change', function() {
+                                if (inp.checked) {
+                                    lbl.classList.add('cb-checked');
+                                } else {
+                                    lbl.classList.remove('cb-checked');
+                                }
+                            });
+                        }
+                    })(labels[l]);
+                }
             }
+
+            // --- Progress bar ---
+            function updateProgress() {
+                var basicFilled = !!(
+                    document.getElementById('f-company').value.trim() &&
+                    document.getElementById('f-name').value.trim() &&
+                    document.getElementById('f-email').value.trim()
+                );
+
+                var anyServiceChecked = document.querySelectorAll('input[name="services"]:checked').length > 0;
+
+                var step = 1;
+                if (basicFilled) step = 2;
+                if (basicFilled && anyServiceChecked) step = 3;
+
+                document.getElementById('prog-1').classList.toggle('done', step >= 1);
+                document.getElementById('prog-2').classList.toggle('done', step >= 2);
+                document.getElementById('prog-3').classList.toggle('done', step >= 3);
+                document.getElementById('prog-label').textContent = step + ' / 3';
+            }
+
+            // Listen to basic fields for progress
+            ['f-company', 'f-name', 'f-email'].forEach(function(id) {
+                document.getElementById(id).addEventListener('input', updateProgress);
+            });
 
             // --- Validation ---
-            function validateForm() {
-                var fields = formConfig.form_fields || [];
-                var valid = true;
-
-                // Clear previous errors
+            function clearErrors() {
                 var prevErrors = document.querySelectorAll('.field-error');
                 for (var i = 0; i < prevErrors.length; i++) prevErrors[i].remove();
                 var prevGroups = document.querySelectorAll('.form-group.has-error');
                 for (var i = 0; i < prevGroups.length; i++) prevGroups[i].classList.remove('has-error');
+            }
 
-                for (var i = 0; i < fields.length; i++) {
-                    var f = fields[i];
-                    if (!f.required) continue;
+            function addError(el, msg) {
+                var group = el.closest('.form-group');
+                if (!group) return;
+                group.classList.add('has-error');
+                var errEl = document.createElement('div');
+                errEl.className = 'field-error';
+                errEl.textContent = msg;
+                group.appendChild(errEl);
+            }
 
-                    var group = document.querySelector('.form-group[data-key="' + f.key + '"]');
-                    var value = getFieldValue(f);
+            function validateForm() {
+                clearErrors();
+                var valid = true;
 
-                    var isEmpty = false;
-                    if (f.type === 'checkbox') {
-                        isEmpty = !value || value.length === 0;
-                    } else if (f.type === 'file') {
-                        var fileInput = document.getElementById('field-' + f.key);
-                        isEmpty = !fileInput || !fileInput.files || fileInput.files.length === 0;
-                    } else {
-                        isEmpty = !value || (typeof value === 'string' && value.trim() === '');
-                    }
+                // Required text fields
+                var requiredFields = [
+                    { id: 'f-company', msg: 'Ce champ est requis' },
+                    { id: 'f-name', msg: 'Ce champ est requis' },
+                    { id: 'f-email', msg: 'Ce champ est requis' }
+                ];
 
-                    if (isEmpty) {
+                for (var i = 0; i < requiredFields.length; i++) {
+                    var el = document.getElementById(requiredFields[i].id);
+                    if (!el.value.trim()) {
+                        addError(el, requiredFields[i].msg);
                         valid = false;
-                        if (group) {
-                            group.classList.add('has-error');
-                            var errEl = document.createElement('div');
-                            errEl.className = 'field-error';
-                            errEl.textContent = 'Ce champ est requis';
-                            group.appendChild(errEl);
-                        }
                     }
+                }
 
-                    // Email format
-                    if (f.type === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                // Email format
+                var emailEl = document.getElementById('f-email');
+                if (emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
+                    addError(emailEl, 'Adresse email invalide');
+                    valid = false;
+                }
+
+                // If "autre" is checked, description is required
+                var autreCb = document.querySelector('input[name="services"][value="autre"]');
+                if (autreCb && autreCb.checked) {
+                    var autreDesc = document.getElementById('f-autre-desc');
+                    if (!autreDesc.value.trim()) {
+                        addError(autreDesc, 'Ce champ est requis');
                         valid = false;
-                        if (group) {
-                            group.classList.add('has-error');
-                            var errEl = document.createElement('div');
-                            errEl.className = 'field-error';
-                            errEl.textContent = 'Adresse email invalide';
-                            group.appendChild(errEl);
-                        }
                     }
                 }
 
                 return valid;
             }
 
-            // --- Get field values ---
-            function getFieldValue(field) {
-                if (field.type === 'checkbox') {
-                    var checked = document.querySelectorAll('input[name="' + field.key + '"]:checked');
-                    var values = [];
-                    for (var i = 0; i < checked.length; i++) {
-                        values.push(checked[i].value);
-                    }
-                    return values;
-                }
-
-                var el = document.getElementById('field-' + field.key);
-                if (!el) return null;
-                return el.value;
+            // --- Collect data ---
+            function val(id) {
+                var el = document.getElementById(id);
+                return el ? el.value.trim() : '';
             }
 
-            // --- File upload ---
-            async function uploadFile(field) {
-                var fileInput = document.getElementById('field-' + field.key);
-                if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
+            function getCheckedValues(containerId) {
+                var container = document.getElementById(containerId);
+                if (!container) return [];
+                var checked = container.querySelectorAll('input[type="checkbox"]:checked');
+                var values = [];
+                for (var i = 0; i < checked.length; i++) values.push(checked[i].value);
+                return values;
+            }
 
-                var file = fileInput.files[0];
-                var token = getToken();
-                var timestamp = Date.now();
-                var safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-                var filePath = 'public-forms/' + token + '/' + timestamp + '_' + safeName;
+            function collectData() {
+                var data = {};
 
-                var { data, error } = await sb.storage
-                    .from('prospect-documents')
-                    .upload(filePath, file);
+                // Basic
+                data.basic = {
+                    company_name: val('f-company'),
+                    website: val('f-website'),
+                    contact_name: val('f-name'),
+                    email: val('f-email'),
+                    phone: val('f-phone'),
+                    position: val('f-position')
+                };
 
-                if (error) {
-                    console.error('Upload error:', error);
-                    throw new Error('Erreur lors de l\'envoi du fichier: ' + file.name);
+                // Services selected
+                var checkedSvcs = document.querySelectorAll('input[name="services"]:checked');
+                var services = [];
+                for (var i = 0; i < checkedSvcs.length; i++) services.push(checkedSvcs[i].value);
+                data.services_selected = services;
+
+                // Conditional data per service
+                if (services.indexOf('google_ads') !== -1) {
+                    data.google_ads = {
+                        has_account: val('f-ga-account'),
+                        budget: val('f-ga-budget'),
+                        goal: val('f-ga-goal'),
+                        url: val('f-ga-url')
+                    };
                 }
 
-                return filePath;
+                if (services.indexOf('meta_ads') !== -1) {
+                    data.meta_ads = {
+                        has_business_manager: val('f-ma-bm'),
+                        budget: val('f-ma-budget'),
+                        goal: val('f-ma-goal'),
+                        facebook_url: val('f-ma-fb'),
+                        instagram_url: val('f-ma-ig')
+                    };
+                }
+
+                if (services.indexOf('seo') !== -1) {
+                    data.seo = {
+                        existing_seo: val('f-seo-existing'),
+                        target_zone: val('f-seo-zone'),
+                        has_blog: val('f-seo-blog'),
+                        keywords: val('f-seo-keywords')
+                    };
+                }
+
+                if (services.indexOf('creation_site') !== -1) {
+                    data.creation_site = {
+                        has_site: val('f-cs-has-site'),
+                        current_url: val('f-cs-url'),
+                        site_type: val('f-cs-type'),
+                        features: getCheckedValues('f-cs-features'),
+                        page_count: val('f-cs-pages'),
+                        has_branding: val('f-cs-branding')
+                    };
+                }
+
+                if (services.indexOf('tiktok_ads') !== -1) {
+                    data.tiktok_ads = {
+                        has_account: val('f-tt-account'),
+                        budget: val('f-tt-budget'),
+                        has_video: val('f-tt-video')
+                    };
+                }
+
+                if (services.indexOf('formation') !== -1) {
+                    data.formation = {
+                        subjects: getCheckedValues('f-fo-subjects'),
+                        people_count: val('f-fo-people'),
+                        format: val('f-fo-format')
+                    };
+                }
+
+                if (services.indexOf('consulting') !== -1) {
+                    data.consulting = {
+                        type: val('f-co-type'),
+                        domains: getCheckedValues('f-co-domains')
+                    };
+                }
+
+                if (services.indexOf('autre') !== -1) {
+                    data.autre = {
+                        description: val('f-autre-desc')
+                    };
+                }
+
+                // General
+                data.general = {
+                    global_budget: val('f-gen-budget'),
+                    timeline: val('f-gen-timeline'),
+                    source: val('f-gen-source'),
+                    notes: val('f-gen-notes')
+                };
+
+                return data;
             }
 
             // --- Submit ---
@@ -697,7 +1351,6 @@
                 e.preventDefault();
 
                 if (!validateForm()) {
-                    // Scroll to first error
                     var firstErr = document.querySelector('.form-group.has-error');
                     if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     return;
@@ -708,24 +1361,7 @@
                 btn.innerHTML = '<span class="btn-spinner"></span>Envoi en cours...';
 
                 try {
-                    var fields = formConfig.form_fields || [];
-                    var responseData = {};
-
-                    for (var i = 0; i < fields.length; i++) {
-                        var f = fields[i];
-
-                        if (f.type === 'file') {
-                            var filePath = await uploadFile(f);
-                            if (filePath) {
-                                responseData[f.key] = filePath;
-                            }
-                        } else {
-                            var val = getFieldValue(f);
-                            if (val !== null && val !== '') {
-                                responseData[f.key] = val;
-                            }
-                        }
-                    }
+                    var responseData = collectData();
 
                     var { error } = await sb
                         .from('prospect_form_responses')
@@ -741,16 +1377,16 @@
                     }
 
                     showState('success');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
 
                 } catch (err) {
                     console.error('Submit error:', err);
                     btn.disabled = false;
-                    btn.textContent = 'Envoyer';
+                    btn.textContent = 'Envoyer mes r\u00e9ponses';
                     alert('Une erreur est survenue. Veuillez r\u00e9essayer.');
                 }
             }
 
-            // --- Bind submit ---
             document.getElementById('prospect-form').addEventListener('submit', handleSubmit);
 
             // --- Start ---
