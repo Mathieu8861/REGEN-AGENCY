@@ -1977,13 +1977,137 @@
         if (responses.length) {
             html += '<h3 style="font-size:0.9rem; font-weight:700; margin-bottom:10px;">' + responses.length + ' reponse(s)</h3>';
             responses.forEach(function(r, i) {
-                html += '<div class="form-response-card" onclick="this.classList.toggle(\'expanded\')">' +
-                    '<div class="form-response-card__header">' +
-                        '<span>Reponse #' + (i + 1) + '</span>' +
-                        '<span style="font-size:0.75rem;color:var(--gray);font-weight:500">' + formatDate(r.created_at) + '</span>' +
-                    '</div>' +
-                    '<div class="form-response-card__body"><pre style="white-space:pre-wrap;font-family:inherit;font-size:0.8rem;">' + escapeHtml(JSON.stringify(r.response_data, null, 2)) + '</pre></div>' +
-                '</div>';
+                var d = r.response_data || {};
+                var dateStr = r.submitted_at ? new Date(r.submitted_at).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '-';
+
+                html += '<div class="form-response-card" style="margin-bottom:12px;">';
+                html += '<div class="form-response-card__header" onclick="this.parentElement.classList.toggle(\'expanded\')">';
+                html += '  <span>Reponse #' + (i + 1) + ' &mdash; ' + dateStr + '</span>';
+                html += '  <div style="display:flex; gap:6px;">';
+                html += '    <button class="btn btn--primary btn--sm" onclick="event.stopPropagation(); injectFormResponse(\'' + r.id + '\')">Injecter dans la fiche</button>';
+                html += '    <button class="btn btn--danger btn--sm" onclick="event.stopPropagation(); deleteFormResponse(\'' + r.id + '\')">Supprimer</button>';
+                html += '  </div>';
+                html += '</div>';
+
+                // Pretty display
+                html += '<div class="form-response-card__body">';
+
+                // Basic info
+                if (d.basic) {
+                    html += '<div style="margin-bottom:14px;">';
+                    html += '<div style="font-weight:700; font-size:0.82rem; color:var(--green); margin-bottom:6px;">Informations</div>';
+                    var basicFields = [
+                        ['Entreprise', d.basic.company_name],
+                        ['Contact', d.basic.contact_name],
+                        ['Email', d.basic.email],
+                        ['Telephone', d.basic.phone],
+                        ['Site web', d.basic.website],
+                        ['Poste', d.basic.position]
+                    ];
+                    basicFields.forEach(function(f) {
+                        if (f[1]) html += '<div style="display:flex; gap:8px; padding:3px 0; font-size:0.8rem;"><span style="color:var(--gray); min-width:90px; font-weight:600;">' + f[0] + '</span><span>' + escapeHtml(f[1]) + '</span></div>';
+                    });
+                    html += '</div>';
+                }
+
+                // Services
+                if (d.services_selected && d.services_selected.length) {
+                    html += '<div style="margin-bottom:14px;">';
+                    html += '<div style="font-weight:700; font-size:0.82rem; color:var(--green); margin-bottom:6px;">Services</div>';
+                    html += '<div style="display:flex; gap:6px; flex-wrap:wrap;">';
+                    d.services_selected.forEach(function(s) {
+                        var labels = { gestion_pub: 'Gestion publicitaire', seo: 'SEO', creation_site: 'Creation site', google_ads: 'Google Ads', meta_ads: 'Meta Ads', tiktok_ads: 'TikTok Ads' };
+                        html += '<span style="background:var(--green-light); color:var(--green); padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:700;">' + (labels[s] || s) + '</span>';
+                    });
+                    html += '</div></div>';
+                }
+
+                // Gestion pub details
+                if (d.gestion_pub) {
+                    html += '<div style="margin-bottom:14px;">';
+                    html += '<div style="font-weight:700; font-size:0.82rem; color:var(--green); margin-bottom:6px;">Gestion publicitaire</div>';
+                    var pubFields = [
+                        ['Plateformes', d.gestion_pub.platforms ? d.gestion_pub.platforms.join(', ') : ''],
+                        ['Pub en cours', d.gestion_pub.has_existing_ads],
+                        ['Comptes crees', d.gestion_pub.has_accounts],
+                        ['Budget Ads', d.gestion_pub.budget],
+                        ['Objectif', d.gestion_pub.goal],
+                        ['URL', d.gestion_pub.url]
+                    ];
+                    pubFields.forEach(function(f) {
+                        if (f[1]) html += '<div style="display:flex; gap:8px; padding:3px 0; font-size:0.8rem;"><span style="color:var(--gray); min-width:110px; font-weight:600;">' + f[0] + '</span><span>' + escapeHtml(f[1]) + '</span></div>';
+                    });
+                    html += '</div>';
+                }
+
+                // Google Ads (ancien format)
+                if (d.google_ads) {
+                    html += '<div style="margin-bottom:14px;">';
+                    html += '<div style="font-weight:700; font-size:0.82rem; color:var(--green); margin-bottom:6px;">Google Ads</div>';
+                    var gaFields = [
+                        ['Compte existant', d.google_ads.has_account],
+                        ['Budget', d.google_ads.budget],
+                        ['Objectif', d.google_ads.goal],
+                        ['URL', d.google_ads.url]
+                    ];
+                    gaFields.forEach(function(f) {
+                        if (f[1]) html += '<div style="display:flex; gap:8px; padding:3px 0; font-size:0.8rem;"><span style="color:var(--gray); min-width:110px; font-weight:600;">' + f[0] + '</span><span>' + escapeHtml(f[1]) + '</span></div>';
+                    });
+                    html += '</div>';
+                }
+
+                // SEO
+                if (d.seo) {
+                    html += '<div style="margin-bottom:14px;">';
+                    html += '<div style="font-weight:700; font-size:0.82rem; color:var(--green); margin-bottom:6px;">SEO</div>';
+                    var seoFields = [
+                        ['SEO existant', d.seo.existing_seo],
+                        ['Zone cible', d.seo.target_zone],
+                        ['Blog', d.seo.has_blog],
+                        ['Mots-cles', d.seo.keywords]
+                    ];
+                    seoFields.forEach(function(f) {
+                        if (f[1]) html += '<div style="display:flex; gap:8px; padding:3px 0; font-size:0.8rem;"><span style="color:var(--gray); min-width:110px; font-weight:600;">' + f[0] + '</span><span>' + escapeHtml(f[1]) + '</span></div>';
+                    });
+                    html += '</div>';
+                }
+
+                // Creation site
+                if (d.creation_site) {
+                    html += '<div style="margin-bottom:14px;">';
+                    html += '<div style="font-weight:700; font-size:0.82rem; color:var(--green); margin-bottom:6px;">Creation site</div>';
+                    var csFields = [
+                        ['Site actuel', d.creation_site.has_site],
+                        ['URL actuel', d.creation_site.current_url],
+                        ['Type', d.creation_site.site_type],
+                        ['Fonctionnalites', d.creation_site.features ? d.creation_site.features.join(', ') : ''],
+                        ['Nb pages', d.creation_site.page_count],
+                        ['Charte graphique', d.creation_site.has_branding]
+                    ];
+                    csFields.forEach(function(f) {
+                        if (f[1]) html += '<div style="display:flex; gap:8px; padding:3px 0; font-size:0.8rem;"><span style="color:var(--gray); min-width:110px; font-weight:600;">' + f[0] + '</span><span>' + escapeHtml(f[1]) + '</span></div>';
+                    });
+                    html += '</div>';
+                }
+
+                // General
+                if (d.general) {
+                    html += '<div style="margin-bottom:8px;">';
+                    html += '<div style="font-weight:700; font-size:0.82rem; color:var(--green); margin-bottom:6px;">General</div>';
+                    var genFields = [
+                        ['Budget global', d.general.global_budget],
+                        ['Delai', d.general.timeline],
+                        ['Source', d.general.source],
+                        ['Besoin', d.general.notes || d.general.needs_description]
+                    ];
+                    genFields.forEach(function(f) {
+                        if (f[1]) html += '<div style="display:flex; gap:8px; padding:3px 0; font-size:0.8rem;"><span style="color:var(--gray); min-width:110px; font-weight:600;">' + f[0] + '</span><span>' + escapeHtml(f[1]) + '</span></div>';
+                    });
+                    html += '</div>';
+                }
+
+                html += '</div>'; // form-response-card__body
+                html += '</div>'; // form-response-card
             });
         } else {
             html += '<div style="text-align:center; padding:16px; color:var(--gray); font-size:0.85rem;">Aucune reponse pour le moment</div>';
@@ -2024,6 +2148,137 @@
         if (currentProspectId) loadFormSection(currentProspectId);
     }
     window.deleteForm = deleteForm;
+
+    // ── Delete a single form response ──
+    async function deleteFormResponse(responseId) {
+        if (!confirm('Supprimer cette reponse ?')) return;
+        await sb.from('prospect_form_responses').delete().eq('id', responseId);
+        toast('Reponse supprimee');
+        if (currentProspectId) loadFormSection(currentProspectId);
+    }
+    window.deleteFormResponse = deleteFormResponse;
+
+    // ── Inject form response into prospect fields (fill empty fields only) ──
+    async function injectFormResponse(responseId) {
+        var res = await sb.from('prospect_form_responses').select('response_data').eq('id', responseId).single();
+        if (res.error || !res.data) { toast('Reponse introuvable', 'error'); return; }
+
+        var d = res.data.response_data;
+        if (!d) { toast('Pas de donnees a injecter', 'error'); return; }
+
+        // Helper: set field only if currently empty
+        function fillIfEmpty(fieldId, value) {
+            if (!value) return false;
+            var el = document.getElementById(fieldId);
+            if (!el) return false;
+            if (el.value && el.value.trim()) return false; // already filled
+            el.value = value;
+            return true;
+        }
+
+        var injected = 0;
+
+        // Basic info
+        if (d.basic) {
+            if (fillIfEmpty('fCompanyName', d.basic.company_name)) injected++;
+            if (fillIfEmpty('fCompanyWebsite', d.basic.website)) injected++;
+            if (fillIfEmpty('fContactFirst', d.basic.contact_name ? d.basic.contact_name.split(' ')[0] : '')) injected++;
+            if (fillIfEmpty('fContactLast', d.basic.contact_name ? d.basic.contact_name.split(' ').slice(1).join(' ') : '')) injected++;
+            if (fillIfEmpty('fContactEmail', d.basic.email)) injected++;
+            if (fillIfEmpty('fContactPhone', d.basic.phone)) injected++;
+            if (fillIfEmpty('fContactPosition', d.basic.position)) injected++;
+        }
+
+        // General
+        if (d.general) {
+            if (fillIfEmpty('fNeedsSummary', d.general.notes || d.general.needs_description)) injected++;
+            // Budget: try to extract number from budget string
+            var budgetStr = d.general.global_budget || '';
+            if (budgetStr && !document.getElementById('fBudget').value) {
+                var match = budgetStr.match(/(\d+)/);
+                if (match) { document.getElementById('fBudget').value = match[1]; injected++; }
+            }
+        }
+
+        // Services: check the relevant checkboxes
+        if (d.services_selected && d.services_selected.length) {
+            var svcMap = {
+                'gestion_pub': ['google_ads', 'meta_ads', 'tiktok_ads'],
+                'google_ads': ['google_ads'],
+                'meta_ads': ['meta_ads'],
+                'tiktok_ads': ['tiktok_ads'],
+                'seo': ['seo'],
+                'creation_site': ['creation_site']
+            };
+            d.services_selected.forEach(function(s) {
+                var targets = svcMap[s] || [s];
+                targets.forEach(function(t) {
+                    var cb = document.querySelector('#fServices input[value="' + t + '"]');
+                    if (cb && !cb.checked) { cb.checked = true; injected++; }
+                });
+            });
+        }
+
+        // Gestion pub platforms → also check service checkboxes
+        if (d.gestion_pub && d.gestion_pub.platforms) {
+            var platformMap = {
+                'Google Ads': 'google_ads',
+                'Meta Ads (Facebook / Instagram)': 'meta_ads',
+                'TikTok Ads': 'tiktok_ads'
+            };
+            d.gestion_pub.platforms.forEach(function(p) {
+                var val = platformMap[p];
+                if (val) {
+                    var cb = document.querySelector('#fServices input[value="' + val + '"]');
+                    if (cb && !cb.checked) { cb.checked = true; injected++; }
+                }
+            });
+            // Budget pub → needs_summary append
+            if (d.gestion_pub.budget) {
+                var ns = document.getElementById('fNeedsSummary');
+                if (ns && ns.value && ns.value.indexOf('Budget Ads') === -1) {
+                    ns.value += '\nBudget Ads : ' + d.gestion_pub.budget;
+                    injected++;
+                } else if (ns && !ns.value) {
+                    ns.value = 'Budget Ads : ' + d.gestion_pub.budget;
+                    injected++;
+                }
+            }
+            if (d.gestion_pub.goal) {
+                var ns2 = document.getElementById('fNeedsSummary');
+                if (ns2 && ns2.value.indexOf('Objectif') === -1) {
+                    ns2.value += '\nObjectif : ' + d.gestion_pub.goal;
+                    injected++;
+                }
+            }
+        }
+
+        // Google Ads (ancien format)
+        if (d.google_ads) {
+            var cb = document.querySelector('#fServices input[value="google_ads"]');
+            if (cb && !cb.checked) { cb.checked = true; injected++; }
+            if (d.google_ads.budget || d.google_ads.goal) {
+                var ns3 = document.getElementById('fNeedsSummary');
+                if (ns3) {
+                    var append = '';
+                    if (d.google_ads.budget && ns3.value.indexOf('Budget') === -1) append += '\nBudget Google Ads : ' + d.google_ads.budget;
+                    if (d.google_ads.goal && ns3.value.indexOf('Objectif') === -1) append += '\nObjectif : ' + d.google_ads.goal;
+                    if (append) { ns3.value += append; injected++; }
+                }
+            }
+            if (fillIfEmpty('fCompanyWebsite', d.google_ads.url)) injected++;
+        }
+
+        if (injected > 0) {
+            // Auto-save
+            await saveProspectInfo();
+            toast(injected + ' champ(s) injecte(s) et sauvegarde(s) !', 'success');
+            switchPanelTab('fiche');
+        } else {
+            toast('Tous les champs sont deja remplis, rien a injecter.', 'info');
+        }
+    }
+    window.injectFormResponse = injectFormResponse;
 
     // ── TRANSCRIPT ──
     // ── EXCHANGES (multi-échanges) ──
