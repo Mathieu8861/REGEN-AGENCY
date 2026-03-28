@@ -1087,15 +1087,35 @@
                 <h3 class="panel-tab-title">Commercial</h3>
                 <p class="panel-tab-subtitle">Synthese, proposition et email</p>
 
-                <!-- Synthese -->
+                <!-- ═══ Synthese ═══ -->
                 <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Synthese IA</h4>
+                <p style="font-size:0.78rem; color:var(--gray); margin-bottom:10px;">Genere un resume global du prospect a partir de toutes les donnees collectees.</p>
                 <button class="btn btn--accent btn--sm" onclick="generateSynthesis()" id="btnGenerateSynthesis">&#129302; Generer une synthese</button>
                 <div id="synthesisResult" style="margin-top:12px;"></div>
 
-                <!-- Proposition -->
+                <!-- ═══ Proposition commerciale ═══ -->
                 <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
-                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Proposition commerciale</h4>
-                <button class="btn btn--accent btn--sm" onclick="generateProposal()" id="btnGenerateProposal">&#128196; Generer la proposition</button>
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:8px;">Proposition commerciale</h4>
+                <p style="font-size:0.78rem; color:var(--gray); margin-bottom:14px;">Selectionnez les services a inclure dans la proposition.</p>
+
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label">Services a proposer *</label>
+                    <div class="checkbox-group" id="propServices">
+                        <label class="checkbox-label"><input type="checkbox" value="google_ads"> Google Ads</label>
+                        <label class="checkbox-label"><input type="checkbox" value="meta_ads"> Meta Ads</label>
+                        <label class="checkbox-label"><input type="checkbox" value="seo"> SEO</label>
+                        <label class="checkbox-label"><input type="checkbox" value="creation_site"> Creation site web</label>
+                        <label class="checkbox-label"><input type="checkbox" value="tiktok_ads"> TikTok Ads</label>
+                        <label class="checkbox-label"><input type="checkbox" value="linkedin_ads"> LinkedIn Ads</label>
+                        <label class="checkbox-label"><input type="checkbox" value="hebergement"> Hebergement</label>
+                        <label class="checkbox-label"><input type="checkbox" value="identite_visuelle"> Identite visuelle</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label">Contexte / precisions (optionnel)</label>
+                    <input class="form-input" id="propContext" placeholder="Ex: Le client veut demarrer avec Google Ads uniquement, budget 500EUR/mois...">
+                </div>
+                <button class="btn btn--accent btn--sm" onclick="generateProposalWithServices()" id="btnGenerateProposal">&#128196; Generer la proposition</button>
 
                 <div id="proposalResult" style="display:none; margin-top:16px;">
                     <div style="display:flex; gap:8px; justify-content:flex-end; margin-bottom:12px;">
@@ -1113,10 +1133,28 @@
                 </div>
                 <div id="proposalLoading" style="display:none;"><div class="loading-center"><div class="spinner"></div></div></div>
 
-                <!-- Email -->
+                <!-- ═══ Email ═══ -->
                 <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
-                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Email d'accompagnement</h4>
-                <button class="btn btn--accent btn--sm" onclick="generateEmailInPanel()" style="margin-bottom:12px;">&#9993; Generer l'email</button>
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:8px;">Email</h4>
+                <p style="font-size:0.78rem; color:var(--gray); margin-bottom:14px;">Choisissez le contexte de l'email a generer.</p>
+
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label class="form-label">Type d'email</label>
+                    <select class="form-select" id="emailType">
+                        <option value="premier_contact">Premier contact / prise de contact</option>
+                        <option value="envoi_proposition">Envoi de proposition commerciale</option>
+                        <option value="relance">Relance (sans reponse)</option>
+                        <option value="suivi_appel">Suivi apres appel / visio</option>
+                        <option value="remerciement">Remerciement / suivi positif</option>
+                        <option value="custom">Personnalise (je decris)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label">Contexte / consigne (optionnel)</label>
+                    <input class="form-input" id="emailContext" placeholder="Ex: On a eu un appel hier, il hesite entre nous et une autre agence...">
+                </div>
+                <button class="btn btn--accent btn--sm" onclick="generateEmailWithContext()" style="margin-bottom:12px;">&#9993; Generer l'email</button>
+
                 <div id="propositionContent" style="display:none;">
                     <div class="form-group" style="margin-bottom:12px;">
                         <label class="form-label">Objet</label>
@@ -2618,19 +2656,37 @@
     window.generateSynthesis = generateSynthesis;
 
     // ── PROPOSITION (inline email) ──
-    async function generateEmailInPanel() {
+    // ── Generate email with context ──
+    async function generateEmailWithContext() {
         if (!currentProspect) return;
+
+        var emailType = document.getElementById('emailType').value;
+        var emailContext = document.getElementById('emailContext').value.trim();
+
         document.getElementById('propositionContent').style.display = 'none';
         document.getElementById('propositionLoading').style.display = 'block';
 
         var linksRes = await sb.from('prospect_links').select('*').eq('prospect_id', currentProspectId);
         var activitiesRes = await sb.from('prospect_activities').select('*').eq('prospect_id', currentProspectId).order('created_at', { ascending: false }).limit(10);
+        var servicesRes = await sb.from('prospect_services').select('*').eq('prospect_id', currentProspectId);
+
+        var emailTypeLabels = {
+            'premier_contact': 'Premier contact / prise de contact',
+            'envoi_proposition': 'Envoi de la proposition commerciale en PJ',
+            'relance': 'Relance car pas de reponse',
+            'suivi_appel': 'Suivi apres un appel / une visio',
+            'remerciement': 'Remerciement / suivi positif',
+            'custom': 'Email personnalise'
+        };
 
         var result = await callAI('generate_email', {
             prospect_id: currentProspectId,
             prospect: currentProspect,
             links: linksRes.data || [],
-            activities: activitiesRes.data || []
+            activities: activitiesRes.data || [],
+            services: servicesRes.data || [],
+            email_type: emailTypeLabels[emailType] || emailType,
+            email_context: emailContext || null
         });
 
         document.getElementById('propositionLoading').style.display = 'none';
@@ -2644,8 +2700,11 @@
             document.getElementById('propositionBody').value = 'Bonjour,\n\n[Erreur de generation - veuillez rediger manuellement]\n\nCordialement,\nRegen Agency';
         }
         updatePropositionMailto();
-        updateCompleteness();
     }
+    window.generateEmailWithContext = generateEmailWithContext;
+
+    // Legacy fallback
+    async function generateEmailInPanel() { generateEmailWithContext(); }
     window.generateEmailInPanel = generateEmailInPanel;
 
     function updatePropositionMailto() {
@@ -2677,8 +2736,21 @@
     var currentProposalData = null; // structured JSON from AI
     var currentProposalHTML = ''; // for backward compat (editor)
 
-    async function generateProposal() {
+    // ── Generate proposal with selected services ──
+    async function generateProposalWithServices() {
         if (!currentProspect) return;
+
+        // Collect selected services
+        var selectedServices = [];
+        document.querySelectorAll('#propServices input:checked').forEach(function(cb) {
+            selectedServices.push(cb.value);
+        });
+        if (selectedServices.length === 0) {
+            toast('Selectionnez au moins un service', 'error');
+            return;
+        }
+        var propContext = document.getElementById('propContext').value.trim();
+
         document.getElementById('proposalResult').style.display = 'none';
         document.getElementById('proposalEditor').style.display = 'none';
         document.getElementById('proposalLoading').style.display = 'block';
@@ -2686,7 +2758,11 @@
         document.getElementById('btnGenerateProposal').textContent = 'Generation en cours...';
 
         try {
-            var result = await callAI('generate_proposal', { prospect_id: currentProspectId });
+            var result = await callAI('generate_proposal', {
+                prospect_id: currentProspectId,
+                selected_services: selectedServices,
+                proposal_context: propContext || null
+            });
             if (result && result.proposal_json) {
                 var parsed = typeof result.proposal_json === 'string' ? JSON.parse(result.proposal_json) : result.proposal_json;
                 currentProposalData = parsed;
@@ -2715,6 +2791,9 @@
         document.getElementById('btnGenerateProposal').disabled = false;
         document.getElementById('btnGenerateProposal').innerHTML = '&#128196; Regenerer la proposition';
     }
+    window.generateProposalWithServices = generateProposalWithServices;
+    // Legacy
+    async function generateProposal() { generateProposalWithServices(); }
     window.generateProposal = generateProposal;
 
     function editProposal() {
