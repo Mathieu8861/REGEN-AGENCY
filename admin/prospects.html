@@ -1971,7 +1971,7 @@
         '</div>';
 
         // Load responses
-        var resResp = await sb.from('prospect_form_responses').select('*').eq('form_id', form.id).order('created_at', { ascending: false });
+        var resResp = await sb.from('prospect_form_responses').select('*').eq('form_id', form.id).order('submitted_at', { ascending: false });
         var responses = resResp.data || [];
 
         if (responses.length) {
