@@ -1979,7 +1979,9 @@
         if (file.size > 10 * 1024 * 1024) { toast('Fichier trop lourd (max 10 Mo)', 'error'); return; }
 
         var category = document.getElementById('docCategory').value;
-        var filePath = AGENCY_ID + '/' + currentProspectId + '/' + Date.now() + '_' + file.name;
+        // Sanitize filename: remove accents, replace spaces/special chars
+        var safeName = file.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9._-]/g, '_');
+        var filePath = AGENCY_ID + '/' + currentProspectId + '/' + Date.now() + '_' + safeName;
 
         toast('Upload en cours...', 'info');
         var storageRes = await sb.storage.from('prospect-documents').upload(filePath, file);
@@ -3671,7 +3673,8 @@
 
         var file = fileInput.files[0];
         var category = document.getElementById('svcDocCategory').value;
-        var filePath = prospectId + '/' + Date.now() + '_' + file.name;
+        var safeName = file.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9._-]/g, '_');
+        var filePath = prospectId + '/' + Date.now() + '_' + safeName;
 
         // Upload to Supabase storage
         var uploadRes = await sb.storage.from('prospect-documents').upload(filePath, file);
