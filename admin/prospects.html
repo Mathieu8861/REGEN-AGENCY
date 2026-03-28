@@ -214,23 +214,49 @@
         .panel-stage-select:focus { outline: none; border-color: var(--green); }
         .panel-actions { margin-left: auto; display: flex; gap: 8px; }
 
-        .panel-body { padding: 24px 28px; }
+        /* ─── Panel Layout: Sidebar + Content ─── */
+        .panel-layout {
+            display: flex; height: calc(100% - 80px); /* minus header */
+        }
+        .panel-sidebar {
+            width: 72px; background: #f8faf9; border-right: 1px solid #e5e7eb;
+            display: flex; flex-direction: column; padding: 8px 0;
+            flex-shrink: 0; position: sticky; top: 0;
+        }
+        .panel-sidebar__item {
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            padding: 12px 4px; border: none; background: none; cursor: pointer;
+            font-family: inherit; color: var(--gray); transition: all 0.2s;
+            border-left: 3px solid transparent; position: relative;
+        }
+        .panel-sidebar__item:hover { background: #f0faf4; color: var(--dark); }
+        .panel-sidebar__item.--active {
+            background: white; color: var(--green);
+            border-left-color: var(--green);
+        }
+        .panel-sidebar__icon { font-size: 1.1rem; line-height: 1; }
+        .panel-sidebar__label { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+        .panel-sidebar__badge {
+            position: absolute; top: 6px; right: 8px;
+            background: var(--green); color: white; font-size: 0.55rem;
+            font-weight: 700; min-width: 16px; height: 16px;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; line-height: 1;
+        }
 
-        /* Tabs */
-        .panel-tabs {
-            display: flex; gap: 2px; border-bottom: 2px solid #e5e7eb;
-            margin-bottom: 24px; overflow-x: auto;
+        .panel-content {
+            flex: 1; overflow-y: auto; padding: 24px 28px;
         }
-        .panel-tab {
-            padding: 10px 16px; font-family: inherit; font-size: 0.8rem;
-            font-weight: 600; color: var(--gray); background: none; border: none;
-            cursor: pointer; border-bottom: 3px solid transparent;
-            margin-bottom: -2px; transition: all 0.3s; white-space: nowrap;
+        .panel-tab-content { display: none; }
+        .panel-tab-content--active { display: block; }
+
+        .panel-tab-title {
+            font-size: 1rem; font-weight: 700; color: var(--dark);
+            margin-bottom: 4px;
         }
-        .panel-tab:hover { color: var(--dark); }
-        .panel-tab.active { color: var(--green); border-bottom-color: var(--green); }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
+        .panel-tab-subtitle {
+            font-size: 0.75rem; color: var(--gray); margin-bottom: 20px;
+        }
 
         /* Form grid */
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -575,6 +601,62 @@
             line-height: 1.6;
         }
 
+        /* ─── Suivi Projet (services pipeline + follow-ups) ─── */
+        .svc-pipeline-card {
+            display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+            border-radius: 10px; background: #fafafa; margin-bottom: 8px;
+            transition: background 0.2s;
+        }
+        .svc-pipeline-card:hover { background: #f0faf4; }
+        .svc-pipeline-card__icon { font-size: 1.1rem; }
+        .svc-pipeline-card__info { flex: 1; }
+        .svc-pipeline-card__title { font-weight: 700; font-size: 0.82rem; color: var(--dark); }
+        .svc-pipeline-card__meta { font-size: 0.7rem; color: var(--gray); margin-top: 2px; }
+        .svc-pipeline-card__badge {
+            font-size: 0.68rem; padding: 4px 12px; border-radius: 20px;
+            font-weight: 700; white-space: nowrap;
+        }
+
+        .pipeline-pills { display: flex; gap: 3px; flex-wrap: wrap; margin: 8px 0; }
+        .pipeline-pill {
+            font-size: 0.65rem; padding: 3px 8px; border-radius: 16px;
+            border: 1.5px solid #e5e7eb; background: white; color: var(--gray);
+            cursor: pointer; transition: all 0.2s; font-weight: 600;
+        }
+        .pipeline-pill:hover { border-color: var(--green); color: var(--green); }
+        .pipeline-pill--active { background: var(--green); color: white; border-color: var(--green); }
+        .pipeline-pill--done { background: #d1fae5; color: #059669; border-color: #a7f3d0; }
+
+        .followup-entry {
+            display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f3f4f6;
+            font-size: 0.78rem;
+        }
+        .followup-entry:last-child { border-bottom: none; }
+        .followup-entry__date { color: var(--gray); min-width: 80px; font-weight: 600; font-size: 0.72rem; }
+        .followup-entry__cat {
+            font-size: 0.62rem; padding: 2px 7px; border-radius: 10px; font-weight: 700;
+            text-transform: uppercase; white-space: nowrap;
+        }
+        .followup-entry__cat--commercial { background: #dbeafe; color: #2563eb; }
+        .followup-entry__cat--technique { background: #fce7f3; color: #db2777; }
+        .followup-entry__cat--facturation { background: #fef3c7; color: #d97706; }
+        .followup-entry__cat--livraison { background: #d1fae5; color: #059669; }
+        .followup-entry__cat--demande_client { background: #e0e7ff; color: #4f46e5; }
+        .followup-entry__cat--general { background: #f3f4f6; color: #6b7280; }
+        .followup-entry__text { color: var(--dark); line-height: 1.4; }
+
+        /* Add service modal overlay for prospects */
+        .svc-add-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 2000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .svc-add-modal {
+            background: white; border-radius: var(--radius); padding: 28px;
+            max-width: 550px; width: 92%; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            max-height: 80vh; overflow-y: auto;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             body { padding: 16px 10px; }
@@ -584,7 +666,15 @@
             .stats-bar { flex-wrap: wrap; }
             .stat-item { min-width: 33.33%; }
             .panel-header { padding: 16px; }
-            .panel-body { padding: 16px; }
+            .panel-layout { flex-direction: column; }
+            .panel-sidebar {
+                flex-direction: row; width: 100%; height: auto;
+                border-right: none; border-bottom: 1px solid #e5e7eb;
+                overflow-x: auto; padding: 0;
+            }
+            .panel-sidebar__item { border-left: none; border-bottom: 3px solid transparent; padding: 10px 12px; }
+            .panel-sidebar__item.--active { border-bottom-color: var(--green); border-left-color: transparent; }
+            .panel-content { padding: 16px; }
             .kanban-column { min-width: 240px; }
         }
     </style>
@@ -711,7 +801,6 @@
             <option value="perdu">Perdu</option>
         </select>
         <div class="panel-actions">
-            <button class="btn btn--accent btn--sm" onclick="openEmailModal()">&#9993; Generer email</button>
             <button class="btn btn--danger btn--sm" onclick="deleteCurrentProspect()">Supprimer</button>
         </div>
     </div>
@@ -719,90 +808,41 @@
     <!-- Quick Info -->
     <div class="panel-quick-info" id="panelQuickInfo"></div>
 
-    <!-- Completeness Bar -->
-    <div class="completeness-bar" id="completenessBar">
-        <div class="completeness-bar__progress">
-            <div class="completeness-bar__fill" id="completenessFill" style="width:0%"></div>
-        </div>
-        <div class="completeness-bar__pills" id="completenessPills"></div>
-    </div>
+    <!-- Layout: Sidebar + Content -->
+    <div class="panel-layout">
 
-    <div class="panel-body">
-
-        <!-- Section 1: Collecte (Links + Documents + Screenshots) -->
-        <div class="panel-section open" id="section-collecte">
-            <div class="panel-section__header" onclick="toggleSection('section-collecte')">
-                <span class="panel-section__icon">&#128279;</span>
-                <div class="panel-section__title-group">
-                    <span class="panel-section__title">Collecte</span>
-                    <span class="panel-section__subtitle">Liens web, reseaux sociaux, documents et fichiers du prospect</span>
-                </div>
-                <span class="panel-section__badge panel-section__badge--empty" id="badge-collecte">0 items</span>
-                <span class="panel-section__chevron">&#9654;</span>
-            </div>
-            <div class="panel-section__content">
-                <!-- Links area -->
-                <h4 style="font-size:0.82rem; font-weight:700; margin-bottom:10px; color:var(--gray);">Liens</h4>
-                <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
-                    <select class="form-select" id="linkType" style="width:auto; min-width:160px;">
-                        <option value="website">Site web</option>
-                        <option value="linkedin_company">LinkedIn (entreprise)</option>
-                        <option value="linkedin_contact">LinkedIn (contact)</option>
-                        <option value="facebook">Facebook</option>
-                        <option value="instagram">Instagram</option>
-                        <option value="tiktok">TikTok</option>
-                        <option value="pappers">Pappers</option>
-                        <option value="societe_com">Societe.com</option>
-                        <option value="google_maps">Google Maps</option>
-                        <option value="autre">Autre</option>
-                    </select>
-                    <input class="form-input" id="linkUrl" placeholder="https://..." style="flex:1; min-width:200px;">
-                    <button class="btn btn--primary btn--sm" onclick="addLink()">Ajouter</button>
-                </div>
-                <div id="linksList"></div>
-
-                <!-- AI Analysis button for links -->
-                <div style="margin-top:12px; margin-bottom:4px;">
-                    <button class="btn btn--accent btn--sm" onclick="analyzeLinks()">&#129302; Analyser les liens avec l'IA</button>
-                </div>
-                <div id="linksAiResult"></div>
-
-                <!-- Separator -->
-                <div style="border-top:1px solid #e5e7eb; margin:20px 0; position:relative;">
-                    <span style="position:absolute;top:-10px;left:16px;background:white;padding:0 10px;font-size:0.78rem;font-weight:700;color:#888;">Documents</span>
-                </div>
-
-                <!-- Upload row (compact) -->
-                <div style="display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap:wrap;">
-                    <select class="form-select" id="docCategory" style="width:auto; min-width:130px;">
-                        <option value="brief">Brief</option>
-                        <option value="charte_graphique">Charte graphique</option>
-                        <option value="devis">Devis</option>
-                        <option value="proposition">Proposition</option>
-                        <option value="contrat">Contrat</option>
-                        <option value="analyse">Analyse</option>
-                        <option value="rapport">Rapport</option>
-                        <option value="autre">Autre</option>
-                    </select>
-                    <button class="btn btn--primary btn--sm" onclick="document.getElementById('docFileInput').click()" style="white-space:nowrap;">&#128206; Ajouter un document</button>
-                    <input type="file" id="docFileInput" style="display:none" onchange="handleDocUpload(event)">
-                </div>
-                <div id="documentsList"></div>
-            </div>
+        <!-- Sidebar Navigation -->
+        <div class="panel-sidebar">
+            <button class="panel-sidebar__item --active" data-ptab="fiche" onclick="switchPanelTab('fiche')">
+                <span class="panel-sidebar__icon">&#128100;</span>
+                <span class="panel-sidebar__label">Fiche</span>
+            </button>
+            <button class="panel-sidebar__item" data-ptab="suivi" onclick="switchPanelTab('suivi')">
+                <span class="panel-sidebar__icon">&#128203;</span>
+                <span class="panel-sidebar__label">Suivi</span>
+            </button>
+            <button class="panel-sidebar__item" data-ptab="collecte" onclick="switchPanelTab('collecte')">
+                <span class="panel-sidebar__icon">&#128206;</span>
+                <span class="panel-sidebar__label">Collecte</span>
+            </button>
+            <button class="panel-sidebar__item" data-ptab="echanges" onclick="switchPanelTab('echanges')">
+                <span class="panel-sidebar__icon">&#128172;</span>
+                <span class="panel-sidebar__label">Echanges</span>
+            </button>
+            <button class="panel-sidebar__item" data-ptab="commercial" onclick="switchPanelTab('commercial')">
+                <span class="panel-sidebar__icon">&#128188;</span>
+                <span class="panel-sidebar__label">Commercial</span>
+            </button>
         </div>
 
-        <!-- Section 2: Informations -->
-        <div class="panel-section open" id="section-informations">
-            <div class="panel-section__header" onclick="toggleSection('section-informations')">
-                <span class="panel-section__icon">&#128202;</span>
-                <div class="panel-section__title-group">
-                    <span class="panel-section__title">Informations</span>
-                    <span class="panel-section__subtitle">Fiche d'identite de l'entreprise et du contact — remplie automatiquement par l'IA</span>
-                </div>
-                <span class="panel-section__badge panel-section__badge--empty" id="badge-informations">0/15</span>
-                <span class="panel-section__chevron">&#9654;</span>
-            </div>
-            <div class="panel-section__content">
+        <!-- Tab Content -->
+        <div class="panel-content">
+
+            <!-- ═══ TAB: FICHE ═══ -->
+            <div class="panel-tab-content panel-tab-content--active" id="ptab-fiche">
+                <h3 class="panel-tab-title">Fiche prospect</h3>
+                <p class="panel-tab-subtitle">Informations de l'entreprise et du contact</p>
+
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Nom de l'entreprise</label>
@@ -814,7 +854,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Secteur</label>
-                        <input class="form-input" id="fCompanySector" placeholder="Ex: E-commerce, SaaS...">
+                        <input class="form-input" id="fCompanySector" placeholder="Ex: E-commerce, BTP...">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Taille</label>
@@ -834,6 +874,11 @@
                         <label class="form-label">Adresse</label>
                         <input class="form-input" id="fCompanyAddress" placeholder="Adresse">
                     </div>
+                </div>
+
+                <div style="border-top:1px solid #e5e7eb; margin:20px 0;"></div>
+
+                <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Prenom du contact</label>
                         <input class="form-input" id="fContactFirst" placeholder="Prenom">
@@ -896,112 +941,169 @@
                 <div style="margin-top:20px; display:flex; justify-content:flex-end;">
                     <button class="btn btn--primary" onclick="saveProspectInfo()">Enregistrer</button>
                 </div>
-            </div>
-        </div>
 
-        <!-- Section 3: Contact (Form + scheduling) -->
-        <div class="panel-section open" id="section-contact">
-            <div class="panel-section__header" onclick="toggleSection('section-contact')">
-                <span class="panel-section__icon">&#128236;</span>
-                <div class="panel-section__title-group">
-                    <span class="panel-section__title">Contact</span>
-                    <span class="panel-section__subtitle">Formulaire de renseignement a envoyer au prospect</span>
-                </div>
-                <span class="panel-section__badge panel-section__badge--empty" id="badge-contact">---</span>
-                <span class="panel-section__chevron">&#9654;</span>
-            </div>
-            <div class="panel-section__content">
+                <!-- Formulaire public (en bas de Fiche) -->
+                <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--gray); margin-bottom:12px;">Formulaire de renseignement</h4>
                 <div id="formSection"></div>
             </div>
-        </div>
 
-        <!-- Section 4: Echanges -->
-        <div class="panel-section open" id="section-echanges">
-            <div class="panel-section__header" onclick="toggleSection('section-echanges')">
-                <span class="panel-section__icon">&#128172;</span>
-                <div class="panel-section__title-group">
-                    <span class="panel-section__title">Echanges</span>
-                    <span class="panel-section__subtitle">Comptes-rendus d'appels, visios et conversations Firefly</span>
+            <!-- ═══ TAB: SUIVI ═══ -->
+            <div class="panel-tab-content" id="ptab-suivi">
+                <h3 class="panel-tab-title">Suivi projet</h3>
+                <p class="panel-tab-subtitle">Services, avancement et notes — transmis a l'IA</p>
+
+                <!-- Relationship type -->
+                <div style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
+                    <label class="form-label" style="margin:0; white-space:nowrap;">Type de relation :</label>
+                    <select class="form-select" id="pRelationshipType" onchange="saveRelationshipType()" style="width:auto;">
+                        <option value="prospect">Prospect</option>
+                        <option value="client_existant">Client existant</option>
+                        <option value="ancien_client">Ancien client</option>
+                        <option value="partenaire">Partenaire</option>
+                    </select>
                 </div>
-                <span class="panel-section__badge panel-section__badge--empty" id="badge-echanges">0</span>
-                <span class="panel-section__chevron">&#9654;</span>
+
+                <!-- Services list -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark);">Services</h4>
+                    <button class="btn btn--primary btn--sm" onclick="openAddProspectService()">+ Ajouter un service</button>
+                </div>
+                <div id="prospectServicesList">
+                    <p class="text-muted" style="font-size:0.78rem;">Aucun service renseigne.</p>
+                </div>
+
+                <!-- Notes de suivi -->
+                <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Notes de suivi</h4>
+                <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+                    <select class="form-select" id="pFollowupCategory" style="width:auto; min-width:140px; font-size:0.78rem;">
+                        <option value="general">General</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="technique">Technique</option>
+                        <option value="facturation">Facturation</option>
+                        <option value="livraison">Livraison</option>
+                        <option value="demande_client">Demande client</option>
+                    </select>
+                    <input class="form-input" id="pFollowupNote" placeholder="Ex: Devis Google Ads envoye, en attente retour..." style="flex:1; min-width:200px; font-size:0.78rem;">
+                    <button class="btn btn--primary btn--sm" onclick="addProspectFollowUp()">Ajouter</button>
+                </div>
+                <div id="prospectFollowUpsList"></div>
+
+                <!-- Contexte IA -->
+                <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:8px;">Contexte pour l'IA</h4>
+                <textarea class="form-textarea" id="pAiContext" rows="3" placeholder="Resumez la situation globale : ce qui a ete fait, ce qui est en cours, ce qui est demande..." style="font-size:0.82rem;"></textarea>
+                <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+                    <button class="btn btn--primary btn--sm" onclick="saveProspectAiContext()">Sauvegarder</button>
+                </div>
             </div>
-            <div class="panel-section__content">
-                <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+
+            <!-- ═══ TAB: COLLECTE ═══ -->
+            <div class="panel-tab-content" id="ptab-collecte">
+                <h3 class="panel-tab-title">Collecte</h3>
+                <p class="panel-tab-subtitle">Liens, documents et fichiers du prospect</p>
+
+                <!-- Links -->
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:10px;">Liens</h4>
+                <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+                    <select class="form-select" id="linkType" style="width:auto; min-width:160px;">
+                        <option value="website">Site web</option>
+                        <option value="linkedin_company">LinkedIn (entreprise)</option>
+                        <option value="linkedin_contact">LinkedIn (contact)</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="pappers">Pappers</option>
+                        <option value="societe_com">Societe.com</option>
+                        <option value="google_maps">Google Maps</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                    <input class="form-input" id="linkUrl" placeholder="https://..." style="flex:1; min-width:200px;">
+                    <button class="btn btn--primary btn--sm" onclick="addLink()">Ajouter</button>
+                </div>
+                <div id="linksList"></div>
+                <div style="margin-top:12px;">
+                    <button class="btn btn--accent btn--sm" onclick="analyzeLinks()">&#129302; Analyser les liens avec l'IA</button>
+                </div>
+                <div id="linksAiResult"></div>
+
+                <!-- Documents -->
+                <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:10px;">Documents</h4>
+                <div style="display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap:wrap;">
+                    <select class="form-select" id="docCategory" style="width:auto; min-width:130px;">
+                        <option value="brief">Brief</option>
+                        <option value="charte_graphique">Charte graphique</option>
+                        <option value="devis">Devis</option>
+                        <option value="proposition">Proposition</option>
+                        <option value="contrat">Contrat</option>
+                        <option value="analyse">Analyse</option>
+                        <option value="rapport">Rapport</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                    <button class="btn btn--primary btn--sm" onclick="document.getElementById('docFileInput').click()" style="white-space:nowrap;">&#128206; Ajouter un document</button>
+                    <input type="file" id="docFileInput" style="display:none" onchange="handleDocUpload(event)">
+                </div>
+                <div id="documentsList"></div>
+            </div>
+
+            <!-- ═══ TAB: ECHANGES ═══ -->
+            <div class="panel-tab-content" id="ptab-echanges">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div>
+                        <h3 class="panel-tab-title" style="margin-bottom:0;">Echanges</h3>
+                        <p class="panel-tab-subtitle" style="margin-bottom:0;">Appels, visios et conversations</p>
+                    </div>
                     <button class="btn btn--primary btn--sm" onclick="showNewExchangeForm()">+ Nouvel echange</button>
                 </div>
 
-                <!-- New exchange form (hidden by default) -->
+                <!-- New exchange form -->
                 <div id="newExchangeForm" style="display:none; background:var(--gray-light); border-radius:12px; padding:16px; margin-bottom:20px;">
                     <div style="display:flex; gap:10px; margin-bottom:10px;">
                         <div style="flex:1;">
                             <label class="form-label">Titre de l'echange</label>
-                            <input class="form-input" id="exchangeTitle" placeholder="Ex: 1er appel decouverte, Visio de suivi...">
+                            <input class="form-input" id="exchangeTitle" placeholder="Ex: 1er appel decouverte...">
                         </div>
                         <div style="width:160px;">
                             <label class="form-label">Date</label>
                             <input class="form-input" id="exchangeDate" type="date">
                         </div>
                     </div>
-                    <label class="form-label">Transcript / Resume de l'echange</label>
-                    <textarea class="form-textarea" id="exchangeContent" style="min-height:120px;" placeholder="Coller le transcript Firefly ou ecrire le resume de l'echange..."></textarea>
+                    <label class="form-label">Transcript / Resume</label>
+                    <textarea class="form-textarea" id="exchangeContent" style="min-height:120px;" placeholder="Coller le transcript Firefly ou ecrire le resume..."></textarea>
                     <div style="display:flex; gap:8px; margin-top:10px; justify-content:flex-end;">
                         <button class="btn btn--ghost btn--sm" onclick="hideNewExchangeForm()">Annuler</button>
                         <button class="btn btn--primary btn--sm" onclick="saveExchange()">Sauvegarder</button>
-                        <button class="btn btn--accent btn--sm" onclick="saveAndSummarize()">Sauvegarder + Resumer avec IA</button>
+                        <button class="btn btn--accent btn--sm" onclick="saveAndSummarize()">Resumer avec IA</button>
                     </div>
                 </div>
 
-                <!-- List of exchanges -->
                 <div id="exchangesList"></div>
             </div>
-        </div>
 
-        <!-- Section 5: Synthese IA -->
-        <div class="panel-section open" id="section-synthese">
-            <div class="panel-section__header" onclick="toggleSection('section-synthese')">
-                <span class="panel-section__icon">&#129504;</span>
-                <div class="panel-section__title-group">
-                    <span class="panel-section__title">Synthese IA</span>
-                    <span class="panel-section__subtitle">Vue d'ensemble generee par l'IA a partir de toutes les donnees collectees</span>
-                </div>
-                <span class="panel-section__badge panel-section__badge--empty" id="badge-synthese">---</span>
-                <span class="panel-section__chevron">&#9654;</span>
-            </div>
-            <div class="panel-section__content">
-                <div style="text-align:center; margin-bottom:16px;">
-                    <button class="btn btn--accent" onclick="generateSynthesis()" id="btnGenerateSynthesis">&#129504; Generer une synthese globale</button>
-                </div>
-                <div id="synthesisResult"></div>
-            </div>
-        </div>
+            <!-- ═══ TAB: COMMERCIAL ═══ -->
+            <div class="panel-tab-content" id="ptab-commercial">
+                <h3 class="panel-tab-title">Commercial</h3>
+                <p class="panel-tab-subtitle">Synthese, proposition et email</p>
 
-        <!-- Section 6: Proposition commerciale -->
-        <div class="panel-section open" id="section-proposition">
-            <div class="panel-section__header" onclick="toggleSection('section-proposition')">
-                <span class="panel-section__icon">&#128196;</span>
-                <div class="panel-section__title-group">
-                    <span class="panel-section__title">Proposition commerciale</span>
-                    <span class="panel-section__subtitle">Generez un devis PDF professionnel a partir des donnees collectees</span>
-                </div>
-                <span class="panel-section__badge panel-section__badge--empty" id="badge-proposition">---</span>
-                <span class="panel-section__chevron">&#9654;</span>
-            </div>
-            <div class="panel-section__content">
-                <!-- Generate proposal -->
-                <div style="text-align:center; margin-bottom:20px;">
-                    <p style="color:#666; font-size:13px; margin-bottom:12px;">L'IA genere une proposition commerciale complete basee sur la synthese, les besoins identifies et les tarifs Regen Agency.</p>
-                    <button class="btn btn--accent" onclick="generateProposal()" id="btnGenerateProposal">&#128196; Generer la proposition commerciale</button>
-                </div>
-                <!-- Proposal result -->
-                <div id="proposalResult" style="display:none;">
+                <!-- Synthese -->
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Synthese IA</h4>
+                <button class="btn btn--accent btn--sm" onclick="generateSynthesis()" id="btnGenerateSynthesis">&#129302; Generer une synthese</button>
+                <div id="synthesisResult" style="margin-top:12px;"></div>
+
+                <!-- Proposition -->
+                <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Proposition commerciale</h4>
+                <button class="btn btn--accent btn--sm" onclick="generateProposal()" id="btnGenerateProposal">&#128196; Generer la proposition</button>
+
+                <div id="proposalResult" style="display:none; margin-top:16px;">
                     <div style="display:flex; gap:8px; justify-content:flex-end; margin-bottom:12px;">
                         <button class="btn btn--primary btn--sm" onclick="downloadProposalPDF()">&#128196; Telecharger PDF</button>
                         <button class="btn btn--ghost btn--sm" onclick="editProposal()">&#9998; Modifier</button>
                     </div>
-                    <div id="proposalPreview" style="background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:24px; max-height:500px; overflow-y:auto;"></div>
+                    <div id="proposalPreview" style="background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:24px; max-height:400px; overflow-y:auto;"></div>
                 </div>
-                <!-- Proposal editor (hidden by default) -->
                 <div id="proposalEditor" style="display:none;">
                     <textarea class="form-textarea" id="proposalRawContent" style="min-height:300px; font-family:monospace; font-size:12px;"></textarea>
                     <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
@@ -1009,19 +1111,12 @@
                         <button class="btn btn--ghost btn--sm" onclick="cancelProposalEdit()">Annuler</button>
                     </div>
                 </div>
-                <div id="proposalLoading" style="display:none;">
-                    <div class="loading-center"><div class="spinner"></div></div>
-                </div>
+                <div id="proposalLoading" style="display:none;"><div class="loading-center"><div class="spinner"></div></div></div>
 
-                <!-- Separator -->
-                <hr style="margin:24px 0; border:none; border-top:1px dashed #ccc;">
-
-                <!-- Email section -->
-                <h4 style="color:#173C3A; margin-bottom:12px;">&#9993; Email d'accompagnement</h4>
-                <p style="color:#666; font-size:13px; margin-bottom:12px;">Email a envoyer avec la proposition commerciale en piece jointe.</p>
-                <div style="text-align:center; margin-bottom:16px;">
-                    <button class="btn btn--outline btn--sm" onclick="generateEmailInPanel()">Generer l'email</button>
-                </div>
+                <!-- Email -->
+                <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Email d'accompagnement</h4>
+                <button class="btn btn--accent btn--sm" onclick="generateEmailInPanel()" style="margin-bottom:12px;">&#9993; Generer l'email</button>
                 <div id="propositionContent" style="display:none;">
                     <div class="form-group" style="margin-bottom:12px;">
                         <label class="form-label">Objet</label>
@@ -1036,14 +1131,13 @@
                         <a class="btn btn--accent btn--sm" id="propositionMailto" href="#" target="_blank" style="text-decoration:none;">Ouvrir Gmail</a>
                     </div>
                 </div>
-                <div id="propositionLoading" style="display:none;">
-                    <div class="loading-center"><div class="spinner"></div></div>
-                </div>
+                <div id="propositionLoading" style="display:none;"><div class="loading-center"><div class="spinner"></div></div></div>
             </div>
-        </div>
 
-    </div>
-    <!-- Hidden timeline container (data still loaded for activities tracking) -->
+        </div><!-- /panel-content -->
+    </div><!-- /panel-layout -->
+
+    <!-- Hidden containers for data tracking -->
     <div style="display:none;">
         <div id="timelineList"></div>
         <select id="activityType"><option value="note">Note</option></select>
@@ -1499,7 +1593,7 @@
         document.getElementById('panelOverlay').classList.add('open');
         document.getElementById('prospectPanel').classList.add('open');
         document.body.style.overflow = 'hidden';
-        openAllSections();
+        switchPanelTab('fiche');
 
         // Reset sections
         document.getElementById('synthesisResult').innerHTML = '';
@@ -1529,6 +1623,9 @@
         loadFormSection(id);
         loadExchanges(id);
         loadSynthesis(id);
+        loadProspectServices(id);
+        loadProspectFollowUps(id);
+        loadProspectAiContext();
         setTimeout(function() { updateCompleteness(); }, 1500);
     }
     window.openPanel = openPanel;
@@ -1590,22 +1687,30 @@
     }
     window.updatePanelStage = updatePanelStage;
 
-    function toggleSection(sectionId) {
-        var section = document.getElementById(sectionId);
-        if (section) section.classList.toggle('open');
+    // ── Panel Tab Navigation ──
+    function switchPanelTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.panel-tab-content').forEach(function(t) {
+            t.classList.remove('panel-tab-content--active');
+        });
+        // Deactivate all sidebar items
+        document.querySelectorAll('.panel-sidebar__item').forEach(function(b) {
+            b.classList.remove('--active');
+        });
+        // Show target tab
+        var tab = document.getElementById('ptab-' + tabName);
+        if (tab) tab.classList.add('panel-tab-content--active');
+        // Activate sidebar item
+        var btn = document.querySelector('.panel-sidebar__item[data-ptab="' + tabName + '"]');
+        if (btn) btn.classList.add('--active');
     }
-    window.toggleSection = toggleSection;
+    window.switchPanelTab = switchPanelTab;
 
-    function scrollToSection(sectionId) {
-        var section = document.getElementById(sectionId);
-        if (!section) return;
-        // Open the section if closed
-        if (!section.classList.contains('open')) {
-            section.classList.add('open');
-        }
-        // Smooth scroll to it
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    // Legacy compat
+    function toggleSection() {}
+    window.toggleSection = toggleSection;
+    function openAllSections() {}
+    function scrollToSection() {}
     window.scrollToSection = scrollToSection;
 
     function toggleAiCard(el) {
@@ -1617,26 +1722,14 @@
             card.classList.remove('collapsed');
             card.classList.add('expanded');
         } else {
-            // First click: expand fully
             card.classList.add('expanded');
         }
     }
     window.toggleAiCard = toggleAiCard;
-
-    // Attach click handlers to all AI card titles (delegated)
     document.addEventListener('click', function(e) {
-        if (e.target.closest('.ai-card__title')) {
-            toggleAiCard(e.target);
-        }
+        if (e.target.closest('.ai-card__title')) { toggleAiCard(e.target); }
     });
 
-    function openAllSections() {
-        document.querySelectorAll('.panel-section').forEach(function(s) {
-            s.classList.add('open');
-        });
-    }
-
-    // Keep switchTab as a no-op for backward compat if called anywhere
     function switchTab() {}
     window.switchTab = switchTab;
 
@@ -2198,122 +2291,8 @@
     window.summarizeTranscript = summarizeTranscript;
 
     // ── COMPLETENESS ──
-    function updateCompleteness() {
-        var sections = {
-            collecte: { label: 'Collecte', score: 0 },
-            informations: { label: 'Infos', score: 0 },
-            contact: { label: 'Formulaire', score: 0 },
-            echanges: { label: 'Echanges', score: 0 },
-            synthese: { label: 'Synthese', score: 0 },
-            proposition: { label: 'Proposition', score: 0 }
-        };
-
-        // Collecte: check links list + documents list
-        var linksEl = document.getElementById('linksList');
-        var docsEl = document.getElementById('documentsList');
-        var hasLinks = linksEl && linksEl.querySelector('.link-item');
-        var hasDocs = docsEl && docsEl.querySelector('.doc-item');
-        if (hasLinks && hasDocs) sections.collecte.score = 100;
-        else if (hasLinks || hasDocs) sections.collecte.score = 50;
-
-        // Informations: check key fields
-        var infoFields = ['fCompanyName', 'fCompanyWebsite', 'fCompanySector', 'fContactFirst', 'fContactLast',
-            'fContactEmail', 'fContactPhone', 'fContactPosition', 'fNeedsSummary', 'fBudget'];
-        var filled = 0;
-        infoFields.forEach(function(fid) {
-            var el = document.getElementById(fid);
-            if (el && el.value && el.value.trim()) filled++;
-        });
-        // Also check services
-        var svcChecked = document.querySelectorAll('#fServices input:checked').length > 0;
-        if (svcChecked) filled++;
-        var total = infoFields.length + 1;
-        sections.informations.score = Math.round((filled / total) * 100);
-
-        // Update badge
-        var badge = document.getElementById('badge-informations');
-        if (badge) badge.textContent = filled + '/' + total;
-
-        // Contact: check if form section has link
-        var formEl = document.getElementById('formSection');
-        if (formEl && formEl.querySelector('.form-link-box')) sections.contact.score = 100;
-        else if (formEl && formEl.querySelector('.form-response-card')) sections.contact.score = 100;
-
-        // Echanges: check list
-        var exchEl = document.getElementById('exchangesList');
-        if (exchEl && exchEl.querySelector('.exchange-card')) sections.echanges.score = 100;
-
-        // Synthese: check result
-        var synthEl = document.getElementById('synthesisResult');
-        if (synthEl && synthEl.querySelector('.synthesis-card')) sections.synthese.score = 100;
-
-        // Proposition: check content visible
-        var propEl = document.getElementById('propositionContent');
-        if (propEl && propEl.style.display !== 'none') sections.proposition.score = 100;
-
-        // Calculate total
-        var keys = Object.keys(sections);
-        var totalScore = 0;
-        keys.forEach(function(k) { totalScore += sections[k].score; });
-        var pct = Math.round(totalScore / keys.length);
-
-        // Update bar
-        var fill = document.getElementById('completenessFill');
-        if (fill) fill.style.width = pct + '%';
-
-        // Update pills
-        var pillsEl = document.getElementById('completenessPills');
-        if (pillsEl) {
-            pillsEl.innerHTML = keys.map(function(k) {
-                var s = sections[k];
-                var cls = s.score >= 80 ? 'completeness-pill--ok' : (s.score > 0 ? 'completeness-pill--warn' : 'completeness-pill--empty');
-                var icon = s.score >= 80 ? ' &#10003;' : (s.score > 0 ? ' &#9888;' : ' &#10005;');
-                return '<span class="completeness-pill ' + cls + '" onclick="scrollToSection(\'section-' + k + '\')">' + s.label + icon + '</span>';
-            }).join('');
-        }
-
-        // Update section badges
-        var collecteBadge = document.getElementById('badge-collecte');
-        if (collecteBadge) {
-            var linkCount = linksEl ? linksEl.querySelectorAll('.link-item').length : 0;
-            var docCount = docsEl ? docsEl.querySelectorAll('.doc-item').length : 0;
-            collecteBadge.textContent = (linkCount + docCount) + ' items';
-            collecteBadge.className = 'panel-section__badge panel-section__badge--' + (linkCount + docCount > 0 ? 'ok' : 'empty');
-        }
-
-        var contactBadge = document.getElementById('badge-contact');
-        if (contactBadge) {
-            var hasForm = sections.contact.score > 0;
-            contactBadge.textContent = hasForm ? 'Actif' : 'Non configure';
-            contactBadge.className = 'panel-section__badge panel-section__badge--' + (hasForm ? 'ok' : 'empty');
-        }
-
-        var exchBadge = document.getElementById('badge-echanges');
-        if (exchBadge) {
-            var exchCount = exchEl ? exchEl.querySelectorAll('.exchange-card').length : 0;
-            exchBadge.textContent = exchCount;
-            exchBadge.className = 'panel-section__badge panel-section__badge--' + (exchCount > 0 ? 'ok' : 'empty');
-        }
-
-        var synthBadge = document.getElementById('badge-synthese');
-        if (synthBadge) {
-            var hasSynth = sections.synthese.score > 0;
-            synthBadge.textContent = hasSynth ? 'Disponible' : 'Non genere';
-            synthBadge.className = 'panel-section__badge panel-section__badge--' + (hasSynth ? 'ok' : 'empty');
-        }
-
-        var propBadge = document.getElementById('badge-proposition');
-        if (propBadge) {
-            var hasProp = sections.proposition.score > 0;
-            propBadge.textContent = hasProp ? 'Pret' : 'Non genere';
-            propBadge.className = 'panel-section__badge panel-section__badge--' + (hasProp ? 'ok' : 'empty');
-        }
-
-        var infoBadge = document.getElementById('badge-informations');
-        if (infoBadge) {
-            infoBadge.className = 'panel-section__badge panel-section__badge--' + (sections.informations.score >= 80 ? 'ok' : (sections.informations.score > 0 ? 'warn' : 'empty'));
-        }
-    }
+    // updateCompleteness removed — no longer needed with sidebar tabs
+    function updateCompleteness() {}
     window.updateCompleteness = updateCompleteness;
 
     // ── SYNTHESIS ──
@@ -3127,6 +3106,335 @@
             closeEmailModal();
         }
     });
+
+    // ═══════════════════════════════════════
+    // SUIVI PROJET - Services & Follow-ups
+    // ═══════════════════════════════════════
+
+    var PROSPECT_SERVICE_TYPES = [
+        { key: 'site_web',          icon: '&#127760;', label: 'Creation / Refonte site web' },
+        { key: 'hebergement',       icon: '&#9729;',   label: 'Hebergement web' },
+        { key: 'google_ads',        icon: '&#128270;', label: 'Campagnes Google Ads' },
+        { key: 'meta_ads',          icon: '&#128240;', label: 'Campagnes Meta / Facebook Ads' },
+        { key: 'seo',               icon: '&#128200;', label: 'SEO / Referencement naturel' },
+        { key: 'identite_visuelle', icon: '&#127912;', label: 'Identite visuelle / Logo' },
+        { key: 'formation',         icon: '&#127891;', label: 'Formation' },
+        { key: 'tiktok_ads',        icon: '&#127916;', label: 'Campagnes TikTok Ads' },
+        { key: 'consulting',        icon: '&#128161;', label: 'Consulting / Strategie' },
+        { key: 'email_marketing',   icon: '&#9993;',   label: 'Email marketing' },
+        { key: 'autre',             icon: '&#128736;', label: 'Autre service' }
+    ];
+
+    var PROSPECT_PIPELINE = [
+        { key: 'besoin_exprime',   label: 'Besoin exprime',     color: '#f3f4f6', text: '#6b7280' },
+        { key: 'devis_envoye',     label: 'Devis envoye',       color: '#dbeafe', text: '#2563eb' },
+        { key: 'devis_accepte',    label: 'Devis accepte',      color: '#bfdbfe', text: '#1d4ed8' },
+        { key: 'acompte_paye',     label: 'Acompte paye',       color: '#fef3c7', text: '#d97706' },
+        { key: 'en_cours',         label: 'En cours',           color: '#fde68a', text: '#92400e' },
+        { key: 'livre',            label: 'Livre',              color: '#d1fae5', text: '#059669' },
+        { key: 'facture_envoyee',  label: 'Facture envoyee',    color: '#a7f3d0', text: '#047857' },
+        { key: 'paye',             label: 'Paye integralement', color: '#6ee7b7', text: '#065f46' },
+        { key: 'recurrent',        label: 'Recurrent / Abo',    color: '#c4b5fd', text: '#5b21b6' },
+        { key: 'annule',           label: 'Annule',             color: '#fecaca', text: '#dc2626' }
+    ];
+
+    // ── Load services for prospect ──
+    async function loadProspectServices(prospectId) {
+        var container = document.getElementById('prospectServicesList');
+        if (!container) return;
+
+        var res = await sb.from('prospect_services').select('*').eq('prospect_id', prospectId).order('created_at');
+        var services = res.data || [];
+
+        // Update badge
+        var badge = document.getElementById('badge-suivi');
+        if (badge) {
+            badge.textContent = services.length + ' service' + (services.length !== 1 ? 's' : '');
+            badge.className = 'panel-section__badge ' + (services.length > 0 ? 'panel-section__badge--filled' : 'panel-section__badge--empty');
+        }
+
+        if (services.length === 0) {
+            container.innerHTML = '<p class="text-muted" style="font-size:0.78rem;">Aucun service renseigne. Cliquez "+ Ajouter un service" pour commencer.</p>';
+            return;
+        }
+
+        var html = '';
+        services.forEach(function(svc) {
+            var svcType = PROSPECT_SERVICE_TYPES.find(function(s) { return s.key === svc.service_type; });
+            var icon = svcType ? svcType.icon : '&#128736;';
+            var step = PROSPECT_PIPELINE.find(function(s) { return s.key === svc.status; });
+            var stepLabel = step ? step.label : svc.status;
+            var stepBg = step ? step.color : '#f3f4f6';
+            var stepTxt = step ? step.text : '#6b7280';
+
+            html += '<div class="svc-pipeline-card">';
+            html += '  <span class="svc-pipeline-card__icon">' + icon + '</span>';
+            html += '  <div class="svc-pipeline-card__info">';
+            html += '    <div class="svc-pipeline-card__title">' + escapeHtml(svc.service_label) + '</div>';
+            html += '    <div class="svc-pipeline-card__meta">';
+            var meta = [];
+            if (svc.price_ht) meta.push(parseFloat(svc.price_ht).toLocaleString('fr-FR') + ' EUR HT');
+            if (svc.started_at) meta.push('Debut: ' + svc.started_at);
+            if (svc.delivered_at) meta.push('Livre: ' + svc.delivered_at);
+            if (svc.notes) meta.push(svc.notes);
+            html += meta.join(' &middot; ') || 'Aucun detail';
+            html += '    </div>';
+            html += '  </div>';
+            html += '  <span class="svc-pipeline-card__badge" style="background:' + stepBg + '; color:' + stepTxt + ';">' + stepLabel + '</span>';
+            html += '  <button class="btn btn--ghost btn--sm btn--icon" onclick="editProspectService(\'' + svc.id + '\')" title="Modifier">&#9998;</button>';
+            html += '</div>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    // ── Add service modal ──
+    function openAddProspectService() {
+        if (!currentProspectId) { toast('Selectionnez un prospect', 'error'); return; }
+
+        // Build modal HTML
+        var html = '<div class="svc-add-overlay" id="svcAddOverlay" onclick="if(event.target===this)closeSvcAddModal()">';
+        html += '<div class="svc-add-modal">';
+        html += '<h3 style="margin-bottom:16px; color:var(--dark);">Ajouter un service</h3>';
+
+        // Service type
+        html += '<div class="form-group"><label class="form-label">Type de service *</label>';
+        html += '<select class="form-select" id="svcAddType">';
+        PROSPECT_SERVICE_TYPES.forEach(function(s) {
+            html += '<option value="' + s.key + '" data-label="' + s.label + '">' + s.label + '</option>';
+        });
+        html += '</select></div>';
+
+        // Pipeline status
+        html += '<div class="form-group"><label class="form-label">Avancement *</label>';
+        html += '<div class="pipeline-pills" id="svcAddPipeline">';
+        PROSPECT_PIPELINE.forEach(function(step, idx) {
+            html += '<span class="pipeline-pill' + (idx === 0 ? ' pipeline-pill--active' : '') + '" data-idx="' + idx + '" onclick="selectSvcPill(' + idx + ')">' + step.label + '</span>';
+        });
+        html += '</div></div>';
+
+        // Price + date
+        html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">';
+        html += '<div class="form-group"><label class="form-label">Montant HT (EUR)</label>';
+        html += '<input class="form-input" type="number" step="0.01" id="svcAddPrice" placeholder="0.00"></div>';
+        html += '<div class="form-group"><label class="form-label">Date de debut</label>';
+        html += '<input class="form-input" type="date" id="svcAddStart"></div>';
+        html += '</div>';
+
+        // Delivered date
+        html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">';
+        html += '<div class="form-group"><label class="form-label">Date de livraison</label>';
+        html += '<input class="form-input" type="date" id="svcAddDelivered"></div>';
+        html += '<div class="form-group"></div>';
+        html += '</div>';
+
+        // Notes
+        html += '<div class="form-group"><label class="form-label">Notes / Precisions</label>';
+        html += '<textarea class="form-textarea" id="svcAddNotes" rows="2" placeholder="Ex: Devis envoye le 27/03, en attente validation. Budget Ads prevu 500EUR/mois."></textarea></div>';
+
+        // Actions
+        html += '<div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">';
+        html += '<button class="btn btn--ghost btn--sm" onclick="closeSvcAddModal()">Annuler</button>';
+        html += '<button class="btn btn--primary btn--sm" onclick="saveSvcAdd()">Ajouter</button>';
+        html += '</div>';
+
+        html += '</div></div>';
+
+        // Insert into DOM
+        var div = document.createElement('div');
+        div.id = 'svcAddContainer';
+        div.innerHTML = html;
+        document.body.appendChild(div);
+    }
+    window.openAddProspectService = openAddProspectService;
+
+    var svcAddPipelineIdx = 0;
+    window.selectSvcPill = function(idx) {
+        svcAddPipelineIdx = idx;
+        var pills = document.querySelectorAll('#svcAddPipeline .pipeline-pill');
+        pills.forEach(function(p, i) {
+            p.classList.remove('pipeline-pill--active', 'pipeline-pill--done');
+            if (i < idx) p.classList.add('pipeline-pill--done');
+            if (i === idx) p.classList.add('pipeline-pill--active');
+        });
+    };
+
+    window.closeSvcAddModal = function() {
+        var el = document.getElementById('svcAddContainer');
+        if (el) el.remove();
+        svcAddPipelineIdx = 0;
+    };
+
+    window.saveSvcAdd = async function() {
+        var typeSelect = document.getElementById('svcAddType');
+        var selectedOption = typeSelect.options[typeSelect.selectedIndex];
+
+        var data = {
+            prospect_id: currentProspectId,
+            service_type: typeSelect.value,
+            service_label: selectedOption.getAttribute('data-label') || selectedOption.text,
+            status: PROSPECT_PIPELINE[svcAddPipelineIdx].key,
+            price_ht: parseFloat(document.getElementById('svcAddPrice').value) || null,
+            started_at: document.getElementById('svcAddStart').value || null,
+            delivered_at: document.getElementById('svcAddDelivered').value || null,
+            notes: document.getElementById('svcAddNotes').value.trim() || null
+        };
+
+        var res = await sb.from('prospect_services').insert(data);
+        if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
+
+        // Auto follow-up
+        await sb.from('prospect_follow_ups').insert({
+            prospect_id: currentProspectId,
+            note: 'Service ajoute : ' + data.service_label + ' (' + PROSPECT_PIPELINE[svcAddPipelineIdx].label + ')',
+            category: 'commercial',
+            created_by: 'admin'
+        });
+
+        closeSvcAddModal();
+        toast('Service ajoute !', 'success');
+        loadProspectServices(currentProspectId);
+        loadProspectFollowUps(currentProspectId);
+    };
+
+    // ── Edit service (change status) ──
+    window.editProspectService = async function(serviceId) {
+        var res = await sb.from('prospect_services').select('*').eq('id', serviceId).single();
+        if (res.error || !res.data) { toast('Service introuvable', 'error'); return; }
+        var svc = res.data;
+
+        // Reuse the same modal but in edit mode
+        openAddProspectService();
+
+        // Wait for DOM
+        setTimeout(function() {
+            document.getElementById('svcAddType').value = svc.service_type;
+            if (svc.price_ht) document.getElementById('svcAddPrice').value = svc.price_ht;
+            if (svc.started_at) document.getElementById('svcAddStart').value = svc.started_at;
+            if (svc.delivered_at) document.getElementById('svcAddDelivered').value = svc.delivered_at;
+            if (svc.notes) document.getElementById('svcAddNotes').value = svc.notes;
+
+            // Set pipeline
+            var idx = PROSPECT_PIPELINE.findIndex(function(s) { return s.key === svc.status; });
+            if (idx >= 0) window.selectSvcPill(idx);
+
+            // Change title and save button to edit mode
+            var modal = document.querySelector('.svc-add-modal h3');
+            if (modal) modal.textContent = 'Modifier le service';
+
+            // Override save to update instead of insert
+            window.saveSvcAdd = async function() {
+                var typeSelect = document.getElementById('svcAddType');
+                var selectedOption = typeSelect.options[typeSelect.selectedIndex];
+
+                var update = {
+                    service_type: typeSelect.value,
+                    service_label: selectedOption.getAttribute('data-label') || selectedOption.text,
+                    status: PROSPECT_PIPELINE[svcAddPipelineIdx].key,
+                    price_ht: parseFloat(document.getElementById('svcAddPrice').value) || null,
+                    started_at: document.getElementById('svcAddStart').value || null,
+                    delivered_at: document.getElementById('svcAddDelivered').value || null,
+                    notes: document.getElementById('svcAddNotes').value.trim() || null,
+                    updated_at: new Date().toISOString()
+                };
+
+                var updateRes = await sb.from('prospect_services').update(update).eq('id', serviceId);
+                if (updateRes.error) { toast('Erreur: ' + updateRes.error.message, 'error'); return; }
+
+                // Follow-up if status changed
+                if (svc.status !== update.status) {
+                    await sb.from('prospect_follow_ups').insert({
+                        prospect_id: currentProspectId,
+                        note: update.service_label + ' : ' + PROSPECT_PIPELINE.find(function(s){return s.key===svc.status;}).label + ' → ' + PROSPECT_PIPELINE[svcAddPipelineIdx].label,
+                        category: 'commercial',
+                        created_by: 'admin'
+                    });
+                }
+
+                closeSvcAddModal();
+                toast('Service mis a jour !', 'success');
+                loadProspectServices(currentProspectId);
+                loadProspectFollowUps(currentProspectId);
+            };
+        }, 100);
+    };
+
+    // ── Follow-ups ──
+    async function loadProspectFollowUps(prospectId) {
+        var container = document.getElementById('prospectFollowUpsList');
+        if (!container) return;
+
+        var res = await sb.from('prospect_follow_ups').select('*').eq('prospect_id', prospectId).order('created_at', { ascending: false }).limit(30);
+        var notes = res.data || [];
+
+        if (notes.length === 0) {
+            container.innerHTML = '<p class="text-muted" style="font-size:0.78rem;">Aucune note de suivi.</p>';
+            return;
+        }
+
+        var html = '';
+        notes.forEach(function(n) {
+            var d = new Date(n.created_at);
+            var dateStr = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            html += '<div class="followup-entry">';
+            html += '  <span class="followup-entry__date">' + dateStr + '</span>';
+            html += '  <span class="followup-entry__cat followup-entry__cat--' + n.category + '">' + n.category.replace('_', ' ') + '</span>';
+            html += '  <span class="followup-entry__text">' + escapeHtml(n.note) + '</span>';
+            html += '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    function addProspectFollowUp() {
+        if (!currentProspectId) return;
+        var note = document.getElementById('pFollowupNote').value.trim();
+        if (!note) { toast('Saisissez une note', 'error'); return; }
+        var cat = document.getElementById('pFollowupCategory').value;
+
+        sb.from('prospect_follow_ups').insert({
+            prospect_id: currentProspectId,
+            note: note,
+            category: cat,
+            created_by: 'admin'
+        }).then(function(res) {
+            if (res.error) { toast('Erreur', 'error'); return; }
+            document.getElementById('pFollowupNote').value = '';
+            toast('Note ajoutee');
+            loadProspectFollowUps(currentProspectId);
+        });
+    }
+    window.addProspectFollowUp = addProspectFollowUp;
+
+    // ── AI Context ──
+    function loadProspectAiContext() {
+        var el = document.getElementById('pAiContext');
+        var relEl = document.getElementById('pRelationshipType');
+        if (!el || !currentProspect) return;
+        el.value = currentProspect.ai_context || '';
+        if (relEl) relEl.value = currentProspect.relationship_type || 'prospect';
+    }
+
+    function saveProspectAiContext() {
+        if (!currentProspectId) return;
+        var ctx = document.getElementById('pAiContext').value.trim();
+        sb.from('prospects').update({ ai_context: ctx }).eq('id', currentProspectId).then(function(res) {
+            if (res.error) { toast('Erreur', 'error'); return; }
+            if (currentProspect) currentProspect.ai_context = ctx;
+            toast('Contexte IA sauvegarde !', 'success');
+        });
+    }
+    window.saveProspectAiContext = saveProspectAiContext;
+
+    function saveRelationshipType() {
+        if (!currentProspectId) return;
+        var val = document.getElementById('pRelationshipType').value;
+        sb.from('prospects').update({ relationship_type: val }).eq('id', currentProspectId).then(function(res) {
+            if (res.error) { toast('Erreur', 'error'); return; }
+            if (currentProspect) currentProspect.relationship_type = val;
+            toast('Type de relation mis a jour');
+        });
+    }
+    window.saveRelationshipType = saveRelationshipType;
 
     // ── INIT ──
     loadProspects();

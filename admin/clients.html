@@ -196,6 +196,67 @@
         .tab-content { display: none; }
         .tab-content--active { display: block; }
 
+        /* ─── Service Cards (Add Client Modal) ─── */
+        .svc-card {
+            border: 2px solid #e5e7eb; border-radius: var(--radius-sm);
+            margin-bottom: 10px; overflow: hidden; transition: border-color 0.3s;
+        }
+        .svc-card--open { border-color: var(--green); }
+        .svc-card__header {
+            display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+            cursor: pointer; user-select: none; font-size: 0.82rem; font-weight: 600;
+            color: var(--dark); background: #fafafa; transition: background 0.2s;
+        }
+        .svc-card__header:hover { background: #f0faf4; }
+        .svc-card__header input[type="checkbox"] { accent-color: var(--green); width: 16px; height: 16px; }
+        .svc-card__icon { font-size: 1rem; }
+        .svc-card__status { margin-left: auto; font-size: 0.7rem; font-weight: 500; color: var(--gray); }
+        .svc-card__body { display: none; padding: 14px; background: white; border-top: 1px solid #e5e7eb; }
+        .svc-card--open .svc-card__body { display: block; }
+        .svc-card .form-label { font-size: 0.72rem; }
+        .svc-card .form-input, .svc-card .form-select { font-size: 0.78rem; padding: 7px 10px; }
+
+        .pipeline-steps { display: flex; gap: 4px; flex-wrap: wrap; margin: 8px 0 14px; }
+        .pipeline-step {
+            font-size: 0.68rem; padding: 4px 10px; border-radius: 20px;
+            border: 1.5px solid #e5e7eb; background: white; color: var(--gray);
+            cursor: pointer; transition: all 0.2s; font-weight: 600;
+        }
+        .pipeline-step:hover { border-color: var(--green); color: var(--green); }
+        .pipeline-step--active { background: var(--green); color: white; border-color: var(--green); }
+        .pipeline-step--done { background: #d1fae5; color: #059669; border-color: #a7f3d0; }
+
+        .doc-upload-row {
+            display: flex; align-items: center; gap: 8px; padding: 6px 0;
+            font-size: 0.75rem; color: var(--dark);
+        }
+        .doc-upload-row .doc-label { min-width: 100px; font-weight: 600; }
+        .doc-upload-row .doc-file { font-size: 0.7rem; color: var(--gray); }
+        .doc-upload-btn {
+            font-size: 0.68rem; padding: 3px 10px; border-radius: 20px;
+            border: 1.5px solid #e5e7eb; background: white; color: var(--gray);
+            cursor: pointer; font-family: inherit; font-weight: 600;
+        }
+        .doc-upload-btn:hover { border-color: var(--green); color: var(--green); }
+
+        /* ─── Suivi IA tab ─── */
+        .followup-item {
+            display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0;
+        }
+        .followup-item:last-child { border-bottom: none; }
+        .followup-date { font-size: 0.72rem; color: var(--gray); min-width: 85px; font-weight: 600; }
+        .followup-badge {
+            font-size: 0.65rem; padding: 2px 8px; border-radius: 10px;
+            font-weight: 600; text-transform: uppercase;
+        }
+        .followup-badge--commercial { background: #dbeafe; color: #2563eb; }
+        .followup-badge--technique { background: #fce7f3; color: #db2777; }
+        .followup-badge--facturation { background: #fef3c7; color: #d97706; }
+        .followup-badge--livraison { background: #d1fae5; color: #059669; }
+        .followup-badge--demande_client { background: #e0e7ff; color: #4f46e5; }
+        .followup-badge--general { background: #f3f4f6; color: #6b7280; }
+        .followup-text { font-size: 0.8rem; color: var(--dark); line-height: 1.5; }
+
         /* ─── Result Box ─── */
         .result-box {
             padding: 16px; border-radius: var(--radius-sm); margin-top: 16px;
@@ -333,42 +394,92 @@
 
         <!-- Modal: Add Client -->
         <div id="modal-add-client" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:flex; align-items:center; justify-content:center;">
-            <div style="background:white; border-radius:var(--radius); padding:32px; max-width:500px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
-                <h3 style="margin-bottom:20px; color:var(--dark);">Ajouter un client</h3>
-                <form id="add-client-form">
+            <div style="background:white; border-radius:var(--radius); padding:32px; max-width:700px; width:95%; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+                <h3 style="margin-bottom:4px; color:var(--dark);">Ajouter un client</h3>
+                <p style="font-size:0.72rem; color:var(--gray); margin-bottom:20px;">Renseignez un maximum d'infos pour que l'IA comprenne exactement ou vous en etes.</p>
+                <form id="add-client-form" style="max-height:72vh; overflow-y:auto; padding-right:8px;">
+
+                    <!-- ── ETAPE 1 : Infos de base ── -->
+                    <p class="form-section-title" style="font-size:0.75rem; font-weight:700; color:var(--green); text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">&#9312; Informations generales</p>
                     <div class="form-group">
                         <label class="form-label">Nom du client *</label>
-                        <input class="form-input" type="text" id="new-client-name" placeholder="Ex: Scatair" required>
+                        <input class="form-input" type="text" id="new-client-name" placeholder="Ex: MJ RENOV" required>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Site web</label>
-                        <input class="form-input" type="url" id="new-client-website" placeholder="https://www.example.com">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Contact principal</label>
+                            <input class="form-input" type="text" id="new-client-contact" placeholder="Jean Dupont">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telephone</label>
+                            <input class="form-input" type="tel" id="new-client-phone" placeholder="06 12 34 56 78">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Email de contact</label>
-                        <input class="form-input" type="email" id="new-client-email" placeholder="contact@client.com">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input class="form-input" type="email" id="new-client-email" placeholder="contact@client.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Secteur d'activite</label>
+                            <input class="form-input" type="text" id="new-client-sector" placeholder="BTP, Restauration...">
+                        </div>
                     </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Site web</label>
+                            <input class="form-input" type="url" id="new-client-website" placeholder="https://www.example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Plateforme</label>
+                            <select class="form-input" id="new-client-platform">
+                                <option value="other">Aucune / Autre</option>
+                                <option value="prestashop">PrestaShop</option>
+                                <option value="shopify">Shopify</option>
+                                <option value="woocommerce">WooCommerce</option>
+                                <option value="magento">Magento</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Lien back-office</label>
+                            <input class="form-input" type="url" id="new-client-backoffice" placeholder="https://...admin">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lien Pappers</label>
+                            <input class="form-input" type="url" id="new-client-pappers" placeholder="https://www.pappers.fr/...">
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label class="form-label">Plateforme e-commerce</label>
-                        <select class="form-input" id="new-client-platform">
-                            <option value="prestashop">PrestaShop</option>
-                            <option value="shopify">Shopify</option>
-                            <option value="woocommerce">WooCommerce</option>
-                            <option value="magento">Magento</option>
-                            <option value="other">Autre</option>
+                        <label class="form-label">Statut de la relation</label>
+                        <select class="form-input" id="new-client-relationship">
+                            <option value="prospect">Prospect (pas encore client)</option>
+                            <option value="onboarding">Onboarding (vient de signer)</option>
+                            <option value="active" selected>Client actif</option>
+                            <option value="paused">En pause</option>
                         </select>
                     </div>
+
+                    <!-- ── ETAPE 2 : Services detailles ── -->
+                    <hr style="border:none; border-top:2px solid #e5e7eb; margin:20px 0 16px;">
+                    <p class="form-section-title" style="font-size:0.75rem; font-weight:700; color:var(--green); text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; gap:6px;">&#9313; Services &amp; suivi detaille</p>
+                    <p style="font-size:0.72rem; color:var(--gray); margin-bottom:14px;">Cochez les services concernes, puis precisez l'avancement pour chacun.</p>
+
+                    <div id="services-checklist"></div>
+
+                    <!-- ── ETAPE 3 : Resume libre ── -->
+                    <hr style="border:none; border-top:2px solid #e5e7eb; margin:20px 0 16px;">
+                    <p class="form-section-title" style="font-size:0.75rem; font-weight:700; color:var(--green); text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; gap:6px;">&#9314; Notes complementaires</p>
                     <div class="form-group">
-                        <label class="form-label">Lien back-office (connexion PrestaShop, Shopify...)</label>
-                        <input class="form-input" type="url" id="new-client-backoffice" placeholder="https://www.example.com/admin">
+                        <label class="form-label">Resume libre / contexte particulier (pour l'IA)</label>
+                        <textarea class="form-input" id="new-client-ai-summary" rows="3" placeholder="Ex: Client apporte par Pepette Marketing. Tres reactif par telephone, prefere les appels aux mails. Budget Google Ads envisage : 500EUR/mois." style="resize:vertical;"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Lien Pappers</label>
-                        <input class="form-input" type="url" id="new-client-pappers" placeholder="https://www.pappers.fr/entreprise/...">
-                    </div>
-                    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+
+                    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px; position:sticky; bottom:0; background:white; padding:12px 0 0;">
                         <button type="button" class="btn btn--danger btn--sm" id="cancel-add-client">Annuler</button>
-                        <button type="submit" class="btn btn--primary btn--sm">Ajouter</button>
+                        <button type="submit" class="btn btn--primary btn--sm">Ajouter le client</button>
                     </div>
                 </form>
             </div>
@@ -1901,6 +2012,268 @@
         var parts = d.split('-');
         return parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : d;
     }
+
+    function formatISODate(d) {
+        if (typeof d === 'string') return d;
+        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+    // ═══════════════════════════════════════
+    // SERVICE TYPES & PIPELINE
+    // ═══════════════════════════════════════
+    var SERVICE_TYPES = [
+        { key: 'site_web',          icon: '&#127760;', label: 'Creation / Refonte site web' },
+        { key: 'hebergement',       icon: '&#9729;',   label: 'Hebergement web' },
+        { key: 'google_ads',        icon: '&#128270;', label: 'Campagnes Google Ads' },
+        { key: 'meta_ads',          icon: '&#128240;', label: 'Campagnes Meta / Facebook Ads' },
+        { key: 'seo',               icon: '&#128200;', label: 'SEO / Referencement naturel' },
+        { key: 'identite_visuelle', icon: '&#127912;', label: 'Identite visuelle / Logo' },
+        { key: 'formation',         icon: '&#127891;', label: 'Formation' },
+        { key: 'tiktok_ads',        icon: '&#127916;', label: 'Campagnes TikTok Ads' },
+        { key: 'consulting',        icon: '&#128161;', label: 'Consulting / Strategie' },
+        { key: 'email_marketing',   icon: '&#9993;',   label: 'Email marketing' },
+        { key: 'autre',             icon: '&#128736;', label: 'Autre service' }
+    ];
+
+    var PIPELINE_STEPS = [
+        { key: 'besoin_exprime',   label: 'Besoin exprime',   color: '#f3f4f6' },
+        { key: 'devis_envoye',     label: 'Devis envoye',     color: '#dbeafe' },
+        { key: 'devis_accepte',    label: 'Devis accepte',    color: '#bfdbfe' },
+        { key: 'acompte_paye',     label: 'Acompte paye',     color: '#fef3c7' },
+        { key: 'en_cours',         label: 'En cours',         color: '#fde68a' },
+        { key: 'livre',            label: 'Livre',            color: '#d1fae5' },
+        { key: 'facture_envoyee',  label: 'Facture envoyee',  color: '#a7f3d0' },
+        { key: 'paye',             label: 'Paye integralement', color: '#6ee7b7' },
+        { key: 'recurrent',        label: 'Recurrent / Abo',  color: '#c4b5fd' }
+    ];
+
+    var DOC_TYPES = [
+        { key: 'devis',      label: 'Devis' },
+        { key: 'facture',    label: 'Facture' },
+        { key: 'contrat',    label: 'Contrat' },
+        { key: 'brief',      label: 'Brief / Cahier des charges' },
+        { key: 'proposition', label: 'Proposition commerciale' },
+        { key: 'autre',      label: 'Autre document' }
+    ];
+
+    // ── Build service checklist in Add Client modal ──
+    function buildServiceChecklist() {
+        var container = document.getElementById('services-checklist');
+        if (!container) return;
+        var html = '';
+
+        SERVICE_TYPES.forEach(function(svc) {
+            html += '<div class="svc-card" id="svc-card-' + svc.key + '">';
+            html += '  <div class="svc-card__header" onclick="toggleServiceCard(\'' + svc.key + '\')">';
+            html += '    <input type="checkbox" id="svc-check-' + svc.key + '" onclick="event.stopPropagation(); toggleServiceCard(\'' + svc.key + '\')">';
+            html += '    <span class="svc-card__icon">' + svc.icon + '</span>';
+            html += '    <span>' + svc.label + '</span>';
+            html += '    <span class="svc-card__status" id="svc-status-' + svc.key + '"></span>';
+            html += '  </div>';
+            html += '  <div class="svc-card__body">';
+
+            // Pipeline steps
+            html += '    <label class="form-label">Avancement :</label>';
+            html += '    <div class="pipeline-steps" id="pipeline-' + svc.key + '">';
+            PIPELINE_STEPS.forEach(function(step, idx) {
+                html += '      <span class="pipeline-step" data-svc="' + svc.key + '" data-step="' + step.key + '" data-idx="' + idx + '" onclick="selectPipelineStep(\'' + svc.key + '\', ' + idx + ')">' + step.label + '</span>';
+            });
+            html += '    </div>';
+
+            // Details grid
+            html += '    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">';
+            html += '      <div class="form-group"><label class="form-label">Montant HT (EUR)</label>';
+            html += '        <input class="form-input" type="number" step="0.01" id="svc-price-' + svc.key + '" placeholder="0.00"></div>';
+            html += '      <div class="form-group"><label class="form-label">Date de debut</label>';
+            html += '        <input class="form-input" type="date" id="svc-start-' + svc.key + '"></div>';
+            html += '    </div>';
+
+            // Documents
+            html += '    <label class="form-label" style="margin-top:10px;">Documents rattaches :</label>';
+            html += '    <div id="svc-docs-' + svc.key + '" style="margin-top:6px;">';
+            DOC_TYPES.forEach(function(doc) {
+                html += '      <div class="doc-upload-row">';
+                html += '        <span class="doc-label">' + doc.label + '</span>';
+                html += '        <input type="file" id="doc-' + svc.key + '-' + doc.key + '" style="display:none;" onchange="onDocSelected(this, \'' + svc.key + '\', \'' + doc.key + '\')">';
+                html += '        <button type="button" class="doc-upload-btn" onclick="document.getElementById(\'doc-' + svc.key + '-' + doc.key + '\').click()">&#128206; Joindre</button>';
+                html += '        <span class="doc-file" id="doc-name-' + svc.key + '-' + doc.key + '"></span>';
+                html += '      </div>';
+            });
+            html += '    </div>';
+
+            // Notes
+            html += '    <div class="form-group" style="margin-top:10px;">';
+            html += '      <label class="form-label">Notes</label>';
+            html += '      <input class="form-input" type="text" id="svc-notes-' + svc.key + '" placeholder="Precision sur ce service...">';
+            html += '    </div>';
+
+            html += '  </div>';
+            html += '</div>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    // Expose to global for onclick
+    window.toggleServiceCard = function(key) {
+        var card = document.getElementById('svc-card-' + key);
+        var cb = document.getElementById('svc-check-' + key);
+        if (!card || !cb) return;
+
+        // Toggle checkbox
+        if (event && event.target !== cb) cb.checked = !cb.checked;
+
+        if (cb.checked) {
+            card.classList.add('svc-card--open');
+        } else {
+            card.classList.remove('svc-card--open');
+        }
+    };
+
+    window.selectPipelineStep = function(svcKey, idx) {
+        var steps = document.querySelectorAll('#pipeline-' + svcKey + ' .pipeline-step');
+        steps.forEach(function(s, i) {
+            s.classList.remove('pipeline-step--active', 'pipeline-step--done');
+            if (i < idx) s.classList.add('pipeline-step--done');
+            if (i === idx) s.classList.add('pipeline-step--active');
+        });
+        // Update status label
+        var statusEl = document.getElementById('svc-status-' + svcKey);
+        if (statusEl) statusEl.textContent = PIPELINE_STEPS[idx].label;
+    };
+
+    window.onDocSelected = function(input, svcKey, docKey) {
+        var nameEl = document.getElementById('doc-name-' + svcKey + '-' + docKey);
+        if (input.files && input.files[0]) {
+            nameEl.textContent = input.files[0].name;
+        }
+    };
+
+    // ── Init checklist on page load ──
+    buildServiceChecklist();
+
+    // ── Collect services data from modal ──
+    function collectServicesFromModal() {
+        var services = [];
+        SERVICE_TYPES.forEach(function(svc) {
+            var cb = document.getElementById('svc-check-' + svc.key);
+            if (!cb || !cb.checked) return;
+
+            // Find active pipeline step
+            var activeStep = 'besoin_exprime';
+            var steps = document.querySelectorAll('#pipeline-' + svc.key + ' .pipeline-step--active');
+            if (steps.length > 0) activeStep = steps[0].getAttribute('data-step');
+
+            services.push({
+                service_type: svc.key,
+                service_label: svc.label,
+                status: activeStep,
+                price_ht: parseFloat(document.getElementById('svc-price-' + svc.key).value) || null,
+                started_at: document.getElementById('svc-start-' + svc.key).value || null,
+                notes: document.getElementById('svc-notes-' + svc.key).value.trim() || null
+            });
+        });
+        return services;
+    }
+
+    // ═══════════════════════════════════════
+    // UPDATED: Add Client form submit
+    // ═══════════════════════════════════════
+    // (Override the original submit handler defined in setupModals)
+    // We patch it after setupModals runs.
+    var _origSetupModals = setupModals;
+    setupModals = function() {
+        _origSetupModals();
+
+        // Replace the submit handler
+        var form = document.getElementById('add-client-form');
+        var addModal = document.getElementById('modal-add-client');
+
+        // Clone to remove old listeners
+        var newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+
+        // Re-init checklist in new form
+        buildServiceChecklist();
+
+        // Cancel button
+        document.getElementById('cancel-add-client').addEventListener('click', function() {
+            addModal.classList.add('hidden');
+            addModal.style.display = 'none';
+        });
+
+        // New submit handler
+        newForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            var name = document.getElementById('new-client-name').value.trim();
+            if (!name) { alert('Nom requis.'); return; }
+
+            try {
+                // 1. Create client with extended fields
+                var clientData = {
+                    name: name,
+                    website: document.getElementById('new-client-website').value.trim() || null,
+                    platform: document.getElementById('new-client-platform').value,
+                    agency_id: AGENCY_ID,
+                    is_active: true,
+                    contact_name: document.getElementById('new-client-contact').value.trim() || null,
+                    contact_phone: document.getElementById('new-client-phone').value.trim() || null,
+                    contact_email: document.getElementById('new-client-email').value.trim() || null,
+                    sector: document.getElementById('new-client-sector').value.trim() || null,
+                    relationship_status: document.getElementById('new-client-relationship').value,
+                    ai_summary: document.getElementById('new-client-ai-summary').value.trim() || null,
+                    notes: JSON.stringify({
+                        email: document.getElementById('new-client-email').value.trim() || null,
+                        backoffice_url: document.getElementById('new-client-backoffice').value.trim() || null,
+                        pappers_url: document.getElementById('new-client-pappers').value.trim() || null
+                    })
+                };
+
+                var res = await sb.from('clients').insert(clientData).select('id').single();
+                if (res.error) throw res.error;
+                var clientId = res.data.id;
+
+                // 2. Link current user
+                var session = await sb.auth.getSession();
+                if (session.data.session) {
+                    await sb.from('client_users').insert({
+                        client_id: clientId,
+                        user_id: session.data.session.user.id
+                    });
+                }
+
+                // 3. Insert services
+                var services = collectServicesFromModal();
+                if (services.length > 0) {
+                    var svcRows = services.map(function(s) {
+                        s.client_id = clientId;
+                        return s;
+                    });
+                    await sb.from('client_services').insert(svcRows);
+                }
+
+                // 4. Auto-create initial follow-up note
+                var svcList = services.map(function(s) { return s.service_label + ' (' + s.status.replace(/_/g, ' ') + ')'; }).join(', ');
+                if (svcList) {
+                    await sb.from('client_follow_ups').insert({
+                        client_id: clientId,
+                        note: 'Client cree avec services : ' + svcList,
+                        category: 'general',
+                        created_by: 'admin'
+                    });
+                }
+
+                alert('Client "' + name + '" ajoute avec ' + services.length + ' service(s) !');
+                addModal.classList.add('hidden');
+                addModal.style.display = 'none';
+                newForm.reset();
+                buildServiceChecklist(); // Reset cards
+                await loadClients();
+            } catch(err) {
+                alert('Erreur : ' + (err.message || err));
+            }
+        });
+    };
 
 })();
 </script>
