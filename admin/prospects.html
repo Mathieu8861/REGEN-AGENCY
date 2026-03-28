@@ -3940,8 +3940,8 @@
             var diff = Math.round((d - today) / 86400000);
             if (diff < 0) { cls = 'next-action-banner--overdue'; dateLabel = 'En retard (' + Math.abs(diff) + ' jour' + (Math.abs(diff)>1?'s':'') + ')'; }
             else if (diff === 0) { cls = 'next-action-banner--today'; dateLabel = "Aujourd'hui"; }
-            else if (diff === 1) { dateLabel = 'Demain'; }
-            else { dateLabel = formatDate(dateStr); }
+            else if (diff === 1) { dateLabel = 'Avant demain'; }
+            else { dateLabel = 'Avant le ' + formatDate(dateStr); }
         }
 
         banner.className = 'next-action-banner ' + cls;
