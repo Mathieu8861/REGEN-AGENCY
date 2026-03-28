@@ -3232,6 +3232,25 @@
         html += '<div class="form-group"><label class="form-label">Notes / Precisions</label>';
         html += '<textarea class="form-textarea" id="svcAddNotes" rows="2" placeholder="Ex: Devis envoye le 27/03, en attente validation. Budget Ads prevu 500EUR/mois."></textarea></div>';
 
+        // Document upload
+        html += '<div class="form-group" style="margin-top:8px;">';
+        html += '  <label class="form-label">Document associe (devis, facture, contrat...)</label>';
+        html += '  <div style="display:flex; gap:8px; align-items:center;">';
+        html += '    <select class="form-select" id="svcDocCategory" style="width:auto; min-width:120px; font-size:0.78rem;">';
+        html += '      <option value="devis">Devis</option>';
+        html += '      <option value="facture">Facture</option>';
+        html += '      <option value="contrat">Contrat</option>';
+        html += '      <option value="proposition">Proposition</option>';
+        html += '      <option value="brief">Brief</option>';
+        html += '      <option value="autre">Autre</option>';
+        html += '    </select>';
+        html += '    <input type="file" id="svcDocFile" style="display:none" onchange="onSvcDocSelected(this)">';
+        html += '    <button type="button" class="btn btn--ghost btn--sm" onclick="document.getElementById(\'svcDocFile\').click()" style="white-space:nowrap;">&#128206; Joindre un fichier</button>';
+        html += '    <span id="svcDocFileName" style="font-size:0.72rem; color:var(--gray);"></span>';
+        html += '  </div>';
+        html += '  <div id="svcExistingDocs" style="margin-top:8px;"></div>';
+        html += '</div>';
+
         // Actions
         html += '<div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">';
         html += '<button class="btn btn--ghost btn--sm" onclick="closeSvcAddModal()">Annuler</button>';
@@ -3265,6 +3284,50 @@
         svcAddPipelineIdx = 0;
     };
 
+    // Show selected doc filename
+    window.onSvcDocSelected = function(input) {
+        var nameEl = document.getElementById('svcDocFileName');
+        if (input.files && input.files[0] && nameEl) {
+            nameEl.textContent = input.files[0].name + ' (' + Math.round(input.files[0].size / 1024) + ' Ko)';
+        }
+    };
+
+    // Upload doc linked to service
+    async function uploadServiceDoc(prospectId, serviceLabel) {
+        var fileInput = document.getElementById('svcDocFile');
+        if (!fileInput || !fileInput.files || !fileInput.files[0]) return;
+
+        var file = fileInput.files[0];
+        var category = document.getElementById('svcDocCategory').value;
+        var filePath = prospectId + '/' + Date.now() + '_' + file.name;
+
+        // Upload to Supabase storage
+        var uploadRes = await sb.storage.from('prospect-documents').upload(filePath, file);
+        if (uploadRes.error) {
+            toast('Erreur upload: ' + uploadRes.error.message, 'error');
+            return;
+        }
+
+        // Save metadata in prospect_documents
+        await sb.from('prospect_documents').insert({
+            prospect_id: prospectId,
+            file_name: file.name,
+            file_path: filePath,
+            file_size: file.size,
+            file_type: file.type,
+            category: category,
+            uploaded_by: 'admin'
+        });
+
+        // Auto follow-up
+        await sb.from('prospect_follow_ups').insert({
+            prospect_id: prospectId,
+            note: 'Document "' + file.name + '" (' + category + ') rattache au service : ' + serviceLabel,
+            category: 'commercial',
+            created_by: 'admin'
+        });
+    }
+
     window.saveSvcAdd = async function() {
         var typeSelect = document.getElementById('svcAddType');
         var selectedOption = typeSelect.options[typeSelect.selectedIndex];
@@ -3282,6 +3345,9 @@
 
         var res = await sb.from('prospect_services').insert(data);
         if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
+
+        // Upload doc if any
+        await uploadServiceDoc(currentProspectId, data.service_label);
 
         // Auto follow-up
         await sb.from('prospect_follow_ups').insert({
