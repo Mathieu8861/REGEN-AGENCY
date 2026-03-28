@@ -627,16 +627,10 @@
                         <div class="section-subtitle">Cochez les services qui correspondent &agrave; vos besoins. Des questions suppl&eacute;mentaires apparaitront pour chaque service s&eacute;lectionn&eacute;.</div>
 
                         <div class="services-grid">
-                            <label class="service-card" data-service="google_ads">
-                                <input type="checkbox" name="services" value="google_ads">
-                                <span class="card-icon">&#128270;</span>
-                                <span class="card-label">Google Ads</span>
-                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
-                            </label>
-                            <label class="service-card" data-service="meta_ads">
-                                <input type="checkbox" name="services" value="meta_ads">
-                                <span class="card-icon">&#128241;</span>
-                                <span class="card-label">Meta Ads - Facebook &amp; Instagram</span>
+                            <label class="service-card" data-service="gestion_pub">
+                                <input type="checkbox" name="services" value="gestion_pub">
+                                <span class="card-icon">&#128640;</span>
+                                <span class="card-label">Gestion publicitaire</span>
                                 <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
                             </label>
                             <label class="service-card" data-service="seo">
@@ -651,120 +645,71 @@
                                 <span class="card-label">Cr&eacute;ation / Refonte de site web</span>
                                 <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
                             </label>
-                            <label class="service-card" data-service="tiktok_ads">
-                                <input type="checkbox" name="services" value="tiktok_ads">
-                                <span class="card-icon">&#127925;</span>
-                                <span class="card-label">TikTok Ads</span>
-                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
-                            </label>
-                            <label class="service-card" data-service="formation">
-                                <input type="checkbox" name="services" value="formation">
-                                <span class="card-icon">&#127891;</span>
-                                <span class="card-label">Formation</span>
-                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
-                            </label>
-                            <label class="service-card" data-service="consulting">
-                                <input type="checkbox" name="services" value="consulting">
-                                <span class="card-icon">&#128161;</span>
-                                <span class="card-label">Consulting / Audit</span>
-                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
-                            </label>
-                            <label class="service-card" data-service="autre">
-                                <input type="checkbox" name="services" value="autre">
-                                <span class="card-icon">&#128203;</span>
-                                <span class="card-label">Autre</span>
-                                <span class="card-check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
-                            </label>
                         </div>
 
                         <!-- ============ CONDITIONAL SECTIONS ============ -->
 
-                        <!-- Google Ads -->
-                        <div id="section-google_ads" class="conditional-section">
+                        <!-- Gestion Publicitaire -->
+                        <div id="section-gestion_pub" class="conditional-section">
                             <div class="conditional-inner">
-                                <div class="section-label"><span class="label-icon">&#128270;</span> Google Ads</div>
-                                <div class="form-group">
-                                    <label for="f-ga-account">Avez-vous d&eacute;j&agrave; un compte Google Ads ?</label>
-                                    <select id="f-ga-account">
-                                        <option value="">-- S&eacute;lectionnez --</option>
-                                        <option>Oui</option>
-                                        <option>Non</option>
-                                        <option>Je ne sais pas</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="f-ga-budget">Budget publicitaire mensuel envisag&eacute; ?</label>
-                                    <select id="f-ga-budget">
-                                        <option value="">-- S&eacute;lectionnez --</option>
-                                        <option>&lt; 500 EUR</option>
-                                        <option>500-1000 EUR</option>
-                                        <option>1000-3000 EUR</option>
-                                        <option>3000-5000 EUR</option>
-                                        <option>&gt; 5000 EUR</option>
-                                        <option>A d&eacute;finir</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="f-ga-goal">Objectif principal</label>
-                                    <select id="f-ga-goal">
-                                        <option value="">-- S&eacute;lectionnez --</option>
-                                        <option>Ventes en ligne</option>
-                                        <option>G&eacute;n&eacute;ration de leads</option>
-                                        <option>Notori&eacute;t&eacute; / Visibilit&eacute;</option>
-                                        <option>Trafic en magasin</option>
-                                        <option>Appels t&eacute;l&eacute;phoniques</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="f-ga-url">URL du site &agrave; promouvoir</label>
-                                    <input type="url" id="f-ga-url" placeholder="https://...">
-                                </div>
-                            </div>
-                        </div>
+                                <div class="section-label"><span class="label-icon">&#128640;</span> Gestion publicitaire</div>
 
-                        <!-- Meta Ads -->
-                        <div id="section-meta_ads" class="conditional-section">
-                            <div class="conditional-inner">
-                                <div class="section-label"><span class="label-icon">&#128241;</span> Meta Ads</div>
                                 <div class="form-group">
-                                    <label for="f-ma-bm">Avez-vous d&eacute;j&agrave; un Business Manager Meta ?</label>
-                                    <select id="f-ma-bm">
+                                    <label>Quelles plateformes vous int&eacute;ressent ?</label>
+                                    <div class="checkbox-group" id="f-pub-platforms">
+                                        <label><input type="checkbox" value="Google Ads"> Google Ads</label>
+                                        <label><input type="checkbox" value="Meta Ads (Facebook / Instagram)"> Meta Ads</label>
+                                        <label><input type="checkbox" value="TikTok Ads"> TikTok Ads</label>
+                                        <label><input type="checkbox" value="LinkedIn Ads"> LinkedIn Ads</label>
+                                        <label><input type="checkbox" value="Je ne sais pas encore"> Je ne sais pas encore</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-pub-existing">Avez-vous d&eacute;j&agrave; de la publicit&eacute; en ligne qui tourne ?</label>
+                                    <select id="f-pub-existing">
                                         <option value="">-- S&eacute;lectionnez --</option>
-                                        <option>Oui</option>
-                                        <option>Non</option>
+                                        <option>Oui, j'ai des campagnes actives</option>
+                                        <option>Oui, mais elles sont en pause</option>
+                                        <option>Non, je n'ai jamais fait de pub</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="f-pub-accounts">Avez-vous d&eacute;j&agrave; des comptes publicitaires cr&eacute;&eacute;s ?</label>
+                                    <select id="f-pub-accounts">
+                                        <option value="">-- S&eacute;lectionnez --</option>
+                                        <option>Oui, tous les comptes sont cr&eacute;&eacute;s</option>
+                                        <option>Oui, certains</option>
+                                        <option>Non, rien n'est cr&eacute;&eacute;</option>
                                         <option>Je ne sais pas</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="f-ma-budget">Budget publicitaire mensuel envisag&eacute; ?</label>
-                                    <select id="f-ma-budget">
+                                    <label for="f-pub-budget">Budget publicitaire mensuel global envisag&eacute; (toutes plateformes)</label>
+                                    <select id="f-pub-budget">
                                         <option value="">-- S&eacute;lectionnez --</option>
                                         <option>&lt; 500 EUR</option>
                                         <option>500-1000 EUR</option>
                                         <option>1000-3000 EUR</option>
                                         <option>3000-5000 EUR</option>
                                         <option>&gt; 5000 EUR</option>
-                                        <option>A d&eacute;finir</option>
+                                        <option>A d&eacute;finir ensemble</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="f-ma-goal">Objectif principal</label>
-                                    <select id="f-ma-goal">
+                                    <label for="f-pub-goal">Objectif principal</label>
+                                    <select id="f-pub-goal">
                                         <option value="">-- S&eacute;lectionnez --</option>
                                         <option>Ventes en ligne</option>
-                                        <option>G&eacute;n&eacute;ration de leads</option>
+                                        <option>G&eacute;n&eacute;ration de leads / demandes de devis</option>
                                         <option>Notori&eacute;t&eacute; / Visibilit&eacute;</option>
-                                        <option>Engagement sur les r&eacute;seaux</option>
-                                        <option>Trafic en magasin</option>
+                                        <option>Trafic en magasin / local</option>
+                                        <option>Appels t&eacute;l&eacute;phoniques</option>
+                                        <option>Engagement sur les r&eacute;seaux sociaux</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="f-ma-fb">Lien de votre page Facebook</label>
-                                    <input type="url" id="f-ma-fb" placeholder="https://facebook.com/...">
-                                </div>
-                                <div class="form-group">
-                                    <label for="f-ma-ig">Lien de votre compte Instagram</label>
-                                    <input type="url" id="f-ma-ig" placeholder="https://instagram.com/...">
+                                    <label for="f-pub-url">URL du site &agrave; promouvoir</label>
+                                    <input type="url" id="f-pub-url" placeholder="https://...">
                                 </div>
                             </div>
                         </div>
@@ -871,118 +816,6 @@
                             </div>
                         </div>
 
-                        <!-- TikTok Ads -->
-                        <div id="section-tiktok_ads" class="conditional-section">
-                            <div class="conditional-inner">
-                                <div class="section-label"><span class="label-icon">&#127925;</span> TikTok Ads</div>
-                                <div class="form-group">
-                                    <label for="f-tt-account">Avez-vous un compte TikTok Business ?</label>
-                                    <select id="f-tt-account">
-                                        <option value="">-- S&eacute;lectionnez --</option>
-                                        <option>Oui</option>
-                                        <option>Non</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="f-tt-budget">Budget publicitaire mensuel envisag&eacute; ?</label>
-                                    <select id="f-tt-budget">
-                                        <option value="">-- S&eacute;lectionnez --</option>
-                                        <option>&lt; 500 EUR</option>
-                                        <option>500-1000 EUR</option>
-                                        <option>1000-3000 EUR</option>
-                                        <option>3000-5000 EUR</option>
-                                        <option>&gt; 5000 EUR</option>
-                                        <option>A d&eacute;finir</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="f-tt-video">Avez-vous d&eacute;j&agrave; du contenu vid&eacute;o ?</label>
-                                    <select id="f-tt-video">
-                                        <option value="">-- S&eacute;lectionnez --</option>
-                                        <option>Oui, beaucoup</option>
-                                        <option>Quelques vid&eacute;os</option>
-                                        <option>Non, rien</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Formation -->
-                        <div id="section-formation" class="conditional-section">
-                            <div class="conditional-inner">
-                                <div class="section-label"><span class="label-icon">&#127891;</span> Formation</div>
-                                <div class="form-group">
-                                    <label>Sur quel(s) sujet(s) ?</label>
-                                    <div class="checkbox-group" id="f-fo-subjects">
-                                        <label><input type="checkbox" value="Google Ads"> Google Ads</label>
-                                        <label><input type="checkbox" value="Meta Ads"> Meta Ads</label>
-                                        <label><input type="checkbox" value="SEO"> SEO</label>
-                                        <label><input type="checkbox" value="Analytics / Reporting"> Analytics / Reporting</label>
-                                        <label><input type="checkbox" value="Creation de contenu"> Cr&eacute;ation de contenu</label>
-                                        <label><input type="checkbox" value="Strategie digitale"> Strat&eacute;gie digitale</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="f-fo-people">Nombre de personnes &agrave; former</label>
-                                    <select id="f-fo-people">
-                                        <option value="">-- S&eacute;lectionnez --</option>
-                                        <option>1</option>
-                                        <option>2-5</option>
-                                        <option>5-10</option>
-                                        <option>10+</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="f-fo-format">Format pr&eacute;f&eacute;r&eacute;</label>
-                                    <select id="f-fo-format">
-                                        <option value="">-- S&eacute;lectionnez --</option>
-                                        <option>Pr&eacute;sentiel</option>
-                                        <option>Visioconf&eacute;rence</option>
-                                        <option>Les deux</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Consulting -->
-                        <div id="section-consulting" class="conditional-section">
-                            <div class="conditional-inner">
-                                <div class="section-label"><span class="label-icon">&#128161;</span> Consulting / Audit</div>
-                                <div class="form-group">
-                                    <label for="f-co-type">Type d'accompagnement souhait&eacute;</label>
-                                    <select id="f-co-type">
-                                        <option value="">-- S&eacute;lectionnez --</option>
-                                        <option>Audit de l'existant</option>
-                                        <option>Strat&eacute;gie digitale</option>
-                                        <option>Accompagnement ponctuel</option>
-                                        <option>Accompagnement continu</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Domaines &agrave; auditer</label>
-                                    <div class="checkbox-group" id="f-co-domains">
-                                        <label><input type="checkbox" value="Site web"> Site web</label>
-                                        <label><input type="checkbox" value="SEO"> SEO</label>
-                                        <label><input type="checkbox" value="Google Ads"> Google Ads</label>
-                                        <label><input type="checkbox" value="Meta Ads"> Meta Ads</label>
-                                        <label><input type="checkbox" value="Analytics"> Analytics</label>
-                                        <label><input type="checkbox" value="Reseaux sociaux"> R&eacute;seaux sociaux</label>
-                                        <label><input type="checkbox" value="E-commerce"> E-commerce</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Autre -->
-                        <div id="section-autre" class="conditional-section">
-                            <div class="conditional-inner">
-                                <div class="section-label"><span class="label-icon">&#128203;</span> Autre</div>
-                                <div class="form-group">
-                                    <label for="f-autre-desc">D&eacute;crivez votre besoin <span class="req">*</span></label>
-                                    <textarea id="f-autre-desc" rows="4" placeholder="D&eacute;crivez votre besoin le plus pr&eacute;cis&eacute;ment possible..."></textarea>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="section-divider"></div>
@@ -992,18 +825,6 @@
                         <div class="section-title">Pour finir</div>
                         <div class="section-subtitle">Quelques derni&egrave;res informations pour mieux cerner votre projet.</div>
 
-                        <div class="form-group">
-                            <label for="f-gen-budget">Budget global mensuel envisag&eacute; pour le digital</label>
-                            <select id="f-gen-budget">
-                                <option value="">-- S&eacute;lectionnez --</option>
-                                <option>&lt; 500 EUR</option>
-                                <option>500-1000 EUR</option>
-                                <option>1000-2000 EUR</option>
-                                <option>2000-5000 EUR</option>
-                                <option>&gt; 5000 EUR</option>
-                                <option>A d&eacute;finir ensemble</option>
-                            </select>
-                        </div>
                         <div class="form-group">
                             <label for="f-gen-timeline">D&eacute;lai souhait&eacute;</label>
                             <select id="f-gen-timeline">
@@ -1026,8 +847,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="f-gen-notes">Informations compl&eacute;mentaires</label>
-                            <textarea id="f-gen-notes" rows="4" placeholder="Ajoutez toute information que vous jugez utile..."></textarea>
+                            <label for="f-gen-notes">D&eacute;crivez-nous votre besoin</label>
+                            <textarea id="f-gen-notes" rows="4" placeholder="Expliquez-nous votre projet, vos objectifs, vos attentes..."></textarea>
                         </div>
                     </div>
 
@@ -1219,16 +1040,6 @@
                     valid = false;
                 }
 
-                // If "autre" is checked, description is required
-                var autreCb = document.querySelector('input[name="services"][value="autre"]');
-                if (autreCb && autreCb.checked) {
-                    var autreDesc = document.getElementById('f-autre-desc');
-                    if (!autreDesc.value.trim()) {
-                        addError(autreDesc, 'Ce champ est requis');
-                        valid = false;
-                    }
-                }
-
                 return valid;
             }
 
@@ -1267,22 +1078,14 @@
                 data.services_selected = services;
 
                 // Conditional data per service
-                if (services.indexOf('google_ads') !== -1) {
-                    data.google_ads = {
-                        has_account: val('f-ga-account'),
-                        budget: val('f-ga-budget'),
-                        goal: val('f-ga-goal'),
-                        url: val('f-ga-url')
-                    };
-                }
-
-                if (services.indexOf('meta_ads') !== -1) {
-                    data.meta_ads = {
-                        has_business_manager: val('f-ma-bm'),
-                        budget: val('f-ma-budget'),
-                        goal: val('f-ma-goal'),
-                        facebook_url: val('f-ma-fb'),
-                        instagram_url: val('f-ma-ig')
+                if (services.indexOf('gestion_pub') !== -1) {
+                    data.gestion_pub = {
+                        platforms: getCheckedValues('f-pub-platforms'),
+                        has_existing_ads: val('f-pub-existing'),
+                        has_accounts: val('f-pub-accounts'),
+                        budget: val('f-pub-budget'),
+                        goal: val('f-pub-goal'),
+                        url: val('f-pub-url')
                     };
                 }
 
@@ -1306,41 +1109,11 @@
                     };
                 }
 
-                if (services.indexOf('tiktok_ads') !== -1) {
-                    data.tiktok_ads = {
-                        has_account: val('f-tt-account'),
-                        budget: val('f-tt-budget'),
-                        has_video: val('f-tt-video')
-                    };
-                }
-
-                if (services.indexOf('formation') !== -1) {
-                    data.formation = {
-                        subjects: getCheckedValues('f-fo-subjects'),
-                        people_count: val('f-fo-people'),
-                        format: val('f-fo-format')
-                    };
-                }
-
-                if (services.indexOf('consulting') !== -1) {
-                    data.consulting = {
-                        type: val('f-co-type'),
-                        domains: getCheckedValues('f-co-domains')
-                    };
-                }
-
-                if (services.indexOf('autre') !== -1) {
-                    data.autre = {
-                        description: val('f-autre-desc')
-                    };
-                }
-
                 // General
                 data.general = {
-                    global_budget: val('f-gen-budget'),
                     timeline: val('f-gen-timeline'),
                     source: val('f-gen-source'),
-                    notes: val('f-gen-notes')
+                    needs_description: val('f-gen-notes')
                 };
 
                 return data;
