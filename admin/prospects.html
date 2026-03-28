@@ -1067,7 +1067,7 @@
                 <!-- Documents -->
                 <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
                 <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:10px;">Documents</h4>
-                <div style="display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap:wrap;">
+                <div style="display:flex; gap:8px; margin-bottom:8px; align-items:center; flex-wrap:wrap;">
                     <select class="form-select" id="docCategory" style="width:auto; min-width:130px;">
                         <option value="brief">Brief</option>
                         <option value="charte_graphique">Charte graphique</option>
@@ -1078,6 +1078,7 @@
                         <option value="rapport">Rapport</option>
                         <option value="autre">Autre</option>
                     </select>
+                    <input class="form-input" id="docDescription" placeholder="Description du document (pour l'IA)..." style="flex:1; min-width:180px; font-size:0.78rem;">
                     <button class="btn btn--primary btn--sm" onclick="document.getElementById('docFileInput').click()" style="white-space:nowrap;">&#128206; Ajouter un document</button>
                     <input type="file" id="docFileInput" style="display:none" onchange="handleDocUpload(event)">
                 </div>
@@ -1961,7 +1962,10 @@
             var publicUrl = SUPABASE_URL + '/storage/v1/object/public/prospect-documents/' + d.file_path;
             return '<div class="doc-item">' +
                 '<span class="doc-item__icon">&#128196;</span>' +
-                '<span class="doc-item__name">' + escapeHtml(d.file_name) + '</span>' +
+                '<div style="flex:1; overflow:hidden;">' +
+                    '<span class="doc-item__name" style="display:block;">' + escapeHtml(d.file_name) + '</span>' +
+                    (d.description ? '<span style="font-size:0.7rem; color:var(--gray); font-style:italic;">' + escapeHtml(d.description) + '</span>' : '') +
+                '</div>' +
                 '<span class="doc-item__cat">' + escapeHtml(d.category || 'autre') + '</span>' +
                 '<span class="doc-item__size">' + formatFileSize(d.file_size) + '</span>' +
                 '<span class="doc-item__date">' + formatDate(d.created_at) + '</span>' +
@@ -1987,14 +1991,17 @@
         var storageRes = await sb.storage.from('prospect-documents').upload(filePath, file);
         if (storageRes.error) { toast('Erreur upload: ' + storageRes.error.message, 'error'); return; }
 
+        var description = document.getElementById('docDescription').value.trim();
         var res = await sb.from('prospect_documents').insert([{
             prospect_id: currentProspectId,
             file_name: file.name, file_path: filePath,
-            file_size: file.size, category: category, file_type: file.type
+            file_size: file.size, category: category, file_type: file.type,
+            description: description || null
         }]);
         if (res.error) { toast('Erreur: ' + res.error.message, 'error'); return; }
         toast('Document uploade !');
         e.target.value = '';
+        document.getElementById('docDescription').value = '';
         loadDocuments(currentProspectId);
     }
     window.handleDocUpload = handleDocUpload;
