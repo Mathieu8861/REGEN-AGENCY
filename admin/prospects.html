@@ -144,6 +144,33 @@
         .priority-dot--haute { background: #f97316; }
         .priority-dot--urgente { background: #ef4444; }
         .prospect-card__days { font-size: 0.68rem; color: var(--gray); margin-left: auto; }
+        .prospect-card__action {
+            display: flex; align-items: center; gap: 5px;
+            margin-top: 8px; padding: 5px 8px; border-radius: 6px;
+            background: #f0f9ff; font-size: 0.7rem; color: #0369a1; font-weight: 600;
+        }
+        .prospect-card__action--overdue { background: #fef2f2; color: #dc2626; }
+        .prospect-card__action--today { background: #fefce8; color: #ca8a04; }
+        .prospect-card__action-icon { font-size: 0.75rem; }
+
+        /* Next action banner in panel */
+        .next-action-banner {
+            display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+            background: #f0f9ff; border-bottom: 1px solid #bae6fd;
+            font-size: 0.82rem; cursor: pointer; transition: background 0.2s;
+        }
+        .next-action-banner:hover { background: #e0f2fe; }
+        .next-action-banner--overdue { background: #fef2f2; border-color: #fecaca; }
+        .next-action-banner--overdue:hover { background: #fee2e2; }
+        .next-action-banner--today { background: #fefce8; border-color: #fde68a; }
+        .next-action-banner--today:hover { background: #fef9c3; }
+        .next-action-banner--empty { background: #f8faf9; border-color: #e5e7eb; color: var(--gray); font-size: 0.78rem; }
+        .next-action-banner__icon { font-size: 1rem; }
+        .next-action-banner__text { flex: 1; font-weight: 600; color: var(--dark); }
+        .next-action-banner__date { font-weight: 700; font-size: 0.78rem; }
+        .next-action-banner__edit { font-size: 0.7rem; color: var(--gray); padding: 2px 8px; border-radius: 20px; border: 1px solid #e5e7eb; background: white; cursor: pointer; font-family: inherit; font-weight: 600; }
+        .next-action-banner__edit:hover { border-color: var(--green); color: var(--green); }
+
         .prospect-card__avatar {
             width: 24px; height: 24px; border-radius: 50%;
             background: var(--primary); color: white; font-size: 0.6rem;
@@ -773,6 +800,7 @@
                             <th>Source</th>
                             <th>Priorite</th>
                             <th>Assigne</th>
+                            <th>Prochaine action</th>
                             <th>Cree le</th>
                             <th>Actions</th>
                         </tr>
@@ -807,6 +835,14 @@
 
     <!-- Quick Info -->
     <div class="panel-quick-info" id="panelQuickInfo"></div>
+
+    <!-- Next Action Banner -->
+    <div class="next-action-banner next-action-banner--empty" id="nextActionBanner" onclick="editNextAction()">
+        <span class="next-action-banner__icon">&#9889;</span>
+        <span class="next-action-banner__text" id="nextActionText">Aucune prochaine action definie</span>
+        <span class="next-action-banner__date" id="nextActionDate"></span>
+        <button class="next-action-banner__edit">Modifier</button>
+    </div>
 
     <!-- Layout: Sidebar + Content -->
     <div class="panel-layout">
@@ -1492,6 +1528,7 @@
                         '<span class="prospect-card__days">' + daysSince(p.created_at) + ' j</span>' +
                         (assigned ? '<span class="prospect-card__avatar">' + assigned + '</span>' : '') +
                     '</div>' +
+                    (p.next_action ? renderCardAction(p.next_action, p.next_action_date) : '') +
                 '</div>';
             }).join('');
         });
@@ -1510,6 +1547,7 @@
                 '<td><span class="source-badge">' + getSourceLabel(p.source) + '</span></td>' +
                 '<td><span class="priority-badge" style="background:' + pri.bg + ';color:' + pri.color + '">' + pri.label + '</span></td>' +
                 '<td>' + escapeHtml(p.assigned_to || '-') + '</td>' +
+                '<td style="white-space:nowrap; font-size:0.78rem;">' + (p.next_action ? escapeHtml(p.next_action) + (p.next_action_date ? '<br><span style="color:' + getActionDateColor(p.next_action_date) + '; font-weight:700;">' + formatDate(p.next_action_date) + '</span>' : '') : '<span style="color:#ccc;">-</span>') + '</td>' +
                 '<td style="white-space:nowrap">' + formatDate(p.created_at) + '</td>' +
                 '<td><button class="btn btn--danger btn--sm" onclick="event.stopPropagation();deleteProspect(\'' + p.id + '\')">Supprimer</button></td>' +
             '</tr>';
@@ -1664,7 +1702,7 @@
         loadProspectServices(id);
         loadProspectFollowUps(id);
         loadProspectAiContext();
-        setTimeout(function() { updateCompleteness(); }, 1500);
+        updateNextActionBanner();
     }
     window.openPanel = openPanel;
 
@@ -3835,6 +3873,197 @@
         });
     }
     window.saveRelationshipType = saveRelationshipType;
+
+    // ═══════════════════════════════════════
+    // NEXT ACTION
+    // ═══════════════════════════════════════
+
+    function getActionDateColor(dateStr) {
+        if (!dateStr) return 'var(--gray)';
+        var today = new Date(); today.setHours(0,0,0,0);
+        var d = new Date(dateStr); d.setHours(0,0,0,0);
+        if (d < today) return '#dc2626'; // overdue = red
+        if (d.getTime() === today.getTime()) return '#ca8a04'; // today = amber
+        return '#0369a1'; // future = blue
+    }
+
+    function getActionDateClass(dateStr) {
+        if (!dateStr) return '';
+        var today = new Date(); today.setHours(0,0,0,0);
+        var d = new Date(dateStr); d.setHours(0,0,0,0);
+        if (d < today) return 'prospect-card__action--overdue';
+        if (d.getTime() === today.getTime()) return 'prospect-card__action--today';
+        return '';
+    }
+
+    function renderCardAction(action, dateStr) {
+        if (!action) return '';
+        var cls = getActionDateClass(dateStr);
+        var dateLabel = '';
+        if (dateStr) {
+            var today = new Date(); today.setHours(0,0,0,0);
+            var d = new Date(dateStr); d.setHours(0,0,0,0);
+            var diff = Math.round((d - today) / 86400000);
+            if (diff < 0) dateLabel = 'En retard (' + Math.abs(diff) + 'j)';
+            else if (diff === 0) dateLabel = "Aujourd'hui";
+            else if (diff === 1) dateLabel = 'Demain';
+            else dateLabel = formatDate(dateStr);
+        }
+        return '<div class="prospect-card__action ' + cls + '">' +
+            '<span class="prospect-card__action-icon">&#9889;</span>' +
+            '<span>' + escapeHtml(action) + '</span>' +
+            (dateLabel ? '<span style="margin-left:auto; font-size:0.65rem;">' + dateLabel + '</span>' : '') +
+        '</div>';
+    }
+
+    function updateNextActionBanner() {
+        var banner = document.getElementById('nextActionBanner');
+        var textEl = document.getElementById('nextActionText');
+        var dateEl = document.getElementById('nextActionDate');
+        if (!banner || !currentProspect) return;
+
+        var action = currentProspect.next_action;
+        var dateStr = currentProspect.next_action_date;
+
+        if (!action) {
+            banner.className = 'next-action-banner next-action-banner--empty';
+            textEl.textContent = 'Aucune prochaine action — cliquez pour definir';
+            dateEl.textContent = '';
+            return;
+        }
+
+        var today = new Date(); today.setHours(0,0,0,0);
+        var cls = '';
+        var dateLabel = '';
+        if (dateStr) {
+            var d = new Date(dateStr); d.setHours(0,0,0,0);
+            var diff = Math.round((d - today) / 86400000);
+            if (diff < 0) { cls = 'next-action-banner--overdue'; dateLabel = 'En retard (' + Math.abs(diff) + ' jour' + (Math.abs(diff)>1?'s':'') + ')'; }
+            else if (diff === 0) { cls = 'next-action-banner--today'; dateLabel = "Aujourd'hui"; }
+            else if (diff === 1) { dateLabel = 'Demain'; }
+            else { dateLabel = formatDate(dateStr); }
+        }
+
+        banner.className = 'next-action-banner ' + cls;
+        textEl.textContent = action;
+        dateEl.textContent = dateLabel;
+    }
+
+    function editNextAction() {
+        if (!currentProspectId) return;
+
+        var currentAction = currentProspect ? currentProspect.next_action || '' : '';
+        var currentDate = currentProspect ? currentProspect.next_action_date || '' : '';
+
+        // Build inline edit modal
+        var html = '<div class="svc-add-overlay" id="nextActionOverlay" onclick="if(event.target===this)closeNextActionModal()">';
+        html += '<div class="svc-add-modal" style="max-width:450px;">';
+        html += '<h3 style="margin-bottom:16px; color:var(--dark);">Prochaine action</h3>';
+
+        html += '<div class="form-group" style="margin-bottom:12px;">';
+        html += '  <label class="form-label">Action a realiser</label>';
+        html += '  <select class="form-select" id="nextActionSelect" onchange="if(this.value===\'custom\')document.getElementById(\'nextActionCustom\').style.display=\'block\'; else document.getElementById(\'nextActionCustom\').style.display=\'none\';">';
+        html += '    <option value="">-- Selectionner --</option>';
+        html += '    <option value="Envoyer la proposition commerciale">Envoyer la proposition commerciale</option>';
+        html += '    <option value="Relancer par email">Relancer par email</option>';
+        html += '    <option value="Appeler le prospect">Appeler le prospect</option>';
+        html += '    <option value="Planifier un RDV">Planifier un RDV</option>';
+        html += '    <option value="Envoyer le devis">Envoyer le devis</option>';
+        html += '    <option value="Envoyer le contrat">Envoyer le contrat</option>';
+        html += '    <option value="Suivre le paiement">Suivre le paiement</option>';
+        html += '    <option value="Preparer la proposition">Preparer la proposition</option>';
+        html += '    <option value="Analyser les besoins">Analyser les besoins</option>';
+        html += '    <option value="custom">Personnalise...</option>';
+        html += '  </select>';
+        html += '</div>';
+
+        html += '<div class="form-group" id="nextActionCustom" style="margin-bottom:12px; display:none;">';
+        html += '  <label class="form-label">Action personnalisee</label>';
+        html += '  <input class="form-input" id="nextActionCustomInput" placeholder="Decrire l\'action...">';
+        html += '</div>';
+
+        html += '<div class="form-group" style="margin-bottom:16px;">';
+        html += '  <label class="form-label">Date limite</label>';
+        html += '  <input class="form-input" type="date" id="nextActionDateInput" value="' + (currentDate || '') + '">';
+        html += '</div>';
+
+        html += '<div style="display:flex; gap:10px; justify-content:space-between;">';
+        html += '  <button class="btn btn--ghost btn--sm" onclick="clearNextAction()" style="color:#ef4444;">Supprimer l\'action</button>';
+        html += '  <div style="display:flex; gap:8px;">';
+        html += '    <button class="btn btn--ghost btn--sm" onclick="closeNextActionModal()">Annuler</button>';
+        html += '    <button class="btn btn--primary btn--sm" onclick="saveNextAction()">Enregistrer</button>';
+        html += '  </div>';
+        html += '</div>';
+
+        html += '</div></div>';
+
+        var div = document.createElement('div');
+        div.id = 'nextActionContainer';
+        div.innerHTML = html;
+        document.body.appendChild(div);
+
+        // Pre-select current action
+        setTimeout(function() {
+            var sel = document.getElementById('nextActionSelect');
+            if (sel && currentAction) {
+                var found = false;
+                for (var i = 0; i < sel.options.length; i++) {
+                    if (sel.options[i].value === currentAction) { sel.selectedIndex = i; found = true; break; }
+                }
+                if (!found) {
+                    sel.value = 'custom';
+                    document.getElementById('nextActionCustom').style.display = 'block';
+                    document.getElementById('nextActionCustomInput').value = currentAction;
+                }
+            }
+        }, 50);
+    }
+    window.editNextAction = editNextAction;
+
+    window.closeNextActionModal = function() {
+        var el = document.getElementById('nextActionContainer');
+        if (el) el.remove();
+    };
+
+    window.saveNextAction = async function() {
+        var sel = document.getElementById('nextActionSelect');
+        var action = sel.value === 'custom' ? document.getElementById('nextActionCustomInput').value.trim() : sel.value;
+        var date = document.getElementById('nextActionDateInput').value || null;
+
+        if (!action) { toast('Selectionnez une action', 'error'); return; }
+
+        await sb.from('prospects').update({
+            next_action: action,
+            next_action_date: date
+        }).eq('id', currentProspectId);
+
+        if (currentProspect) {
+            currentProspect.next_action = action;
+            currentProspect.next_action_date = date;
+        }
+
+        closeNextActionModal();
+        updateNextActionBanner();
+        toast('Prochaine action enregistree !', 'success');
+        loadProspects(); // refresh kanban + table
+    };
+
+    window.clearNextAction = async function() {
+        await sb.from('prospects').update({
+            next_action: null,
+            next_action_date: null
+        }).eq('id', currentProspectId);
+
+        if (currentProspect) {
+            currentProspect.next_action = null;
+            currentProspect.next_action_date = null;
+        }
+
+        closeNextActionModal();
+        updateNextActionBanner();
+        toast('Action supprimee');
+        loadProspects();
+    };
 
     // ── INIT ──
     loadProspects();
