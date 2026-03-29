@@ -2671,25 +2671,14 @@
         container.innerHTML = '<div class="loading-center"><div class="spinner"></div></div>';
         document.getElementById('btnGenerateSynthesis').disabled = true;
 
-        // Gather all data
-        var linksRes = await sb.from('prospect_links').select('*').eq('prospect_id', currentProspectId);
-        var activitiesRes = await sb.from('prospect_activities').select('*').eq('prospect_id', currentProspectId).order('created_at', { ascending: false }).limit(20);
-        var docsRes = await sb.from('prospect_documents').select('file_name, category, created_at').eq('prospect_id', currentProspectId);
-        var formsRes = await sb.from('prospect_form_responses').select('response_data, created_at')
-            .in('form_id', (await sb.from('prospect_forms').select('id').eq('prospect_id', currentProspectId)).data ? (await sb.from('prospect_forms').select('id').eq('prospect_id', currentProspectId)).data.map(function(f) { return f.id; }) : []);
-
-        var result = await callAI('generate_email', {
-            prospect_id: currentProspectId,
-            prospect: currentProspect,
-            links: linksRes.data || [],
-            activities: activitiesRes.data || [],
-            extra_context: 'MODE SYNTHESE: Au lieu de generer un email, genere une SYNTHESE COMPLETE du prospect. Inclus: resume de l\'entreprise, besoins identifies, historique des echanges, points forts, points de vigilance, recommandation strategique. Formate en sections claires.'
+        var result = await callAI('generate_synthesis', {
+            prospect_id: currentProspectId
         });
 
         document.getElementById('btnGenerateSynthesis').disabled = false;
 
-        if (result && (result.body || result.summary || result.analysis)) {
-            var content = result.body || result.summary || result.analysis;
+        if (result && (result.synthesis || result.body || result.summary)) {
+            var content = result.synthesis || result.body || result.summary;
             // Save as activity
             await sb.from('prospect_activities').insert([{
                 prospect_id: currentProspectId,

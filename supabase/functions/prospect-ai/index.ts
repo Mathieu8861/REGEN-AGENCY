@@ -554,6 +554,8 @@ async function handleGenerateSynthesis(prospectId: string) {
   const { data: links } = await supabase.from("prospect_links").select("*").eq("prospect_id", prospectId);
   const { data: activities } = await supabase.from("prospect_activities").select("*").eq("prospect_id", prospectId).order("created_at", { ascending: false }).limit(30);
   const { data: formResponses } = await supabase.from("prospect_form_responses").select("*").eq("prospect_id", prospectId);
+  const { data: services } = await supabase.from("prospect_services").select("*").eq("prospect_id", prospectId).order("created_at");
+  const { data: followUps } = await supabase.from("prospect_follow_ups").select("*").eq("prospect_id", prospectId).order("created_at", { ascending: false }).limit(20);
   const docsContext = await fetchProspectDocuments(prospectId);
 
   // 2. Separate activity types
@@ -600,6 +602,21 @@ ${docsContext}
 
 ## Notes internes
 ${notes.map((n: Record<string, string>) => `- ${n.title}: ${n.content || ""}`).join("\n") || "Aucune note"}
+
+## Services en cours (pipeline)
+${(services || []).length > 0 ? (services || []).map((s: Record<string, string>) => `- ${s.service_label} → Statut: ${s.status}${s.price_ht ? " | " + s.price_ht + " EUR HT" : ""}${s.notes ? " | Note: " + s.notes : ""}`).join("\n") : "Aucun service renseigné"}
+
+## Notes de suivi
+${(followUps || []).length > 0 ? (followUps || []).map((f: Record<string, string>) => `- [${f.category}] ${f.note} (${f.created_at})`).join("\n") : "Aucune note de suivi"}
+
+## Contexte IA
+${prospect.ai_context || "Aucun contexte libre renseigné"}
+
+## Type de relation
+${prospect.relationship_type || "prospect"}
+
+## Prochaine action
+${prospect.next_action ? prospect.next_action + (prospect.next_action_date ? " (avant le " + prospect.next_action_date + ")" : "") : "Aucune action définie"}
 
 ---
 
