@@ -3030,7 +3030,7 @@
     }
 
     // ── jsPDF-based PDF generation ──
-    function downloadProposalPDF() {
+    async function downloadProposalPDF() {
         if (!currentProposalData && !currentProposalHTML) { toast('Aucune proposition a telecharger', 'error'); return; }
         var companyName = currentProspect ? currentProspect.company_name : 'Prospect';
         var filename = 'Proposition_Regen_Agency_' + companyName.replace(/[^a-zA-Z0-9\u00C0-\u024F]/g, '_') + '.pdf';
@@ -3043,6 +3043,21 @@
                 return;
             }
         }
+
+        // Load agency logo
+        var logoBase64 = null;
+        try {
+            var agencyRes = await sb.from('agencies').select('logo_url').limit(1).single();
+            if (agencyRes.data && agencyRes.data.logo_url) {
+                var logoResp = await fetch(agencyRes.data.logo_url);
+                var logoBlob = await logoResp.blob();
+                logoBase64 = await new Promise(function(resolve) {
+                    var reader = new FileReader();
+                    reader.onload = function() { resolve(reader.result); };
+                    reader.readAsDataURL(logoBlob);
+                });
+            }
+        } catch(e) { /* no logo, continue without */ }
 
         try {
             var jsPDF = window.jspdf.jsPDF;
@@ -3208,44 +3223,39 @@
             doc.setFillColor(23, 60, 58);
             doc.rect(0, 0, pageW, pageH, 'F');
 
-            // Top line
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8);
-            doc.setTextColor(255, 255, 255);
-            doc.setGState(new doc.GState({ opacity: 0.6 }));
-            doc.text('REGEN AGENCY \u2022 60 rue Fran\u00e7ois 1er, 75008 Paris \u2022 contact.regenagency@gmail.com', pageW / 2, 25, { align: 'center' });
-            doc.setGState(new doc.GState({ opacity: 1 }));
-
-            // Separator line
-            doc.setDrawColor(255, 255, 255);
-            doc.setGState(new doc.GState({ opacity: 0.15 }));
-            doc.line(marginL, 32, pageW - marginR, 32);
-            doc.setGState(new doc.GState({ opacity: 1 }));
+            // Logo at top
+            if (logoBase64) {
+                try {
+                    var logoW = 40, logoH = 40;
+                    doc.addImage(logoBase64, 'JPEG', (pageW - logoW) / 2, 30, logoW, logoH);
+                } catch(e) { /* logo failed, skip */ }
+            }
 
             // "Proposition commerciale" label
+            var coverTitleY = logoBase64 ? 90 : 100;
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(11);
+            doc.setFontSize(12);
             doc.setTextColor(47, 185, 99);
-            doc.text('PROPOSITION COMMERCIALE', pageW / 2, 110, { align: 'center' });
+            doc.text('Proposition commerciale', pageW / 2, coverTitleY, { align: 'center' });
 
             // Company name
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(28);
+            doc.setFontSize(30);
             doc.setTextColor(255, 255, 255);
             var companyLines = doc.splitTextToSize(companyName, contentW);
-            doc.text(companyLines, pageW / 2, 130, { align: 'center' });
-            var companyEndY = 130 + companyLines.length * 12;
+            doc.text(companyLines, pageW / 2, coverTitleY + 22, { align: 'center' });
+            var companyEndY = coverTitleY + 22 + companyLines.length * 13;
 
             // "x Regen Agency"
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(16);
+            doc.setFontSize(14);
             doc.setTextColor(47, 185, 99);
-            doc.text('\u00d7 Regen Agency', pageW / 2, companyEndY + 8, { align: 'center' });
+            doc.text('\u00d7 Regen Agency', pageW / 2, companyEndY + 6, { align: 'center' });
 
-            // Bottom separator
+            // Bottom section
             doc.setDrawColor(255, 255, 255);
             doc.setGState(new doc.GState({ opacity: 0.15 }));
-            doc.line(marginL, 230, pageW - marginR, 230);
+            doc.line(marginL + 20, 225, pageW - marginR - 20, 225);
             doc.setGState(new doc.GState({ opacity: 1 }));
 
             // Date
@@ -3253,10 +3263,18 @@
             doc.setFontSize(11);
             doc.setTextColor(255, 255, 255);
             doc.setGState(new doc.GState({ opacity: 0.7 }));
-            doc.text(dateStr, pageW / 2, 242, { align: 'center' });
+            doc.text(dateStr, pageW / 2, 240, { align: 'center' });
             doc.setGState(new doc.GState({ opacity: 0.45 }));
             doc.setFontSize(10);
-            doc.text('Suite \u00e0 nos \u00e9changes', pageW / 2, 250, { align: 'center' });
+            doc.text('Suite \u00e0 nos \u00e9changes', pageW / 2, 248, { align: 'center' });
+            doc.setGState(new doc.GState({ opacity: 1 }));
+
+            // Footer info
+            doc.setGState(new doc.GState({ opacity: 0.4 }));
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7.5);
+            doc.setTextColor(255, 255, 255);
+            doc.text('REGEN AGENCY \u2014 60 rue Fran\u00e7ois 1er, 75008 Paris \u2014 contact.regenagency@gmail.com', pageW / 2, 280, { align: 'center' });
             doc.setGState(new doc.GState({ opacity: 1 }));
 
             // ══════════════════════════════════════
