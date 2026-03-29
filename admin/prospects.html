@@ -3068,6 +3068,129 @@
                 }
             }
 
+            // ── Draw a single bullet point (handles bold+text wrapping) ──
+            function drawBullet(b) {
+                var bulletIndent = 6;
+                var bulletX = marginL + bulletIndent;
+                var availW = contentW - bulletIndent;
+
+                // Parse bullet content
+                var boldPart = '';
+                var textPart = '';
+                if (typeof b === 'string') {
+                    textPart = b;
+                } else if (b.bold) {
+                    boldPart = b.bold;
+                    textPart = b.text || '';
+                } else {
+                    textPart = b.text || '';
+                }
+
+                // Estimate lines needed
+                var fullText = boldPart + (boldPart && textPart ? ' \u2013 ' + textPart : textPart);
+                var estLines = doc.splitTextToSize(fullText, availW);
+                checkY(estLines.length * 4.5 + 3);
+
+                // Green bullet dot
+                doc.setFontSize(10);
+                doc.setTextColor(47, 185, 99);
+                doc.setFont('helvetica', 'bold');
+                doc.text('\u2022', marginL, y);
+
+                if (boldPart) {
+                    // Draw bold part
+                    doc.setTextColor(51, 51, 51);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(10);
+
+                    // Check if bold part itself needs wrapping
+                    var boldLines = doc.splitTextToSize(boldPart, availW);
+                    if (boldLines.length > 1) {
+                        // Bold part is very long — wrap it, then text on new lines
+                        boldLines.forEach(function(bl, i) {
+                            if (i > 0) checkY(4.5);
+                            doc.text(bl, bulletX, y);
+                            y += 4.5;
+                        });
+                        if (textPart) {
+                            doc.setFont('helvetica', 'normal');
+                            var tLines = doc.splitTextToSize(textPart, availW);
+                            tLines.forEach(function(tl) {
+                                checkY(4.5);
+                                doc.text(tl, bulletX, y);
+                                y += 4.5;
+                            });
+                        }
+                    } else {
+                        // Bold fits on one line
+                        doc.text(boldPart, bulletX, y);
+                        var boldW = doc.getTextWidth(boldPart);
+
+                        if (textPart) {
+                            doc.setFont('helvetica', 'normal');
+                            var sep = ' \u2013 ';
+                            var sepW = doc.getTextWidth(sep);
+                            var remainOnFirstLine = availW - boldW - sepW;
+
+                            if (remainOnFirstLine > 20) {
+                                // Enough space: put separator + start of text on same line as bold
+                                // Split text to fit: first line shorter, rest full width
+                                var words = textPart.split(' ');
+                                var firstLineText = '';
+                                var restText = '';
+                                var tempW = 0;
+
+                                for (var wi = 0; wi < words.length; wi++) {
+                                    var wordW = doc.getTextWidth((firstLineText ? ' ' : '') + words[wi]);
+                                    if (tempW + wordW <= remainOnFirstLine) {
+                                        firstLineText += (firstLineText ? ' ' : '') + words[wi];
+                                        tempW += wordW;
+                                    } else {
+                                        restText = words.slice(wi).join(' ');
+                                        break;
+                                    }
+                                }
+
+                                doc.text(sep + firstLineText, bulletX + boldW, y);
+                                y += 4.5;
+
+                                if (restText) {
+                                    var restLines = doc.splitTextToSize(restText, availW);
+                                    restLines.forEach(function(rl) {
+                                        checkY(4.5);
+                                        doc.text(rl, bulletX, y);
+                                        y += 4.5;
+                                    });
+                                }
+                            } else {
+                                // Not enough space: text goes to next line
+                                y += 4.5;
+                                var textLines = doc.splitTextToSize(sep.trim() + ' ' + textPart, availW);
+                                textLines.forEach(function(tl2) {
+                                    checkY(4.5);
+                                    doc.text(tl2, bulletX, y);
+                                    y += 4.5;
+                                });
+                            }
+                        } else {
+                            y += 4.5;
+                        }
+                    }
+                } else {
+                    // No bold, just plain text
+                    doc.setTextColor(51, 51, 51);
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(10);
+                    var plainLines = doc.splitTextToSize(textPart, availW);
+                    plainLines.forEach(function(pl, pi) {
+                        if (pi > 0) checkY(4.5);
+                        doc.text(pl, bulletX, y);
+                        y += 4.5;
+                    });
+                }
+                y += 1.5; // spacing after bullet
+            }
+
             // ── Draw content page header + page number ──
             function drawContentHeader() {
                 doc.setFont('helvetica', 'normal');
@@ -3180,51 +3303,7 @@
                     // ── Top-level bullets ──
                     if (section.bullets) {
                         section.bullets.forEach(function(b) {
-                            var txt = typeof b === 'string' ? b : (b.bold ? b.bold + (b.text ? ' \u2013 ' + b.text : '') : (b.text || ''));
-                            var bLines = doc.splitTextToSize(txt, contentW - 8);
-                            checkY(bLines.length * 5 + 2);
-                            // Green bullet
-                            doc.setTextColor(47, 185, 99);
-                            doc.setFont('helvetica', 'bold');
-                            doc.setFontSize(10);
-                            doc.text('\u2022', marginL, y);
-                            // Bold part
-                            if (typeof b === 'object' && b.bold) {
-                                doc.setTextColor(51, 51, 51);
-                                doc.setFont('helvetica', 'bold');
-                                doc.text(b.bold, marginL + 6, y);
-                                var boldW = doc.getTextWidth(b.bold);
-                                if (b.text) {
-                                    doc.setFont('helvetica', 'normal');
-                                    var rest = ' \u2013 ' + b.text;
-                                    var firstLineAvail = contentW - 8 - boldW;
-                                    if (firstLineAvail > 10) {
-                                        var restLines = doc.splitTextToSize(rest, contentW - 8);
-                                        doc.text(restLines[0], marginL + 6 + boldW, y);
-                                        y += 5;
-                                        for (var rl = 1; rl < restLines.length; rl++) {
-                                            checkY(5);
-                                            doc.text(restLines[rl], marginL + 6, y);
-                                            y += 5;
-                                        }
-                                    } else {
-                                        y += 5;
-                                        var restLines2 = doc.splitTextToSize(rest, contentW - 8);
-                                        restLines2.forEach(function(rl2) { checkY(5); doc.text(rl2, marginL + 6, y); y += 5; });
-                                    }
-                                } else {
-                                    y += 5;
-                                }
-                            } else {
-                                doc.setTextColor(51, 51, 51);
-                                doc.setFont('helvetica', 'normal');
-                                bLines.forEach(function(bl, idx) {
-                                    if (idx > 0) checkY(5);
-                                    doc.text(bl, marginL + 6, y);
-                                    y += 5;
-                                });
-                            }
-                            y += 1;
+                            drawBullet(b);
                         });
                         y += 3;
                     }
@@ -3271,23 +3350,7 @@
                             }
 
                             if (sub.bullets) {
-                                sub.bullets.forEach(function(b) {
-                                    var txt2 = typeof b === 'string' ? b : (b.bold ? b.bold + (b.text ? ' \u2013 ' + b.text : '') : (b.text || ''));
-                                    var bL2 = doc.splitTextToSize(txt2, contentW - 8);
-                                    checkY(bL2.length * 5 + 2);
-                                    doc.setTextColor(47, 185, 99);
-                                    doc.setFont('helvetica', 'bold');
-                                    doc.setFontSize(10);
-                                    doc.text('\u2022', marginL, y);
-                                    doc.setTextColor(51, 51, 51);
-                                    doc.setFont('helvetica', 'normal');
-                                    bL2.forEach(function(bl2, bi) {
-                                        if (bi > 0) checkY(5);
-                                        doc.text(bl2, marginL + 6, y);
-                                        y += 5;
-                                    });
-                                    y += 1;
-                                });
+                                sub.bullets.forEach(function(b) { drawBullet(b); });
                                 y += 2;
                             }
 
@@ -3301,23 +3364,7 @@
                             }
 
                             if (sub.items) {
-                                sub.items.forEach(function(item) {
-                                    var txt3 = typeof item === 'string' ? item : (item.bold ? item.bold + (item.text ? ' \u2013 ' + item.text : '') : (item.text || ''));
-                                    var bL3 = doc.splitTextToSize(txt3, contentW - 8);
-                                    checkY(bL3.length * 5 + 2);
-                                    doc.setTextColor(47, 185, 99);
-                                    doc.setFont('helvetica', 'bold');
-                                    doc.setFontSize(10);
-                                    doc.text('\u2022', marginL, y);
-                                    doc.setTextColor(51, 51, 51);
-                                    doc.setFont('helvetica', 'normal');
-                                    bL3.forEach(function(bl3, bi3) {
-                                        if (bi3 > 0) checkY(5);
-                                        doc.text(bl3, marginL + 6, y);
-                                        y += 5;
-                                    });
-                                    y += 1;
-                                });
+                                sub.items.forEach(function(item) { drawBullet(item); });
                                 y += 2;
                             }
                         });
