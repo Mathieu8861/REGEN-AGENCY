@@ -617,15 +617,38 @@
             border-radius: var(--radius-sm);
             padding: 18px;
         }
+        .synthesis-card__header {
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; user-select: none;
+        }
+        .synthesis-card__header:hover { opacity: 0.8; }
         .synthesis-card__date {
             font-size: 0.72rem;
             color: #888;
-            margin-bottom: 8px;
         }
+        .synthesis-card__toggle {
+            font-size: 0.72rem; font-weight: 700; color: var(--green);
+            background: white; border: 1px solid #bbf7d0; border-radius: 20px;
+            padding: 3px 12px; cursor: pointer; font-family: inherit;
+        }
+        .synthesis-card__toggle:hover { background: var(--green); color: white; }
         .synthesis-card__content {
             font-size: 0.82rem;
             color: var(--dark);
             line-height: 1.6;
+            max-height: 120px; overflow: hidden; position: relative;
+            margin-top: 10px; transition: max-height 0.3s ease;
+        }
+        .synthesis-card__content::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 40px; background: linear-gradient(transparent, #ecfdf5);
+            pointer-events: none;
+        }
+        .synthesis-card.--expanded .synthesis-card__content {
+            max-height: none;
+        }
+        .synthesis-card.--expanded .synthesis-card__content::after {
+            display: none;
         }
 
         /* ─── Suivi Projet (services pipeline + follow-ups) ─── */
@@ -2655,8 +2678,11 @@
             .order('created_at', { ascending: false }).limit(1);
         if (res.data && res.data.length > 0) {
             var s = res.data[0];
-            container.innerHTML = '<div class="synthesis-card">' +
-                '<div class="synthesis-card__date">Derniere synthese : ' + formatRelativeDate(s.created_at) + '</div>' +
+            container.innerHTML = '<div class="synthesis-card" id="synthCard">' +
+                '<div class="synthesis-card__header" onclick="toggleSynthesis()">' +
+                    '<span class="synthesis-card__date">Derniere synthese : ' + formatRelativeDate(s.created_at) + '</span>' +
+                    '<button class="synthesis-card__toggle" id="synthToggleBtn">Voir tout</button>' +
+                '</div>' +
                 '<div class="synthesis-card__content">' + formatAiText(s.content) + '</div>' +
             '</div>';
         } else {
@@ -2688,8 +2714,11 @@
                 created_by: 'system'
             }]);
 
-            container.innerHTML = '<div class="synthesis-card">' +
-                '<div class="synthesis-card__date">Generee a l\'instant</div>' +
+            container.innerHTML = '<div class="synthesis-card" id="synthCard">' +
+                '<div class="synthesis-card__header" onclick="toggleSynthesis()">' +
+                    '<span class="synthesis-card__date">Generee a l\'instant</span>' +
+                    '<button class="synthesis-card__toggle" id="synthToggleBtn">Voir tout</button>' +
+                '</div>' +
                 '<div class="synthesis-card__content">' + formatAiText(content) + '</div>' +
             '</div>';
             toast('Synthese generee !', 'success');
@@ -2699,6 +2728,20 @@
         }
     }
     window.generateSynthesis = generateSynthesis;
+
+    function toggleSynthesis() {
+        var card = document.getElementById('synthCard');
+        var btn = document.getElementById('synthToggleBtn');
+        if (!card) return;
+        if (card.classList.contains('--expanded')) {
+            card.classList.remove('--expanded');
+            btn.textContent = 'Voir tout';
+        } else {
+            card.classList.add('--expanded');
+            btn.textContent = 'Replier';
+        }
+    }
+    window.toggleSynthesis = toggleSynthesis;
 
     // ── PROPOSITION (inline email) ──
     // ── Generate email with context ──
