@@ -41,11 +41,34 @@ function jsonResponse(
   });
 }
 
+// callClaude with optional document attachments (PDF support)
 async function callClaude(
   systemPrompt: string,
   userPrompt: string,
   maxTokens: number,
+  documents?: Array<{ base64: string; mediaType: string; fileName: string }>,
 ): Promise<string> {
+  // Build content array: documents first, then text prompt
+  const content: unknown[] = [];
+
+  if (documents && documents.length > 0) {
+    for (const doc of documents) {
+      if (doc.mediaType === "application/pdf") {
+        content.push({
+          type: "document",
+          source: { type: "base64", media_type: "application/pdf", data: doc.base64 },
+        });
+      } else {
+        // Images (PNG, JPEG, etc.)
+        content.push({
+          type: "image",
+          source: { type: "base64", media_type: doc.mediaType, data: doc.base64 },
+        });
+      }
+    }
+  }
+  content.push({ type: "text", text: userPrompt });
+
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -57,7 +80,7 @@ async function callClaude(
       model: CLAUDE_MODEL,
       max_tokens: maxTokens,
       system: systemPrompt,
-      messages: [{ role: "user", content: userPrompt }],
+      messages: [{ role: "user", content }],
     }),
   });
 
@@ -68,6 +91,41 @@ async function callClaude(
 
   const data = await res.json();
   return data.content?.[0]?.text ?? "";
+}
+
+// Extract text from PPTX/DOCX (they are ZIP files with XML inside)
+async function extractTextFromOfficeFile(blob: Blob, fileName: string): Promise<string> {
+  try {
+    const { ZipReader, BlobReader, TextWriter } = await import("https://deno.land/x/zipjs@v2.7.34/index.js");
+    const reader = new ZipReader(new BlobReader(blob));
+    const entries = await reader.getEntries();
+
+    const textParts: string[] = [];
+    const isPptx = fileName.toLowerCase().endsWith(".pptx");
+    const isDocx = fileName.toLowerCase().endsWith(".docx");
+
+    for (const entry of entries) {
+      // PPTX: slides are in ppt/slides/slide*.xml
+      // DOCX: content is in word/document.xml
+      const isRelevant = isPptx
+        ? entry.filename.match(/ppt\/slides\/slide\d+\.xml/)
+        : isDocx
+        ? entry.filename === "word/document.xml"
+        : false;
+
+      if (isRelevant && entry.getData) {
+        const writer = new TextWriter();
+        const xml = await entry.getData(writer);
+        // Strip XML tags, keep text
+        const text = xml.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+        if (text.length > 0) textParts.push(text);
+      }
+    }
+    await reader.close();
+    return textParts.join("\n\n").slice(0, 5000);
+  } catch (err) {
+    return `[Erreur extraction texte ${fileName}: ${(err as Error).message}]`;
+  }
 }
 
 async function logActivity(
@@ -85,38 +143,79 @@ async function logActivity(
   });
 }
 
-async function fetchProspectDocuments(prospectId: string): Promise<string> {
+interface DocResult {
+  textSummaries: string;
+  pdfDocuments: Array<{ base64: string; mediaType: string; fileName: string }>;
+}
+
+async function fetchProspectDocuments(prospectId: string): Promise<DocResult> {
   const { data: docs } = await supabase
     .from("prospect_documents")
     .select("*")
     .eq("prospect_id", prospectId)
     .order("created_at", { ascending: false })
-    .limit(5);
+    .limit(8);
 
-  if (!docs || docs.length === 0) return "Aucun document uploadé.";
+  const result: DocResult = { textSummaries: "", pdfDocuments: [] };
+  if (!docs || docs.length === 0) {
+    result.textSummaries = "Aucun document uploadé.";
+    return result;
+  }
 
   const summaries: string[] = [];
   for (const doc of docs) {
-    // For text-based files, try to download and read content
+    const desc = doc.description ? ` — ${doc.description}` : "";
+
+    // 1. Text/CSV files → read as text
     if (doc.file_type && (doc.file_type.includes("text") || doc.file_type.includes("csv"))) {
       try {
-        const { data: fileData } = await supabase.storage
-          .from("prospect-documents")
-          .download(doc.file_path);
+        const { data: fileData } = await supabase.storage.from("prospect-documents").download(doc.file_path);
         if (fileData) {
           const text = await fileData.text();
-          summaries.push(`### Document: ${doc.file_name} (${doc.category})\n${text.slice(0, 2000)}`);
+          summaries.push(`### Document: ${doc.file_name} (${doc.category})${desc}\n${text.slice(0, 3000)}`);
           continue;
         }
-      } catch (_) {
-        // Fall through to metadata only
-      }
+      } catch (_) { /* fall through */ }
     }
-    // For non-text files (PDF, images), just include metadata
-    summaries.push(`### Document: ${doc.file_name} (catégorie: ${doc.category}, type: ${doc.file_type || "inconnu"}, taille: ${doc.file_size ? Math.round(doc.file_size / 1024) + " Ko" : "inconnue"})`);
+
+    // 2. PDF files → send as base64 to Claude (native reading)
+    if (doc.file_type === "application/pdf") {
+      try {
+        const { data: fileData } = await supabase.storage.from("prospect-documents").download(doc.file_path);
+        if (fileData && doc.file_size && doc.file_size < 5 * 1024 * 1024) { // max 5MB
+          const arrayBuf = await fileData.arrayBuffer();
+          const bytes = new Uint8Array(arrayBuf);
+          // Base64 encode
+          let binary = "";
+          for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+          const b64 = btoa(binary);
+          result.pdfDocuments.push({ base64: b64, mediaType: "application/pdf", fileName: doc.file_name });
+          summaries.push(`### Document PDF: ${doc.file_name} (${doc.category})${desc} — [CONTENU LU PAR L'IA]`);
+          continue;
+        }
+      } catch (_) { /* fall through */ }
+    }
+
+    // 3. PPTX/DOCX files → extract text from XML inside ZIP
+    if (doc.file_name && (doc.file_name.toLowerCase().endsWith(".pptx") || doc.file_name.toLowerCase().endsWith(".docx"))) {
+      try {
+        const { data: fileData } = await supabase.storage.from("prospect-documents").download(doc.file_path);
+        if (fileData) {
+          const extractedText = await extractTextFromOfficeFile(fileData, doc.file_name);
+          if (extractedText && !extractedText.startsWith("[Erreur")) {
+            summaries.push(`### Document: ${doc.file_name} (${doc.category})${desc}\nContenu extrait:\n${extractedText}`);
+            continue;
+          }
+        }
+      } catch (_) { /* fall through */ }
+    }
+
+    // 4. Fallback: metadata only
+    summaries.push(`### Document: ${doc.file_name} (catégorie: ${doc.category}, type: ${doc.file_type || "inconnu"}, taille: ${doc.file_size ? Math.round(doc.file_size / 1024) + " Ko" : "inconnue"})${desc}`);
   }
 
-  return summaries.join("\n\n");
+  result.textSummaries = summaries.join("\n\n");
+  return result;
 }
 
 async function fetchPageContent(url: string): Promise<string> {
@@ -184,7 +283,7 @@ async function handleGenerateEmail(prospectId: string, language: string) {
     .limit(10);
 
   // 5. Fetch documents
-  const docsContext = await fetchProspectDocuments(prospectId);
+  const docsResult = await fetchProspectDocuments(prospectId);
 
   // 6. Build prompt
   const systemPrompt =
@@ -244,14 +343,14 @@ ${
 }
 
 ## Documents du prospect
-${docsContext}
+${docsResult.textSummaries}
 
 Langue de l'email : ${language === "en" ? "anglais" : "français"}
 
 Rédige l'email complet avec l'objet en première ligne (format "Objet: ...") puis le corps du message.`;
 
-  // 7. Call Claude
-  const aiResponse = await callClaude(systemPrompt, userPrompt, 2000);
+  // 7. Call Claude (with PDF documents if any)
+  const aiResponse = await callClaude(systemPrompt, userPrompt, 2000, docsResult.pdfDocuments);
 
   // 7. Parse subject and body
   let emailSubject = "";
@@ -556,7 +655,7 @@ async function handleGenerateSynthesis(prospectId: string) {
   const { data: formResponses } = await supabase.from("prospect_form_responses").select("*").eq("prospect_id", prospectId);
   const { data: services } = await supabase.from("prospect_services").select("*").eq("prospect_id", prospectId).order("created_at");
   const { data: followUps } = await supabase.from("prospect_follow_ups").select("*").eq("prospect_id", prospectId).order("created_at", { ascending: false }).limit(20);
-  const docsContext = await fetchProspectDocuments(prospectId);
+  const docsResult = await fetchProspectDocuments(prospectId);
 
   // 2. Separate activity types
   const exchanges = (activities || []).filter((a: Record<string, string>) => ["call", "meeting"].includes(a.activity_type));
@@ -598,7 +697,7 @@ ${exchanges.map((e: Record<string, string>) => `### ${e.title} (${e.created_at})
 ${formResponses && formResponses.length > 0 ? formResponses.map((r: Record<string, unknown>) => JSON.stringify(r.response_data)).join("\n") : "Aucune réponse"}
 
 ## Documents
-${docsContext}
+${docsResult.textSummaries}
 
 ## Notes internes
 ${notes.map((n: Record<string, string>) => `- ${n.title}: ${n.content || ""}`).join("\n") || "Aucune note"}
@@ -648,8 +747,8 @@ Ce qu'il reste à faire concrètement
 
 Sois CONCIS. Utilise des bullet points. Si une info n'est pas disponible, écris "Non renseigné" plutôt que d'inventer.`;
 
-  // 4. Call Claude
-  const aiResponse = await callClaude(systemPrompt, userPrompt, 3000);
+  // 4. Call Claude (with PDF documents if any)
+  const aiResponse = await callClaude(systemPrompt, userPrompt, 3000, docsResult.pdfDocuments);
 
   // 5. Log activity
   await logActivity(prospectId, "Synthèse globale IA", "ai_analysis", aiResponse);
@@ -668,7 +767,7 @@ async function handleGenerateProposal(prospectId: string) {
   const { data: links } = await supabase.from("prospect_links").select("*").eq("prospect_id", prospectId);
   const { data: activities } = await supabase.from("prospect_activities").select("*").eq("prospect_id", prospectId).order("created_at", { ascending: false }).limit(30);
   const { data: formResponses } = await supabase.from("prospect_form_responses").select("*").eq("prospect_id", prospectId);
-  const docsContext = await fetchProspectDocuments(prospectId);
+  const docsResult = await fetchProspectDocuments(prospectId);
 
   const exchanges = (activities || []).filter((a: Record<string, string>) => ["call", "meeting"].includes(a.activity_type));
   const aiAnalyses = (activities || []).filter((a: Record<string, string>) => a.activity_type === "ai_analysis");
@@ -703,7 +802,7 @@ ${exchanges.map((e: Record<string, string>) => `${e.title}: ${(e.content || "").
 ${formResponses && formResponses.length > 0 ? formResponses.map((r: Record<string, unknown>) => JSON.stringify(r.response_data)).join("\n") : "Aucune"}
 
 ## Documents
-${docsContext}
+${docsResult.textSummaries}
 
 ---
 
