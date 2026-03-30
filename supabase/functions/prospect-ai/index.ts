@@ -759,7 +759,7 @@ Sois CONCIS. Utilise des bullet points. Si une info n'est pas disponible, écris
 
 // ── Action: generate_proposal ──────────
 
-async function handleGenerateProposal(prospectId: string) {
+async function handleGenerateProposal(prospectId: string, body?: Record<string, unknown>) {
   // 1. Fetch ALL data
   const { data: prospect } = await supabase.from("prospects").select("*").eq("id", prospectId).single();
   if (!prospect) return jsonResponse({ success: false, error: "Prospect non trouvé" }, 404);
@@ -767,36 +767,70 @@ async function handleGenerateProposal(prospectId: string) {
   const { data: links } = await supabase.from("prospect_links").select("*").eq("prospect_id", prospectId);
   const { data: activities } = await supabase.from("prospect_activities").select("*").eq("prospect_id", prospectId).order("created_at", { ascending: false }).limit(30);
   const { data: formResponses } = await supabase.from("prospect_form_responses").select("*").eq("prospect_id", prospectId);
+  const { data: services } = await supabase.from("prospect_services").select("*").eq("prospect_id", prospectId).order("created_at");
+  const { data: followUps } = await supabase.from("prospect_follow_ups").select("*").eq("prospect_id", prospectId).order("created_at", { ascending: false }).limit(20);
   const docsResult = await fetchProspectDocuments(prospectId);
+
+  // Get agency info for the proposal
+  const { data: agency } = await supabase.from("agencies").select("*").limit(1).single();
 
   const exchanges = (activities || []).filter((a: Record<string, string>) => ["call", "meeting"].includes(a.activity_type));
   const aiAnalyses = (activities || []).filter((a: Record<string, string>) => a.activity_type === "ai_analysis");
 
-  // 2. Build prompt — now returns structured JSON for native jsPDF rendering
+  // Extra params from frontend
+  const selectedServices = body?.selected_services as string[] || [];
+  const proposalContext = body?.proposal_context as string || "";
+  const modifications = body?.modifications as string || "";
+  const previousProposal = body?.previous_proposal as string || "";
+
+  const today = new Date();
+  const months = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  const dateStr = today.getDate() + " " + months[today.getMonth()] + " " + today.getFullYear();
+  const monthYear = months[today.getMonth()].charAt(0).toUpperCase() + months[today.getMonth()].slice(1) + " " + today.getFullYear();
+  const contactName = ((prospect.contact_first_name || "") + " " + (prospect.contact_last_name || "")).trim();
+
+  // 2. Build prompt — generates HTML body using the Regen proposal template CSS classes
   const systemPrompt =
     "Tu es un directeur commercial senior chez Regen Agency. " +
-    "Tu rédiges des PROPOSITIONS COMMERCIALES professionnelles. " +
-    "Le document doit être structuré, chiffré et convaincant. " +
-    "Tu dois IMPÉRATIVEMENT répondre en JSON valide (pas de HTML, pas de markdown). " +
-    "Retourne UNIQUEMENT un objet JSON brut sans bloc de code, sans ```json, juste le JSON.\n\n" +
+    "Tu rédiges des PROPOSITIONS COMMERCIALES professionnelles en HTML. " +
+    "Tu utilises les classes CSS du template Regen Agency pour structurer le document. " +
+    "Le document doit être structuré, chiffré avec des prix réalistes, et personnalisé pour le prospect. " +
+    "Tu dois retourner UNIQUEMENT du HTML brut (pas de ```html, pas de markdown, juste le HTML). " +
+    "NE PAS inclure de balises <html>, <head>, <body>, <style> — retourne uniquement le CONTENU intérieur.\n\n" +
     AGENCY_KNOWLEDGE_BASE;
 
-  const userPrompt = `Génère une PROPOSITION COMMERCIALE complète en JSON structuré pour ce prospect.
+  const userPrompt = `Génère une PROPOSITION COMMERCIALE en HTML pour ce prospect. Utilise les classes CSS du template Regen Agency.
 
 ## Données du prospect
 - Entreprise : ${prospect.company_name} | Secteur : ${prospect.company_sector || "?"} | Taille : ${prospect.company_size || "?"}
 - Site web : ${prospect.company_website || "?"}
-- Adresse : ${prospect.company_address || "?"}
-- Contact : ${prospect.contact_first_name || ""} ${prospect.contact_last_name || ""} | Poste : ${prospect.contact_position || "?"}
+- SIRET : ${prospect.company_siret || "?"} | Adresse : ${prospect.company_address || "?"}
+- Contact : ${contactName} | Poste : ${prospect.contact_position || "?"}
+- Email : ${prospect.contact_email || "?"} | Tel : ${prospect.contact_phone || "?"}
 - Besoins : ${prospect.needs_summary || "Non renseigné"}
 - Budget estimé : ${prospect.budget_estimate || "?"} ${prospect.budget_currency || "EUR"}
 - Services intéressés : ${(prospect.services_interested || []).join(", ") || "?"}
+- Type de relation : ${prospect.relationship_type || "prospect"}
+- Contexte IA : ${prospect.ai_context || "Aucun"}
+
+## Services sélectionnés pour cette proposition
+${selectedServices.length > 0 ? selectedServices.join(", ") : "Tous les services pertinents"}
+
+${proposalContext ? "## Contexte / précisions\n" + proposalContext : ""}
+
+${modifications ? "## MODIFICATIONS À APPLIQUER sur la proposition précédente\n" + modifications + "\n\nVoici la proposition précédente à modifier :\n" + (typeof previousProposal === 'string' ? previousProposal.slice(0, 3000) : JSON.stringify(previousProposal).slice(0, 3000)) : ""}
+
+## Services en cours (pipeline)
+${(services || []).length > 0 ? (services || []).map((s: Record<string, string>) => "- " + s.service_label + " → " + s.status + (s.notes ? " | " + s.notes : "")).join("\n") : "Aucun"}
+
+## Notes de suivi
+${(followUps || []).length > 0 ? (followUps || []).map((f: Record<string, string>) => "- [" + f.category + "] " + f.note).join("\n") : "Aucune"}
 
 ## Analyses IA
 ${aiAnalyses.map((a: Record<string, string>) => a.content?.slice(0, 500)).join("\n\n") || "Aucune"}
 
 ## Échanges
-${exchanges.map((e: Record<string, string>) => `${e.title}: ${(e.content || "").slice(0, 300)}`).join("\n") || "Aucun"}
+${exchanges.map((e: Record<string, string>) => e.title + ": " + (e.content || "").slice(0, 300)).join("\n") || "Aucun"}
 
 ## Réponses formulaire
 ${formResponses && formResponses.length > 0 ? formResponses.map((r: Record<string, unknown>) => JSON.stringify(r.response_data)).join("\n") : "Aucune"}
@@ -806,118 +840,89 @@ ${docsResult.textSummaries}
 
 ---
 
-STRUCTURE JSON OBLIGATOIRE — retourne exactement cet format :
+GÉNÈRE LE HTML en utilisant EXACTEMENT ces classes CSS. Retourne UNIQUEMENT le HTML sans balises html/head/body/style.
 
-{
-  "sections": [
-    {
-      "title": "Votre situation actuelle",
-      "subsections": [
-        { "subtitle": "L'entreprise", "text": "Description de l'entreprise, son secteur, son historique..." },
-        { "subtitle": "Votre site web", "bullets": ["Point 1 sur le site actuel", "Point 2..."] },
-        { "subtitle": "Votre référencement (SEO)", "bullets": ["Analyse SEO point 1", "Analyse SEO point 2"], "text_after": "Points d'attention : résumé des problèmes SEO identifiés." }
-      ]
-    },
-    {
-      "title": "Besoins identifiés",
-      "bullets": [
-        { "bold": "Moderniser le site web", "text": "Le design actuel ne reflète pas le standing de l'établissement..." },
-        { "bold": "Améliorer le référencement", "text": "Le site n'apparaît pas dans les premiers résultats..." }
-      ]
-    },
-    {
-      "title": "Solutions proposées",
-      "subsections": [
-        {
-          "subtitle": "Option A – Refonte complète sur-mesure",
-          "text": "Description de l'option A...",
-          "items": [
-            { "bold": "Design sur-mesure", "text": "Création d'un design unique..." },
-            { "bold": "Développement responsive", "text": "Site adapté mobile/tablette..." }
-          ]
-        },
-        {
-          "subtitle": "Option B – Refonte premium",
-          "text": "Description de l'option B..."
-        }
-      ]
-    },
-    {
-      "title": "Tarification",
-      "tables": [
-        {
-          "name": "Site web",
-          "columns": ["Prestation", "Option A", "Option B"],
-          "rows": [
-            ["Cadrage projet & maquettes", "500 €", "700 €"],
-            ["Design & intégration", "1 500 €", "2 200 €"],
-            ["Développement", "1 200 €", "1 800 €"]
-          ],
-          "total_row": ["TOTAL", "3 200 € HT", "4 700 € HT"]
-        }
-      ],
-      "recap_table": {
-        "name": "Récapitulatif global",
-        "columns": ["Poste", "Option A", "Option B"],
-        "rows": [
-          ["Site web (one-shot)", "3 200 € HT", "4 700 € HT"],
-          ["SEO mensuel", "350 €/mois HT", "500 €/mois HT"]
-        ],
-        "total_row": ["TOTAL", "3 200 € + 350 €/mois", "4 700 € + 500 €/mois"]
-      }
-    },
-    {
-      "title": "Contrat d'accompagnement",
-      "subsections": [
-        { "subtitle": "Durée & reconduction", "text": "Engagement initial de 6 mois, renouvelable tacitement..." },
-        { "subtitle": "Engagements du Prestataire", "bullets": ["Rapport mensuel de performance", "Support technique réactif", "Optimisations continues"] },
-        { "subtitle": "Modalités de paiement", "text": "50% à la commande, 50% à la livraison pour le site web. Facturation mensuelle pour le SEO." }
-      ]
-    },
-    {
-      "title": "Prochaines étapes",
-      "numbered_list": [
-        "Validation de l'option retenue (A ou B)",
-        "Signature du devis et versement de l'acompte",
-        "Réunion de cadrage et planning détaillé",
-        "Livraison des maquettes sous 2 semaines",
-        "Développement et mise en ligne sous 6 semaines"
-      ]
-    }
-  ]
-}
+STRUCTURE DU HTML À GÉNÉRER :
 
-IMPORTANT :
-- Les prix doivent être RÉALISTES et basés sur la grille tarifaire Regen Agency fournie dans la base de connaissances
-- Tous les montants en euros HT
-- Sois spécifique au prospect (nom, secteur, besoins réels), pas générique
-- Adapte le nombre de sections et sous-sections selon les services pertinents pour ce prospect
-- Si le prospect n'a besoin que d'un site web, ne propose pas de section SEO/SEA et vice-versa
-- Retourne UNIQUEMENT le JSON, sans texte avant ou après, sans bloc de code markdown`;
+1. COVER (obligatoire) :
+<div class="cover">
+  <div class="wrap">
+    <div class="cover-logo">Regen Agency</div>
+    <div class="cover-tag">Proposition commerciale</div>
+    <h1>Titre principal avec <em>mot-clé en vert</em></h1>
+    <p class="cover-sub">Sous-titre descriptif</p>
+    <p class="cover-client">${prospect.company_name} × Regen Agency</p>
+    <p class="cover-date">${monthYear}</p>
+    <p class="cover-conf">Confidentiel — Destiné à ${prospect.company_name}</p>
+  </div>
+</div>
 
-  // 3. Call Claude
-  const aiResponse = await callClaude(systemPrompt, userPrompt, 5000);
+2. SECTIONS (dans <div class="wrap cnt">) avec numérotation :
+<div class="sec rv">
+  <div class="sh"><span class="snum">01</span><h2 class="st">Titre section</h2></div>
+  <p>Paragraphe...</p>
+  <h3 class="su">Sous-titre</h3>
+  <ul class="bul"><li><strong>Gras</strong> description</li></ul>
+</div>
 
-  // 4. Parse JSON — strip markdown code fences if present
-  let cleanJson = aiResponse.trim();
-  if (cleanJson.startsWith("```")) {
-    cleanJson = cleanJson.replace(/^```(?:json)?\s*/, "").replace(/\s*```$/, "");
+3. ALERTES :
+<div class="al alg"><span class="al-i">💡</span><div>Texte info</div></div>
+<div class="al alw"><span class="al-i">⚠</span><div>Texte warning</div></div>
+
+4. TABLEAUX :
+<div class="tw"><table><thead class="thg"><tr><th>Col1</th><th>Col2</th></tr></thead>
+<tbody><tr><td class="ts">Label</td><td class="tm">Valeur</td></tr></tbody></table></div>
+
+5. DEVIS :
+<div class="devis">
+  <div class="devis-head"><div><div class="devis-title">Titre devis</div><div class="devis-num">Ref · Date</div></div></div>
+  <div class="devis-body">
+    <div class="devis-head-cols"><div class="dhc">Prestation</div><div class="dhc" style="text-align:right">Total HT</div></div>
+    <div class="devis-line"><div class="dl-name"><strong>Nom prestation</strong><span class="dl-sub">Description</span></div><div class="dl-total">XXX€</div></div>
+  </div>
+  <div class="devis-total"><div><div class="devis-total-label">Total HT</div></div><div class="devis-total-val">XXXX€ <span style="font-size:16px;color:var(--gr)">HT</span></div></div>
+</div>
+
+6. PRICING CARDS (si formules mensuelles) :
+<div class="pricing">
+  <div class="pcard pcard-std"><div class="pcard-head"><div class="pcard-badge">Sans engagement</div><div class="pcard-price">XXX€</div><div class="pcard-period">HT / mois</div></div><div class="pcard-body"><div class="pcard-item">Item inclus</div></div></div>
+  <div class="pcard pcard-reco"><div class="pcard-head"><div class="pcard-badge">Recommandée</div><div class="pcard-price">XXX€</div><div class="pcard-period">HT / mois</div></div><div class="pcard-body"><div class="pcard-item">Item inclus</div></div></div>
+</div>
+
+7. FOOTER (obligatoire, à la fin) :
+<div class="ft"><div class="wrap"><div class="ftl">Rédigé par <strong>Regen Agency</strong> · ${monthYear} · Confidentiel</div><div class="ftr">REGEN AGENCY — SARL au capital de 200€ — SIRET 985 275 460 00014 — 60 rue François 1er, 75008 Paris — contact.regenagency@gmail.com</div></div></div>
+
+RÈGLES IMPORTANTES :
+- Prix RÉALISTES basés sur la grille tarifaire Regen Agency
+- Montants en euros HT
+- Personnalisé pour ${prospect.company_name} (nom, secteur, besoins réels)
+- N'inclus QUE les services pertinents (${selectedServices.length > 0 ? selectedServices.join(", ") : "selon les besoins identifiés"})
+- Ajoute class="rv" à chaque <div class="sec"> pour l'animation de révélation
+- Retourne UNIQUEMENT le HTML, sans texte avant/après, sans bloc code markdown`;
+
+  // 3. Call Claude (with PDF documents if any)
+  const aiResponse = await callClaude(systemPrompt, userPrompt, 8000, docsResult.pdfDocuments);
+
+  // 4. Clean up response — strip any markdown code fences
+  let html = aiResponse.trim();
+  if (html.startsWith("```")) {
+    html = html.replace(/^```(?:html)?\s*/, "").replace(/\s*```$/, "");
   }
 
-  let proposalJson: unknown;
-  try {
-    proposalJson = JSON.parse(cleanJson);
-  } catch (_e) {
-    // Fallback: return raw text as HTML for backward compat
-    await logActivity(prospectId, "Proposition commerciale générée (fallback HTML)", "ai_analysis", "Proposition générée par IA — format JSON invalide, fallback HTML");
-    return jsonResponse({ success: true, data: { proposal_html: aiResponse } });
-  }
+  // 5. Save as activity for the proposition.html page to load
+  await supabase.from("prospect_activities").insert({
+    prospect_id: prospectId,
+    activity_type: "proposal_html",
+    title: "Proposition commerciale HTML",
+    content: html,
+    created_by: "system",
+  });
 
-  // 5. Log activity
-  await logActivity(prospectId, "Proposition commerciale générée", "ai_analysis", "Proposition PDF générée par IA (format JSON structuré)");
+  // 6. Log activity
+  await logActivity(prospectId, "Proposition commerciale générée", "ai_analysis", "Proposition HTML générée — ouvrir via le lien");
 
-  // 6. Return structured JSON
-  return jsonResponse({ success: true, data: { proposal_json: proposalJson } });
+  // 7. Return HTML
+  return jsonResponse({ success: true, data: { proposal_html: html, prospect_id: prospectId } });
 }
 
 // ── Main handler ─────────────────────────
@@ -972,7 +977,7 @@ serve(async (req) => {
         return await handleGenerateSynthesis(prospect_id);
 
       case "generate_proposal":
-        return await handleGenerateProposal(prospect_id);
+        return await handleGenerateProposal(prospect_id, body);
 
       default:
         return jsonResponse(

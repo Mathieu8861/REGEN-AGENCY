@@ -2851,24 +2851,21 @@
                 selected_services: selectedServices,
                 proposal_context: propContext || null
             });
-            if (result && result.proposal_json) {
-                var parsed = typeof result.proposal_json === 'string' ? JSON.parse(result.proposal_json) : result.proposal_json;
-                currentProposalData = parsed;
-                currentProposalHTML = JSON.stringify(parsed, null, 2);
-                document.getElementById('proposalPreview').innerHTML = renderProposalPreview(parsed);
-                document.getElementById('proposalRawContent').value = currentProposalHTML;
-                document.getElementById('proposalResult').style.display = 'block';
-                updateCompleteness();
-                toast('Proposition commerciale generee !', 'success');
-            } else if (result && result.proposal_html) {
-                // Fallback for old HTML format
+
+            if (result && result.proposal_html) {
                 currentProposalHTML = result.proposal_html;
                 currentProposalData = null;
-                document.getElementById('proposalPreview').innerHTML = currentProposalHTML;
-                document.getElementById('proposalRawContent').value = currentProposalHTML;
+
+                // Show result with link to open
+                var proposalUrl = window.location.origin + '/proposition.html?id=' + currentProspectId;
+                document.getElementById('proposalPreview').innerHTML =
+                    '<div style="text-align:center; padding:20px;">' +
+                    '<p style="font-size:0.9rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Proposition generee avec succes !</p>' +
+                    '<a href="' + proposalUrl + '" target="_blank" class="btn btn--primary" style="text-decoration:none; margin-bottom:12px;">Ouvrir la proposition</a>' +
+                    '<p style="font-size:0.72rem; color:var(--gray); margin-top:8px;">La proposition s\'ouvre dans un nouvel onglet. Vous pouvez la partager ou l\'imprimer (Ctrl+P).</p>' +
+                    '</div>';
                 document.getElementById('proposalResult').style.display = 'block';
-                updateCompleteness();
-                toast('Proposition commerciale generee !', 'success');
+                toast('Proposition generee ! Cliquez pour l\'ouvrir.', 'success');
             } else {
                 toast('Erreur lors de la generation', 'error');
             }
@@ -2887,7 +2884,6 @@
         var modifs = document.getElementById('proposalModifications').value.trim();
         if (!modifs) { toast('Decrivez les modifications a appliquer', 'error'); return; }
 
-        // Get selected services
         var selectedServices = [];
         document.querySelectorAll('#propServices input:checked').forEach(function(cb) {
             selectedServices.push(cb.value);
@@ -2895,7 +2891,6 @@
         var propContext = document.getElementById('propContext').value.trim();
 
         document.getElementById('proposalResult').style.display = 'none';
-        document.getElementById('proposalEditor').style.display = 'none';
         document.getElementById('proposalLoading').style.display = 'block';
 
         try {
@@ -2903,23 +2898,18 @@
                 prospect_id: currentProspectId,
                 selected_services: selectedServices.length > 0 ? selectedServices : null,
                 proposal_context: propContext || null,
-                previous_proposal: currentProposalData || currentProposalHTML || null,
+                previous_proposal: currentProposalHTML || null,
                 modifications: modifs
             });
-            if (result && result.proposal_json) {
-                var parsed = typeof result.proposal_json === 'string' ? JSON.parse(result.proposal_json) : result.proposal_json;
-                currentProposalData = parsed;
-                currentProposalHTML = JSON.stringify(parsed, null, 2);
-                document.getElementById('proposalPreview').innerHTML = renderProposalPreview(parsed);
-                document.getElementById('proposalRawContent').value = currentProposalHTML;
-                document.getElementById('proposalResult').style.display = 'block';
-                document.getElementById('proposalModifications').value = '';
-                toast('Proposition regeneree !', 'success');
-            } else if (result && result.proposal_html) {
+
+            if (result && result.proposal_html) {
                 currentProposalHTML = result.proposal_html;
-                currentProposalData = null;
-                document.getElementById('proposalPreview').innerHTML = currentProposalHTML;
-                document.getElementById('proposalRawContent').value = currentProposalHTML;
+                var proposalUrl = window.location.origin + '/proposition.html?id=' + currentProspectId;
+                document.getElementById('proposalPreview').innerHTML =
+                    '<div style="text-align:center; padding:20px;">' +
+                    '<p style="font-size:0.9rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Proposition mise a jour !</p>' +
+                    '<a href="' + proposalUrl + '" target="_blank" class="btn btn--primary" style="text-decoration:none; margin-bottom:12px;">Ouvrir la proposition</a>' +
+                    '</div>';
                 document.getElementById('proposalResult').style.display = 'block';
                 document.getElementById('proposalModifications').value = '';
                 toast('Proposition regeneree !', 'success');
