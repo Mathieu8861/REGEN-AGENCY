@@ -7336,8 +7336,8 @@ html.dark-mode .theme-toggle__icon {
 /* --- Services liés / outils communs --- */
 .services-split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-xxl);
+    grid-template-columns: 1.2fr 1fr;
+    gap: var(--spacing-3xl, 5rem);
     align-items: center;
 }
 
