@@ -468,6 +468,38 @@
         });
     }
 
+    // --- Carousel résultats clients ---
+    function initResultsCarousel() {
+        document.querySelectorAll('.realisations-carousel').forEach(carousel => {
+            const track = carousel.querySelector('.realisations-carousel__track');
+            const prevBtn = carousel.querySelector('.realisations-carousel__btn--prev');
+            const nextBtn = carousel.querySelector('.realisations-carousel__btn--next');
+            if (!track) return;
+
+            const scrollAmount = 280;
+
+            if (prevBtn) prevBtn.addEventListener('click', () => track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
+            if (nextBtn) nextBtn.addEventListener('click', () => track.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
+
+            let isDragging = false, startX = 0, scrollStart = 0;
+            track.style.cursor = 'grab';
+
+            track.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.pageX;
+                scrollStart = track.scrollLeft;
+                track.style.cursor = 'grabbing';
+            });
+            track.addEventListener('mouseleave', () => { isDragging = false; track.style.cursor = 'grab'; });
+            track.addEventListener('mouseup', () => { isDragging = false; track.style.cursor = 'grab'; });
+            track.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                track.scrollLeft = scrollStart - (e.pageX - startX) * 1.5;
+            });
+        });
+    }
+
     // =============================================
     // 6. EFFETS VISUELS
     // =============================================
@@ -717,6 +749,7 @@
         initFaqAccordion();
         initTestimonialsCarousel();
         initRealisationsCarousel();
+        initResultsCarousel();
         initScrollProgress();
         initDarkMode();
         initActiveNavOnScroll();

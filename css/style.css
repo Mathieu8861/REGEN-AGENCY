@@ -7045,6 +7045,67 @@ html.dark-mode .theme-toggle__icon {
     gap: var(--spacing-lg);
 }
 
+/* --- Carousel réalisations --- */
+.realisations-carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.realisations-carousel__track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 10px 0;
+}
+
+.realisations-carousel__track::-webkit-scrollbar {
+    display: none;
+}
+
+.realisations-carousel .realisation-card--mini {
+    flex: 0 0 260px;
+    max-width: 260px;
+}
+
+.realisations-carousel__btn {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(6px);
+}
+
+.realisations-carousel__btn:hover {
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.4);
+}
+
+.realisations-carousel__btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+@media (max-width: 768px) {
+    .realisations-carousel .realisation-card--mini {
+        flex: 0 0 220px;
+        max-width: 220px;
+    }
+    .realisations-carousel__btn { display: none; }
+}
+
 /* --- Marquee réalisations full-width --- */
 .realisations-section {
     overflow: hidden;
@@ -7212,21 +7273,21 @@ html.dark-mode .theme-toggle__icon {
 }
 
 .realisation-card__body {
-    padding: 12px 16px;
+    padding: 10px 14px;
 }
 
 .realisation-card__type-tag {
     display: inline-block;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--color-secondary);
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: 2px;
 }
 
 .realisation-card__name {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: var(--color-primary);
     margin-bottom: 2px;
@@ -7235,11 +7296,11 @@ html.dark-mode .theme-toggle__icon {
 .realisation-card__result {
     display: flex;
     align-items: baseline;
-    gap: var(--spacing-sm);
+    gap: 6px;
 }
 
 .realisation-card__result-value {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 700;
     background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
     -webkit-background-clip: text;
@@ -7248,7 +7309,7 @@ html.dark-mode .theme-toggle__icon {
 }
 
 .realisation-card__result-label {
-    font-size: 0.78rem;
+    font-size: 0.7rem;
     color: #888;
 }
 
@@ -7257,7 +7318,7 @@ html.dark-mode .theme-toggle__icon {
 }
 
 .realisation-card__result--secondary .realisation-card__result-value {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     background: linear-gradient(135deg, #2d6a4f, #40916c);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
