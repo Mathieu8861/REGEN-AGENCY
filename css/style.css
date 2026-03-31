@@ -7068,8 +7068,8 @@ html.dark-mode .theme-toggle__icon {
 }
 
 .realisations-carousel .realisation-card--mini {
-    flex: 0 0 260px;
-    max-width: 260px;
+    flex: 0 0 230px;
+    max-width: 230px;
 }
 
 .realisations-carousel__btn {
@@ -7100,8 +7100,8 @@ html.dark-mode .theme-toggle__icon {
 
 @media (max-width: 768px) {
     .realisations-carousel .realisation-card--mini {
-        flex: 0 0 220px;
-        max-width: 220px;
+        flex: 0 0 190px;
+        max-width: 190px;
     }
     .realisations-carousel__btn { display: none; }
 }
