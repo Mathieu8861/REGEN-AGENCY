@@ -7565,16 +7565,21 @@ html.dark-mode .theme-toggle__icon {
 
 .pricing-card__ribbon {
     position: absolute;
-    top: 16px;
-    right: -32px;
+    top: 0;
+    left: 0;
+    right: 0;
     background: var(--color-secondary);
     color: #fff;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 4px 40px;
-    transform: rotate(45deg);
+    letter-spacing: 0.08em;
+    padding: 6px 0;
+    text-align: center;
+}
+
+.pricing-card--recommended {
+    padding-top: calc(var(--spacing-xl) + 28px);
 }
 
 .pricing-card__badge {
@@ -7663,7 +7668,14 @@ html.dark-mode .theme-toggle__icon {
 
 .pricing-card__setup--free {
     color: var(--color-secondary);
-    background: rgba(45, 106, 79, 0.06);
+    background: rgba(45, 106, 79, 0.08);
+    border: 1px solid rgba(45, 106, 79, 0.15);
+    font-weight: 600;
+}
+
+.pricing-card__setup--free strong {
+    font-size: 0.95rem;
+    color: var(--color-secondary);
 }
 
 .pricing-card__setup--free svg {
@@ -7671,8 +7683,14 @@ html.dark-mode .theme-toggle__icon {
 }
 
 .pricing-card--recommended .pricing-card__setup--free {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(125, 255, 186, 0.15);
+    color: #fff;
+    border: 1px solid rgba(125, 255, 186, 0.3);
+}
+
+.pricing-card--recommended .pricing-card__setup--free strong {
     color: #7dffba;
+    font-size: 0.95rem;
 }
 
 .pricing-card--recommended .pricing-card__setup--free svg {
