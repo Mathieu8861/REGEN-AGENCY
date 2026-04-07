@@ -1146,6 +1146,9 @@
             .eq('year', year);
         var spendData = spendRes.data || [];
 
+        // Separate paid channels for ROAS calculation
+        var paidChannels = ['google_ads', 'meta_ads', 'tiktok_ads'];
+
         // Aggregate by week
         var weekData = weeks.map(function(w, idx) {
             var wOrders = orders.filter(function(o) {
@@ -1154,6 +1157,11 @@
             });
             var revenue = wOrders.reduce(function(s, o) { return s + parseFloat(o.total_ttc || 0); }, 0);
             var count = wOrders.length;
+
+            // CA Ads only (for ROAS)
+            var adsOrders = wOrders.filter(function(o) { return paidChannels.indexOf(o.channel) !== -1; });
+            var adsRevenue = adsOrders.reduce(function(s, o) { return s + parseFloat(o.total_ttc || 0); }, 0);
+            var adsCount = adsOrders.length;
 
             // Spend: aggregate API daily metrics for this week's date range
             var spend = 0;
@@ -1175,24 +1183,26 @@
             return {
                 label: 'S' + (idx + 1) + ' (' + formatShortDate(w.start) + ' - ' + formatShortDate(w.end) + ')',
                 revenue: revenue,
+                adsRevenue: adsRevenue,
                 count: count,
+                adsCount: adsCount,
                 spend: spend,
-                roas: spend > 0 ? revenue / spend : 0,
+                roas: spend > 0 ? adsRevenue / spend : 0,
                 aov: count > 0 ? revenue / count : 0
             };
         });
 
         // Totals
         var totals = weekData.reduce(function(t, w) {
-            t.revenue += w.revenue; t.count += w.count; t.spend += w.spend;
+            t.revenue += w.revenue; t.adsRevenue += w.adsRevenue; t.count += w.count; t.adsCount += w.adsCount; t.spend += w.spend;
             return t;
-        }, { revenue: 0, count: 0, spend: 0 });
-        totals.roas = totals.spend > 0 ? totals.revenue / totals.spend : 0;
+        }, { revenue: 0, adsRevenue: 0, count: 0, adsCount: 0, spend: 0 });
+        totals.roas = totals.spend > 0 ? totals.adsRevenue / totals.spend : 0;
         totals.aov = totals.count > 0 ? totals.revenue / totals.count : 0;
 
         var html = '<h4 class="text-sm text-muted mb-16">' + MONTH_NAMES[month] + ' ' + year + '</h4>';
         html += '<div class="table-wrap"><table class="attr-table"><thead><tr>';
-        html += '<th style="text-align:left;">Semaine</th><th>Depense</th><th>CA</th><th>ROAS</th><th>Commandes</th><th>Panier Moyen</th>';
+        html += '<th style="text-align:left;">Semaine</th><th>Depense</th><th>CA Ads</th><th>CA Total</th><th>ROAS</th><th>Commandes</th><th>Panier Moyen</th>';
         html += '</tr></thead><tbody>';
 
         weekData.forEach(function(w) {
@@ -1200,7 +1210,8 @@
             html += '<tr>';
             html += '<td style="text-align:left; font-weight:600;">' + w.label + '</td>';
             html += '<td>' + (w.spend > 0 ? formatMoney(w.spend) : '-') + '</td>';
-            html += '<td class="text-bold">' + formatMoney(w.revenue) + '</td>';
+            html += '<td class="text-bold">' + (w.adsRevenue > 0 ? formatMoney(w.adsRevenue) : '-') + '</td>';
+            html += '<td>' + formatMoney(w.revenue) + '</td>';
             html += '<td>' + (w.roas > 0 ? '<span class="attr-roas-badge ' + roasClass + '">' + w.roas.toFixed(2) + '</span>' : '-') + '</td>';
             html += '<td>' + w.count + '</td>';
             html += '<td>' + (w.count > 0 ? formatMoney(w.aov) : '-') + '</td>';
@@ -1212,6 +1223,7 @@
         html += '<tr class="attr-total">';
         html += '<td style="text-align:left;">Total</td>';
         html += '<td>' + (totals.spend > 0 ? formatMoney(totals.spend) : '-') + '</td>';
+        html += '<td>' + (totals.adsRevenue > 0 ? formatMoney(totals.adsRevenue) : '-') + '</td>';
         html += '<td>' + formatMoney(totals.revenue) + '</td>';
         html += '<td>' + (totals.roas > 0 ? '<span class="attr-roas-badge ' + tRoasClass + '">' + totals.roas.toFixed(2) + '</span>' : '-') + '</td>';
         html += '<td>' + totals.count + '</td>';
