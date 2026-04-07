@@ -81,6 +81,7 @@
             font-size: 0.8rem; font-weight: 600; cursor: pointer;
             transition: all 0.3s; text-decoration: none; display: inline-flex;
             align-items: center; gap: 6px; border: 2px solid;
+            background: var(--card-bg); color: var(--dark);
         }
         .btn--back { background: transparent; color: var(--green); border-color: var(--green); }
         .btn--back:hover { background: var(--green); color: white; }
@@ -140,7 +141,7 @@
         .stat-card {
             padding: 24px 20px; text-align: center;
             border-right: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
-            position: relative;
+            position: relative; background: var(--card-bg);
         }
         .stat-card:nth-child(3n) { border-right: none; }
         .stat-card:nth-last-child(-n+3) { border-bottom: none; }
