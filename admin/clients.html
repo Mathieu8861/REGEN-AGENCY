@@ -710,7 +710,7 @@
                 </div>
             </div>
             <div class="card">
-                <h3 class="card__title"><span class="card__title-icon"><img src="../assets/images/statistiques.png" alt=""></span> Evolution 12 mois</h3>
+                <h3 class="card__title"><span class="card__title-icon"><img src="../assets/images/statistiques.png" alt=""></span> Evolution 24 mois</h3>
                 <div id="evolution-chart">
                     <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
                 </div>
@@ -1416,15 +1416,15 @@
         var container = document.getElementById('evolution-chart');
         if (!currentClient) return;
 
-        // Fetch last 12 months of data
+        // Fetch last 24 months of data (full year-over-year)
         var now = new Date();
         var months = [];
-        for (var m = 11; m >= 0; m--) {
+        for (var m = 23; m >= 0; m--) {
             var d = new Date(now.getFullYear(), now.getMonth() - m, 1);
             months.push({
                 year: d.getFullYear(),
                 month: d.getMonth(),
-                label: MONTH_NAMES[d.getMonth()].substring(0, 3),
+                label: MONTH_NAMES[d.getMonth()].substring(0, 3) + (d.getMonth() === 0 ? ' ' + d.getFullYear() : ''),
                 from: formatISODate(new Date(d.getFullYear(), d.getMonth(), 1)),
                 to: formatISODate(new Date(d.getFullYear(), d.getMonth() + 1, 0))
             });
