@@ -273,6 +273,34 @@
         .channel-badge--organic { background: #d1fae5; color: #059669; }
         .channel-badge--tiktok_ads { background: #fae8ff; color: #a855f7; }
 
+        /* ─── Evolution Chart ─── */
+        .evo-chart { display: flex; flex-direction: column; gap: 24px; }
+        .evo-chart__row { display: flex; flex-direction: column; gap: 8px; }
+        .evo-chart__label { font-size: 0.75rem; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+        .evo-chart__bars { display: flex; align-items: flex-end; gap: 4px; height: 140px; padding: 0 4px; }
+        .evo-bar {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: flex-end; gap: 4px; position: relative; min-width: 0;
+        }
+        .evo-bar__fill {
+            width: 100%; border-radius: 6px 6px 2px 2px; min-height: 2px;
+            transition: height 0.5s ease; position: relative;
+        }
+        .evo-bar__fill--ca { background: linear-gradient(180deg, var(--green), #05C08A); }
+        .evo-bar__fill--spend { background: linear-gradient(180deg, #f59e0b, #d97706); }
+        .evo-bar__fill--roas { background: linear-gradient(180deg, #8b5cf6, #6d28d9); }
+        .evo-bar__value {
+            font-size: 0.6rem; font-weight: 700; color: var(--dark);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+        }
+        .evo-bar__month { font-size: 0.62rem; color: var(--gray); font-weight: 600; margin-top: 4px; }
+        .evo-legend { display: flex; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
+        .evo-legend__item { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 600; color: var(--gray); }
+        .evo-legend__dot { width: 10px; height: 10px; border-radius: 3px; }
+        .evo-legend__dot--ca { background: linear-gradient(135deg, var(--green), #05C08A); }
+        .evo-legend__dot--spend { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .evo-legend__dot--roas { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
         /* ─── Tabs ─── */
         .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid var(--table-header-border); }
         .tab {
@@ -682,6 +710,12 @@
                 </div>
             </div>
             <div class="card">
+                <h3 class="card__title"><span class="card__title-icon"><img src="../assets/images/statistiques.png" alt=""></span> Evolution 12 mois</h3>
+                <div id="evolution-chart">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+            <div class="card">
                 <h3 class="card__title"><span class="card__title-icon"><img src="../assets/images/programme.png" alt=""></span> Detail journalier</h3>
                 <div id="daily-table">
                     <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
@@ -1032,6 +1066,7 @@
         loadApiDailyMetrics();
         loadSyncStatus();
         loadTopProducts();
+        loadEvolutionChart();
     }
 
     // ═══════════════════════════════════════
@@ -1372,6 +1407,143 @@
 
         html += '</tbody></table></div>';
         container.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    // EVOLUTION CHART (12 months)
+    // ═══════════════════════════════════════
+    async function loadEvolutionChart() {
+        var container = document.getElementById('evolution-chart');
+        if (!currentClient) return;
+
+        // Fetch last 12 months of data
+        var now = new Date();
+        var months = [];
+        for (var m = 11; m >= 0; m--) {
+            var d = new Date(now.getFullYear(), now.getMonth() - m, 1);
+            months.push({
+                year: d.getFullYear(),
+                month: d.getMonth(),
+                label: MONTH_NAMES[d.getMonth()].substring(0, 3),
+                from: formatISODate(new Date(d.getFullYear(), d.getMonth(), 1)),
+                to: formatISODate(new Date(d.getFullYear(), d.getMonth() + 1, 0))
+            });
+        }
+
+        var yearFrom = months[0].from;
+        var yearTo = months[months.length - 1].to;
+
+        // Fetch all orders for 12 months
+        var ordRes = await sb.from('orders').select('channel, total_ttc, order_date')
+            .eq('client_id', currentClient.id)
+            .gte('order_date', yearFrom)
+            .lte('order_date', yearTo);
+        var orders = ordRes.data || [];
+
+        // Fetch API spend for 12 months
+        var apiSpendByMonth = {};
+        try {
+            var accRes = await sb.from('ad_accounts').select('id').eq('client_id', currentClient.id);
+            var accounts = accRes.data || [];
+            if (accounts.length > 0) {
+                var accIds = accounts.map(function(a) { return a.id; });
+                var campRes = await sb.from('ad_campaigns').select('id').in('ad_account_id', accIds);
+                var campaigns = campRes.data || [];
+                if (campaigns.length > 0) {
+                    var campIds = campaigns.map(function(c) { return c.id; });
+                    var metRes = await sb.from('ad_daily_metrics').select('date, spend')
+                        .in('campaign_id', campIds)
+                        .gte('date', yearFrom)
+                        .lte('date', yearTo);
+                    (metRes.data || []).forEach(function(r) {
+                        var key = r.date.substring(0, 7); // YYYY-MM
+                        apiSpendByMonth[key] = (apiSpendByMonth[key] || 0) + parseFloat(r.spend || 0);
+                    });
+                }
+            }
+        } catch(e) { console.log('Evo chart API error:', e); }
+
+        var paidChannels = ['google_ads', 'meta_ads', 'tiktok_ads'];
+
+        // Aggregate by month
+        var data = months.map(function(m) {
+            var key = m.from.substring(0, 7);
+            var mOrders = orders.filter(function(o) { return o.order_date >= m.from && o.order_date <= m.to; });
+            var ca = mOrders.reduce(function(s, o) { return s + parseFloat(o.total_ttc || 0); }, 0);
+            var adsCA = mOrders.filter(function(o) { return paidChannels.indexOf(o.channel) !== -1; })
+                .reduce(function(s, o) { return s + parseFloat(o.total_ttc || 0); }, 0);
+            var spend = apiSpendByMonth[key] || 0;
+            var roas = spend > 0 ? adsCA / spend : 0;
+            var count = mOrders.length;
+            return { label: m.label, year: m.year, ca: ca, adsCA: adsCA, spend: spend, roas: roas, count: count };
+        });
+
+        // Find max values for scaling
+        var maxCA = Math.max.apply(null, data.map(function(d) { return d.ca; })) || 1;
+        var maxSpend = Math.max.apply(null, data.map(function(d) { return d.spend; })) || 1;
+        var maxROAS = Math.max.apply(null, data.map(function(d) { return d.roas; })) || 1;
+
+        // Build chart HTML
+        var html = '<div class="evo-chart">';
+
+        // Legend
+        html += '<div class="evo-legend">';
+        html += '<div class="evo-legend__item"><div class="evo-legend__dot evo-legend__dot--ca"></div> CA Total</div>';
+        html += '<div class="evo-legend__item"><div class="evo-legend__dot evo-legend__dot--spend"></div> Depenses Ads</div>';
+        html += '<div class="evo-legend__item"><div class="evo-legend__dot evo-legend__dot--roas"></div> ROAS Ads</div>';
+        html += '</div>';
+
+        // CA Chart
+        html += '<div class="evo-chart__row">';
+        html += '<div class="evo-chart__label">Chiffre d\'affaires</div>';
+        html += '<div class="evo-chart__bars">';
+        data.forEach(function(d) {
+            var h = maxCA > 0 ? Math.max(2, (d.ca / maxCA) * 120) : 2;
+            html += '<div class="evo-bar">';
+            html += '<div class="evo-bar__value">' + (d.ca > 0 ? formatCompact(d.ca) : '') + '</div>';
+            html += '<div class="evo-bar__fill evo-bar__fill--ca" style="height:' + h + 'px;"></div>';
+            html += '<div class="evo-bar__month">' + d.label + '</div>';
+            html += '</div>';
+        });
+        html += '</div></div>';
+
+        // Spend Chart
+        html += '<div class="evo-chart__row">';
+        html += '<div class="evo-chart__label">Depenses Ads</div>';
+        html += '<div class="evo-chart__bars">';
+        data.forEach(function(d) {
+            var h = maxSpend > 0 ? Math.max(2, (d.spend / maxSpend) * 120) : 2;
+            html += '<div class="evo-bar">';
+            html += '<div class="evo-bar__value">' + (d.spend > 0 ? formatCompact(d.spend) : '') + '</div>';
+            html += '<div class="evo-bar__fill evo-bar__fill--spend" style="height:' + h + 'px;"></div>';
+            html += '<div class="evo-bar__month">' + d.label + '</div>';
+            html += '</div>';
+        });
+        html += '</div></div>';
+
+        // ROAS Chart
+        html += '<div class="evo-chart__row">';
+        html += '<div class="evo-chart__label">ROAS Ads</div>';
+        html += '<div class="evo-chart__bars">';
+        data.forEach(function(d) {
+            var h = maxROAS > 0 ? Math.max(2, (d.roas / maxROAS) * 120) : 2;
+            var roasClass = d.roas >= 5 ? 'attr-roas--good' : d.roas >= 2 ? 'attr-roas--ok' : d.roas > 0 ? 'attr-roas--bad' : '';
+            html += '<div class="evo-bar">';
+            html += '<div class="evo-bar__value">' + (d.roas > 0 ? d.roas.toFixed(1) + 'x' : '') + '</div>';
+            html += '<div class="evo-bar__fill evo-bar__fill--roas" style="height:' + h + 'px;"></div>';
+            html += '<div class="evo-bar__month">' + d.label + '</div>';
+            html += '</div>';
+        });
+        html += '</div></div>';
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    // Format compact: 15506 -> "15.5k", 1200 -> "1.2k", 350 -> "350"
+    function formatCompact(n) {
+        if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'k';
+        return Math.round(n).toString();
     }
 
     // ═══════════════════════════════════════
