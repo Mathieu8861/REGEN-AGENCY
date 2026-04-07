@@ -1416,11 +1416,9 @@
         var container = document.getElementById('evolution-chart');
         if (!currentClient) return;
 
-        // Fetch from January of current year to current month
+        // Fetch from January of previous year to current month
         var now = new Date();
-        var startYear = now.getFullYear();
-        // If we're early in the year (Jan-Mar), include previous year too
-        if (now.getMonth() <= 2) startYear--;
+        var startYear = now.getFullYear() - 1;
         var months = [];
         var startDate = new Date(startYear, 0, 1); // Jan 1st
         var d = new Date(startDate);
