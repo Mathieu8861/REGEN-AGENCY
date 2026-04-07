@@ -112,11 +112,13 @@
         }
         .btn--config:hover { box-shadow: 0 5px 18px rgba(59,130,246,0.4); }
         .btn--sync-gads {
-            background: linear-gradient(135deg, #fbbc04 0%, #4285f4 100%);
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 40%, #fbbc04 80%, #ea4335 100%);
             color: white; border: none; font-weight: 800; letter-spacing: 0.3px;
-            box-shadow: 0 3px 12px rgba(66,133,244,0.3);
+            box-shadow: 0 3px 12px rgba(66,133,244,0.25);
+            background-size: 200% 200%; animation: gads-shimmer 3s ease infinite;
         }
-        .btn--sync-gads:hover { box-shadow: 0 5px 18px rgba(66,133,244,0.45); }
+        .btn--sync-gads:hover { box-shadow: 0 5px 18px rgba(66,133,244,0.4); }
+        @keyframes gads-shimmer { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
         .btn--sync-meta {
             background: linear-gradient(135deg, #1877f2 0%, #0d5bbd 100%);
             color: white; border: none;
@@ -164,11 +166,14 @@
         .client-select:focus { outline: none; border-color: var(--green); }
         .client-links { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
         .client-links a {
-            font-size: 0.75rem; font-weight: 600; color: var(--green);
-            text-decoration: none; padding: 4px 10px; background: var(--green-light);
-            border-radius: 50px; transition: all 0.3s;
+            font-size: 0.72rem; font-weight: 700; color: var(--dark);
+            text-decoration: none; padding: 6px 14px;
+            background: var(--card-bg-gradient, var(--card-bg));
+            border: 1.5px solid var(--card-border);
+            border-radius: 10px; transition: all 0.3s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
-        .client-links a:hover { background: var(--green); color: white; }
+        .client-links a:hover { border-color: var(--green); color: var(--green); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(47,185,99,0.15); }
 
         /* ─── Stats Cards ─── */
         .stats-grid {
