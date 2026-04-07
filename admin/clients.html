@@ -612,10 +612,12 @@
         <div class="card" style="margin-bottom:20px; padding:14px 24px;">
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                 <span class="text-sm text-bold" style="color:var(--dark);">Mois :</span>
-                <button class="btn btn--sm btn--arrow" id="month-prev">&#10094;</button>
-                <span id="month-label" style="font-size:1rem; font-weight:800; color:var(--dark); min-width:160px; text-align:center;"></span>
-                <button class="btn btn--sm btn--arrow" id="month-next">&#10095;</button>
-                <span class="text-sm text-muted" id="date-range-label" style="margin-left:auto;"></span>
+                <div style="display:flex; align-items:center; gap:6px; margin-left:auto; margin-right:auto;">
+                    <button class="btn btn--sm btn--arrow" id="month-prev">&#10094;</button>
+                    <span id="month-label" style="font-size:1rem; font-weight:800; color:var(--dark); min-width:140px; text-align:center;"></span>
+                    <button class="btn btn--sm btn--arrow" id="month-next">&#10095;</button>
+                </div>
+                <span class="text-sm text-muted" id="date-range-label"></span>
             </div>
         </div>
 
