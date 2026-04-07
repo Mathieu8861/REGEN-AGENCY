@@ -1030,18 +1030,17 @@
         document.getElementById('month-prev').addEventListener('click', function() {
             currentMonth.setMonth(currentMonth.getMonth() - 1);
             setMonth(currentMonth);
-            loadAllData();
+            reloadCurrentView();
         });
 
         document.getElementById('month-next').addEventListener('click', function() {
             var now = new Date();
             var next = new Date(currentMonth);
             next.setMonth(next.getMonth() + 1);
-            // Don't go past current month
             if (next.getFullYear() < now.getFullYear() || (next.getFullYear() === now.getFullYear() && next.getMonth() <= now.getMonth())) {
                 currentMonth = next;
                 setMonth(currentMonth);
-                loadAllData();
+                reloadCurrentView();
             }
         });
     }
@@ -1287,6 +1286,14 @@
         });
         html += '</div>';
         container.innerHTML = html;
+    }
+
+    function reloadCurrentView() {
+        if (currentClient) {
+            loadAllData();
+        } else {
+            loadAgencyDashboard();
+        }
     }
 
     function showAgencyView() {
