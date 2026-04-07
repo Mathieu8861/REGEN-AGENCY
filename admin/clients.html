@@ -312,6 +312,7 @@
             align-items: center; justify-content: center; font-size: 0.85rem;
             font-weight: 800; color: white; flex-shrink: 0;
         }
+        .attr-icon--img { background: transparent; }
         .attr-icon--google { background: #fbbc04; }
         .attr-icon--meta { background: #1877f2; }
         .attr-icon--tiktok { background: #010101; }
@@ -1017,8 +1018,8 @@
     }
 
     var SOURCE_CONFIG = {
-        google_ads: { label: 'Google Ads', icon: 'G', iconClass: 'attr-icon--google' },
-        meta_ads: { label: 'Meta Ads', icon: 'M', iconClass: 'attr-icon--meta' },
+        google_ads: { label: 'Google Ads', icon: '<img src="../assets/images/adwords.png" style="width:20px;height:20px;object-fit:contain;">', iconClass: 'attr-icon--img' },
+        meta_ads: { label: 'Meta Ads', icon: '<img src="../assets/images/meta.png" style="width:20px;height:20px;object-fit:contain;">', iconClass: 'attr-icon--img' },
         tiktok_ads: { label: 'TikTok Ads', icon: 'T', iconClass: 'attr-icon--tiktok' },
         direct: { label: 'Direct', icon: 'D', iconClass: 'attr-icon--direct' },
         email: { label: 'Email', icon: 'E', iconClass: 'attr-icon--email' },
