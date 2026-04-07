@@ -453,6 +453,26 @@
 
         .hub-card__icon--docs { background: linear-gradient(135deg, var(--color-primary), #2D5A58); }
         .hub-card__icon--clients { background: linear-gradient(135deg, #6366f1, #818cf8); }
+        .hub-card__icon--dashboard { background: linear-gradient(135deg, #2FB963 0%, #05C08A 50%, #173C3A 100%); }
+
+        /* Dashboard card: full-width featured card */
+        .hub-card--featured {
+            grid-column: 1 / -1;
+            flex-direction: row;
+            text-align: left;
+            padding: 28px 36px;
+            background: linear-gradient(135deg, #0d2618 0%, #142a1f 40%, #1a3628 100%);
+            border: 2px solid rgba(47,185,99,0.3);
+            color: white;
+            gap: 20px;
+        }
+        .hub-card--featured .hub-card__icon { width: 52px; height: 52px; }
+        .hub-card--featured .hub-card__title { color: white; font-size: 1.15rem; }
+        .hub-card--featured .hub-card__desc { color: rgba(255,255,255,0.65); }
+        .hub-card--featured .hub-card__arrow { position: static; margin-left: auto; }
+        .hub-card--featured .hub-card__arrow svg { stroke: rgba(255,255,255,0.5); }
+        .hub-card--featured:hover { border-color: #2FB963; box-shadow: 0 8px 32px rgba(47,185,99,0.25); }
+        .hub-card--featured:hover .hub-card__arrow svg { stroke: #2FB963; }
         .hub-card__icon--compta { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
         .hub-card__icon--tasks { background: linear-gradient(135deg, var(--color-secondary), var(--color-accent)); }
         .hub-card__icon--prospects { background: linear-gradient(135deg, #ec4899, #f43f5e); }
@@ -669,41 +689,57 @@
 
             <div class="hub-grid">
 
-                <!-- Documents internes -->
-                <a href="admin/documents.html" class="hub-card">
-                    <div class="hub-card__icon hub-card__icon--docs">
+                <!-- 1. Dashboard Agence (featured, full-width) -->
+                <a href="admin/clients.html" class="hub-card hub-card--featured">
+                    <div class="hub-card__icon hub-card__icon--dashboard">
                         <svg viewBox="0 0 24 24">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/>
-                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <rect x="3" y="12" width="4" height="9" rx="1"/>
+                            <rect x="10" y="7" width="4" height="14" rx="1"/>
+                            <rect x="17" y="3" width="4" height="18" rx="1"/>
                         </svg>
                     </div>
-                    <h3 class="hub-card__title">Documents internes</h3>
-                    <p class="hub-card__desc">Architecture, conventions & références pour le développement</p>
+                    <div>
+                        <h3 class="hub-card__title">Dashboard Agence</h3>
+                        <p class="hub-card__desc">KPIs globaux, performance cross-clients & pilotage ads</p>
+                    </div>
                     <div class="hub-card__arrow">
                         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </div>
                 </a>
 
-                <!-- Vue globale Clients -->
-                <a href="admin/clients.html" class="hub-card">
-                    <div class="hub-card__icon hub-card__icon--clients">
+                <!-- 2. Gestion des prospects -->
+                <a href="admin/prospects.html" class="hub-card">
+                    <div class="hub-card__icon hub-card__icon--prospects">
                         <svg viewBox="0 0 24 24">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <line x1="20" y1="8" x2="20" y2="14"/>
+                            <line x1="23" y1="11" x2="17" y2="11"/>
                         </svg>
                     </div>
-                    <h3 class="hub-card__title">Dashboard Agence</h3>
-                    <p class="hub-card__desc">KPIs globaux, performance cross-clients & pilotage ads</p>
+                    <h3 class="hub-card__title">Gestion des Prospects</h3>
+                    <p class="hub-card__desc">Pipeline commercial, suivi & formulaires</p>
                     <div class="hub-card__arrow">
                         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </div>
                 </a>
 
-                <!-- Gestion comptable -->
+                <!-- 3. Gestion des tâches -->
+                <a href="admin/taches.html" class="hub-card">
+                    <div class="hub-card__icon hub-card__icon--tasks">
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="9 11 12 14 22 4"/>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                        </svg>
+                    </div>
+                    <h3 class="hub-card__title">Gestion des tâches</h3>
+                    <p class="hub-card__desc">Kanban board interne</p>
+                    <div class="hub-card__arrow">
+                        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
+                </a>
+
+                <!-- 4. Gestion comptable -->
                 <a href="admin/comptabilite.html" class="hub-card">
                     <div class="hub-card__icon hub-card__icon--compta">
                         <svg viewBox="0 0 24 24">
@@ -719,33 +755,18 @@
                     </div>
                 </a>
 
-                <!-- Gestion des tâches -->
-                <a href="admin/taches.html" class="hub-card">
-                    <div class="hub-card__icon hub-card__icon--tasks">
+                <!-- 5. Documents internes -->
+                <a href="admin/documents.html" class="hub-card">
+                    <div class="hub-card__icon hub-card__icon--docs">
                         <svg viewBox="0 0 24 24">
-                            <polyline points="9 11 12 14 22 4"/>
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
                         </svg>
                     </div>
-                    <h3 class="hub-card__title">Gestion des tâches</h3>
-                    <p class="hub-card__desc">Kanban board interne</p>
-                    <div class="hub-card__arrow">
-                        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                    </div>
-                </a>
-
-                <!-- Gestion des prospects -->
-                <a href="admin/prospects.html" class="hub-card">
-                    <div class="hub-card__icon hub-card__icon--prospects">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="8.5" cy="7" r="4"/>
-                            <line x1="20" y1="8" x2="20" y2="14"/>
-                            <line x1="23" y1="11" x2="17" y2="11"/>
-                        </svg>
-                    </div>
-                    <h3 class="hub-card__title">Gestion des Prospects</h3>
-                    <p class="hub-card__desc">Pipeline commercial, suivi & formulaires</p>
+                    <h3 class="hub-card__title">Documents internes</h3>
+                    <p class="hub-card__desc">Architecture, conventions & références</p>
                     <div class="hub-card__arrow">
                         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </div>
