@@ -1666,18 +1666,58 @@
 
         if (!data.length) { container.innerHTML = '<p class="text-muted text-sm">Aucun import.</p>'; return; }
 
-        var html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Fichier</th><th>Statut</th><th class="text-right">Importees</th><th class="text-right">Ignorees</th></tr></thead><tbody>';
+        var html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Fichier</th><th>Statut</th><th class="text-right">Importees</th><th class="text-right">Ignorees</th><th></th></tr></thead><tbody>';
         data.forEach(function(l) {
             var badge = l.status === 'completed' ? '<span style="color:#10b981; font-weight:700;">OK</span>' : l.status === 'failed' ? '<span class="text-danger">Erreur</span>' : 'En cours';
             var fileName = l.source && l.source !== 'csv' ? '<code style="font-size:0.78rem; background:#f3f4f6; padding:2px 8px; border-radius:6px;">' + l.source + '</code>' : '<span class="text-muted">csv</span>';
+            var imported = l.rows_imported || 0;
+            var deleteBtn = imported > 0
+                ? '<button class="btn btn--danger btn--sm" onclick="window._deleteImport(\'' + l.id + '\', \'' + (l.source || 'csv').replace(/'/g, "\\'") + '\', ' + imported + ')" title="Supprimer cet import">&#10005;</button>'
+                : '';
             html += '<tr><td>' + new Date(l.created_at).toLocaleDateString('fr-FR') + '</td>';
             html += '<td>' + fileName + '</td><td>' + badge + '</td>';
-            html += '<td class="text-right">' + (l.rows_imported || 0) + '</td>';
-            html += '<td class="text-right">' + (l.rows_skipped || 0) + '</td></tr>';
+            html += '<td class="text-right">' + imported + '</td>';
+            html += '<td class="text-right">' + (l.rows_skipped || 0) + '</td>';
+            html += '<td class="text-right">' + deleteBtn + '</td></tr>';
         });
         html += '</tbody></table></div>';
         container.innerHTML = html;
     }
+
+    // ── Delete an import + its orders ──
+    window._deleteImport = async function(logId, source, count) {
+        if (!confirm('Supprimer cet import (' + source + ') et ses ' + count + ' commandes associees ?')) return;
+
+        try {
+            // Get the import log to find the time window
+            var logRes = await sb.from('import_logs').select('created_at, client_id').eq('id', logId).single();
+            if (logRes.error) throw logRes.error;
+
+            var logTime = new Date(logRes.data.created_at);
+            var clientId = logRes.data.client_id;
+
+            // Delete orders created within 2 minutes of the import log (same batch)
+            var windowStart = new Date(logTime.getTime() - 5000).toISOString();
+            var windowEnd = new Date(logTime.getTime() + 120000).toISOString();
+
+            var delOrders = await sb.from('orders').delete()
+                .eq('client_id', clientId)
+                .eq('import_source', 'csv')
+                .gte('created_at', windowStart)
+                .lte('created_at', windowEnd);
+
+            if (delOrders.error) throw delOrders.error;
+
+            // Delete the import log
+            var delLog = await sb.from('import_logs').delete().eq('id', logId);
+            if (delLog.error) throw delLog.error;
+
+            // Reload
+            loadAllData();
+        } catch(err) {
+            alert('Erreur suppression : ' + (err.message || err));
+        }
+    };
 
     // ═══════════════════════════════════════
     // ADD CLIENT & CONFIG ADS MODALS
