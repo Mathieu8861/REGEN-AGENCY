@@ -125,6 +125,14 @@
             box-shadow: 0 3px 12px rgba(24,119,242,0.3);
         }
         .btn--sync-meta:hover { box-shadow: 0 5px 18px rgba(24,119,242,0.4); }
+        .btn--arrow {
+            width: 36px; height: 36px; padding: 0; font-size: 1rem; line-height: 1;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--green) 0%, #05C08A 100%);
+            color: white; border: none; border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(47,185,99,0.25);
+        }
+        .btn--arrow:hover { box-shadow: 0 4px 14px rgba(47,185,99,0.4); }
         .btn--theme {
             background: var(--card-bg-gradient, var(--card-bg)); border: 1.5px solid var(--card-border);
             font-size: 1.1rem; padding: 7px 11px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -604,9 +612,9 @@
         <div class="card" style="margin-bottom:20px; padding:14px 24px;">
             <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
                 <span class="text-sm text-bold" style="color:var(--dark);">Mois :</span>
-                <button class="btn btn--sm" id="month-prev" style="padding:6px 12px; font-size:1rem; line-height:1;">&#8592;</button>
+                <button class="btn btn--sm btn--arrow" id="month-prev">&#10094;</button>
                 <span id="month-label" style="font-size:1rem; font-weight:800; color:var(--dark); min-width:160px; text-align:center;"></span>
-                <button class="btn btn--sm" id="month-next" style="padding:6px 12px; font-size:1rem; line-height:1;">&#8594;</button>
+                <button class="btn btn--sm btn--arrow" id="month-next">&#10095;</button>
                 <span class="text-sm text-muted" id="date-range-label" style="margin-left:auto;"></span>
             </div>
         </div>
