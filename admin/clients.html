@@ -615,8 +615,8 @@
             <div class="card">
                 <h3 class="card__title"><span class="card__title-icon">&#128228;</span> Importer des commandes (CSV)</h3>
                 <p class="text-muted text-sm mb-16">
-                    Format : CSV separateur point-virgule (;).<br>
-                    Colonnes : ID Commande ; Reference ; Date (DD-MM-YYYY) ; Total TTC ; Page d'entree ; Produits...
+                    Format : CSV separateur virgule (,) ou point-virgule (;) — detection automatique.<br>
+                    Colonnes detectees : ID, Reference, Date, Total TTC, Source/Touchpoints, Produits...
                 </p>
                 <div class="upload-zone" id="upload-zone">
                     <div class="upload-zone__icon">&#128196;</div>
@@ -736,6 +736,7 @@
     var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     var currentClient = null;
     var parsedOrders = [];
+    var currentFileName = '';
 
     // ── Check admin password ──
     if (sessionStorage.getItem('regen_admin_auth') !== 'true') {
@@ -1246,6 +1247,7 @@
 
     function handleFile(file) {
         if (!file.name.endsWith('.csv')) { alert('Fichier CSV uniquement.'); return; }
+        currentFileName = file.name;
         var reader = new FileReader();
         reader.onload = function(e) { parseCSV(e.target.result); };
         reader.readAsText(file, 'UTF-8');
@@ -1255,8 +1257,12 @@
         var lines = content.trim().split('\n');
         if (lines.length < 2) { alert('CSV vide.'); return; }
 
+        // ── Auto-detect delimiter (, or ;) ──
+        var delim = detectDelimiter(lines[0]);
+        console.log('CSV delimiter detected:', delim === ',' ? 'comma' : 'semicolon');
+
         // ── Auto-detect columns from header ──
-        var headerFields = parseCSVLine(lines[0], ';').map(function(h) { return clean(h).toLowerCase(); });
+        var headerFields = parseCSVLine(lines[0], delim).map(function(h) { return clean(h).toLowerCase().replace(/\s+/g, '_'); });
         var colMap = detectColumnMap(headerFields);
         console.log('CSV columns detected:', colMap);
 
@@ -1265,7 +1271,7 @@
             var line = lines[i].trim();
             if (!line) continue;
 
-            var fields = parseCSVLine(line, ';');
+            var fields = parseCSVLine(line, delim);
             if (fields.length < 4) continue;
 
             var externalId = clean(fields[colMap.id] || '');
@@ -1273,15 +1279,26 @@
             var dateStr = clean(fields[colMap.date] || '');
             var totalStr = clean(fields[colMap.total] || '');
 
-            // Source URL: prefer URI complete > Page atterrissage > Page d'entree
+            // Source URL: prefer URI complete > Page atterrissage > Page d'entree > TP1_Page
             var sourceUrl = '';
             if (colMap.uri !== -1) sourceUrl = clean(fields[colMap.uri] || '');
             if (!sourceUrl && colMap.landing !== -1) sourceUrl = clean(fields[colMap.landing] || '');
             if (!sourceUrl && colMap.source_url !== -1) sourceUrl = clean(fields[colMap.source_url] || '');
+            if (!sourceUrl && colMap.tp1_page !== -1) sourceUrl = clean(fields[colMap.tp1_page] || '');
 
-            // Channel: prefer explicit Source column, else detect from URL
+            // Channel: prefer TP1_Source > explicit Source column > detect from URL
             var channel = 'direct';
-            if (colMap.source_col !== -1) {
+            if (colMap.tp1_source !== -1) {
+                var tpSrc = clean(fields[colMap.tp1_source] || '').toLowerCase();
+                if (tpSrc.indexOf('google') !== -1) channel = 'google_ads';
+                else if (tpSrc.indexOf('meta') !== -1 || tpSrc.indexOf('facebook') !== -1 || tpSrc.indexOf('instagram') !== -1) channel = 'meta_ads';
+                else if (tpSrc.indexOf('tiktok') !== -1) channel = 'tiktok_ads';
+                else if (tpSrc.indexOf('email') !== -1 || tpSrc.indexOf('newsletter') !== -1) channel = 'email';
+                else if (tpSrc.indexOf('organic') !== -1 || tpSrc.indexOf('seo') !== -1) channel = 'organic';
+                else if (tpSrc === 'direct' || tpSrc === '') channel = 'direct';
+                else if (tpSrc) channel = 'referral';
+            }
+            if (channel === 'direct' && colMap.source_col !== -1) {
                 var srcVal = clean(fields[colMap.source_col] || '').toLowerCase();
                 if (srcVal.indexOf('google') !== -1) channel = 'google_ads';
                 else if (srcVal.indexOf('meta') !== -1 || srcVal.indexOf('facebook') !== -1 || srcVal.indexOf('instagram') !== -1) channel = 'meta_ads';
@@ -1291,16 +1308,14 @@
             }
             if (channel === 'direct') channel = detectChannel(sourceUrl);
 
-            // Products
+            // Products: collect from product columns (Produit_1, Produit_2, etc.)
             var products = [];
             colMap.products.forEach(function(idx) {
                 var p = clean(fields[idx] || '');
                 if (p) products.push(p);
             });
 
-            // Date: handle DD-MM-YYYY or DD-MM-YYYY HH:MM
             var orderDate = parseOrderDate(dateStr);
-
             var total = parseFloat(totalStr.replace(/[^\d,.-]/g, '').replace(',', '.'));
 
             if (externalId && orderDate && !isNaN(total)) {
@@ -1316,27 +1331,52 @@
             }
         }
 
+        console.log('Parsed orders:', parsedOrders.length);
         showPreview();
+    }
+
+    // ── Auto-detect CSV delimiter ──
+    function detectDelimiter(headerLine) {
+        var semicolons = (headerLine.match(/;/g) || []).length;
+        var commas = (headerLine.match(/,/g) || []).length;
+        return semicolons > commas ? ';' : ',';
     }
 
     // ── Auto-detect column indices from header names ──
     function detectColumnMap(headers) {
-        var map = { id: 0, ref: 1, date: 2, total: 3, source_url: 4, source_col: -1, landing: -1, uri: -1, products: [] };
+        var map = { id: 0, ref: 1, date: 2, total: 3, source_url: -1, source_col: -1, landing: -1, uri: -1, tp1_source: -1, tp1_page: -1, products: [] };
 
         for (var i = 0; i < headers.length; i++) {
             var h = headers[i];
-            if (h.indexOf('id commande') !== -1 || h === 'id') map.id = i;
-            else if (h.indexOf('rence') !== -1 || h === 'reference' || h === 'ref') map.ref = i;
-            else if (h.indexOf('date') !== -1) map.date = i;
-            else if (h === 'total ttc' || h === 'total_ttc') map.total = i;
-            else if (h.indexOf('page d') !== -1 && h.indexOf('entr') !== -1) map.source_url = i;
+            // ID
+            if (h === 'id_commande' || h === 'id' || h.indexOf('id_commande') !== -1) map.id = i;
+            // Reference
+            else if (h === 'reference' || h === 'ref' || h.indexOf('rence') !== -1) map.ref = i;
+            // Date
+            else if (h === 'date_commande' || h === 'date') map.date = i;
+            // Total TTC
+            else if (h === 'total_ttc') map.total = i;
+            // Source URL (old format)
+            else if (h.indexOf('page_d') !== -1 && h.indexOf('entr') !== -1) map.source_url = i;
+            // Source column (old format)
             else if (h === 'source') map.source_col = i;
-            else if (h.indexOf('page atterr') !== -1) map.landing = i;
-            else if (h.indexOf('uri compl') !== -1) map.uri = i;
-            else if (h.indexOf('produit') !== -1 && !h.indexOf('produits ttc') !== -1 && h !== 'produits ttc') map.products.push(i);
+            // Landing page
+            else if (h.indexOf('page_atterr') !== -1) map.landing = i;
+            // URI complete
+            else if (h.indexOf('uri_compl') !== -1) map.uri = i;
+            // Touchpoint source (new format: TP1_Source)
+            else if (h === 'tp1_source') map.tp1_source = i;
+            // Touchpoint page (new format: TP1_Page)
+            else if (h === 'tp1_page') map.tp1_page = i;
+            // Products: match Produit_1, Produit_2 etc. (but not Produit_1_Qte, Produit_1_PrixHT)
+            else if (/^produit_\d+$/.test(h)) map.products.push(i);
+            // Old format: produit or produits columns
+            else if (h.indexOf('produit') !== -1 && h.indexOf('_qte') === -1 && h.indexOf('_prix') === -1 && h !== 'total_produits_ht' && h !== 'total_produits_ttc') {
+                if (!/^produit_\d+$/.test(h)) map.products.push(i);
+            }
         }
 
-        // If no product columns found, use columns 5-9 as fallback
+        // Fallback: if no product columns found, try columns 5-9
         if (map.products.length === 0) {
             for (var j = 5; j < Math.min(headers.length, 10); j++) {
                 if (!headers[j] || headers[j].indexOf('produit') !== -1) map.products.push(j);
@@ -1346,18 +1386,16 @@
         return map;
     }
 
-    // ── Parse date: DD-MM-YYYY or DD-MM-YYYY HH:MM ──
+    // ── Parse date: DD-MM-YYYY, DD-MM-YYYY HH:MM, YYYY-MM-DD, YYYY-MM-DD HH:MM:SS ──
     function parseOrderDate(dateStr) {
         if (!dateStr) return null;
-        // Remove time part if present
         var datePart = dateStr.split(' ')[0];
-        var parts = datePart.split('-');
-        if (parts.length === 3) {
-            return parts[2] + '-' + parts[1] + '-' + parts[0]; // YYYY-MM-DD
-        }
-        // Try YYYY-MM-DD format already
-        if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
-            return dateStr.split(' ')[0];
+        // Already YYYY-MM-DD
+        if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) return datePart;
+        // DD-MM-YYYY or DD/MM/YYYY
+        var parts = datePart.split(/[-\/]/);
+        if (parts.length === 3 && parts[0].length <= 2) {
+            return parts[2] + '-' + parts[1] + '-' + parts[0];
         }
         return null;
     }
@@ -1415,7 +1453,7 @@
             var res = await sb.rpc('import_orders_batch', {
                 p_client_id: currentClient.id,
                 p_orders: parsedOrders,
-                p_source: 'csv'
+                p_source: currentFileName || 'csv'
             });
 
             if (res.error) throw res.error;
@@ -1429,6 +1467,7 @@
             resultEl.classList.remove('hidden');
 
             parsedOrders = [];
+            currentFileName = '';
             document.getElementById('csv-preview').classList.add('hidden');
             document.getElementById('csv-input').value = '';
 
@@ -1627,11 +1666,12 @@
 
         if (!data.length) { container.innerHTML = '<p class="text-muted text-sm">Aucun import.</p>'; return; }
 
-        var html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Source</th><th>Statut</th><th class="text-right">Importees</th><th class="text-right">Ignorees</th></tr></thead><tbody>';
+        var html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Fichier</th><th>Statut</th><th class="text-right">Importees</th><th class="text-right">Ignorees</th></tr></thead><tbody>';
         data.forEach(function(l) {
             var badge = l.status === 'completed' ? '<span style="color:#10b981; font-weight:700;">OK</span>' : l.status === 'failed' ? '<span class="text-danger">Erreur</span>' : 'En cours';
+            var fileName = l.source && l.source !== 'csv' ? '<code style="font-size:0.78rem; background:#f3f4f6; padding:2px 8px; border-radius:6px;">' + l.source + '</code>' : '<span class="text-muted">csv</span>';
             html += '<tr><td>' + new Date(l.created_at).toLocaleDateString('fr-FR') + '</td>';
-            html += '<td>' + l.source + '</td><td>' + badge + '</td>';
+            html += '<td>' + fileName + '</td><td>' + badge + '</td>';
             html += '<td class="text-right">' + (l.rows_imported || 0) + '</td>';
             html += '<td class="text-right">' + (l.rows_skipped || 0) + '</td></tr>';
         });
