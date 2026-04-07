@@ -55,7 +55,10 @@
             background: var(--gray-light);
             min-height: 100vh;
             padding: 30px 20px;
+            color: var(--dark);
+            transition: background 0.3s, color 0.3s;
         }
+        .card, .stats-grid, .client-bar, .auth-box, .stat-card { transition: background 0.3s, border-color 0.3s; }
 
         .container { max-width: 1200px; margin: 0 auto; }
 
@@ -204,7 +207,7 @@
         }
         .channel-badge--google_ads { background: #fef3c7; color: #d97706; }
         .channel-badge--meta_ads { background: #dbeafe; color: #2563eb; }
-        .channel-badge--direct { background: #f3f4f6; color: #6b7280; }
+        .channel-badge--direct { background: var(--hover-bg); color: var(--gray); }
         .channel-badge--email { background: #e0e7ff; color: #4f46e5; }
         .channel-badge--referral { background: #fce7f3; color: #db2777; }
         .channel-badge--organic { background: #d1fae5; color: #059669; }
@@ -281,7 +284,7 @@
         .followup-badge--facturation { background: #fef3c7; color: #d97706; }
         .followup-badge--livraison { background: #d1fae5; color: #059669; }
         .followup-badge--demande_client { background: #e0e7ff; color: #4f46e5; }
-        .followup-badge--general { background: #f3f4f6; color: #6b7280; }
+        .followup-badge--general { background: var(--hover-bg); color: var(--gray); }
         .followup-text { font-size: 0.8rem; color: var(--dark); line-height: 1.5; }
 
         /* ─── Result Box ─── */
@@ -325,11 +328,11 @@
         }
         .attr-table th:first-child { text-align: left; }
         .attr-table td {
-            padding: 14px 8px; border-bottom: 1px solid #f3f4f6;
+            padding: 14px 8px; border-bottom: 1px solid var(--table-border);
             text-align: center; font-size: 0.85rem; color: var(--dark);
         }
         .attr-table td:first-child { text-align: left; }
-        .attr-table tr:hover td { background: #f9fafb; }
+        .attr-table tr:hover td { background: var(--hover-bg); }
         .attr-table .attr-source {
             display: flex; align-items: center; gap: 8px; font-weight: 700;
         }
@@ -935,7 +938,7 @@
         if (!currentClient) return;
         var notes = currentClient.notes || {};
         if (typeof notes === 'string') try { notes = JSON.parse(notes); } catch(e) { notes = {}; }
-        var infoHtml = '<a href="#" onclick="return false;" style="background:#f3f4f6; color:var(--gray); cursor:default;">' + (currentClient.platform || 'web') + '</a>';
+        var infoHtml = '<a href="#" onclick="return false;" style="background:var(--hover-bg); color:var(--gray); cursor:default;">' + (currentClient.platform || 'web') + '</a>';
         if (notes.email) infoHtml += '<a href="mailto:' + notes.email + '">&#9993; ' + notes.email + '</a>';
         if (notes.backoffice_url) infoHtml += '<a href="' + notes.backoffice_url + '" target="_blank">&#128274; Back-office</a>';
         if (notes.pappers_url) infoHtml += '<a href="' + notes.pappers_url + '" target="_blank">&#128196; Pappers</a>';
@@ -1312,7 +1315,7 @@
                 if (mainProduct.length > 50) mainProduct = mainProduct.substring(0, 50) + '...';
             }
             html += '<tr><td>' + (o.external_id || '-') + '</td>';
-            html += '<td><code style="font-size:0.75rem; background:#f3f4f6; padding:2px 6px; border-radius:4px;">' + (o.reference || '-') + '</code></td>';
+            html += '<td><code style="font-size:0.75rem; background:var(--hover-bg); padding:2px 6px; border-radius:4px;">' + (o.reference || '-') + '</code></td>';
             html += '<td>' + formatDate(o.order_date) + '</td>';
             html += '<td class="text-right text-bold">' + formatMoney(o.total_ttc) + '</td>';
             html += '<td><span class="channel-badge channel-badge--' + ch + '">' + label + '</span></td>';
@@ -1796,7 +1799,7 @@
         var html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Fichier</th><th>Statut</th><th class="text-right">Importees</th><th class="text-right">Ignorees</th><th></th></tr></thead><tbody>';
         data.forEach(function(l) {
             var badge = l.status === 'completed' ? '<span style="color:#10b981; font-weight:700;">OK</span>' : l.status === 'failed' ? '<span class="text-danger">Erreur</span>' : 'En cours';
-            var fileName = l.source && l.source !== 'csv' ? '<code style="font-size:0.78rem; background:#f3f4f6; padding:2px 8px; border-radius:6px;">' + l.source + '</code>' : '<span class="text-muted">csv</span>';
+            var fileName = l.source && l.source !== 'csv' ? '<code style="font-size:0.78rem; background:var(--hover-bg); padding:2px 8px; border-radius:6px;">' + l.source + '</code>' : '<span class="text-muted">csv</span>';
             var imported = l.rows_imported || 0;
             var deleteBtn = '<button class="btn btn--danger btn--sm" onclick="window._deleteImport(\'' + l.id + '\', \'' + (l.source || 'csv').replace(/'/g, "\\'") + '\', ' + imported + ')" title="Supprimer cet import">&#10005;</button>';
             html += '<tr><td>' + new Date(l.created_at).toLocaleDateString('fr-FR') + '</td>';
