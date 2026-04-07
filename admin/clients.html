@@ -1453,12 +1453,17 @@
             var res = await sb.rpc('import_orders_batch', {
                 p_client_id: currentClient.id,
                 p_orders: parsedOrders,
-                p_source: currentFileName || 'csv'
+                p_source: 'csv'
             });
 
             if (res.error) throw res.error;
 
             var d = res.data;
+
+            // Update import_logs with the real filename
+            if (d.log_id && currentFileName) {
+                await sb.from('import_logs').update({ source: currentFileName }).eq('id', d.log_id);
+            }
             var resultEl = document.getElementById('csv-result');
             resultEl.innerHTML = '<div class="result-box result-box--success">'
                 + '<p class="text-bold text-success">Import termine !</p>'
