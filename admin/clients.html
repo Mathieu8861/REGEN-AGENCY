@@ -25,12 +25,15 @@
         /* ─── Light Theme defaults ─── */
         :root {
             --card-bg: white;
+            --card-bg-gradient: none;
             --card-border: #f0f0f0;
             --input-bg: white;
             --input-border: #e5e7eb;
             --hover-bg: #f9fafb;
             --table-border: #f3f4f6;
             --table-header-border: #e5e7eb;
+            --stat-gradient: none;
+            --card-header-gradient: none;
         }
 
         /* ─── Dark Theme (Regen Green) ─── */
@@ -40,14 +43,17 @@
             --dark: #e8f0ec;
             --gray: #8a9b92;
             --gray-light: #0d1f17;
-            --shadow: 0 2px 12px rgba(0,0,0,0.25);
+            --shadow: 0 2px 16px rgba(0,0,0,0.3);
             --card-bg: #142a1f;
+            --card-bg-gradient: linear-gradient(160deg, #162e22 0%, #112018 100%);
             --card-border: #1e3a2b;
             --input-bg: #1a3628;
             --input-border: #2d5040;
             --hover-bg: #1a3628;
             --table-border: #1e3a2b;
             --table-header-border: #2d5040;
+            --stat-gradient: linear-gradient(135deg, #153026 0%, #0f2119 100%);
+            --card-header-gradient: linear-gradient(90deg, rgba(47,185,99,0.12) 0%, rgba(5,192,138,0.06) 50%, transparent 100%);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -113,8 +119,9 @@
         .client-bar {
             display: flex; gap: 12px; align-items: center;
             margin-bottom: 16px; flex-wrap: wrap;
-            background: var(--card-bg); padding: 16px 24px;
+            background: var(--card-bg-gradient, var(--card-bg)); padding: 16px 24px;
             border-radius: var(--radius); box-shadow: var(--shadow);
+            border: 1px solid var(--card-border);
         }
         .client-select {
             padding: 10px 16px; border: 2px solid var(--input-border); border-radius: var(--radius-sm);
@@ -134,14 +141,14 @@
         /* ─── Stats Cards ─── */
         .stats-grid {
             display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 0; margin-bottom: 24px; background: var(--card-bg);
+            gap: 0; margin-bottom: 24px; background: var(--card-bg-gradient, var(--card-bg));
             border-radius: var(--radius); box-shadow: var(--shadow);
-            overflow: hidden;
+            overflow: hidden; border: 1px solid var(--card-border);
         }
         .stat-card {
             padding: 24px 20px; text-align: center;
             border-right: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
-            position: relative; background: var(--card-bg);
+            position: relative; background: var(--stat-gradient, var(--card-bg));
         }
         .stat-card:nth-child(3n) { border-right: none; }
         .stat-card:nth-last-child(-n+3) { border-bottom: none; }
@@ -165,12 +172,17 @@
 
         /* ─── Cards ─── */
         .card {
-            background: var(--card-bg); border-radius: var(--radius); padding: 24px;
+            background: var(--card-bg-gradient, var(--card-bg)); border-radius: var(--radius); padding: 24px;
             box-shadow: var(--shadow); margin-bottom: 24px;
+            border: 1px solid var(--card-border);
         }
         .card__title {
             font-size: 1rem; font-weight: 700; color: var(--dark);
             margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px; margin: -24px -24px 16px -24px;
+            border-radius: var(--radius) var(--radius) 0 0;
+            background: var(--card-header-gradient, transparent);
+            border-bottom: 1px solid var(--card-border);
         }
         .card__title-icon { font-size: 1.2rem; }
         .card__title-icon img { width: 20px; height: 20px; object-fit: contain; vertical-align: middle; }
