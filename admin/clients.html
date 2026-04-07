@@ -22,6 +22,32 @@
             --shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
 
+        /* ─── Dark Theme (Regen Green) ─── */
+        [data-theme="dark"] {
+            --green: #34d26b;
+            --green-light: #0d2618;
+            --dark: #e8f0ec;
+            --gray: #8a9b92;
+            --gray-light: #0d1f17;
+            --shadow: 0 2px 12px rgba(0,0,0,0.25);
+            --card-bg: #142a1f;
+            --card-border: #1e3a2b;
+            --input-bg: #1a3628;
+            --input-border: #2d5040;
+            --hover-bg: #1a3628;
+            --table-border: #1e3a2b;
+            --table-header-border: #2d5040;
+        }
+        :root {
+            --card-bg: white;
+            --card-border: #f0f0f0;
+            --input-bg: white;
+            --input-border: #e5e7eb;
+            --hover-bg: #f9fafb;
+            --table-border: #f3f4f6;
+            --table-header-border: #e5e7eb;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
@@ -37,7 +63,7 @@
         .page-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 30px; padding-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 2px solid var(--card-border);
         }
         .page-header-left { display: flex; align-items: center; gap: 15px; }
         .page-logo img { width: 40px; height: 40px; object-fit: contain; }
@@ -61,7 +87,7 @@
 
         /* ─── Auth Section ─── */
         .auth-box {
-            max-width: 400px; margin: 80px auto; background: white;
+            max-width: 400px; margin: 80px auto; background: var(--card-bg);
             border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow);
             text-align: center;
         }
@@ -70,9 +96,9 @@
         .form-group { margin-bottom: 16px; text-align: left; }
         .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--gray); margin-bottom: 6px; }
         .form-input {
-            width: 100%; padding: 10px 14px; border: 2px solid #e5e7eb;
+            width: 100%; padding: 10px 14px; border: 2px solid var(--input-border);
             border-radius: var(--radius-sm); font-family: inherit; font-size: 0.9rem;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s; background: var(--input-bg); color: var(--dark);
         }
         .form-input:focus { outline: none; border-color: var(--green); }
         .auth-error { color: #ef4444; font-size: 0.8rem; margin-bottom: 12px; display: none; }
@@ -81,13 +107,13 @@
         .client-bar {
             display: flex; gap: 12px; align-items: center;
             margin-bottom: 16px; flex-wrap: wrap;
-            background: white; padding: 16px 24px;
+            background: var(--card-bg); padding: 16px 24px;
             border-radius: var(--radius); box-shadow: var(--shadow);
         }
         .client-select {
-            padding: 10px 16px; border: 2px solid #e5e7eb; border-radius: var(--radius-sm);
+            padding: 10px 16px; border: 2px solid var(--input-border); border-radius: var(--radius-sm);
             font-family: inherit; font-size: 0.9rem; font-weight: 700;
-            background: white; cursor: pointer; min-width: 240px;
+            background: var(--input-bg); cursor: pointer; min-width: 240px;
             color: var(--dark);
         }
         .client-select:focus { outline: none; border-color: var(--green); }
@@ -102,13 +128,13 @@
         /* ─── Stats Cards ─── */
         .stats-grid {
             display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 0; margin-bottom: 24px; background: white;
+            gap: 0; margin-bottom: 24px; background: var(--card-bg);
             border-radius: var(--radius); box-shadow: var(--shadow);
             overflow: hidden;
         }
         .stat-card {
             padding: 24px 20px; text-align: center;
-            border-right: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0;
+            border-right: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
             position: relative;
         }
         .stat-card:nth-child(3n) { border-right: none; }
@@ -133,7 +159,7 @@
 
         /* ─── Cards ─── */
         .card {
-            background: white; border-radius: var(--radius); padding: 24px;
+            background: var(--card-bg); border-radius: var(--radius); padding: 24px;
             box-shadow: var(--shadow); margin-bottom: 24px;
         }
         .card__title {
@@ -145,9 +171,9 @@
 
         /* ─── Upload Zone ─── */
         .upload-zone {
-            border: 2px dashed #d1d5db; border-radius: var(--radius-sm);
+            border: 2px dashed var(--input-border); border-radius: var(--radius-sm);
             padding: 40px 20px; text-align: center; cursor: pointer;
-            transition: all 0.3s; background: #fafafa;
+            transition: all 0.3s; background: var(--input-bg);
         }
         .upload-zone:hover, .upload-zone--active {
             border-color: var(--green); background: var(--green-light);
@@ -159,9 +185,9 @@
         /* ─── Table ─── */
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th { text-align: left; padding: 10px 12px; color: var(--gray); font-weight: 600; border-bottom: 2px solid #e5e7eb; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.3px; }
-        td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; color: var(--dark); }
-        tr:hover td { background: #f9fafb; }
+        th { text-align: left; padding: 10px 12px; color: var(--gray); font-weight: 600; border-bottom: 2px solid var(--table-header-border); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.3px; }
+        td { padding: 10px 12px; border-bottom: 1px solid var(--table-border); color: var(--dark); }
+        tr:hover td { background: var(--hover-bg); }
         .text-right { text-align: right; }
         .text-bold { font-weight: 700; }
         .text-muted { color: var(--gray); }
@@ -185,7 +211,7 @@
         .channel-badge--tiktok_ads { background: #fae8ff; color: #a855f7; }
 
         /* ─── Tabs ─── */
-        .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid var(--table-header-border); }
         .tab {
             padding: 10px 20px; font-family: inherit; font-size: 0.85rem;
             font-weight: 600; color: var(--gray); background: none; border: none;
@@ -199,20 +225,20 @@
 
         /* ─── Service Cards (Add Client Modal) ─── */
         .svc-card {
-            border: 2px solid #e5e7eb; border-radius: var(--radius-sm);
+            border: 2px solid var(--input-border); border-radius: var(--radius-sm);
             margin-bottom: 10px; overflow: hidden; transition: border-color 0.3s;
         }
         .svc-card--open { border-color: var(--green); }
         .svc-card__header {
             display: flex; align-items: center; gap: 10px; padding: 10px 14px;
             cursor: pointer; user-select: none; font-size: 0.82rem; font-weight: 600;
-            color: var(--dark); background: #fafafa; transition: background 0.2s;
+            color: var(--dark); background: var(--input-bg); transition: background 0.2s;
         }
         .svc-card__header:hover { background: #f0faf4; }
         .svc-card__header input[type="checkbox"] { accent-color: var(--green); width: 16px; height: 16px; }
         .svc-card__icon { font-size: 1rem; }
         .svc-card__status { margin-left: auto; font-size: 0.7rem; font-weight: 500; color: var(--gray); }
-        .svc-card__body { display: none; padding: 14px; background: white; border-top: 1px solid #e5e7eb; }
+        .svc-card__body { display: none; padding: 14px; background: var(--card-bg); border-top: 1px solid var(--card-border); }
         .svc-card--open .svc-card__body { display: block; }
         .svc-card .form-label { font-size: 0.72rem; }
         .svc-card .form-input, .svc-card .form-select { font-size: 0.78rem; padding: 7px 10px; }
@@ -220,7 +246,7 @@
         .pipeline-steps { display: flex; gap: 4px; flex-wrap: wrap; margin: 8px 0 14px; }
         .pipeline-step {
             font-size: 0.68rem; padding: 4px 10px; border-radius: 20px;
-            border: 1.5px solid #e5e7eb; background: white; color: var(--gray);
+            border: 1.5px solid var(--input-border); background: var(--card-bg); color: var(--gray);
             cursor: pointer; transition: all 0.2s; font-weight: 600;
         }
         .pipeline-step:hover { border-color: var(--green); color: var(--green); }
@@ -235,7 +261,7 @@
         .doc-upload-row .doc-file { font-size: 0.7rem; color: var(--gray); }
         .doc-upload-btn {
             font-size: 0.68rem; padding: 3px 10px; border-radius: 20px;
-            border: 1.5px solid #e5e7eb; background: white; color: var(--gray);
+            border: 1.5px solid var(--input-border); background: var(--card-bg); color: var(--gray);
             cursor: pointer; font-family: inherit; font-weight: 600;
         }
         .doc-upload-btn:hover { border-color: var(--green); color: var(--green); }
@@ -283,9 +309,9 @@
         /* ─── Date Pills ─── */
         .date-pills { display: flex; gap: 4px; flex-wrap: wrap; /* legacy, kept for compat */ }
         .date-pill {
-            padding: 6px 14px; border: 2px solid #e5e7eb; border-radius: 50px;
+            padding: 6px 14px; border: 2px solid var(--input-border); border-radius: 50px;
             font-family: inherit; font-size: 0.75rem; font-weight: 600;
-            color: var(--gray); background: white; cursor: pointer; transition: all 0.3s;
+            color: var(--gray); background: var(--card-bg); cursor: pointer; transition: all 0.3s;
         }
         .date-pill:hover { border-color: var(--green); color: var(--green); }
         .date-pill--active { background: var(--green); color: white; border-color: var(--green); }
@@ -321,7 +347,7 @@
         .attr-icon--referral { background: #ec4899; }
         .attr-icon--organic { background: #10b981; }
         .attr-icon--snapchat { background: #fffc00; color: #000; }
-        .attr-table .attr-total td { font-weight: 800; background: #f9fafb; border-top: 2px solid #e5e7eb; }
+        .attr-table .attr-total td { font-weight: 800; background: var(--hover-bg); border-top: 2px solid var(--table-header-border); }
         .attr-roas-badge {
             display: inline-block; padding: 3px 10px; border-radius: 50px;
             font-weight: 700; font-size: 0.75rem;
@@ -356,6 +382,7 @@
             <h1 class="page-title">Vue globale <span>Clients</span></h1>
         </div>
         <div class="header-actions">
+            <button class="btn btn--sm" id="theme-toggle" style="background:var(--card-bg); border-color:var(--card-border); font-size:1.1rem; padding:6px 10px; cursor:pointer;" title="Mode nuit/jour">&#127769;</button>
             <a href="../connexion.html" class="btn btn--back">&#8592; Retour Hub</a>
             <button class="btn btn--danger btn--sm" id="logoutBtn">Deconnexion</button>
         </div>
@@ -396,7 +423,7 @@
 
         <!-- Modal: Add Client -->
         <div id="modal-add-client" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:flex; align-items:center; justify-content:center;">
-            <div style="background:white; border-radius:var(--radius); padding:32px; max-width:700px; width:95%; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+            <div style="background:var(--card-bg, white); border-radius:var(--radius); padding:32px; max-width:700px; width:95%; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
                 <h3 style="margin-bottom:4px; color:var(--dark);">Ajouter un client</h3>
                 <p style="font-size:0.72rem; color:var(--gray); margin-bottom:20px;">Renseignez un maximum d'infos pour que l'IA comprenne exactement ou vous en etes.</p>
                 <form id="add-client-form" style="max-height:72vh; overflow-y:auto; padding-right:8px;">
@@ -479,7 +506,7 @@
                         <textarea class="form-input" id="new-client-ai-summary" rows="3" placeholder="Ex: Client apporte par Pepette Marketing. Tres reactif par telephone, prefere les appels aux mails. Budget Google Ads envisage : 500EUR/mois." style="resize:vertical;"></textarea>
                     </div>
 
-                    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px; position:sticky; bottom:0; background:white; padding:12px 0 0;">
+                    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px; position:sticky; bottom:0; background:var(--card-bg, white); padding:12px 0 0;">
                         <button type="button" class="btn btn--danger btn--sm" id="cancel-add-client">Annuler</button>
                         <button type="submit" class="btn btn--primary btn--sm">Ajouter le client</button>
                     </div>
@@ -489,7 +516,7 @@
 
         <!-- Modal: Config Ads -->
         <div id="modal-config-ads" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:flex; align-items:center; justify-content:center;">
-            <div style="background:white; border-radius:var(--radius); padding:32px; max-width:500px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+            <div style="background:var(--card-bg, white); border-radius:var(--radius); padding:32px; max-width:500px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
                 <h3 style="margin-bottom:6px; color:var(--dark);">Configuration Ads</h3>
                 <p class="text-sm text-muted" style="margin-bottom:20px;">Client : <strong id="config-client-name"></strong></p>
 
@@ -558,7 +585,7 @@
         </div>
 
         <!-- Sync Status Bar -->
-        <div id="sync-bar" class="hidden" style="display:none; align-items:center; gap:12px; padding:12px 20px; background:white; border-radius:var(--radius-sm); box-shadow:var(--shadow); margin-bottom:16px; flex-wrap:wrap;">
+        <div id="sync-bar" class="hidden" style="display:none; align-items:center; gap:12px; padding:12px 20px; background:var(--card-bg, white); border-radius:var(--radius-sm); box-shadow:var(--shadow); margin-bottom:16px; flex-wrap:wrap;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--dark);">API Sync :</span>
             <span id="sync-status" style="font-size:0.8rem; color:var(--gray); flex:1;"></span>
             <button class="btn btn--sm" id="sync-gads-btn" style="display:none; background:#fbbc04; color:#000; border-color:#fbbc04; font-size:0.7rem;">Sync Google Ads</button>
@@ -729,6 +756,24 @@
 <script>
 (function() {
     'use strict';
+
+    // ── Theme Toggle ──
+    (function initTheme() {
+        var saved = localStorage.getItem('regen_theme');
+        if (saved === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        var btn = document.getElementById('theme-toggle');
+        if (btn) {
+            btn.textContent = saved === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+            btn.addEventListener('click', function() {
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+                localStorage.setItem('regen_theme', isDark ? 'light' : 'dark');
+                btn.textContent = isDark ? '\uD83C\uDF19' : '\u2600\uFE0F';
+            });
+        }
+    })();
 
     // ── Config ──
     var SUPABASE_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
