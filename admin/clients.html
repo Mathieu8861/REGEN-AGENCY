@@ -1286,26 +1286,34 @@
             if (!sourceUrl && colMap.source_url !== -1) sourceUrl = clean(fields[colMap.source_url] || '');
             if (!sourceUrl && colMap.tp1_page !== -1) sourceUrl = clean(fields[colMap.tp1_page] || '');
 
-            // Channel: prefer TP1_Source > explicit Source column > detect from URL
+            // Channel: majority attribution across all touchpoints
+            // Count touchpoints per channel, the one with most TP wins
+            // Paid channels (google_ads, meta_ads, tiktok_ads) win ties
             var channel = 'direct';
-            if (colMap.tp1_source !== -1) {
-                var tpSrc = clean(fields[colMap.tp1_source] || '').toLowerCase();
-                if (tpSrc.indexOf('google') !== -1) channel = 'google_ads';
-                else if (tpSrc.indexOf('meta') !== -1 || tpSrc.indexOf('facebook') !== -1 || tpSrc.indexOf('instagram') !== -1) channel = 'meta_ads';
-                else if (tpSrc.indexOf('tiktok') !== -1) channel = 'tiktok_ads';
-                else if (tpSrc.indexOf('email') !== -1 || tpSrc.indexOf('newsletter') !== -1) channel = 'email';
-                else if (tpSrc.indexOf('organic') !== -1 || tpSrc.indexOf('seo') !== -1) channel = 'organic';
-                else if (tpSrc === 'direct' || tpSrc === '') channel = 'direct';
-                else if (tpSrc) channel = 'referral';
+            if (colMap.tp_sources.length > 0) {
+                var tpCounts = {};
+                colMap.tp_sources.forEach(function(tpIdx) {
+                    var src = classifySource(clean(fields[tpIdx] || ''));
+                    if (src) {
+                        tpCounts[src] = (tpCounts[src] || 0) + 1;
+                    }
+                });
+                // Find the channel with most touchpoints, paid channels win ties
+                var paidPriority = { google_ads: 3, meta_ads: 2, tiktok_ads: 1, direct: 0 };
+                var best = 'direct', bestCount = 0;
+                Object.keys(tpCounts).forEach(function(ch) {
+                    if (tpCounts[ch] > bestCount || (tpCounts[ch] === bestCount && (paidPriority[ch] || 0) > (paidPriority[best] || 0))) {
+                        best = ch;
+                        bestCount = tpCounts[ch];
+                    }
+                });
+                channel = best;
             }
+            // Fallback: old format Source column
             if (channel === 'direct' && colMap.source_col !== -1) {
-                var srcVal = clean(fields[colMap.source_col] || '').toLowerCase();
-                if (srcVal.indexOf('google') !== -1) channel = 'google_ads';
-                else if (srcVal.indexOf('meta') !== -1 || srcVal.indexOf('facebook') !== -1 || srcVal.indexOf('instagram') !== -1) channel = 'meta_ads';
-                else if (srcVal.indexOf('tiktok') !== -1) channel = 'tiktok_ads';
-                else if (srcVal.indexOf('email') !== -1) channel = 'email';
-                else if (srcVal) channel = 'referral';
+                channel = classifySource(clean(fields[colMap.source_col] || ''));
             }
+            // Fallback: detect from URL
             if (channel === 'direct') channel = detectChannel(sourceUrl);
 
             // Products: collect from product columns (Produit_1, Produit_2, etc.)
@@ -1344,7 +1352,7 @@
 
     // ── Auto-detect column indices from header names ──
     function detectColumnMap(headers) {
-        var map = { id: 0, ref: 1, date: 2, total: 3, source_url: -1, source_col: -1, landing: -1, uri: -1, tp1_source: -1, tp1_page: -1, products: [] };
+        var map = { id: 0, ref: 1, date: 2, total: 3, source_url: -1, source_col: -1, landing: -1, uri: -1, tp1_page: -1, tp_sources: [], products: [] };
 
         for (var i = 0; i < headers.length; i++) {
             var h = headers[i];
@@ -1364,9 +1372,9 @@
             else if (h.indexOf('page_atterr') !== -1) map.landing = i;
             // URI complete
             else if (h.indexOf('uri_compl') !== -1) map.uri = i;
-            // Touchpoint source (new format: TP1_Source)
-            else if (h === 'tp1_source') map.tp1_source = i;
-            // Touchpoint page (new format: TP1_Page)
+            // All touchpoint sources (TP1_Source, TP2_Source, ... TP6_Source)
+            else if (/^tp\d+_source$/.test(h)) map.tp_sources.push(i);
+            // Touchpoint page (TP1_Page for source URL fallback)
             else if (h === 'tp1_page') map.tp1_page = i;
             // Products: match Produit_1, Produit_2 etc. (but not Produit_1_Qte, Produit_1_PrixHT)
             else if (/^produit_\d+$/.test(h)) map.products.push(i);
@@ -1413,6 +1421,17 @@
     }
 
     function clean(v) { return (v || '').replace(/^"|"$/g, '').trim(); }
+
+    // Classify a source string into a simplified channel
+    // Paid = google_ads, meta_ads, tiktok_ads. Everything else = direct
+    function classifySource(src) {
+        if (!src) return 'direct';
+        src = src.toLowerCase();
+        if (src.indexOf('google ads') !== -1 || src.indexOf('google_ads') !== -1) return 'google_ads';
+        if (src.indexOf('meta') !== -1 || src.indexOf('facebook') !== -1 || src.indexOf('instagram') !== -1) return 'meta_ads';
+        if (src.indexOf('tiktok') !== -1) return 'tiktok_ads';
+        return 'direct';
+    }
 
     function detectChannel(url) {
         if (!url) return 'direct';
