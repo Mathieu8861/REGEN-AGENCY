@@ -1130,56 +1130,63 @@
         // Aggregate per client
         var clientMap = {};
         clients.forEach(function(cl) {
-            clientMap[cl.id] = { name: cl.name, ca: 0, adsCA: 0, orders: 0, spend: spendByClient[cl.id] || 0 };
+            clientMap[cl.id] = { name: cl.name, ca: 0, adsCA: 0, orders: 0, adsOrders: 0, spend: spendByClient[cl.id] || 0 };
         });
         allOrders.forEach(function(o) {
             var cm = clientMap[o.client_id];
             if (!cm) return;
             cm.ca += parseFloat(o.total_ttc || 0);
             cm.orders++;
-            if (paidChannels.indexOf(o.channel) !== -1) cm.adsCA += parseFloat(o.total_ttc || 0);
+            if (paidChannels.indexOf(o.channel) !== -1) {
+                cm.adsCA += parseFloat(o.total_ttc || 0);
+                cm.adsOrders++;
+            }
         });
 
         // Totals
-        var totalCA = 0, totalSpend = 0, totalAdsCA = 0, totalOrders = 0;
+        var totalCA = 0, totalSpend = 0, totalAdsCA = 0, totalOrders = 0, totalAdsOrders = 0;
         clients.forEach(function(cl) {
             var cm = clientMap[cl.id];
             totalCA += cm.ca; totalSpend += cm.spend; totalAdsCA += cm.adsCA; totalOrders += cm.orders;
         });
+        // Count ads orders
+        allOrders.forEach(function(o) {
+            if (paidChannels.indexOf(o.channel) !== -1) totalAdsOrders++;
+        });
 
-        // Update KPI cards
-        document.getElementById('stat-ca').textContent = formatMoney(totalCA);
-        document.getElementById('stat-orders').textContent = totalOrders;
+        // Update KPI cards (Ads only for agency view)
+        document.getElementById('stat-ca').textContent = formatMoney(totalAdsCA);
+        document.getElementById('stat-orders').textContent = totalAdsOrders;
         document.getElementById('stat-ads').textContent = totalSpend > 0 ? formatMoney(totalSpend) : '-';
         document.getElementById('stat-roas').textContent = totalSpend > 0 ? (totalAdsCA / totalSpend).toFixed(2) + 'x' : '-';
-        document.getElementById('stat-aov').textContent = formatMoney(totalOrders > 0 ? totalCA / totalOrders : 0);
-        document.getElementById('stat-cpa').textContent = totalSpend > 0 && totalOrders > 0 ? formatMoney(totalSpend / totalOrders) : '-';
+        document.getElementById('stat-aov').textContent = formatMoney(totalAdsOrders > 0 ? totalAdsCA / totalAdsOrders : 0);
+        document.getElementById('stat-cpa').textContent = totalSpend > 0 && totalAdsOrders > 0 ? formatMoney(totalSpend / totalAdsOrders) : '-';
 
         // Build client table
         var sorted = clients.map(function(cl) {
             var cm = clientMap[cl.id];
             cm.roas = cm.spend > 0 ? cm.adsCA / cm.spend : 0;
-            cm.cpa = cm.orders > 0 && cm.spend > 0 ? cm.spend / cm.orders : 0;
-            cm.aov = cm.orders > 0 ? cm.ca / cm.orders : 0;
+            cm.cpa = cm.adsOrders > 0 && cm.spend > 0 ? cm.spend / cm.adsOrders : 0;
+            cm.aov = cm.adsOrders > 0 ? cm.adsCA / cm.adsOrders : 0;
             return cm;
-        }).sort(function(a, b) { return b.ca - a.ca; });
+        }).sort(function(a, b) { return b.adsCA - a.adsCA; });
 
         var html = '<div class="table-wrap"><table><thead><tr>';
-        html += '<th style="text-align:left;">Client</th><th class="text-right">CA</th><th class="text-right">Commandes</th><th class="text-right">Spend</th><th class="text-right">ROAS</th><th class="text-right">CPA</th><th class="text-right">AOV</th>';
+        html += '<th style="text-align:left;">Client</th><th class="text-right">CA Ads</th><th class="text-right">CA Total</th><th class="text-right">Commandes</th><th class="text-right">Spend</th><th class="text-right">ROAS</th><th class="text-right">CPA</th>';
         html += '</tr></thead><tbody>';
 
         sorted.forEach(function(cm) {
-            if (cm.ca === 0 && cm.orders === 0 && cm.spend === 0) return; // Skip clients with no data
+            if (cm.ca === 0 && cm.orders === 0 && cm.spend === 0) return;
             var roasClass = cm.roas >= 5 ? 'attr-roas--good' : cm.roas >= 2 ? 'attr-roas--ok' : cm.roas > 0 ? 'attr-roas--bad' : '';
             var roasHtml = cm.spend > 0 ? '<span class="attr-roas-badge ' + roasClass + '">' + cm.roas.toFixed(2) + '</span>' : '-';
             html += '<tr>';
             html += '<td style="text-align:left; font-weight:700;">' + cm.name + '</td>';
-            html += '<td class="text-right text-bold">' + formatMoney(cm.ca) + '</td>';
-            html += '<td class="text-right">' + cm.orders + '</td>';
+            html += '<td class="text-right text-bold" style="color:var(--green);">' + formatMoney(cm.adsCA) + '</td>';
+            html += '<td class="text-right text-muted">' + formatMoney(cm.ca) + '</td>';
+            html += '<td class="text-right">' + cm.adsOrders + '</td>';
             html += '<td class="text-right">' + (cm.spend > 0 ? formatMoney(cm.spend) : '-') + '</td>';
             html += '<td class="text-right">' + roasHtml + '</td>';
             html += '<td class="text-right">' + (cm.cpa > 0 ? formatMoney(cm.cpa) : '-') + '</td>';
-            html += '<td class="text-right">' + (cm.aov > 0 ? formatMoney(cm.aov) : '-') + '</td>';
             html += '</tr>';
         });
 
@@ -1188,12 +1195,12 @@
         var tRoasClass = tRoas >= 5 ? 'attr-roas--good' : tRoas >= 2 ? 'attr-roas--ok' : tRoas > 0 ? 'attr-roas--bad' : '';
         html += '<tr class="attr-total">';
         html += '<td style="text-align:left;">Total (' + clients.length + ' clients)</td>';
-        html += '<td class="text-right">' + formatMoney(totalCA) + '</td>';
-        html += '<td class="text-right">' + totalOrders + '</td>';
+        html += '<td class="text-right" style="color:var(--green);">' + formatMoney(totalAdsCA) + '</td>';
+        html += '<td class="text-right text-muted">' + formatMoney(totalCA) + '</td>';
+        html += '<td class="text-right">' + totalAdsOrders + '</td>';
         html += '<td class="text-right">' + (totalSpend > 0 ? formatMoney(totalSpend) : '-') + '</td>';
         html += '<td class="text-right">' + (totalSpend > 0 ? '<span class="attr-roas-badge ' + tRoasClass + '">' + tRoas.toFixed(2) + '</span>' : '-') + '</td>';
-        html += '<td class="text-right">' + (totalOrders > 0 && totalSpend > 0 ? formatMoney(totalSpend / totalOrders) : '-') + '</td>';
-        html += '<td class="text-right">' + formatMoney(totalOrders > 0 ? totalCA / totalOrders : 0) + '</td>';
+        html += '<td class="text-right">' + (totalAdsOrders > 0 && totalSpend > 0 ? formatMoney(totalSpend / totalAdsOrders) : '-') + '</td>';
         html += '</tr></tbody></table></div>';
         document.getElementById('agency-client-table').innerHTML = html;
 
