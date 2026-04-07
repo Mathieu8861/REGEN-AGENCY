@@ -988,13 +988,23 @@
             });
         }
 
+        // Calculate Ads-only CA (paid channels only) for ROAS & CPA
+        var paidChannels = ['google_ads', 'meta_ads', 'tiktok_ads'];
+        var adsCA = 0, adsOrders = 0;
+        paidChannels.forEach(function(ch) {
+            if (channels[ch]) {
+                adsCA += channels[ch].revenue;
+                adsOrders += channels[ch].count;
+            }
+        });
+
         // Update stat cards
         var aov = totalOrders > 0 ? totalCA / totalOrders : 0;
-        var cpa = totalOrders > 0 && totalSpend > 0 ? totalSpend / totalOrders : 0;
+        var cpa = adsOrders > 0 && totalSpend > 0 ? totalSpend / adsOrders : 0;
         document.getElementById('stat-ca').textContent = formatMoney(totalCA);
         document.getElementById('stat-orders').textContent = totalOrders;
         document.getElementById('stat-ads').textContent = totalSpend > 0 ? formatMoney(totalSpend) : '-';
-        document.getElementById('stat-roas').textContent = totalSpend > 0 ? (totalCA / totalSpend).toFixed(2) + 'x' : '-';
+        document.getElementById('stat-roas').textContent = totalSpend > 0 ? (adsCA / totalSpend).toFixed(2) + 'x' : '-';
         document.getElementById('stat-aov').textContent = formatMoney(aov);
         document.getElementById('stat-cpa').textContent = totalSpend > 0 ? formatMoney(cpa) : '-';
 
