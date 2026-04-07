@@ -1433,12 +1433,23 @@
         var yearFrom = months[0].from;
         var yearTo = months[months.length - 1].to;
 
-        // Fetch all orders for 12 months
-        var ordRes = await sb.from('orders').select('channel, total_ttc, order_date')
-            .eq('client_id', currentClient.id)
-            .gte('order_date', yearFrom)
-            .lte('order_date', yearTo);
-        var orders = ordRes.data || [];
+        // Fetch all orders for 12 months (no row limit)
+        var allOrders = [];
+        var pageSize = 1000;
+        var offset = 0;
+        var hasMore = true;
+        while (hasMore) {
+            var ordRes = await sb.from('orders').select('channel, total_ttc, order_date')
+                .eq('client_id', currentClient.id)
+                .gte('order_date', yearFrom)
+                .lte('order_date', yearTo)
+                .range(offset, offset + pageSize - 1);
+            var batch = ordRes.data || [];
+            allOrders = allOrders.concat(batch);
+            hasMore = batch.length === pageSize;
+            offset += pageSize;
+        }
+        var orders = allOrders;
 
         // Fetch API spend for 12 months
         var apiSpendByMonth = {};
