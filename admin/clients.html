@@ -1118,7 +1118,29 @@
             .lte('order_date', monthEnd);
         var orders = ordRes.data || [];
 
-        // Fetch spend for this month
+        // Fetch spend: API daily metrics (priority) + manual fallback
+        var apiDailySpend = [];
+        var hasApiSpend = false;
+        try {
+            var accRes = await sb.from('ad_accounts').select('id').eq('client_id', currentClient.id);
+            var accounts = accRes.data || [];
+            if (accounts.length > 0) {
+                var accIds = accounts.map(function(a) { return a.id; });
+                var campRes = await sb.from('ad_campaigns').select('id').in('ad_account_id', accIds);
+                var campaigns = campRes.data || [];
+                if (campaigns.length > 0) {
+                    var campIds = campaigns.map(function(c) { return c.id; });
+                    var metRes = await sb.from('ad_daily_metrics').select('date, spend')
+                        .in('campaign_id', campIds)
+                        .gte('date', monthStart)
+                        .lte('date', monthEnd);
+                    apiDailySpend = metRes.data || [];
+                    hasApiSpend = apiDailySpend.length > 0;
+                }
+            }
+        } catch(e) { console.log('Weekly recap API spend error:', e); }
+
+        // Manual spend fallback
         var spendRes = await sb.from('ad_weekly_spend').select('*')
             .eq('client_id', currentClient.id)
             .eq('year', year);
@@ -1133,10 +1155,22 @@
             var revenue = wOrders.reduce(function(s, o) { return s + parseFloat(o.total_ttc || 0); }, 0);
             var count = wOrders.length;
 
-            // Find matching spend
-            var weekCode = (month + 1) * 10 + (idx + 1);
-            var weekSpend = spendData.filter(function(s) { return s.week === weekCode; });
-            var spend = weekSpend.reduce(function(s, r) { return s + parseFloat(r.spend || 0); }, 0);
+            // Spend: aggregate API daily metrics for this week's date range
+            var spend = 0;
+            if (hasApiSpend) {
+                var wStart = formatISODate(w.start);
+                var wEnd = formatISODate(w.end);
+                apiDailySpend.forEach(function(m) {
+                    if (m.date >= wStart && m.date <= wEnd) {
+                        spend += parseFloat(m.spend || 0);
+                    }
+                });
+            } else {
+                // Fallback: manual spend
+                var weekCode = (month + 1) * 10 + (idx + 1);
+                var weekSpend = spendData.filter(function(s) { return s.week === weekCode; });
+                spend = weekSpend.reduce(function(s, r) { return s + parseFloat(r.spend || 0); }, 0);
+            }
 
             return {
                 label: 'S' + (idx + 1) + ' (' + formatShortDate(w.start) + ' - ' + formatShortDate(w.end) + ')',
