@@ -663,6 +663,7 @@
             <button class="tab" data-tab="campaigns">Campagnes</button>
             <button class="tab" data-tab="import">Import CSV</button>
             <button class="tab" data-tab="orders">Commandes</button>
+            <button class="tab" data-tab="products">Produits</button>
             <button class="tab" data-tab="spend">Saisie manuelle</button>
         </div>
 
@@ -748,6 +749,22 @@
             <div class="card">
                 <h3 class="card__title"><span class="card__title-icon">&#128722;</span> Dernieres commandes</h3>
                 <div id="orders-table">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Tab: Products ── -->
+        <div class="tab-content" id="tab-products">
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128230;</span> Top produits (via Ads)</h3>
+                <div id="products-ads-table">
+                    <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="card__title"><span class="card__title-icon">&#128202;</span> Top produits (toutes sources)</h3>
+                <div id="products-all-table">
                     <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
                 </div>
             </div>
@@ -1014,6 +1031,7 @@
         loadCampaigns();
         loadApiDailyMetrics();
         loadSyncStatus();
+        loadTopProducts();
     }
 
     // ═══════════════════════════════════════
@@ -1354,6 +1372,104 @@
 
         html += '</tbody></table></div>';
         container.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    // TOP PRODUCTS
+    // ═══════════════════════════════════════
+    async function loadTopProducts() {
+        var adsContainer = document.getElementById('products-ads-table');
+        var allContainer = document.getElementById('products-all-table');
+        if (!currentClient) return;
+
+        // Fetch orders with items for the period
+        var res = await sb.from('orders').select('channel, total_ttc, order_items(product_name)')
+            .eq('client_id', currentClient.id)
+            .gte('order_date', dateRange.from)
+            .lte('order_date', dateRange.to);
+        var orders = res.data || [];
+
+        if (orders.length === 0) {
+            adsContainer.innerHTML = '<p class="text-muted text-sm">Aucune commande sur cette periode.</p>';
+            allContainer.innerHTML = '<p class="text-muted text-sm">Aucune commande sur cette periode.</p>';
+            return;
+        }
+
+        var paidChannels = ['google_ads', 'meta_ads', 'tiktok_ads'];
+
+        // Aggregate products
+        function aggregateProducts(orderList) {
+            var products = {};
+            orderList.forEach(function(o) {
+                if (!o.order_items || !o.order_items.length) return;
+                var avgPrice = parseFloat(o.total_ttc || 0) / o.order_items.length;
+                o.order_items.forEach(function(item) {
+                    var name = normalizeProductName(item.product_name || '');
+                    if (!name) return;
+                    if (!products[name]) products[name] = { count: 0, revenue: 0 };
+                    products[name].count++;
+                    products[name].revenue += avgPrice;
+                });
+            });
+            return products;
+        }
+
+        // Normalize: remove size/color variants in parentheses, trim
+        function normalizeProductName(name) {
+            // Remove content in parentheses like (conditionnement par : ...) or (Pièces détachées SP3 : ...)
+            name = name.replace(/\s*\((?:conditionnement|montage|diamètre|pièces|couleur|taille|coloris)[^)]*\)/gi, '');
+            // Remove trailing whitespace and standardize
+            return name.trim();
+        }
+
+        // Build table from product map
+        function buildProductTable(products, container, limit) {
+            var sorted = Object.entries(products).sort(function(a, b) { return b[1].count - a[1].count; });
+            if (sorted.length === 0) {
+                container.innerHTML = '<p class="text-muted text-sm">Aucun produit trouve.</p>';
+                return;
+            }
+
+            var total = sorted.reduce(function(s, p) { return s + p[1].count; }, 0);
+            var shown = sorted.slice(0, limit || 20);
+
+            var html = '<div class="table-wrap" style="max-height:500px; overflow-y:auto;"><table><thead><tr>';
+            html += '<th style="text-align:left; width:50%;">Produit</th><th class="text-right">Ventes</th><th class="text-right">CA estime</th><th class="text-right">% du total</th>';
+            html += '</tr></thead><tbody>';
+
+            shown.forEach(function(entry, idx) {
+                var name = entry[0];
+                var data = entry[1];
+                var pct = total > 0 ? ((data.count / total) * 100).toFixed(1) : '0';
+                var barWidth = total > 0 ? Math.round((data.count / sorted[0][1].count) * 100) : 0;
+
+                html += '<tr>';
+                html += '<td style="text-align:left;"><div style="display:flex; align-items:center; gap:8px;">';
+                html += '<span style="color:var(--green); font-weight:800; font-size:0.7rem; min-width:20px;">#' + (idx + 1) + '</span>';
+                html += '<span style="font-weight:600; font-size:0.82rem;">' + name + '</span>';
+                html += '</div><div style="margin-top:4px; height:3px; border-radius:2px; background:var(--card-border);"><div style="height:100%; border-radius:2px; background:linear-gradient(90deg, var(--green), #05C08A); width:' + barWidth + '%;"></div></div></td>';
+                html += '<td class="text-right text-bold">' + data.count + '</td>';
+                html += '<td class="text-right">' + formatMoney(data.revenue) + '</td>';
+                html += '<td class="text-right"><span style="color:var(--green); font-weight:700;">' + pct + '%</span></td>';
+                html += '</tr>';
+            });
+
+            if (sorted.length > (limit || 20)) {
+                html += '<tr><td colspan="4" class="text-muted text-sm" style="text-align:center; padding:12px;">... et ' + (sorted.length - (limit || 20)) + ' autres produits</td></tr>';
+            }
+
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        }
+
+        // Ads products
+        var adsOrders = orders.filter(function(o) { return paidChannels.indexOf(o.channel) !== -1; });
+        var adsProducts = aggregateProducts(adsOrders);
+        buildProductTable(adsProducts, adsContainer, 20);
+
+        // All products
+        var allProducts = aggregateProducts(orders);
+        buildProductTable(allProducts, allContainer, 20);
     }
 
     // ── Orders ──
