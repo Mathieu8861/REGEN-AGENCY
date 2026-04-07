@@ -1671,9 +1671,7 @@
             var badge = l.status === 'completed' ? '<span style="color:#10b981; font-weight:700;">OK</span>' : l.status === 'failed' ? '<span class="text-danger">Erreur</span>' : 'En cours';
             var fileName = l.source && l.source !== 'csv' ? '<code style="font-size:0.78rem; background:#f3f4f6; padding:2px 8px; border-radius:6px;">' + l.source + '</code>' : '<span class="text-muted">csv</span>';
             var imported = l.rows_imported || 0;
-            var deleteBtn = imported > 0
-                ? '<button class="btn btn--danger btn--sm" onclick="window._deleteImport(\'' + l.id + '\', \'' + (l.source || 'csv').replace(/'/g, "\\'") + '\', ' + imported + ')" title="Supprimer cet import">&#10005;</button>'
-                : '';
+            var deleteBtn = '<button class="btn btn--danger btn--sm" onclick="window._deleteImport(\'' + l.id + '\', \'' + (l.source || 'csv').replace(/'/g, "\\'") + '\', ' + imported + ')" title="Supprimer cet import">&#10005;</button>';
             html += '<tr><td>' + new Date(l.created_at).toLocaleDateString('fr-FR') + '</td>';
             html += '<td>' + fileName + '</td><td>' + badge + '</td>';
             html += '<td class="text-right">' + imported + '</td>';
@@ -1686,7 +1684,10 @@
 
     // ── Delete an import + its orders ──
     window._deleteImport = async function(logId, source, count) {
-        if (!confirm('Supprimer cet import (' + source + ') et ses ' + count + ' commandes associees ?')) return;
+        var msg = count > 0
+            ? 'Supprimer cet import (' + source + ') et ses ' + count + ' commandes associees ?'
+            : 'Supprimer cet import (' + source + ') ?';
+        if (!confirm(msg)) return;
 
         try {
             // Get the import log to find the time window
@@ -1697,16 +1698,18 @@
             var clientId = logRes.data.client_id;
 
             // Delete orders created within 2 minutes of the import log (same batch)
-            var windowStart = new Date(logTime.getTime() - 5000).toISOString();
-            var windowEnd = new Date(logTime.getTime() + 120000).toISOString();
+            if (count > 0) {
+                var windowStart = new Date(logTime.getTime() - 5000).toISOString();
+                var windowEnd = new Date(logTime.getTime() + 120000).toISOString();
 
-            var delOrders = await sb.from('orders').delete()
-                .eq('client_id', clientId)
-                .eq('import_source', 'csv')
-                .gte('created_at', windowStart)
-                .lte('created_at', windowEnd);
+                var delOrders = await sb.from('orders').delete()
+                    .eq('client_id', clientId)
+                    .eq('import_source', 'csv')
+                    .gte('created_at', windowStart)
+                    .lte('created_at', windowEnd);
 
-            if (delOrders.error) throw delOrders.error;
+                if (delOrders.error) throw delOrders.error;
+            }
 
             // Delete the import log
             var delLog = await sb.from('import_logs').delete().eq('id', logId);
