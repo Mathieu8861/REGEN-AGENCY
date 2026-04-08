@@ -646,6 +646,12 @@
                     </div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group">
+                            <label class="form-label">Google Drive (dossier partage)</label>
+                            <input class="form-input" type="url" id="config-gdrive" placeholder="https://drive.google.com/drive/folders/...">
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
                             <label class="form-label">Plateforme</label>
                             <select class="form-input" id="config-platform">
                                 <option value="other">Autre</option>
@@ -1459,6 +1465,7 @@
         if (notes.email) infoHtml += '<a href="mailto:' + notes.email + '">&#9993; ' + notes.email + '</a>';
         if (notes.backoffice_url) infoHtml += '<a href="' + notes.backoffice_url + '" target="_blank">&#128274; Back-office</a>';
         if (notes.pappers_url) infoHtml += '<a href="' + notes.pappers_url + '" target="_blank">&#128196; Pappers</a>';
+        if (notes.gdrive_url) infoHtml += '<a href="' + notes.gdrive_url + '" target="_blank">&#128193; Drive</a>';
         if (currentClient.website) infoHtml += '<a href="' + currentClient.website + '" target="_blank">&#127760; Site</a>';
         document.getElementById('client-info').innerHTML = infoHtml;
         loadDashboard();
@@ -2705,6 +2712,7 @@
             document.getElementById('config-website').value = currentClient.website || '';
             document.getElementById('config-backoffice').value = notes.backoffice_url || '';
             document.getElementById('config-pappers').value = notes.pappers_url || '';
+            document.getElementById('config-gdrive').value = notes.gdrive_url || '';
             document.getElementById('config-platform').value = currentClient.platform || 'other';
 
             // ── Load Groupes ──
@@ -2878,6 +2886,7 @@
                 notes.email = document.getElementById('config-email').value.trim();
                 notes.backoffice_url = document.getElementById('config-backoffice').value.trim();
                 notes.pappers_url = document.getElementById('config-pappers').value.trim();
+                notes.gdrive_url = document.getElementById('config-gdrive').value.trim();
 
                 var website = document.getElementById('config-website').value.trim();
                 var platform = document.getElementById('config-platform').value;
