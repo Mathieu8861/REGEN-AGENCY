@@ -1455,7 +1455,7 @@
         if (typeof notes === 'string') try { notes = JSON.parse(notes); } catch(e) { notes = {}; }
         var platformIcons = { prestashop: '../assets/images/prestashop.png', shopify: null, woocommerce: null };
         var platIcon = platformIcons[currentClient.platform] ? '<img src="' + platformIcons[currentClient.platform] + '" style="width:14px;height:14px;object-fit:contain;vertical-align:middle;margin-right:4px;">' : '';
-        var infoHtml = '<a href="#" onclick="return false;" style="background:var(--hover-bg); color:var(--gray); cursor:default;">' + platIcon + (currentClient.platform || 'web') + '</a>';
+        var infoHtml = '<a href="#" onclick="return false;" style="background:var(--hover-bg); color:var(--gray); cursor:default; display:inline-flex; align-items:center; gap:4px;">' + platIcon + (currentClient.platform || 'web') + '</a>';
         if (notes.email) infoHtml += '<a href="mailto:' + notes.email + '">&#9993; ' + notes.email + '</a>';
         if (notes.backoffice_url) infoHtml += '<a href="' + notes.backoffice_url + '" target="_blank">&#128274; Back-office</a>';
         if (notes.pappers_url) infoHtml += '<a href="' + notes.pappers_url + '" target="_blank">&#128196; Pappers</a>';
