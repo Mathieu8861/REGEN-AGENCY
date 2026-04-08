@@ -1465,7 +1465,7 @@
         if (notes.email) infoHtml += '<a href="mailto:' + notes.email + '">&#9993; ' + notes.email + '</a>';
         if (notes.backoffice_url) infoHtml += '<a href="' + notes.backoffice_url + '" target="_blank">&#128274; Back-office</a>';
         if (notes.pappers_url) infoHtml += '<a href="' + notes.pappers_url + '" target="_blank">&#128196; Pappers</a>';
-        if (notes.gdrive_url) infoHtml += '<a href="' + notes.gdrive_url + '" target="_blank">&#128193; Drive</a>';
+        if (notes.gdrive_url) infoHtml += '<a href="' + notes.gdrive_url + '" target="_blank" style="display:inline-flex; align-items:center; gap:4px;"><img src="../assets/images/google-drive.png" style="width:14px;height:14px;object-fit:contain;"> Drive</a>';
         if (currentClient.website) infoHtml += '<a href="' + currentClient.website + '" target="_blank">&#127760; Site</a>';
         document.getElementById('client-info').innerHTML = infoHtml;
         loadDashboard();
