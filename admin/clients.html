@@ -474,7 +474,7 @@
         </div>
         <div class="header-actions">
             <button class="btn btn--sm btn--theme" id="theme-toggle" title="Mode nuit/jour">&#127769;</button>
-            <a href="../connexion.html" class="btn btn--back">&#8592; Retour Hub</a>
+            <a href="../connexion.html" class="btn btn--back" data-admin-only>&#8592; Retour Hub</a>
             <button class="btn btn--danger btn--sm" id="logoutBtn">Deconnexion</button>
         </div>
     </header>
@@ -506,7 +506,7 @@
                 <option value="">Chargement...</option>
             </select>
             <div class="client-links" id="client-info"></div>
-            <div style="margin-left:auto; display:flex; gap:8px;">
+            <div style="margin-left:auto; display:flex; gap:8px;" data-admin-only>
                 <button class="btn btn--primary btn--sm" id="add-client-btn">+ Nouveau client</button>
                 <button class="btn btn--sm btn--config" id="config-client-btn">&#9881; Configuration</button>
             </div>
@@ -748,7 +748,7 @@
         <div id="client-view" class="hidden">
 
         <!-- Sync Status Bar -->
-        <div id="sync-bar" class="hidden" style="display:none; align-items:center; gap:12px; padding:12px 20px; background:var(--card-bg, white); border-radius:var(--radius-sm); box-shadow:var(--shadow); margin-bottom:16px; flex-wrap:wrap;">
+        <div id="sync-bar" class="hidden" data-admin-only style="display:none; align-items:center; gap:12px; padding:12px 20px; background:var(--card-bg, white); border-radius:var(--radius-sm); box-shadow:var(--shadow); margin-bottom:16px; flex-wrap:wrap;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--dark);">API Sync :</span>
             <span id="sync-status" style="font-size:0.8rem; color:var(--gray); flex:1;"></span>
             <button class="btn btn--sm btn--sync-gads" id="sync-gads-btn" style="display:none;">&#9889; Sync Google Ads</button>
@@ -759,10 +759,10 @@
         <div class="tabs">
             <button class="tab tab--active" data-tab="dashboard">Vue mensuelle</button>
             <button class="tab" data-tab="campaigns">Campagnes</button>
-            <button class="tab" data-tab="import">Import CSV</button>
+            <button class="tab" data-tab="import" data-admin-only>Import CSV</button>
             <button class="tab" data-tab="orders">Commandes</button>
             <button class="tab" data-tab="products">Produits</button>
-            <button class="tab" data-tab="spend">Saisie manuelle</button>
+            <button class="tab" data-tab="spend" data-admin-only>Saisie manuelle</button>
         </div>
 
         <!-- ── Tab: Monthly Dashboard ── -->
@@ -974,11 +974,9 @@
     var parsedOrders = [];
     var currentFileName = '';
 
-    // ── Check admin password ──
-    if (sessionStorage.getItem('regen_admin_auth') !== 'true') {
-        window.location.href = '../connexion.html';
-        return;
-    }
+    // ── Check access: admin password OR Supabase session ──
+    var isAdminMode = sessionStorage.getItem('regen_admin_auth') === 'true';
+    var isClientMode = false;
 
     // ── DOM refs ──
     var authSection = document.getElementById('auth-section');
@@ -989,7 +987,15 @@
     // ── Init: check Supabase session ──
     sb.auth.getSession().then(function(res) {
         if (res.data.session) {
+            // Check if this is a client user (not admin accessing via password)
+            if (!isAdminMode) {
+                isClientMode = true;
+            }
             showApp();
+        } else if (!isAdminMode) {
+            // No Supabase session and no admin password — redirect to login
+            window.location.href = '../connexion.html';
+            return;
         }
     });
 
@@ -1026,19 +1032,59 @@
         authSection.classList.add('hidden');
         appSection.classList.remove('hidden');
 
+        // Client mode: hide admin elements, change title
+        if (isClientMode) {
+            applyClientMode();
+        }
+
         initDateRange();
         await loadClients();
         setupTabs();
-        setupCSVUpload();
-        setupSpendForm();
-        setupModals();
+        if (!isClientMode) {
+            setupCSVUpload();
+            setupSpendForm();
+            setupModals();
+        }
         populateMonths();
+    }
+
+    function applyClientMode() {
+        // Hide all admin-only elements
+        document.querySelectorAll('[data-admin-only]').forEach(function(el) {
+            el.style.display = 'none';
+        });
+
+        // Change title
+        document.querySelector('.page-title').innerHTML = 'Espace <span>Client</span>';
+        document.title = 'Espace Client - Regen Agency';
+
+        // Change logout to sign out of Supabase
+        document.getElementById('logoutBtn').addEventListener('click', async function(e) {
+            e.stopImmediatePropagation();
+            await sb.auth.signOut();
+            window.location.href = '../connexion.html';
+        });
     }
 
     // ── Load Clients ──
     async function loadClients() {
-        var res = await sb.from('clients').select('*').eq('agency_id', AGENCY_ID).eq('is_active', true).order('name');
-        var clients = res.data || [];
+        var clients = [];
+
+        if (isClientMode) {
+            // Client mode: only load accessible clients via client_users
+            var session = await sb.auth.getSession();
+            var userId = session.data.session.user.id;
+            var cuRes = await sb.from('client_users').select('client_id, clients(*)').eq('user_id', userId);
+            clients = (cuRes.data || [])
+                .filter(function(cu) { return cu.clients && cu.clients.is_active; })
+                .map(function(cu) { return cu.clients; })
+                .sort(function(a, b) { return a.name.localeCompare(b.name); });
+        } else {
+            // Admin mode: load all clients
+            var res = await sb.from('clients').select('*').eq('agency_id', AGENCY_ID).eq('is_active', true).order('name');
+            clients = res.data || [];
+        }
+
         var select = document.getElementById('client-select');
 
         if (clients.length === 0) {
@@ -1046,14 +1092,23 @@
             return;
         }
 
-        var html = '<option value="__all__">&#128202; Tous les clients</option>';
+        var html = '';
+        if (!isClientMode) {
+            html += '<option value="__all__">&#128202; Tous les clients</option>';
+        }
         clients.forEach(function(c) {
             html += '<option value="' + c.id + '">' + c.name + (c.website ? ' (' + c.website.replace('https://', '') + ')' : '') + '</option>';
         });
         select.innerHTML = html;
 
         allClients = clients;
-        currentClient = null; // Start with agency view
+
+        // Client mode: start on first client. Admin mode: start on agency view
+        if (isClientMode) {
+            currentClient = clients[0];
+        } else {
+            currentClient = null;
+        }
 
         select.addEventListener('change', function() {
             if (select.value === '__all__') {
@@ -1065,7 +1120,12 @@
             }
         });
 
-        loadAgencyDashboard(); // Default: agency view
+        // Default view
+        if (isClientMode) {
+            loadAllData(); // Client: show first client directly
+        } else {
+            loadAgencyDashboard(); // Admin: show agency overview
+        }
     }
 
     // ── Month Navigation State ──
