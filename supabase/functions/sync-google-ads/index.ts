@@ -59,6 +59,7 @@ interface CampaignMetric {
   ctr: number;
   cpc: number;
   conversions: number;
+  conversions_value: number;
 }
 
 // ── CORS headers ────────────────────────
@@ -239,6 +240,7 @@ async function syncGoogleAdsAccount(
         metrics.ctr,
         metrics.average_cpc,
         metrics.conversions,
+        metrics.conversions_value,
         metrics.cost_per_conversion,
         metrics.conversions_from_interactions_rate
       FROM campaign
@@ -300,6 +302,7 @@ async function syncGoogleAdsAccount(
           ctr: parseFloat(row.metrics?.ctr || "0") * 100, // Convert to percentage
           cpc: (parseInt(row.metrics?.averageCpc || "0") / 1_000_000),
           conversions: parseFloat(row.metrics?.conversions || "0"),
+          conversions_value: parseFloat(row.metrics?.conversionsValue || "0"),
         });
       }
 
@@ -360,7 +363,7 @@ async function syncGoogleAdsAccount(
           impressions: row.impressions,
           clicks: row.clicks,
           conversions: row.conversions,
-          revenue_reported: 0, // Google Ads doesn't always report revenue
+          revenue_reported: row.conversions_value || 0,
           cpc: row.cpc,
           cpm: row.impressions > 0 ? (row.spend / row.impressions) * 1000 : 0,
           ctr: row.ctr,
