@@ -2791,7 +2791,20 @@
                 var groupSelect = document.getElementById('config-group');
                 var groupName = groupNew.style.display !== 'none' ? groupNew.value.trim() : groupSelect.value;
 
-                await sb.from('clients').update({ notes: notes, group_name: groupName || null }).eq('id', currentClient.id);
+                var updateData = { notes: JSON.stringify(notes) };
+                // Try to update group_name (column may not exist yet)
+                try {
+                    var gRes = await sb.from('clients').update({ group_name: groupName || null }).eq('id', currentClient.id);
+                    if (gRes.error && gRes.error.message.indexOf('group_name') !== -1) {
+                        // Column doesn't exist — run migration
+                        console.warn('group_name column missing, trying to add it...');
+                        await sb.rpc('exec_sql', { query: 'ALTER TABLE clients ADD COLUMN IF NOT EXISTS group_name TEXT' }).catch(function(){});
+                        await sb.from('clients').update({ group_name: groupName || null }).eq('id', currentClient.id);
+                    }
+                } catch(e) { console.warn('Group update error:', e); }
+
+                var notesRes = await sb.from('clients').update(updateData).eq('id', currentClient.id);
+                if (notesRes.error) throw notesRes.error;
                 currentClient.notes = notes;
                 currentClient.group_name = groupName || null;
 
