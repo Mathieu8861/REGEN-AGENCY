@@ -619,33 +619,14 @@
                             <circle cx="12" cy="7" r="4"/>
                         </svg>
                     </div>
-                    <h2 class="login-card__title">Client</h2>
+                    <h2 class="login-card__title">Espace Client</h2>
                     <p class="login-card__desc">Accédez à votre espace dédié<br>Performances, rapports & documents</p>
 
-                    <span class="login-card__badge">Bientôt disponible</span>
-
-                    <div class="login-card__features">
-                        <div class="login-card__feature">
-                            <svg viewBox="0 0 24 24">
-                                <line x1="18" y1="20" x2="18" y2="10"/>
-                                <line x1="12" y1="20" x2="12" y2="4"/>
-                                <line x1="6" y1="20" x2="6" y2="14"/>
-                            </svg>
-                            Dashboard performances
-                        </div>
-                        <div class="login-card__feature">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                            </svg>
-                            Documents & rapports
-                        </div>
-                        <div class="login-card__feature">
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                            </svg>
-                            Résultats Ads en temps réel
-                        </div>
+                    <div id="client-login-form" style="width:100%; margin-top:8px;">
+                        <div class="login-card__error" id="client-login-error" style="display:none; color:#ef4444; font-size:0.78rem; margin-bottom:8px; text-align:center;"></div>
+                        <input type="email" id="client-email" placeholder="Email" style="width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:12px; font-family:inherit; font-size:0.9rem; margin-bottom:8px; background:#fafafa;">
+                        <input type="password" id="client-password" placeholder="Mot de passe" style="width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:12px; font-family:inherit; font-size:0.9rem; margin-bottom:12px; background:#fafafa;">
+                        <button id="client-login-btn" style="width:100%; padding:14px; background:linear-gradient(135deg, #2FB963, #05C08A); color:white; border:none; border-radius:12px; font-family:inherit; font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.3s;">Se connecter</button>
                     </div>
                 </div>
 
@@ -781,6 +762,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         (function() {
             // === CONFIGURATION ===
@@ -838,6 +820,53 @@
                 sessionStorage.removeItem(ADMIN_SESSION_KEY);
                 showLogin();
             });
+
+            // === CLIENT LOGIN (Supabase Auth) ===
+            var SUPABASE_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
+            var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
+
+            var clientLoginBtn = document.getElementById('client-login-btn');
+            var clientError = document.getElementById('client-login-error');
+
+            if (clientLoginBtn && window.supabase) {
+                var sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+                clientLoginBtn.addEventListener('click', async function() {
+                    var email = document.getElementById('client-email').value.trim();
+                    var password = document.getElementById('client-password').value;
+                    clientError.style.display = 'none';
+
+                    if (!email || !password) {
+                        clientError.textContent = 'Remplissez tous les champs.';
+                        clientError.style.display = 'block';
+                        return;
+                    }
+
+                    clientLoginBtn.textContent = 'Connexion...';
+                    clientLoginBtn.disabled = true;
+
+                    var res = await sbClient.auth.signInWithPassword({ email: email, password: password });
+
+                    if (res.error) {
+                        clientError.textContent = res.error.message === 'Invalid login credentials' ? 'Email ou mot de passe incorrect.' : res.error.message;
+                        clientError.style.display = 'block';
+                        clientLoginBtn.textContent = 'Se connecter';
+                        clientLoginBtn.disabled = false;
+                        return;
+                    }
+
+                    // Redirect to espace client
+                    window.location.href = 'espace-client/dashboard.html';
+                });
+
+                // Allow Enter key on password field
+                document.getElementById('client-password').addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') clientLoginBtn.click();
+                });
+                document.getElementById('client-email').addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') document.getElementById('client-password').focus();
+                });
+            }
 
             // === INIT ===
             checkAuth();
