@@ -112,28 +112,48 @@
 
     // ── Load Clients ─────────────────────────
     async function loadClients() {
-        var result = await window.REGEN.supabase
-            .from('clients')
-            .select('*')
-            .eq('is_active', true)
-            .order('name');
+        var profile = window.REGEN.currentProfile;
+        var clients = [];
 
-        if (result.data) {
-            window.REGEN.accessibleClients = result.data;
+        if (profile && profile.role === 'client') {
+            // Client role: only load clients they have access to via client_users
+            var cuRes = await window.REGEN.supabase
+                .from('client_users')
+                .select('client_id, clients(*)')
+                .eq('user_id', profile.id);
+
+            if (cuRes.data) {
+                clients = cuRes.data
+                    .filter(function(cu) { return cu.clients && cu.clients.is_active; })
+                    .map(function(cu) { return cu.clients; })
+                    .sort(function(a, b) { return a.name.localeCompare(b.name); });
+            }
+        } else {
+            // Admin/staff: load all clients
+            var result = await window.REGEN.supabase
+                .from('clients')
+                .select('*')
+                .eq('is_active', true)
+                .order('name');
+            clients = result.data || [];
+        }
+
+        if (clients.length > 0) {
+            window.REGEN.accessibleClients = clients;
 
             // Restore selected client from localStorage
             var savedClientId = localStorage.getItem('regen_selected_client');
             if (savedClientId) {
-                var found = result.data.find(function (c) { return c.id === savedClientId; });
+                var found = clients.find(function (c) { return c.id === savedClientId; });
                 if (found) {
                     window.REGEN.currentClient = found;
                 }
             }
 
             // Default to first client
-            if (!window.REGEN.currentClient && result.data.length > 0) {
-                window.REGEN.currentClient = result.data[0];
-                localStorage.setItem('regen_selected_client', result.data[0].id);
+            if (!window.REGEN.currentClient && clients.length > 0) {
+                window.REGEN.currentClient = clients[0];
+                localStorage.setItem('regen_selected_client', clients[0].id);
             }
         }
     }

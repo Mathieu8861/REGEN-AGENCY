@@ -508,7 +508,7 @@
             <div class="client-links" id="client-info"></div>
             <div style="margin-left:auto; display:flex; gap:8px;">
                 <button class="btn btn--primary btn--sm" id="add-client-btn">+ Nouveau client</button>
-                <button class="btn btn--sm btn--config" id="config-client-btn">&#9881; Config Ads</button>
+                <button class="btn btn--sm btn--config" id="config-client-btn">&#9881; Configuration</button>
             </div>
         </div>
 
@@ -605,31 +605,82 @@
             </div>
         </div>
 
-        <!-- Modal: Config Ads -->
+        <!-- Modal: Configuration Client -->
         <div id="modal-config-ads" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:flex; align-items:center; justify-content:center;">
-            <div style="background:var(--card-bg, white); border-radius:var(--radius); padding:32px; max-width:500px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
-                <h3 style="margin-bottom:6px; color:var(--dark);">Configuration Ads</h3>
+            <div style="background:var(--card-bg, white); border-radius:var(--radius); padding:32px; max-width:700px; width:95%; box-shadow:0 20px 60px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto;">
+                <h3 style="margin-bottom:6px; color:var(--dark);">Configuration</h3>
                 <p class="text-sm text-muted" style="margin-bottom:20px;">Client : <strong id="config-client-name"></strong></p>
 
+                <!-- ── Section 1 : Infos client ── -->
                 <div class="card" style="margin-bottom:16px; padding:16px; background:var(--gray-light);">
-                    <h4 style="font-size:0.85rem; margin-bottom:12px; color:var(--dark);">Google Ads</h4>
-                    <div class="form-group">
-                        <label class="form-label">Customer ID (ex: 123-456-7890)</label>
-                        <input class="form-input" type="text" id="config-gads-id" placeholder="123-456-7890">
+                    <h4 style="font-size:0.85rem; margin-bottom:12px; color:var(--dark); display:flex; align-items:center; gap:6px;">&#128100; Informations client</h4>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Contact principal</label>
+                            <input class="form-input" type="text" id="config-contact" placeholder="Jean Dupont">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telephone</label>
+                            <input class="form-input" type="tel" id="config-phone" placeholder="06 12 34 56 78">
+                        </div>
                     </div>
-                    <div id="gads-status" class="text-sm" style="margin-top:8px;"></div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input class="form-input" type="email" id="config-email" placeholder="contact@client.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Groupe</label>
+                            <div style="display:flex; gap:6px;">
+                                <select class="form-input" id="config-group" style="flex:1;">
+                                    <option value="">Aucun groupe</option>
+                                </select>
+                                <input class="form-input" type="text" id="config-group-new" placeholder="Nouveau..." style="flex:1; display:none;">
+                                <button type="button" class="btn btn--sm" id="config-group-toggle" style="padding:6px 10px; font-size:0.7rem; white-space:nowrap;">+ Nouveau</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- ── Section 2 : Config Ads ── -->
                 <div class="card" style="margin-bottom:16px; padding:16px; background:var(--gray-light);">
-                    <h4 style="font-size:0.85rem; margin-bottom:12px; color:var(--dark);">Meta Ads</h4>
-                    <div class="form-group">
-                        <label class="form-label">Ad Account ID (ex: act_123456789)</label>
-                        <input class="form-input" type="text" id="config-meta-id" placeholder="act_123456789">
+                    <h4 style="font-size:0.85rem; margin-bottom:12px; color:var(--dark); display:flex; align-items:center; gap:6px;"><img src="../assets/images/adwords.png" style="width:16px;height:16px;"> Integrations Ads</h4>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Google Ads Customer ID</label>
+                            <input class="form-input" type="text" id="config-gads-id" placeholder="123-456-7890">
+                            <div id="gads-status" class="text-sm" style="margin-top:4px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Meta Ads Account ID</label>
+                            <input class="form-input" type="text" id="config-meta-id" placeholder="act_123456789">
+                            <div id="meta-status" class="text-sm" style="margin-top:4px;"></div>
+                        </div>
                     </div>
-                    <div id="meta-status" class="text-sm" style="margin-top:8px;"></div>
                 </div>
 
-                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <!-- ── Section 3 : Acces espace client ── -->
+                <div class="card" style="margin-bottom:16px; padding:16px; background:var(--gray-light);">
+                    <h4 style="font-size:0.85rem; margin-bottom:12px; color:var(--dark); display:flex; align-items:center; gap:6px;">&#128274; Acces espace client</h4>
+                    <div id="config-access-list" style="margin-bottom:12px;">
+                        <p class="text-muted text-sm">Chargement...</p>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:flex-end;">
+                        <div class="form-group" style="flex:1; margin-bottom:0;">
+                            <label class="form-label">Inviter un utilisateur</label>
+                            <input class="form-input" type="email" id="config-invite-email" placeholder="email@client.com">
+                        </div>
+                        <button type="button" class="btn btn--primary btn--sm" id="config-invite-btn" style="margin-bottom:0; height:38px;">Inviter</button>
+                    </div>
+                    <div id="config-invite-group" class="hidden" style="margin-top:8px; padding:10px; background:var(--card-bg); border-radius:var(--radius-sm); border:1.5px solid var(--green); font-size:0.78rem;">
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:600; color:var(--dark);">
+                            <input type="checkbox" id="config-invite-group-check" checked style="accent-color:var(--green);">
+                            Ajouter aussi aux autres clients du groupe <strong id="config-invite-group-name"></strong>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end; position:sticky; bottom:0; background:var(--card-bg, white); padding:12px 0 0;">
                     <button type="button" class="btn btn--danger btn--sm" id="cancel-config-ads">Fermer</button>
                     <button type="button" class="btn btn--primary btn--sm" id="save-config-ads">Enregistrer</button>
                 </div>
@@ -2549,7 +2600,7 @@
             }
         });
 
-        // Open Config Ads
+        // Open Configuration
         document.getElementById('config-client-btn').addEventListener('click', async function() {
             if (!currentClient) { alert('Selectionnez un client.'); return; }
 
@@ -2557,7 +2608,43 @@
             configModal.classList.remove('hidden');
             configModal.style.display = 'flex';
 
-            // Load existing integrations
+            var notes = currentClient.notes || {};
+            if (typeof notes === 'string') try { notes = JSON.parse(notes); } catch(e) { notes = {}; }
+
+            // ── Load Infos client ──
+            document.getElementById('config-contact').value = notes.contact || '';
+            document.getElementById('config-phone').value = notes.phone || '';
+            document.getElementById('config-email').value = notes.email || '';
+
+            // ── Load Groupes ──
+            var groupSelect = document.getElementById('config-group');
+            var groupRes = await sb.from('clients').select('group_name').eq('agency_id', AGENCY_ID).not('group_name', 'is', null);
+            var groups = [];
+            (groupRes.data || []).forEach(function(c) {
+                if (c.group_name && groups.indexOf(c.group_name) === -1) groups.push(c.group_name);
+            });
+            var gHtml = '<option value="">Aucun groupe</option>';
+            groups.sort().forEach(function(g) { gHtml += '<option value="' + g + '">' + g + '</option>'; });
+            groupSelect.innerHTML = gHtml;
+            groupSelect.value = currentClient.group_name || '';
+
+            // Group toggle new/existing
+            var groupNewInput = document.getElementById('config-group-new');
+            var groupToggle = document.getElementById('config-group-toggle');
+            groupNewInput.style.display = 'none';
+            groupSelect.style.display = '';
+            groupToggle.textContent = '+ Nouveau';
+            groupToggle.onclick = function() {
+                if (groupNewInput.style.display === 'none') {
+                    groupNewInput.style.display = ''; groupSelect.style.display = 'none';
+                    groupToggle.textContent = 'Existant';
+                } else {
+                    groupNewInput.style.display = 'none'; groupSelect.style.display = '';
+                    groupToggle.textContent = '+ Nouveau';
+                }
+            };
+
+            // ── Load Integrations ──
             var intRes = await sb.from('integrations').select('*').eq('client_id', currentClient.id);
             var integrations = intRes.data || [];
 
@@ -2566,35 +2653,155 @@
 
             document.getElementById('config-gads-id').value = gadsInt ? (gadsInt.credentials || {}).customer_id || '' : '';
             document.getElementById('gads-status').innerHTML = gadsInt
-                ? '<span class="text-success">Connecte</span> — Derniere sync : ' + (gadsInt.last_sync ? new Date(gadsInt.last_sync).toLocaleString('fr-FR') : 'jamais')
+                ? '<span class="text-success">Connecte</span> — Sync : ' + (gadsInt.last_sync ? new Date(gadsInt.last_sync).toLocaleString('fr-FR') : 'jamais')
                 : '<span class="text-muted">Non configure</span>';
 
             document.getElementById('config-meta-id').value = metaInt ? (metaInt.credentials || {}).ad_account_id || '' : '';
             document.getElementById('meta-status').innerHTML = metaInt
-                ? '<span class="text-success">Connecte</span> — Derniere sync : ' + (metaInt.last_sync ? new Date(metaInt.last_sync).toLocaleString('fr-FR') : 'jamais')
+                ? '<span class="text-success">Connecte</span> — Sync : ' + (metaInt.last_sync ? new Date(metaInt.last_sync).toLocaleString('fr-FR') : 'jamais')
                 : '<span class="text-muted">Non configure</span>';
+
+            // ── Load Acces client ──
+            loadConfigAccess();
+
+            // ── Show group invite option if client has group ──
+            var inviteGroupDiv = document.getElementById('config-invite-group');
+            if (currentClient.group_name) {
+                document.getElementById('config-invite-group-name').textContent = currentClient.group_name;
+                inviteGroupDiv.classList.remove('hidden');
+            } else {
+                inviteGroupDiv.classList.add('hidden');
+            }
         });
 
-        // Close Config Ads
+        // ── Load access list ──
+        async function loadConfigAccess() {
+            var container = document.getElementById('config-access-list');
+            if (!currentClient) return;
+
+            var res = await sb.from('client_users').select('id, user_id, profiles(email, full_name, role)').eq('client_id', currentClient.id);
+            var users = res.data || [];
+
+            if (users.length === 0) {
+                container.innerHTML = '<p class="text-muted text-sm">Aucun acces configure. Invitez un utilisateur ci-dessous.</p>';
+                return;
+            }
+
+            var html = '<div style="display:flex; flex-direction:column; gap:6px;">';
+            users.forEach(function(u) {
+                var profile = u.profiles || {};
+                var name = profile.full_name || '';
+                var email = profile.email || '?';
+                html += '<div style="display:flex; align-items:center; gap:8px; padding:8px 12px; background:var(--card-bg); border-radius:var(--radius-sm); border:1px solid var(--card-border);">';
+                html += '<span style="font-size:0.82rem; font-weight:600; color:var(--dark); flex:1;">&#9993; ' + email + (name ? ' <span class="text-muted text-sm">(' + name + ')</span>' : '') + '</span>';
+                html += '<span style="font-size:0.68rem; padding:2px 8px; background:var(--green-light); color:var(--green); border-radius:20px; font-weight:700;">' + (profile.role || 'client') + '</span>';
+                html += '<button class="btn btn--danger btn--sm" style="padding:3px 8px; font-size:0.68rem;" onclick="window._removeAccess(\'' + u.id + '\')">&#10005;</button>';
+                html += '</div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // ── Remove access ──
+        window._removeAccess = async function(clientUserId) {
+            if (!confirm('Retirer cet acces ?')) return;
+            await sb.from('client_users').delete().eq('id', clientUserId);
+            loadConfigAccess();
+        };
+
+        // ── Invite user ──
+        document.getElementById('config-invite-btn').addEventListener('click', async function() {
+            var email = document.getElementById('config-invite-email').value.trim().toLowerCase();
+            if (!email || !currentClient) { alert('Entrez un email valide.'); return; }
+
+            var btn = this;
+            btn.disabled = true; btn.textContent = '...';
+
+            try {
+                // Check if profile exists
+                var profileRes = await sb.from('profiles').select('id, email').eq('email', email).maybeSingle();
+                var userId;
+
+                if (profileRes.data) {
+                    userId = profileRes.data.id;
+                } else {
+                    // Create user via signUp (client will need to confirm email)
+                    var signUpRes = await sb.auth.signUp({ email: email, password: 'Regen2026!' });
+                    if (signUpRes.error) throw signUpRes.error;
+                    userId = signUpRes.data.user.id;
+
+                    // Update profile role to client
+                    await sb.from('profiles').upsert({ id: userId, email: email, role: 'client', agency_id: AGENCY_ID });
+                }
+
+                // Check if already linked
+                var existCheck = await sb.from('client_users').select('id').eq('client_id', currentClient.id).eq('user_id', userId).maybeSingle();
+                if (existCheck.data) {
+                    alert('Cet utilisateur a deja acces a ce client.');
+                    btn.disabled = false; btn.textContent = 'Inviter';
+                    return;
+                }
+
+                // Insert client_users
+                var clientsToLink = [currentClient.id];
+
+                // If group invite checked
+                if (currentClient.group_name && document.getElementById('config-invite-group-check').checked) {
+                    var groupRes = await sb.from('clients').select('id').eq('group_name', currentClient.group_name).eq('agency_id', AGENCY_ID);
+                    clientsToLink = (groupRes.data || []).map(function(c) { return c.id; });
+                }
+
+                for (var i = 0; i < clientsToLink.length; i++) {
+                    var check = await sb.from('client_users').select('id').eq('client_id', clientsToLink[i]).eq('user_id', userId).maybeSingle();
+                    if (!check.data) {
+                        await sb.from('client_users').insert({ client_id: clientsToLink[i], user_id: userId });
+                    }
+                }
+
+                document.getElementById('config-invite-email').value = '';
+                loadConfigAccess();
+                alert('Acces ajoute ! ' + (clientsToLink.length > 1 ? '(' + clientsToLink.length + ' clients du groupe)' : ''));
+            } catch(err) {
+                alert('Erreur : ' + (err.message || err));
+            }
+
+            btn.disabled = false; btn.textContent = 'Inviter';
+        });
+
+        // Close Configuration
         document.getElementById('cancel-config-ads').addEventListener('click', function() {
             configModal.classList.add('hidden');
             configModal.style.display = 'none';
         });
 
-        // Save Config Ads
+        // Save Configuration
         document.getElementById('save-config-ads').addEventListener('click', async function() {
             if (!currentClient) return;
 
-            var gadsId = document.getElementById('config-gads-id').value.trim();
-            var metaId = document.getElementById('config-meta-id').value.trim();
-
             try {
-                // Google Ads
+                // Save client infos
+                var notes = currentClient.notes || {};
+                if (typeof notes === 'string') try { notes = JSON.parse(notes); } catch(e) { notes = {}; }
+                notes.contact = document.getElementById('config-contact').value.trim();
+                notes.phone = document.getElementById('config-phone').value.trim();
+                notes.email = document.getElementById('config-email').value.trim();
+
+                // Group
+                var groupNew = document.getElementById('config-group-new');
+                var groupSelect = document.getElementById('config-group');
+                var groupName = groupNew.style.display !== 'none' ? groupNew.value.trim() : groupSelect.value;
+
+                await sb.from('clients').update({ notes: notes, group_name: groupName || null }).eq('id', currentClient.id);
+                currentClient.notes = notes;
+                currentClient.group_name = groupName || null;
+
+                // Save Ads integrations
+                var gadsId = document.getElementById('config-gads-id').value.trim();
+                var metaId = document.getElementById('config-meta-id').value.trim();
+
                 if (gadsId) {
                     await saveIntegration(currentClient.id, 'google_ads', { customer_id: gadsId, access_type: 'mcc' });
                 }
-
-                // Meta Ads
                 if (metaId) {
                     await saveIntegration(currentClient.id, 'meta_ads', { ad_account_id: metaId });
                 }
@@ -2602,7 +2809,7 @@
                 alert('Configuration sauvegardee !');
                 configModal.classList.add('hidden');
                 configModal.style.display = 'none';
-                loadAllData();
+                reloadCurrentView();
             } catch(err) {
                 alert('Erreur : ' + (err.message || err));
             }
