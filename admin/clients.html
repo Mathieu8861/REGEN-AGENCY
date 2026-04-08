@@ -379,8 +379,10 @@
         .result-box {
             padding: 16px; border-radius: var(--radius-sm); margin-top: 16px;
         }
-        .result-box--success { background: #ecfdf5; border: 1px solid #a7f3d0; }
-        .result-box--error { background: #fef2f2; border: 1px solid #fca5a5; }
+        .result-box--success { background: var(--green-light); border: 1px solid var(--green); color: var(--dark); }
+        .result-box--success .text-success { color: var(--green); }
+        .result-box--error { background: #fef2f2; border: 1px solid #fca5a5; color: var(--dark); }
+        [data-theme="dark"] .result-box--error { background: #2a1515; border-color: #5c2020; }
 
         /* ─── Loading ─── */
         .spinner {
