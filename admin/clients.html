@@ -2369,8 +2369,8 @@
             }
             var resultEl = document.getElementById('csv-result');
             resultEl.innerHTML = '<div class="result-box result-box--success">'
-                + '<p class="text-bold text-success">Import termine !</p>'
-                + '<p>' + d.imported + ' commandes importees, ' + d.skipped + ' ignorees (doublons).</p>'
+                + '<p class="text-bold" style="color:var(--green);">Import termine !</p>'
+                + '<p style="color:var(--dark);">' + d.imported + ' commandes importees, ' + d.skipped + ' ignorees (doublons).</p>'
                 + '</div>';
             resultEl.classList.remove('hidden');
 
