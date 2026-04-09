@@ -1509,6 +1509,7 @@
 
         // Fetch API daily metrics (filtered by date range) — priority source
         var apiSpend = { google_ads: 0, meta_ads: 0, tiktok_ads: 0 };
+        var apiGadsRevenue = { google_ads: 0, meta_ads: 0, tiktok_ads: 0 };
         var hasApiData = false;
         try {
             var accRes = await sb.from('ad_accounts').select('id, platform').eq('client_id', currentClient.id);
@@ -1525,7 +1526,7 @@
                     var campAccMap = {};
                     campaigns.forEach(function(c) { campAccMap[c.id] = c.ad_account_id; });
 
-                    var metRes = await sb.from('ad_daily_metrics').select('campaign_id, spend')
+                    var metRes = await sb.from('ad_daily_metrics').select('campaign_id, spend, revenue_reported')
                         .in('campaign_id', campIds)
                         .gte('date', fromStr)
                         .lte('date', toStr);
@@ -1534,6 +1535,7 @@
                         var accId = campAccMap[m.campaign_id];
                         var plat = accPlatMap[accId] || 'google_ads';
                         apiSpend[plat] += parseFloat(m.spend || 0);
+                        apiGadsRevenue[plat] += parseFloat(m.revenue_reported || 0);
                         hasApiData = true;
                     });
                 }
@@ -1549,7 +1551,7 @@
         var totalCA = 0, totalOrders = 0;
         orders.forEach(function(o) {
             var ch = o.channel || 'direct';
-            if (!channels[ch]) channels[ch] = { count: 0, revenue: 0, spend: 0 };
+            if (!channels[ch]) channels[ch] = { count: 0, revenue: 0, spend: 0, gadsRevenue: 0 };
             channels[ch].count++;
             channels[ch].revenue += parseFloat(o.total_ttc || 0);
             totalCA += parseFloat(o.total_ttc || 0);
@@ -1561,9 +1563,10 @@
         if (hasApiData) {
             // Use API spend (filtered by date range)
             Object.keys(apiSpend).forEach(function(plat) {
-                if (apiSpend[plat] > 0) {
-                    if (!channels[plat]) channels[plat] = { count: 0, revenue: 0, spend: 0 };
+                if (apiSpend[plat] > 0 || apiGadsRevenue[plat] > 0) {
+                    if (!channels[plat]) channels[plat] = { count: 0, revenue: 0, spend: 0, gadsRevenue: 0 };
                     channels[plat].spend += apiSpend[plat];
+                    channels[plat].gadsRevenue += apiGadsRevenue[plat];
                     totalSpend += apiSpend[plat];
                 }
             });
@@ -1625,7 +1628,8 @@
 
         var html = '<div class="table-wrap"><table class="attr-table"><thead><tr>';
         html += '<th style="text-align:left;">Source</th>';
-        html += '<th>ROAS</th>';
+        html += '<th>ROAS Site</th>';
+        html += '<th>ROAS GAds</th>';
         html += '<th>Commandes</th>';
         html += '<th>CA</th>';
         html += '<th>Spend</th>';
@@ -1633,19 +1637,25 @@
         html += '<th>AOV</th>';
         html += '</tr></thead><tbody>';
 
+        var totalGadsRev = 0;
         keys.forEach(function(ch) {
             var d = channels[ch];
             var cfg = SOURCE_CONFIG[ch] || { label: ch, icon: '?', iconClass: 'attr-icon--direct' };
             var roas = d.spend > 0 ? (d.revenue / d.spend) : 0;
+            var roasGads = d.spend > 0 && d.gadsRevenue > 0 ? (d.gadsRevenue / d.spend) : 0;
             var cpa = d.count > 0 && d.spend > 0 ? d.spend / d.count : 0;
             var aov = d.count > 0 ? d.revenue / d.count : 0;
+            totalGadsRev += (d.gadsRevenue || 0);
 
             var roasClass = roas >= 5 ? 'attr-roas--good' : roas >= 2 ? 'attr-roas--ok' : roas > 0 ? 'attr-roas--bad' : '';
             var roasHtml = d.spend > 0 ? '<span class="attr-roas-badge ' + roasClass + '">' + roas.toFixed(2) + '</span>' : '-';
+            var roasGClass = roasGads >= 5 ? 'attr-roas--good' : roasGads >= 2 ? 'attr-roas--ok' : roasGads > 0 ? 'attr-roas--bad' : '';
+            var roasGHtml = roasGads > 0 ? '<span class="attr-roas-badge ' + roasGClass + '">' + roasGads.toFixed(2) + '</span>' : '-';
 
             html += '<tr>';
             html += '<td><div class="attr-source"><div class="attr-source-icon ' + cfg.iconClass + '">' + cfg.icon + '</div>' + cfg.label + '</div></td>';
             html += '<td>' + roasHtml + '</td>';
+            html += '<td>' + roasGHtml + '</td>';
             html += '<td class="text-bold">' + d.count + '</td>';
             html += '<td class="text-bold">' + formatMoney(d.revenue) + '</td>';
             html += '<td>' + (d.spend > 0 ? formatMoney(d.spend) : '-') + '</td>';
@@ -1656,13 +1666,16 @@
 
         // Total row
         var totalRoas = totalSpend > 0 ? (totalCA / totalSpend) : 0;
+        var totalRoasGads = totalSpend > 0 && totalGadsRev > 0 ? (totalGadsRev / totalSpend) : 0;
         var totalCpa = totalOrders > 0 && totalSpend > 0 ? totalSpend / totalOrders : 0;
         var totalAov = totalOrders > 0 ? totalCA / totalOrders : 0;
         var totalRoasClass = totalRoas >= 5 ? 'attr-roas--good' : totalRoas >= 2 ? 'attr-roas--ok' : totalRoas > 0 ? 'attr-roas--bad' : '';
+        var totalRoasGClass = totalRoasGads >= 5 ? 'attr-roas--good' : totalRoasGads >= 2 ? 'attr-roas--ok' : totalRoasGads > 0 ? 'attr-roas--bad' : '';
 
         html += '<tr class="attr-total">';
         html += '<td>(' + keys.length + ' Sources)</td>';
         html += '<td>' + (totalSpend > 0 ? '<span class="attr-roas-badge ' + totalRoasClass + '">' + totalRoas.toFixed(2) + '</span>' : '-') + '</td>';
+        html += '<td>' + (totalRoasGads > 0 ? '<span class="attr-roas-badge ' + totalRoasGClass + '">' + totalRoasGads.toFixed(2) + '</span>' : '-') + '</td>';
         html += '<td>' + totalOrders + '</td>';
         html += '<td>' + formatMoney(totalCA) + '</td>';
         html += '<td>' + (totalSpend > 0 ? formatMoney(totalSpend) : '-') + '</td>';
