@@ -476,6 +476,7 @@
         </div>
         <div class="header-actions">
             <button class="btn btn--sm btn--theme" id="theme-toggle" title="Mode nuit/jour">&#127769;</button>
+            <button class="btn btn--sm" id="change-password-btn" data-client-only style="display:none; background:var(--card-bg); border:1.5px solid var(--card-border); color:var(--dark);" title="Changer mon mot de passe">&#128274;</button>
             <a href="../connexion.html" class="btn btn--back" data-admin-only>&#8592; Retour Hub</a>
             <button class="btn btn--danger btn--sm" id="logoutBtn">Deconnexion</button>
         </div>
@@ -716,6 +717,85 @@
                 <div style="display:flex; gap:10px; justify-content:flex-end; position:sticky; bottom:0; background:var(--card-bg, white); padding:12px 0 0;">
                     <button type="button" class="btn btn--danger btn--sm" id="cancel-config-ads">Fermer</button>
                     <button type="button" class="btn btn--primary btn--sm" id="save-config-ads">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Change Password (voluntary) -->
+        <div id="modal-change-password" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:2500; display:flex; align-items:center; justify-content:center;">
+            <div style="background:var(--card-bg, white); border-radius:var(--radius); padding:32px; max-width:480px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3); border:2px solid var(--green);">
+                <h3 style="margin-bottom:6px; color:var(--dark); display:flex; align-items:center; gap:8px;">&#128274; Changer mon mot de passe</h3>
+                <p class="text-sm text-muted" style="margin-bottom:20px;">Choisissez un nouveau mot de passe securise.</p>
+
+                <div id="change-pwd-error" class="hidden" style="color:#ef4444; font-size:0.78rem; margin-bottom:12px; padding:8px 12px; background:#fef2f2; border-radius:var(--radius-sm); border:1px solid #fca5a5;"></div>
+                <div id="change-pwd-success" class="hidden" style="color:var(--green); font-size:0.78rem; margin-bottom:12px; padding:8px 12px; background:var(--green-light); border-radius:var(--radius-sm); border:1px solid var(--green);"></div>
+
+                <div class="form-group">
+                    <label class="form-label">Nouveau mot de passe</label>
+                    <input class="form-input" type="password" id="change-pwd-new" placeholder="Minimum 8 caracteres" minlength="8">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmer le mot de passe</label>
+                    <input class="form-input" type="password" id="change-pwd-confirm" placeholder="Retapez votre mot de passe">
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
+                    <button type="button" class="btn btn--danger btn--sm" id="change-pwd-cancel">Annuler</button>
+                    <button type="button" class="btn btn--primary btn--sm" id="change-pwd-submit">Changer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Force Password Change (client first login) -->
+        <div id="modal-force-password" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:3000; display:flex; align-items:center; justify-content:center;">
+            <div style="background:var(--card-bg, white); border-radius:var(--radius); padding:32px; max-width:480px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.4); border:2px solid var(--green);">
+                <h3 style="margin-bottom:6px; color:var(--dark); display:flex; align-items:center; gap:8px;">&#128274; Changement de mot de passe requis</h3>
+                <p class="text-sm text-muted" style="margin-bottom:20px;">Bienvenue ! Pour securiser votre compte, merci de choisir un nouveau mot de passe.</p>
+
+                <div id="force-pwd-error" class="hidden" style="color:#ef4444; font-size:0.78rem; margin-bottom:12px; padding:8px 12px; background:#fef2f2; border-radius:var(--radius-sm); border:1px solid #fca5a5;"></div>
+
+                <div class="form-group">
+                    <label class="form-label">Nouveau mot de passe</label>
+                    <input class="form-input" type="password" id="force-pwd-new" placeholder="Minimum 8 caracteres" minlength="8">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmer le mot de passe</label>
+                    <input class="form-input" type="password" id="force-pwd-confirm" placeholder="Retapez votre mot de passe">
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
+                    <button type="button" class="btn btn--primary btn--sm" id="force-pwd-submit">Changer mon mot de passe</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Temp Password -->
+        <div id="modal-temp-password" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:2000; display:flex; align-items:center; justify-content:center;">
+            <div style="background:var(--card-bg, white); border-radius:var(--radius); padding:32px; max-width:520px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3); border:2px solid var(--green);">
+                <h3 style="margin-bottom:4px; color:var(--dark); display:flex; align-items:center; gap:8px;">&#128274; Acces cree !</h3>
+                <p class="text-sm text-muted" style="margin-bottom:20px;">Transmettez ces identifiants au client. Il devra changer son mot de passe au premier login.</p>
+
+                <div class="card" style="padding:16px; background:var(--input-bg); border:1.5px solid var(--green); margin-bottom:16px;">
+                    <div style="margin-bottom:12px;">
+                        <div style="font-size:0.7rem; color:var(--gray); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Email</div>
+                        <div id="temp-pwd-email" style="font-size:0.95rem; font-weight:700; color:var(--dark); word-break:break-all;"></div>
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        <div style="font-size:0.7rem; color:var(--gray); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Mot de passe temporaire</div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <code id="temp-pwd-value" style="flex:1; font-size:1.1rem; font-weight:800; color:var(--green); background:var(--card-bg); padding:10px 14px; border-radius:var(--radius-sm); border:1.5px solid var(--card-border); font-family:monospace; letter-spacing:1px;"></code>
+                            <button type="button" class="btn btn--sm btn--primary" id="temp-pwd-copy" style="padding:10px 14px;">&#128203; Copier</button>
+                        </div>
+                    </div>
+                    <div id="temp-pwd-group-info" class="hidden" style="font-size:0.75rem; color:var(--green); font-weight:600; margin-top:8px;"></div>
+                </div>
+
+                <div style="background:rgba(251,191,36,0.15); border:1px solid #fbbf24; border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:16px; font-size:0.78rem; color:var(--dark);">
+                    &#9888; <strong>Important :</strong> ce mot de passe ne sera plus affiche. Copiez-le maintenant et envoyez-le au client.
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" class="btn btn--primary btn--sm" id="temp-pwd-close">J'ai note</button>
                 </div>
             </div>
         </div>
@@ -1065,8 +1145,14 @@
         authSection.classList.add('hidden');
         appSection.classList.remove('hidden');
 
-        // Client mode: hide admin elements, change title
+        // Check if user must change password (first login)
         if (isClientMode) {
+            var sess = await sb.auth.getSession();
+            var user = sess.data.session && sess.data.session.user;
+            if (user && user.user_metadata && user.user_metadata.must_change_password) {
+                showForcePasswordModal();
+                return; // Block until password is changed
+            }
             applyClientMode();
         }
 
@@ -1081,10 +1167,64 @@
         populateMonths();
     }
 
+    // Force password change modal (first login)
+    function showForcePasswordModal() {
+        var modal = document.getElementById('modal-force-password');
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+
+        var submitBtn = document.getElementById('force-pwd-submit');
+        var errorEl = document.getElementById('force-pwd-error');
+
+        submitBtn.onclick = async function() {
+            var newPwd = document.getElementById('force-pwd-new').value;
+            var confirmPwd = document.getElementById('force-pwd-confirm').value;
+            errorEl.classList.add('hidden');
+
+            if (newPwd.length < 8) {
+                errorEl.textContent = 'Le mot de passe doit contenir au moins 8 caracteres.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            if (newPwd !== confirmPwd) {
+                errorEl.textContent = 'Les mots de passe ne correspondent pas.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '...';
+
+            try {
+                // Update password + clear must_change_password flag
+                var updRes = await sb.auth.updateUser({
+                    password: newPwd,
+                    data: { must_change_password: false }
+                });
+                if (updRes.error) throw updRes.error;
+
+                // Reload the page cleanly
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+                window.location.reload();
+            } catch(err) {
+                errorEl.textContent = 'Erreur : ' + (err.message || err);
+                errorEl.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Changer mon mot de passe';
+            }
+        };
+    }
+
     function applyClientMode() {
         // Hide all admin-only elements
         document.querySelectorAll('[data-admin-only]').forEach(function(el) {
             el.style.display = 'none';
+        });
+
+        // Show all client-only elements
+        document.querySelectorAll('[data-client-only]').forEach(function(el) {
+            el.style.display = '';
         });
 
         // Change title
@@ -1096,6 +1236,85 @@
             e.stopImmediatePropagation();
             await sb.auth.signOut();
             window.location.href = '../connexion.html';
+        });
+
+        // Setup change password button
+        setupChangePassword();
+    }
+
+    // Change password modal (voluntary)
+    function setupChangePassword() {
+        var btn = document.getElementById('change-password-btn');
+        var modal = document.getElementById('modal-change-password');
+        var errorEl = document.getElementById('change-pwd-error');
+        var successEl = document.getElementById('change-pwd-success');
+        var newInput = document.getElementById('change-pwd-new');
+        var confirmInput = document.getElementById('change-pwd-confirm');
+        var submitBtn = document.getElementById('change-pwd-submit');
+        var cancelBtn = document.getElementById('change-pwd-cancel');
+
+        btn.addEventListener('click', function() {
+            errorEl.classList.add('hidden');
+            successEl.classList.add('hidden');
+            newInput.value = '';
+            confirmInput.value = '';
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        });
+
+        cancelBtn.addEventListener('click', function() {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        });
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
+        });
+
+        submitBtn.addEventListener('click', async function() {
+            errorEl.classList.add('hidden');
+            successEl.classList.add('hidden');
+
+            var newPwd = newInput.value;
+            var confirmPwd = confirmInput.value;
+
+            if (newPwd.length < 8) {
+                errorEl.textContent = 'Le mot de passe doit contenir au moins 8 caracteres.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            if (newPwd !== confirmPwd) {
+                errorEl.textContent = 'Les mots de passe ne correspondent pas.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '...';
+
+            try {
+                var updRes = await sb.auth.updateUser({ password: newPwd });
+                if (updRes.error) throw updRes.error;
+
+                successEl.textContent = '\u2713 Mot de passe change avec succes !';
+                successEl.classList.remove('hidden');
+                newInput.value = '';
+                confirmInput.value = '';
+
+                setTimeout(function() {
+                    modal.classList.add('hidden');
+                    modal.style.display = 'none';
+                }, 1500);
+            } catch(err) {
+                errorEl.textContent = 'Erreur : ' + (err.message || err);
+                errorEl.classList.remove('hidden');
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Changer';
         });
     }
 
@@ -2827,6 +3046,52 @@
             container.innerHTML = html;
         }
 
+        // ── Show temp password modal ──
+        function showTempPasswordModal(email, tempPassword, clientCount) {
+            var modal = document.getElementById('modal-temp-password');
+            document.getElementById('temp-pwd-email').textContent = email;
+            document.getElementById('temp-pwd-value').textContent = tempPassword;
+
+            var groupInfo = document.getElementById('temp-pwd-group-info');
+            if (clientCount > 1) {
+                groupInfo.textContent = '\u2713 Acces ajoute a ' + clientCount + ' clients du groupe';
+                groupInfo.classList.remove('hidden');
+            } else {
+                groupInfo.classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+
+        // Close temp password modal
+        document.getElementById('temp-pwd-close').addEventListener('click', function() {
+            var modal = document.getElementById('modal-temp-password');
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        });
+
+        // Copy temp password to clipboard
+        document.getElementById('temp-pwd-copy').addEventListener('click', function() {
+            var pwd = document.getElementById('temp-pwd-value').textContent;
+            var email = document.getElementById('temp-pwd-email').textContent;
+            var text = 'Email : ' + email + '\nMot de passe : ' + pwd;
+            navigator.clipboard.writeText(text).then(function() {
+                var btn = document.getElementById('temp-pwd-copy');
+                var original = btn.innerHTML;
+                btn.innerHTML = '\u2713 Copie !';
+                setTimeout(function() { btn.innerHTML = original; }, 1500);
+            });
+        });
+
+        // Close temp password modal on backdrop click
+        document.getElementById('modal-temp-password').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+                this.style.display = 'none';
+            }
+        });
+
         // ── Remove access ──
         window._removeAccess = async function(clientUserId) {
             if (!confirm('Retirer cet acces ?')) return;
@@ -2846,17 +3111,35 @@
                 // Check if profile exists
                 var profileRes = await sb.from('profiles').select('id, email').eq('email', email).maybeSingle();
                 var userId;
+                var tempPassword = null;
+                var isNewUser = false;
 
                 if (profileRes.data) {
                     userId = profileRes.data.id;
                 } else {
-                    // Create user via signUp (client will need to confirm email)
-                    var signUpRes = await sb.auth.signUp({ email: email, password: 'Regen2026!' });
+                    // Generate unique temp password (Regen + 6 random chars)
+                    tempPassword = 'Regen' + Math.random().toString(36).slice(-6).toUpperCase() + '!';
+                    isNewUser = true;
+
+                    // Create user via signUp with must_change_password metadata
+                    var signUpRes = await sb.auth.signUp({
+                        email: email,
+                        password: tempPassword,
+                        options: {
+                            data: { must_change_password: true }
+                        }
+                    });
                     if (signUpRes.error) throw signUpRes.error;
                     userId = signUpRes.data.user.id;
 
                     // Update profile role to client
-                    await sb.from('profiles').upsert({ id: userId, email: email, role: 'client', agency_id: AGENCY_ID });
+                    await sb.from('profiles').upsert({
+                        id: userId,
+                        email: email,
+                        role: 'client',
+                        agency_id: AGENCY_ID,
+                        full_name: null
+                    });
                 }
 
                 // Check if already linked
@@ -2885,7 +3168,13 @@
 
                 document.getElementById('config-invite-email').value = '';
                 loadConfigAccess();
-                alert('Acces ajoute ! ' + (clientsToLink.length > 1 ? '(' + clientsToLink.length + ' clients du groupe)' : ''));
+
+                if (isNewUser && tempPassword) {
+                    // Show temp password in a modal for the admin to copy
+                    showTempPasswordModal(email, tempPassword, clientsToLink.length);
+                } else {
+                    alert('Acces ajoute ! ' + (clientsToLink.length > 1 ? '(' + clientsToLink.length + ' clients du groupe)' : ''));
+                }
             } catch(err) {
                 alert('Erreur : ' + (err.message || err));
             }
