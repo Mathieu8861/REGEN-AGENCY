@@ -69,28 +69,49 @@ async function callClaude(
   }
   content.push({ type: "text", text: userPrompt });
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": ANTHROPIC_API_KEY!,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: CLAUDE_MODEL,
-      max_tokens: maxTokens,
-      system: systemPrompt,
-      messages: [{ role: "user", content }],
-    }),
-  });
+  // Retry with exponential backoff for 529 (overloaded) and 429 (rate limit)
+  const maxRetries = 4;
+  const retryableStatuses = [429, 529, 500, 502, 503, 504];
+  let lastError = "";
 
-  if (!res.ok) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": ANTHROPIC_API_KEY!,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: maxTokens,
+        system: systemPrompt,
+        messages: [{ role: "user", content }],
+      }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      return data.content?.[0]?.text ?? "";
+    }
+
     const errBody = await res.text();
-    throw new Error(`Claude API error (${res.status}): ${errBody}`);
+    lastError = `Claude API error (${res.status}): ${errBody}`;
+
+    // Don't retry on non-retryable errors
+    if (!retryableStatuses.includes(res.status)) {
+      throw new Error(lastError);
+    }
+
+    // Exponential backoff: 1s, 2s, 4s, 8s
+    if (attempt < maxRetries - 1) {
+      const delayMs = 1000 * Math.pow(2, attempt);
+      console.log(`Claude API ${res.status} - retry ${attempt + 1}/${maxRetries} in ${delayMs}ms`);
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
   }
 
-  const data = await res.json();
-  return data.content?.[0]?.text ?? "";
+  throw new Error(lastError + ` (after ${maxRetries} retries)`);
 }
 
 // Extract text from PPTX/DOCX (they are ZIP files with XML inside)
