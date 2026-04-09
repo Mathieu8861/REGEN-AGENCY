@@ -147,9 +147,9 @@ async function syncMetaAdsAccount(integration: Integration) {
     errors: [] as string[],
   };
 
-  // Date range: last 7 days
+  // Date range: last 90 days (to have full history for period filters)
   const dateTo = new Date(Date.now() - 86400000);
-  const dateFrom = new Date(dateTo.getTime() - 7 * 86400000);
+  const dateFrom = new Date(dateTo.getTime() - 90 * 86400000);
   const dateToStr = dateTo.toISOString().split("T")[0];
   const dateFromStr = dateFrom.toISOString().split("T")[0];
 
