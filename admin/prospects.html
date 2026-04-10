@@ -1032,6 +1032,13 @@
                     <p class="text-muted" style="font-size:0.78rem;">Aucun service renseigne.</p>
                 </div>
 
+                <!-- Historique des actions -->
+                <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
+                <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:12px; display:flex; align-items:center; gap:6px;">&#9889; Historique des actions</h4>
+                <div id="actionHistoryList" style="margin-bottom:16px;">
+                    <p class="text-muted" style="font-size:0.78rem;">Aucune action precedente.</p>
+                </div>
+
                 <!-- Notes de suivi -->
                 <div style="border-top:1px solid #e5e7eb; margin:24px 0;"></div>
                 <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Notes de suivi</h4>
@@ -1734,6 +1741,7 @@
         loadSynthesis(id);
         loadProspectServices(id);
         loadProspectFollowUps(id);
+        loadActionHistory();
         loadProspectAiContext();
         updateNextActionBanner();
     }
@@ -4191,6 +4199,21 @@
 
         if (!action) { toast('Selectionnez une action', 'error'); return; }
 
+        // Log previous action to history before replacing
+        if (currentProspect && currentProspect.next_action) {
+            var prevAction = currentProspect.next_action;
+            var prevDate = currentProspect.next_action_date;
+            var statusLabel = prevDate ? (new Date(prevDate) < new Date() ? 'Fait (en retard)' : 'Fait') : 'Fait';
+            await sb.from('prospect_activities').insert({
+                prospect_id: currentProspectId,
+                activity_type: 'task',
+                title: prevAction,
+                content: prevDate ? 'Echeance : ' + formatDate(prevDate) + ' — ' + statusLabel : statusLabel,
+                metadata: { action: prevAction, date: prevDate, completed_at: new Date().toISOString() },
+                created_by: 'admin'
+            });
+        }
+
         await sb.from('prospects').update({
             next_action: action,
             next_action_date: date
@@ -4204,10 +4227,23 @@
         closeNextActionModal();
         updateNextActionBanner();
         toast('Prochaine action enregistree !', 'success');
-        loadProspects(); // refresh kanban + table
+        loadProspects();
+        loadActionHistory(); // refresh history in Suivi tab
     };
 
     window.clearNextAction = async function() {
+        // Log the action being cleared
+        if (currentProspect && currentProspect.next_action) {
+            await sb.from('prospect_activities').insert({
+                prospect_id: currentProspectId,
+                activity_type: 'task',
+                title: currentProspect.next_action,
+                content: 'Action annulee',
+                metadata: { action: currentProspect.next_action, date: currentProspect.next_action_date, cancelled: true },
+                created_by: 'admin'
+            });
+        }
+
         await sb.from('prospects').update({
             next_action: null,
             next_action_date: null
@@ -4222,7 +4258,46 @@
         updateNextActionBanner();
         toast('Action supprimee');
         loadProspects();
+        loadActionHistory();
     };
+
+    // ── Load Action History in Suivi tab ──
+    async function loadActionHistory() {
+        var container = document.getElementById('actionHistoryList');
+        if (!container || !currentProspectId) return;
+
+        var res = await sb.from('prospect_activities').select('*')
+            .eq('prospect_id', currentProspectId)
+            .eq('activity_type', 'task')
+            .order('created_at', { ascending: false })
+            .limit(20);
+        var actions = res.data || [];
+
+        if (actions.length === 0) {
+            container.innerHTML = '<p style="color:#999; font-size:0.82rem;">Aucune action precedente.</p>';
+            return;
+        }
+
+        var html = '';
+        actions.forEach(function(a) {
+            var meta = a.metadata || {};
+            var isCancelled = meta.cancelled;
+            var dateLabel = meta.date ? formatDate(meta.date) : '';
+            var doneDate = a.created_at ? new Date(a.created_at).toLocaleDateString('fr-FR') : '';
+            var statusClass = isCancelled ? 'color:#ef4444;' : 'color:#10b981;';
+            var statusIcon = isCancelled ? '&#10005;' : '&#10003;';
+
+            html += '<div style="display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid #f0f0f0;">';
+            html += '<span style="font-size:0.9rem; min-width:20px; ' + statusClass + '">' + statusIcon + '</span>';
+            html += '<div style="flex:1;">';
+            html += '<div style="font-weight:600; font-size:0.85rem;">' + escapeHtml(a.title) + '</div>';
+            if (dateLabel) html += '<div style="font-size:0.75rem; color:#999;">Echeance : ' + dateLabel + '</div>';
+            html += '</div>';
+            html += '<span style="font-size:0.72rem; color:#999; white-space:nowrap;">' + doneDate + '</span>';
+            html += '</div>';
+        });
+        container.innerHTML = html;
+    }
 
     // ── INIT ──
     loadProspects();
