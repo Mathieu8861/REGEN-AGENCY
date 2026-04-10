@@ -800,16 +800,25 @@
             </div>
         </div>
 
-        <!-- Month Selector -->
+        <!-- Date Selector -->
         <div class="card" style="margin-bottom:20px; padding:14px 24px;">
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <!-- Month navigation -->
                 <span class="text-sm text-bold" style="color:var(--dark);">Mois :</span>
                 <div style="display:flex; align-items:center; gap:6px;">
                     <button class="btn btn--sm btn--arrow" id="month-prev">&#10094;</button>
                     <span id="month-label" style="font-size:1rem; font-weight:800; color:var(--dark); min-width:140px; text-align:center;"></span>
                     <button class="btn btn--sm btn--arrow" id="month-next">&#10095;</button>
                 </div>
-                <span class="text-sm text-muted" id="date-range-label"></span>
+                <!-- Separator -->
+                <span style="color:var(--card-border); margin:0 4px;">|</span>
+                <!-- Custom date range -->
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <input type="date" id="date-from" class="form-input" style="padding:5px 10px; font-size:0.78rem; width:auto;">
+                    <span class="text-muted" style="font-size:0.8rem;">&#8594;</span>
+                    <input type="date" id="date-to" class="form-input" style="padding:5px 10px; font-size:0.78rem; width:auto;">
+                    <button class="btn btn--sm btn--primary" id="date-apply" style="padding:5px 14px; font-size:0.7rem;">OK</button>
+                </div>
             </div>
         </div>
 
@@ -1380,9 +1389,9 @@
         }
     }
 
-    // ── Month Navigation State ──
+    // ── Date Range State ──
     var dateRange = { from: null, to: null };
-    var currentMonth = new Date(); // Tracks selected month
+    var currentMonth = new Date();
 
     var MONTH_NAMES = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'];
 
@@ -1390,6 +1399,7 @@
         // Default: current month
         setMonth(new Date());
 
+        // Month arrows
         document.getElementById('month-prev').addEventListener('click', function() {
             currentMonth.setMonth(currentMonth.getMonth() - 1);
             setMonth(currentMonth);
@@ -1406,34 +1416,43 @@
                 reloadCurrentView();
             }
         });
+
+        // Custom date range apply button
+        document.getElementById('date-apply').addEventListener('click', function() {
+            var fromVal = document.getElementById('date-from').value;
+            var toVal = document.getElementById('date-to').value;
+            if (fromVal && toVal) {
+                dateRange.from = fromVal;
+                dateRange.to = toVal;
+                // Update month label to show custom range
+                document.getElementById('month-label').textContent = formatDate(fromVal) + ' - ' + formatDate(toVal);
+                reloadCurrentView();
+            }
+        });
     }
 
     function setMonth(d) {
         var year = d.getFullYear();
         var month = d.getMonth();
         var from = new Date(year, month, 1);
-        var to = new Date(year, month + 1, 0); // Last day of month
+        var to = new Date(year, month + 1, 0);
 
-        // If current month, cap to today
         var now = new Date();
-        if (year === now.getFullYear() && month === now.getMonth()) {
-            to = now;
-        }
+        if (year === now.getFullYear() && month === now.getMonth()) to = now;
 
         dateRange.from = formatISODate(from);
         dateRange.to = formatISODate(to);
 
         document.getElementById('month-label').textContent = MONTH_NAMES[month] + ' ' + year;
-        document.getElementById('date-range-label').textContent = formatDate(dateRange.from) + ' → ' + formatDate(dateRange.to);
+        document.getElementById('date-from').value = dateRange.from;
+        document.getElementById('date-to').value = dateRange.to;
 
-        // Disable next button if current month
+        // Disable next if current month
         var nextBtn = document.getElementById('month-next');
         if (year === now.getFullYear() && month === now.getMonth()) {
-            nextBtn.style.opacity = '0.3';
-            nextBtn.style.pointerEvents = 'none';
+            nextBtn.style.opacity = '0.3'; nextBtn.style.pointerEvents = 'none';
         } else {
-            nextBtn.style.opacity = '1';
-            nextBtn.style.pointerEvents = 'auto';
+            nextBtn.style.opacity = '1'; nextBtn.style.pointerEvents = 'auto';
         }
     }
 
