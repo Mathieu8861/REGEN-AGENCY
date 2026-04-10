@@ -1484,28 +1484,41 @@
             offset += 1000;
         }
 
-        // Fetch spend + gads revenue per client
+        // Fetch spend + revenue per client per platform
         var spendByClient = {};
         var gadsRevenueByClient = {};
+        var metaRevenueByClient = {};
         for (var c = 0; c < clients.length; c++) {
-            spendByClient[clients[c].id] = 0;
-            gadsRevenueByClient[clients[c].id] = 0;
+            var cid = clients[c].id;
+            spendByClient[cid] = 0;
+            gadsRevenueByClient[cid] = 0;
+            metaRevenueByClient[cid] = 0;
             try {
-                var aRes = await sb.from('ad_accounts').select('id').eq('client_id', clients[c].id);
+                var aRes = await sb.from('ad_accounts').select('id, platform').eq('client_id', cid);
                 var accounts = aRes.data || [];
                 if (accounts.length > 0) {
+                    var accPlatMap = {};
+                    accounts.forEach(function(a) { accPlatMap[a.id] = a.platform; });
                     var accIds = accounts.map(function(a) { return a.id; });
-                    var cpRes = await sb.from('ad_campaigns').select('id').in('ad_account_id', accIds);
+                    var cpRes = await sb.from('ad_campaigns').select('id, ad_account_id').in('ad_account_id', accIds);
                     var camps = cpRes.data || [];
                     if (camps.length > 0) {
+                        var campAccMap = {};
+                        camps.forEach(function(cp) { campAccMap[cp.id] = cp.ad_account_id; });
                         var campIds = camps.map(function(cp) { return cp.id; });
-                        var mRes = await sb.from('ad_daily_metrics').select('spend, revenue_reported')
+                        var mRes = await sb.from('ad_daily_metrics').select('campaign_id, spend, revenue_reported')
                             .in('campaign_id', campIds)
                             .gte('date', dateRange.from)
                             .lte('date', dateRange.to);
                         (mRes.data || []).forEach(function(m) {
-                            spendByClient[clients[c].id] += parseFloat(m.spend || 0);
-                            gadsRevenueByClient[clients[c].id] += parseFloat(m.revenue_reported || 0);
+                            var accId = campAccMap[m.campaign_id];
+                            var plat = accPlatMap[accId] || 'google_ads';
+                            spendByClient[cid] += parseFloat(m.spend || 0);
+                            if (plat === 'google_ads') {
+                                gadsRevenueByClient[cid] += parseFloat(m.revenue_reported || 0);
+                            } else if (plat === 'meta_ads') {
+                                metaRevenueByClient[cid] += parseFloat(m.revenue_reported || 0);
+                            }
                         });
                     }
                 }
@@ -1515,7 +1528,7 @@
         // Aggregate per client
         var clientMap = {};
         clients.forEach(function(cl) {
-            clientMap[cl.id] = { name: cl.name, ca: 0, adsCA: 0, orders: 0, adsOrders: 0, spend: spendByClient[cl.id] || 0, gadsRevenue: gadsRevenueByClient[cl.id] || 0 };
+            clientMap[cl.id] = { name: cl.name, ca: 0, adsCA: 0, orders: 0, adsOrders: 0, spend: spendByClient[cl.id] || 0, gadsRevenue: gadsRevenueByClient[cl.id] || 0, metaRevenue: metaRevenueByClient[cl.id] || 0 };
         });
         allOrders.forEach(function(o) {
             var cm = clientMap[o.client_id];
@@ -1551,13 +1564,14 @@
         var sorted = clients.map(function(cl) {
             var cm = clientMap[cl.id];
             cm.roas = cm.spend > 0 ? cm.adsCA / cm.spend : 0;
-            cm.roasGads = cm.spend > 0 ? cm.gadsRevenue / cm.spend : 0;
+            cm.roasGads = cm.gadsRevenue > 0 && cm.spend > 0 ? cm.gadsRevenue / cm.spend : 0;
+            cm.roasMeta = cm.metaRevenue > 0 && cm.spend > 0 ? cm.metaRevenue / cm.spend : 0;
             cm.cpa = cm.adsOrders > 0 && cm.spend > 0 ? cm.spend / cm.adsOrders : 0;
             return cm;
         }).sort(function(a, b) { return b.adsCA - a.adsCA; });
 
         var html = '<div class="table-wrap"><table><thead><tr>';
-        html += '<th style="text-align:left;">Client</th><th class="text-right">CA Ads</th><th class="text-right">CA Total</th><th class="text-right">Commandes</th><th class="text-right">Spend</th><th class="text-right">ROAS Site</th><th class="text-right">ROAS GAds</th><th class="text-right">CPA</th>';
+        html += '<th style="text-align:left;">Client</th><th class="text-right">CA Ads</th><th class="text-right">CA Total</th><th class="text-right">Commandes</th><th class="text-right">Spend</th><th class="text-right">ROAS Site</th><th class="text-right">ROAS GAds</th><th class="text-right">ROAS Meta</th><th class="text-right">CPA</th>';
         html += '</tr></thead><tbody>';
 
         sorted.forEach(function(cm) {
@@ -1566,6 +1580,8 @@
             var roasHtml = cm.spend > 0 ? '<span class="attr-roas-badge ' + roasClass + '">' + cm.roas.toFixed(2) + '</span>' : '-';
             var roasGClass = cm.roasGads >= 5 ? 'attr-roas--good' : cm.roasGads >= 2 ? 'attr-roas--ok' : cm.roasGads > 0 ? 'attr-roas--bad' : '';
             var roasGHtml = cm.roasGads > 0 ? '<span class="attr-roas-badge ' + roasGClass + '">' + cm.roasGads.toFixed(2) + '</span>' : '-';
+            var roasMClass = cm.roasMeta >= 5 ? 'attr-roas--good' : cm.roasMeta >= 2 ? 'attr-roas--ok' : cm.roasMeta > 0 ? 'attr-roas--bad' : '';
+            var roasMHtml = cm.roasMeta > 0 ? '<span class="attr-roas-badge ' + roasMClass + '">' + cm.roasMeta.toFixed(2) + '</span>' : '-';
             html += '<tr>';
             html += '<td style="text-align:left; font-weight:700;">' + cm.name + '</td>';
             html += '<td class="text-right text-bold" style="color:var(--green);">' + formatMoney(cm.adsCA) + '</td>';
@@ -1574,16 +1590,20 @@
             html += '<td class="text-right">' + (cm.spend > 0 ? formatMoney(cm.spend) : '-') + '</td>';
             html += '<td class="text-right">' + roasHtml + '</td>';
             html += '<td class="text-right">' + roasGHtml + '</td>';
+            html += '<td class="text-right">' + roasMHtml + '</td>';
             html += '<td class="text-right">' + (cm.cpa > 0 ? formatMoney(cm.cpa) : '-') + '</td>';
             html += '</tr>';
         });
 
         // Total row
         var totalGadsRevenue = clients.reduce(function(s, cl) { return s + (clientMap[cl.id].gadsRevenue || 0); }, 0);
+        var totalMetaRevenue = clients.reduce(function(s, cl) { return s + (clientMap[cl.id].metaRevenue || 0); }, 0);
         var tRoas = totalSpend > 0 ? totalAdsCA / totalSpend : 0;
-        var tRoasG = totalSpend > 0 ? totalGadsRevenue / totalSpend : 0;
+        var tRoasG = totalGadsRevenue > 0 && totalSpend > 0 ? totalGadsRevenue / totalSpend : 0;
+        var tRoasM = totalMetaRevenue > 0 && totalSpend > 0 ? totalMetaRevenue / totalSpend : 0;
         var tRoasClass = tRoas >= 5 ? 'attr-roas--good' : tRoas >= 2 ? 'attr-roas--ok' : tRoas > 0 ? 'attr-roas--bad' : '';
         var tRoasGClass = tRoasG >= 5 ? 'attr-roas--good' : tRoasG >= 2 ? 'attr-roas--ok' : tRoasG > 0 ? 'attr-roas--bad' : '';
+        var tRoasMClass = tRoasM >= 5 ? 'attr-roas--good' : tRoasM >= 2 ? 'attr-roas--ok' : tRoasM > 0 ? 'attr-roas--bad' : '';
         html += '<tr class="attr-total">';
         html += '<td style="text-align:left;">Total (' + clients.length + ' clients)</td>';
         html += '<td class="text-right" style="color:var(--green);">' + formatMoney(totalAdsCA) + '</td>';
@@ -1592,6 +1612,7 @@
         html += '<td class="text-right">' + (totalSpend > 0 ? formatMoney(totalSpend) : '-') + '</td>';
         html += '<td class="text-right">' + (totalSpend > 0 ? '<span class="attr-roas-badge ' + tRoasClass + '">' + tRoas.toFixed(2) + '</span>' : '-') + '</td>';
         html += '<td class="text-right">' + (tRoasG > 0 ? '<span class="attr-roas-badge ' + tRoasGClass + '">' + tRoasG.toFixed(2) + '</span>' : '-') + '</td>';
+        html += '<td class="text-right">' + (tRoasM > 0 ? '<span class="attr-roas-badge ' + tRoasMClass + '">' + tRoasM.toFixed(2) + '</span>' : '-') + '</td>';
         html += '<td class="text-right">' + (totalAdsOrders > 0 && totalSpend > 0 ? formatMoney(totalSpend / totalAdsOrders) : '-') + '</td>';
         html += '</tr></tbody></table></div>';
         document.getElementById('agency-client-table').innerHTML = html;

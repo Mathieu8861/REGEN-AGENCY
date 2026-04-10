@@ -218,7 +218,7 @@ async function syncMetaAdsAccount(integration: Integration) {
     // 2. Fetch insights (daily breakdown)
     const insightsUrl =
       `${GRAPH_API_BASE}/${adAccountId}/insights?` +
-      `fields=campaign_id,campaign_name,spend,impressions,clicks,ctr,cpc,actions` +
+      `fields=campaign_id,campaign_name,spend,impressions,clicks,ctr,cpc,actions,action_values` +
       `&level=campaign` +
       `&time_range={"since":"${dateFromStr}","until":"${dateToStr}"}` +
       `&time_increment=1` +
@@ -262,6 +262,19 @@ async function syncMetaAdsAccount(integration: Integration) {
         }
       }
 
+      // Extract conversion value (revenue) from action_values array
+      let conversionValue = 0;
+      if (row.action_values) {
+        const purchaseValue = row.action_values.find(
+          (a: { action_type: string; value: string }) =>
+            a.action_type === "purchase" ||
+            a.action_type === "offsite_conversion.fb_pixel_purchase"
+        );
+        if (purchaseValue) {
+          conversionValue = parseFloat(purchaseValue.value || "0");
+        }
+      }
+
       const spend = parseFloat(row.spend || "0");
       const clicks = parseInt(row.clicks || "0");
       const impressions = parseInt(row.impressions || "0");
@@ -274,7 +287,7 @@ async function syncMetaAdsAccount(integration: Integration) {
           impressions,
           clicks,
           conversions,
-          revenue_reported: 0,
+          revenue_reported: conversionValue,
           cpc: clicks > 0 ? spend / clicks : 0,
           cpm: impressions > 0 ? (spend / impressions) * 1000 : 0,
           ctr: parseFloat(row.ctr || "0"),
