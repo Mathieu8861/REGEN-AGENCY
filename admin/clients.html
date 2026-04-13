@@ -155,8 +155,9 @@
             transition: border-color 0.3s; background: var(--input-bg); color: var(--dark);
         }
         .form-input:focus { outline: none; border-color: var(--green); }
-        input[type="date"] { color-scheme: dark; position: relative; }
-        input[type="date"]::-webkit-calendar-picker-indicator {
+        input[type="date"] { position: relative; }
+        [data-theme="dark"] input[type="date"] { color-scheme: dark; }
+        [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
             opacity: 0;
             position: absolute;
             right: 6px;
@@ -169,7 +170,7 @@
             position: relative;
             display: inline-block;
         }
-        .date-icon-wrap::after {
+        [data-theme="dark"] .date-icon-wrap::after {
             content: '';
             position: absolute;
             right: 10px;
@@ -1598,7 +1599,7 @@
         }).sort(function(a, b) { return b.adsCA - a.adsCA; });
 
         var html = '<div class="table-wrap"><table><thead><tr>';
-        html += '<th style="text-align:left;">Client</th><th class="text-right">CA Ads</th><th class="text-right">CA Total</th><th class="text-right">Commandes</th><th class="text-right">Spend</th><th class="text-right">ROAS Site</th><th class="text-right">ROAS GAds</th><th class="text-right">ROAS Meta</th><th class="text-right">CPA</th>';
+        html += '<th style="text-align:left;">Client</th><th class="text-right">CA Ads</th><th class="text-right">CA Total</th><th class="text-right">Commandes</th><th class="text-right">Spend</th><th class="text-right">ROAS Site</th><th class="text-right">ROAS Ads</th><th class="text-right">ROAS Meta</th><th class="text-right">CPA</th>';
         html += '</tr></thead><tbody>';
 
         sorted.forEach(function(cm) {
@@ -1915,7 +1916,7 @@
         var html = '<div class="table-wrap"><table class="attr-table"><thead><tr>';
         html += '<th style="text-align:left;">Source</th>';
         html += '<th>ROAS Site</th>';
-        html += '<th>ROAS GAds</th>';
+        html += '<th>ROAS Ads</th>';
         html += '<th>Commandes</th>';
         html += '<th>CA</th>';
         html += '<th>Spend</th>';
