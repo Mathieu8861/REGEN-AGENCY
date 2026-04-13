@@ -155,8 +155,12 @@
             transition: border-color 0.3s; background: var(--input-bg); color: var(--dark);
         }
         .form-input:focus { outline: none; border-color: var(--green); }
-        [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-        [data-theme="dark"] input[type="date"] { color-scheme: dark; }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1) brightness(2);
+            cursor: pointer;
+            opacity: 1;
+        }
+        input[type="date"] { color-scheme: dark; }
         .auth-error { color: #ef4444; font-size: 0.8rem; margin-bottom: 12px; display: none; }
 
         /* ─── Client Selector ─── */
