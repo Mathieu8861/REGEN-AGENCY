@@ -3161,25 +3161,25 @@
                     tempPassword = 'Regen' + Math.random().toString(36).slice(-6).toUpperCase() + '!';
                     isNewUser = true;
 
-                    // Create user via signUp with must_change_password metadata
-                    var signUpRes = await sb.auth.signUp({
-                        email: email,
-                        password: tempPassword,
-                        options: {
-                            data: { must_change_password: true }
-                        }
+                    // Create user via Edge Function (auto-confirms email)
+                    var session = await sb.auth.getSession();
+                    var createRes = await fetch(SUPABASE_URL + '/functions/v1/create-client-user', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + session.data.session.access_token,
+                            'apikey': SUPABASE_ANON_KEY
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: tempPassword,
+                            agency_id: AGENCY_ID
+                        })
                     });
-                    if (signUpRes.error) throw signUpRes.error;
-                    userId = signUpRes.data.user.id;
-
-                    // Update profile role to client
-                    await sb.from('profiles').upsert({
-                        id: userId,
-                        email: email,
-                        role: 'client',
-                        agency_id: AGENCY_ID,
-                        full_name: null
-                    });
+                    var createData = await createRes.json();
+                    if (!createRes.ok) throw new Error(createData.error || 'Erreur creation utilisateur');
+                    userId = createData.user_id;
+                    if (createData.existing) isNewUser = false;
                 }
 
                 // Check if already linked
@@ -3454,6 +3454,12 @@
 
         if (!currentClient) { bar.classList.add('hidden'); return; }
 
+        // Hide sync buttons for client users
+        if (isClientMode) {
+            gadsBtn.style.display = 'none';
+            metaBtn.style.display = 'none';
+        }
+
         // Check integrations
         var intRes = await sb.from('integrations').select('*').eq('client_id', currentClient.id).in('platform', ['google_ads', 'meta_ads']);
         var integrations = intRes.data || [];
@@ -3477,11 +3483,11 @@
             var dot = int.status === 'active' ? '&#128994;' : int.status === 'error' ? '&#128308;' : '&#128993;';
             statusParts.push(dot + ' ' + plabel + ' : ' + lastSync);
 
-            if (int.platform === 'google_ads') {
+            if (int.platform === 'google_ads' && !isClientMode) {
                 gadsBtn.style.display = 'inline-flex';
                 gadsBtn.onclick = function() { syncNow('sync-google-ads', int.id); };
             }
-            if (int.platform === 'meta_ads') {
+            if (int.platform === 'meta_ads' && !isClientMode) {
                 metaBtn.style.display = 'inline-flex';
                 metaBtn.onclick = function() { syncNow('sync-meta-ads', int.id); };
             }
