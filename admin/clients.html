@@ -1121,6 +1121,8 @@
     var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     var currentClient = null;
     var allClients = [];
+    var groupClients = [];
+    var clientGroupName = null;
     var parsedOrders = [];
     var currentFileName = '';
 
@@ -1381,19 +1383,45 @@
             return;
         }
 
+        allClients = clients;
+
+        // Detect group membership for client mode
+        groupClients = [];
+        clientGroupName = null;
+        if (isClientMode) {
+            var groupCounts = {};
+            clients.forEach(function(c) {
+                if (c.group_name) {
+                    if (!groupCounts[c.group_name]) groupCounts[c.group_name] = [];
+                    groupCounts[c.group_name].push(c);
+                }
+            });
+            // Pick the group with most clients (if 2+)
+            Object.keys(groupCounts).forEach(function(g) {
+                if (groupCounts[g].length >= 2 && groupCounts[g].length > groupClients.length) {
+                    groupClients = groupCounts[g];
+                    clientGroupName = g;
+                }
+            });
+        }
+
         var html = '';
         if (!isClientMode) {
             html += '<option value="__all__">&#128202; Tous les clients</option>';
+        }
+        if (isClientMode && clientGroupName) {
+            html += '<option value="__group__">&#128202; Vue groupe ' + clientGroupName + '</option>';
         }
         clients.forEach(function(c) {
             html += '<option value="' + c.id + '">' + c.name + (c.website ? ' (' + c.website.replace('https://', '') + ')' : '') + '</option>';
         });
         select.innerHTML = html;
 
-        allClients = clients;
-
-        // Client mode: start on first client. Admin mode: start on agency view
-        if (isClientMode) {
+        // Default selection
+        if (isClientMode && clientGroupName) {
+            currentClient = null;
+            select.value = '__group__';
+        } else if (isClientMode) {
             currentClient = clients[0];
         } else {
             currentClient = null;
@@ -1403,6 +1431,9 @@
             if (select.value === '__all__') {
                 currentClient = null;
                 loadAgencyDashboard();
+            } else if (select.value === '__group__') {
+                currentClient = null;
+                loadAgencyDashboard(groupClients);
             } else {
                 currentClient = clients.find(function(c) { return c.id === select.value; });
                 loadAllData();
@@ -1410,8 +1441,10 @@
         });
 
         // Default view
-        if (isClientMode) {
-            loadAllData(); // Client: show first client directly
+        if (isClientMode && clientGroupName) {
+            loadAgencyDashboard(groupClients); // Client with group: show group overview
+        } else if (isClientMode) {
+            loadAllData(); // Client without group: show first client directly
         } else {
             loadAgencyDashboard(); // Admin: show agency overview
         }
@@ -1488,11 +1521,11 @@
     // ═══════════════════════════════════════
     // AGENCY DASHBOARD (cross-clients)
     // ═══════════════════════════════════════
-    async function loadAgencyDashboard() {
+    async function loadAgencyDashboard(clientsOverride) {
         showAgencyView();
         document.getElementById('client-info').innerHTML = '';
 
-        var clients = allClients;
+        var clients = clientsOverride || allClients;
         if (clients.length === 0) return;
 
         var clientIds = clients.map(function(c) { return c.id; });
@@ -1737,7 +1770,10 @@
     }
 
     function reloadCurrentView() {
-        if (currentClient) {
+        var select = document.getElementById('client-select');
+        if (select && select.value === '__group__') {
+            loadAgencyDashboard(groupClients);
+        } else if (currentClient) {
             loadAllData();
         } else {
             loadAgencyDashboard();
