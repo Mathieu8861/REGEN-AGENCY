@@ -3227,7 +3227,7 @@
 
                     // Create user via Edge Function (auto-confirms email)
                     var session = await sb.auth.getSession();
-                    var createRes = await fetch(SUPABASE_URL + '/functions/v1/create-client-user', {
+                    var createRes = await fetch(SUPABASE_URL + '/functions/v1/bright-responder', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
