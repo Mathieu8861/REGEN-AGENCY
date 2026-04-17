@@ -411,7 +411,7 @@
         gap: 14px;
         margin-bottom: 18px;
     }
-    .config-category__emoji {
+    .config-category__icon {
         flex-shrink: 0;
         width: 44px; height: 44px;
         border-radius: 12px;
@@ -419,7 +419,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.4rem;
+        color: var(--color-secondary);
         box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
     .config-category__title {
@@ -541,7 +541,8 @@
         border-color: rgba(5,192,138,0.3);
         transform: translateX(4px);
     }
-    .board-feature__emoji { font-size: 1.1rem; flex-shrink: 0; }
+    .board-feature__icon { flex-shrink: 0; color: #05C08A; display: flex; align-items: center; justify-content: center; }
+    .board-feature__icon svg { display: block; }
     .board-feature__label {
         font-size: 0.82rem;
         color: rgba(255,255,255,0.9);
@@ -1004,7 +1005,9 @@
                     <!-- Fondations -->
                     <div class="config-category">
                         <div class="config-category__head">
-                            <div class="config-category__emoji">🏗️</div>
+                            <div class="config-category__icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                            </div>
                             <h3 class="config-category__title">Fondations</h3>
                         </div>
                         <ul class="config-category__list">
@@ -1019,7 +1022,9 @@
                     <!-- Pixels publicitaires -->
                     <div class="config-category">
                         <div class="config-category__head">
-                            <div class="config-category__emoji">📱</div>
+                            <div class="config-category__icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                            </div>
                             <h3 class="config-category__title">Pixels publicitaires</h3>
                         </div>
                         <ul class="config-category__list">
@@ -1034,7 +1039,9 @@
                     <!-- Tracking avancé -->
                     <div class="config-category">
                         <div class="config-category__head">
-                            <div class="config-category__emoji">🎯</div>
+                            <div class="config-category__icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                            </div>
                             <h3 class="config-category__title">Tracking avancé</h3>
                         </div>
                         <ul class="config-category__list">
@@ -1049,7 +1056,9 @@
                     <!-- E-commerce -->
                     <div class="config-category">
                         <div class="config-category__head">
-                            <div class="config-category__emoji">🛒</div>
+                            <div class="config-category__icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                            </div>
                             <h3 class="config-category__title">E-commerce</h3>
                         </div>
                         <ul class="config-category__list">
@@ -1064,7 +1073,9 @@
                     <!-- Comportement -->
                     <div class="config-category">
                         <div class="config-category__head">
-                            <div class="config-category__emoji">👁️</div>
+                            <div class="config-category__icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </div>
                             <h3 class="config-category__title">Comportement utilisateur</h3>
                         </div>
                         <ul class="config-category__list">
@@ -1079,7 +1090,9 @@
                     <!-- Reporting & Data -->
                     <div class="config-category">
                         <div class="config-category__head">
-                            <div class="config-category__emoji">📊</div>
+                            <div class="config-category__icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                            </div>
                             <h3 class="config-category__title">Reporting & Data</h3>
                         </div>
                         <ul class="config-category__list">
@@ -1193,35 +1206,35 @@
 
                         <div class="board-features">
                             <div class="board-feature">
-                                <span class="board-feature__emoji">📊</span>
+                                <span class="board-feature__icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>
                                 <span class="board-feature__label">Dashboard personnalisé</span>
                             </div>
                             <div class="board-feature">
-                                <span class="board-feature__emoji">🏢</span>
+                                <span class="board-feature__icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/></svg></span>
                                 <span class="board-feature__label">Vue groupe multi-marques</span>
                             </div>
                             <div class="board-feature">
-                                <span class="board-feature__emoji">🔄</span>
+                                <span class="board-feature__icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
                                 <span class="board-feature__label">Multi-sources centralisées</span>
                             </div>
                             <div class="board-feature">
-                                <span class="board-feature__emoji">💰</span>
+                                <span class="board-feature__icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
                                 <span class="board-feature__label">ROAS croisés par canal</span>
                             </div>
                             <div class="board-feature">
-                                <span class="board-feature__emoji">📅</span>
+                                <span class="board-feature__icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
                                 <span class="board-feature__label">Historique & comparaisons</span>
                             </div>
                             <div class="board-feature">
-                                <span class="board-feature__emoji">🏆</span>
+                                <span class="board-feature__icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></span>
                                 <span class="board-feature__label">Top produits automatique</span>
                             </div>
                             <div class="board-feature">
-                                <span class="board-feature__emoji">🎯</span>
+                                <span class="board-feature__icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
                                 <span class="board-feature__label">Attribution multi-touch</span>
                             </div>
                             <div class="board-feature">
-                                <span class="board-feature__emoji">📤</span>
+                                <span class="board-feature__icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
                                 <span class="board-feature__label">Export CSV & API</span>
                             </div>
                         </div>
