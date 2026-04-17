@@ -1170,6 +1170,15 @@ p:last-child {
     border: 2px dashed rgba(var(--color-secondary-rgb), 0.3);
 }
 
+.collab__video {
+    width: 100%;
+    max-width: 460px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-xl);
+    display: block;
+}
+
 .collab__text .section__badge {
     margin-bottom: var(--spacing-md);
 }
