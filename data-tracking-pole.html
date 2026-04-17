@@ -15,6 +15,677 @@
 
     <!-- Theme Color -->
     <meta name="theme-color" content="#173C3A">
+
+    <!-- ============================================ -->
+    <!-- Styles spécifiques — Refonte 3 phases         -->
+    <!-- ============================================ -->
+    <style>
+    /* ===== PHASES OVERVIEW ===== */
+    .phases-overview {
+        padding: 120px 0 80px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8faf9 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    .phases-overview::before {
+        content: '';
+        position: absolute;
+        top: 20%; left: -10%;
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, rgba(47,185,99,0.08) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .phases-overview::after {
+        content: '';
+        position: absolute;
+        bottom: 10%; right: -10%;
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, rgba(5,192,138,0.06) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .phases-overview__header {
+        text-align: center;
+        max-width: 760px;
+        margin: 0 auto 64px;
+        position: relative;
+    }
+    .phases-overview__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        background: linear-gradient(135deg, rgba(47,185,99,0.12), rgba(5,192,138,0.12));
+        color: #173C3A;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border-radius: 50px;
+        border: 1px solid rgba(47,185,99,0.2);
+        margin-bottom: 20px;
+    }
+    .phases-overview__title {
+        font-size: clamp(2rem, 4vw, 2.75rem);
+        font-weight: 700;
+        line-height: 1.2;
+        color: #202020;
+        margin-bottom: 18px;
+    }
+    .phases-overview__title .gradient {
+        background: linear-gradient(135deg, #2FB963, #05C08A);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .phases-overview__subtitle {
+        font-size: 1.1rem;
+        color: #4a5058;
+        line-height: 1.65;
+    }
+
+    .phases-overview__grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        position: relative;
+    }
+
+    .phase-card {
+        position: relative;
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 48px 32px 36px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+        border-top: 5px solid transparent;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        overflow: hidden;
+    }
+    .phase-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
+    }
+    .phase-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 48px rgba(0,0,0,0.1);
+    }
+
+    .phase-card--audit { border-top-color: #4285F4; }
+    .phase-card--audit .phase-card__number,
+    .phase-card--audit .phase-card__icon-wrap {
+        background: linear-gradient(135deg, #4285F4 0%, #5B9BF5 100%);
+    }
+    .phase-card--audit .phase-card__link { color: #4285F4; }
+    .phase-card--audit .phase-card__link:hover { background: #4285F4; color: white; }
+
+    .phase-card--config { border-top-color: #2FB963; }
+    .phase-card--config .phase-card__number,
+    .phase-card--config .phase-card__icon-wrap {
+        background: linear-gradient(135deg, #2FB963 0%, #05C08A 100%);
+    }
+    .phase-card--config .phase-card__link { color: #2FB963; }
+    .phase-card--config .phase-card__link:hover { background: #2FB963; color: white; }
+
+    .phase-card--board { border-top-color: #05C08A; position: relative; }
+    .phase-card--board .phase-card__number,
+    .phase-card--board .phase-card__icon-wrap {
+        background: linear-gradient(135deg, #05C08A 0%, #173C3A 100%);
+    }
+    .phase-card--board .phase-card__link { color: #05C08A; }
+    .phase-card--board .phase-card__link:hover { background: #05C08A; color: white; }
+    .phase-card--board .phase-card__badge-spotlight {
+        position: absolute;
+        top: 16px; right: 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 10px;
+        background: linear-gradient(135deg, #05C08A, #2FB963);
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(5,192,138,0.3);
+    }
+
+    .phase-card__number {
+        display: inline-block;
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        color: white;
+        font-size: 1.3rem;
+        font-weight: 800;
+        text-align: center;
+        line-height: 52px;
+        margin-bottom: 20px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+    .phase-card__label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #6b7280;
+        margin-bottom: 6px;
+    }
+    .phase-card__title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1.25;
+        color: #202020;
+        margin-bottom: 14px;
+    }
+    .phase-card__desc {
+        font-size: 0.95rem;
+        color: #4a5058;
+        line-height: 1.65;
+        margin-bottom: 22px;
+    }
+    .phase-card__list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 26px;
+    }
+    .phase-card__list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 6px 0;
+        font-size: 0.88rem;
+        color: #4a5058;
+    }
+    .phase-card__list li::before {
+        content: '';
+        flex-shrink: 0;
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        margin-top: 8px;
+        opacity: 0.5;
+    }
+    .phase-card--audit .phase-card__list li::before { color: #4285F4; }
+    .phase-card--config .phase-card__list li::before { color: #2FB963; }
+    .phase-card--board .phase-card__list li::before { color: #05C08A; }
+
+    .phase-card__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        border: 2px solid currentColor;
+        background: transparent;
+        transition: all 0.25s ease;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .phase-card__link svg { transition: transform 0.25s ease; }
+    .phase-card__link:hover svg { transform: translateX(4px); }
+
+    /* ===== PHASE 1 — AUDIT ===== */
+    .phase-detail {
+        padding: 100px 0;
+        position: relative;
+    }
+    .phase-detail--audit {
+        background: #f8faf9;
+    }
+    .phase-detail__container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+    .phase-detail__header {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 48px;
+        max-width: 820px;
+    }
+    .phase-detail__number {
+        flex-shrink: 0;
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    .phase-detail--audit .phase-detail__number { background: linear-gradient(135deg, #4285F4, #5B9BF5); }
+    .phase-detail--config .phase-detail__number { background: linear-gradient(135deg, #2FB963, #05C08A); }
+    .phase-detail--board .phase-detail__number { background: linear-gradient(135deg, #05C08A, #173C3A); }
+
+    .phase-detail__text-head { flex: 1; }
+    .phase-detail__label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 6px;
+    }
+    .phase-detail--audit .phase-detail__label { color: #4285F4; }
+    .phase-detail--config .phase-detail__label { color: #2FB963; }
+    .phase-detail--board .phase-detail__label { color: #05C08A; }
+    .phase-detail__title {
+        font-size: clamp(1.8rem, 3vw, 2.4rem);
+        font-weight: 700;
+        color: #202020;
+        line-height: 1.25;
+    }
+
+    .audit-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+    .audit-item {
+        background: white;
+        border-radius: 20px;
+        padding: 32px 28px;
+        border: 1px solid #e4ebe7;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    .audit-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(66,133,244,0.1);
+        border-color: #4285F4;
+    }
+    .audit-item__icon {
+        flex-shrink: 0;
+        width: 52px; height: 52px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(66,133,244,0.12), rgba(91,155,245,0.08));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4285F4;
+    }
+    .audit-item__content h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #202020;
+        margin-bottom: 8px;
+    }
+    .audit-item__content p {
+        font-size: 0.9rem;
+        color: #4a5058;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .audit-deliverable {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 28px 32px;
+        background: linear-gradient(135deg, #e8f0ff 0%, #f0f7ff 100%);
+        border-radius: 20px;
+        border: 2px dashed #4285F4;
+    }
+    .audit-deliverable__icon {
+        flex-shrink: 0;
+        width: 56px; height: 56px;
+        background: white;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4285F4;
+        box-shadow: 0 4px 14px rgba(66,133,244,0.15);
+    }
+    .audit-deliverable__text { flex: 1; }
+    .audit-deliverable__title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #202020;
+        margin-bottom: 4px;
+    }
+    .audit-deliverable__desc {
+        font-size: 0.88rem;
+        color: #4a5058;
+        margin: 0;
+    }
+
+    /* ===== PHASE 2 — CONFIGURATION ===== */
+    .phase-detail--config { background: #ffffff; }
+
+    .config-intro {
+        max-width: 720px;
+        margin-bottom: 48px;
+        font-size: 1.05rem;
+        color: #4a5058;
+        line-height: 1.7;
+    }
+
+    .config-categories {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+    .config-category {
+        background: linear-gradient(160deg, #f8faf9 0%, #f1f5f3 100%);
+        border: 1px solid #e4ebe7;
+        border-radius: 20px;
+        padding: 28px 24px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .config-category::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #2FB963, #05C08A);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+    }
+    .config-category:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(47,185,99,0.1);
+        border-color: rgba(47,185,99,0.3);
+    }
+    .config-category:hover::before { transform: scaleX(1); }
+
+    .config-category__head {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+    .config-category__emoji {
+        flex-shrink: 0;
+        width: 44px; height: 44px;
+        border-radius: 12px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .config-category__title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #202020;
+        line-height: 1.3;
+    }
+    .config-category__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .config-category__list li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 0;
+        font-size: 0.85rem;
+        color: #4a5058;
+        border-bottom: 1px dashed #e4ebe7;
+    }
+    .config-category__list li:last-child { border-bottom: none; }
+    .config-category__list li::before {
+        content: '';
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: #2FB963;
+        flex-shrink: 0;
+        opacity: 0.6;
+    }
+
+    /* ===== PHASE 3 — BOARD GLOBAL (SPOTLIGHT) ===== */
+    .phase-detail--board {
+        background: linear-gradient(135deg, #0f1f1d 0%, #173C3A 50%, #0a1817 100%);
+        color: white;
+        overflow: hidden;
+        position: relative;
+    }
+    .phase-detail--board::before {
+        content: '';
+        position: absolute;
+        top: -20%; right: -10%;
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(5,192,138,0.12) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    .phase-detail--board::after {
+        content: '';
+        position: absolute;
+        bottom: -20%; left: -10%;
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, rgba(47,185,99,0.08) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    .phase-detail--board .phase-detail__title { color: white; }
+    .phase-detail--board .phase-detail__label { color: #5CE6A8; }
+
+    .board-layout {
+        display: grid;
+        grid-template-columns: 1fr 1.1fr;
+        gap: 60px;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .board-intro__tagline {
+        display: inline-block;
+        padding: 6px 14px;
+        background: rgba(5,192,138,0.15);
+        border: 1px solid rgba(5,192,138,0.3);
+        border-radius: 50px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #5CE6A8;
+        margin-bottom: 18px;
+    }
+    .board-intro__title {
+        font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+        font-weight: 700;
+        line-height: 1.2;
+        color: white;
+        margin-bottom: 18px;
+    }
+    .board-intro__title .highlight {
+        background: linear-gradient(135deg, #5CE6A8, #05C08A);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .board-intro__desc {
+        font-size: 1.05rem;
+        color: rgba(255,255,255,0.75);
+        line-height: 1.7;
+        margin-bottom: 32px;
+    }
+
+    .board-features {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-bottom: 36px;
+    }
+    .board-feature {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    .board-feature:hover {
+        background: rgba(5,192,138,0.1);
+        border-color: rgba(5,192,138,0.3);
+        transform: translateX(4px);
+    }
+    .board-feature__emoji { font-size: 1.1rem; flex-shrink: 0; }
+    .board-feature__label {
+        font-size: 0.82rem;
+        color: rgba(255,255,255,0.9);
+        font-weight: 600;
+    }
+
+    .board-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 32px;
+        background: linear-gradient(135deg, #2FB963 0%, #05C08A 100%);
+        color: white;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border-radius: 50px;
+        text-decoration: none;
+        box-shadow: 0 8px 24px rgba(5,192,138,0.35);
+        transition: all 0.3s ease;
+    }
+    .board-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px rgba(5,192,138,0.5);
+    }
+
+    /* Mockup visual à droite */
+    .board-mockup {
+        position: relative;
+        padding: 20px;
+    }
+    .board-mockup__frame {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+    .board-mockup__header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        margin-bottom: 18px;
+    }
+    .board-mockup__dot {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+    }
+    .board-mockup__dot:nth-child(1) { background: #FF5F57; }
+    .board-mockup__dot:nth-child(2) { background: #FEBC2E; }
+    .board-mockup__dot:nth-child(3) { background: #27C93F; }
+    .board-mockup__title {
+        margin-left: auto;
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.5);
+        font-weight: 600;
+    }
+
+    .board-mockup__kpis {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .board-kpi {
+        background: rgba(5,192,138,0.08);
+        border: 1px solid rgba(5,192,138,0.15);
+        border-radius: 12px;
+        padding: 14px 12px;
+    }
+    .board-kpi__label {
+        font-size: 0.62rem;
+        color: rgba(255,255,255,0.55);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    .board-kpi__value {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: white;
+        line-height: 1;
+        margin-bottom: 3px;
+    }
+    .board-kpi__trend {
+        font-size: 0.62rem;
+        color: #5CE6A8;
+        font-weight: 700;
+    }
+
+    .board-mockup__chart {
+        height: 100px;
+        background: rgba(255,255,255,0.02);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 16px;
+        position: relative;
+        overflow: hidden;
+    }
+    .board-mockup__chart svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .board-mockup__sources {
+        display: flex;
+        gap: 8px;
+    }
+    .board-source {
+        flex: 1;
+        padding: 8px 10px;
+        background: rgba(255,255,255,0.04);
+        border-radius: 8px;
+        font-size: 0.65rem;
+        color: rgba(255,255,255,0.7);
+        font-weight: 600;
+        text-align: center;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+        .phases-overview__grid { grid-template-columns: repeat(2, 1fr); }
+        .phases-overview__grid .phase-card:last-child { grid-column: 1 / -1; max-width: 550px; margin: 0 auto; }
+        .config-categories { grid-template-columns: repeat(2, 1fr); }
+        .board-layout { grid-template-columns: 1fr; gap: 40px; }
+    }
+    @media (max-width: 768px) {
+        .phases-overview { padding: 80px 0 60px; }
+        .phases-overview__grid { grid-template-columns: 1fr; gap: 20px; }
+        .phases-overview__grid .phase-card:last-child { grid-column: auto; }
+        .phase-detail { padding: 70px 0; }
+        .phase-detail__header { flex-direction: column; align-items: flex-start; gap: 18px; }
+        .audit-grid { grid-template-columns: 1fr; }
+        .audit-deliverable { flex-direction: column; text-align: center; gap: 16px; }
+        .config-categories { grid-template-columns: 1fr; }
+        .board-features { grid-template-columns: 1fr; }
+    }
+    </style>
 </head>
 <body class="loading">
 
@@ -174,239 +845,253 @@
             </div>
         </section>
 
-        <!-- ===================== SERVICES GRID ===================== -->
-        <section class="services-explorer" id="services">
+        <!-- ===================== PHASES OVERVIEW (3 étapes) ===================== -->
+        <section class="phases-overview" id="services">
             <div class="container">
-                <div class="section__header reveal">
-                    <span class="section__badge">Nos services</span>
-                    <h2 class="section__title">Tout ce qu'on configure pour vous</h2>
-                    <p class="section__description">Cliquez sur un outil pour en savoir plus.</p>
+                <div class="phases-overview__header reveal">
+                    <span class="phases-overview__badge">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Notre méthode en 3 temps
+                    </span>
+                    <h2 class="phases-overview__title">
+                        De l'analyse à la <span class="gradient">reprise en main totale</span> de vos données
+                    </h2>
+                    <p class="phases-overview__subtitle">
+                        On ne vend pas du tracking à la carte. On vous accompagne du premier audit jusqu'au tableau de bord qui vous rend autonome sur vos données.
+                    </p>
                 </div>
 
-                <div class="services-explorer__layout reveal">
-                    <!-- Grille d'icônes à gauche -->
-                    <div class="services-explorer__grid">
-                        <button class="services-explorer__item active" data-service="gtm">
-                            <div class="services-explorer__icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                            </div>
-                            <span class="services-explorer__label">GTM</span>
-                        </button>
-                        <button class="services-explorer__item" data-service="ga4">
-                            <div class="services-explorer__icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                            </div>
-                            <span class="services-explorer__label">GA4</span>
-                        </button>
-                        <button class="services-explorer__item" data-service="meta">
-                            <div class="services-explorer__icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
-                            </div>
-                            <span class="services-explorer__label">Meta Pixel</span>
-                        </button>
-                        <button class="services-explorer__item" data-service="capi">
-                            <div class="services-explorer__icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-                            </div>
-                            <span class="services-explorer__label">CAPI</span>
-                        </button>
-                        <button class="services-explorer__item" data-service="utm">
-                            <div class="services-explorer__icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-                            </div>
-                            <span class="services-explorer__label">UTM</span>
-                        </button>
-                        <button class="services-explorer__item services-explorer__item--purple" data-service="consent">
-                            <div class="services-explorer__icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            </div>
-                            <span class="services-explorer__label">Consent</span>
-                        </button>
-                        <button class="services-explorer__item" data-service="ecommerce">
-                            <div class="services-explorer__icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-                            </div>
-                            <span class="services-explorer__label">E-commerce</span>
-                        </button>
-                        <button class="services-explorer__item" data-service="linkedin">
-                            <div class="services-explorer__icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                            </div>
-                            <span class="services-explorer__label">LinkedIn</span>
-                        </button>
-                        <button class="services-explorer__item" data-service="custom">
-                            <div class="services-explorer__icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                            </div>
-                            <span class="services-explorer__label">Custom</span>
-                        </button>
+                <div class="phases-overview__grid reveal">
+                    <!-- Phase 1 — Audit -->
+                    <article class="phase-card phase-card--audit">
+                        <div class="phase-card__number">01</div>
+                        <span class="phase-card__label">D'abord</span>
+                        <h3 class="phase-card__title">On audit ce qui existe</h3>
+                        <p class="phase-card__desc">Avant toute installation, on passe au crible votre écosystème actuel pour comprendre ce qui fonctionne, ce qui manque et ce qui vous fait perdre de l'argent.</p>
+                        <ul class="phase-card__list">
+                            <li>Analyse du tracking en place</li>
+                            <li>Conformité RGPD vérifiée</li>
+                            <li>Qualité des conversions ads</li>
+                            <li>Rapport livré avec priorités</li>
+                        </ul>
+                        <a href="#phase-audit" class="phase-card__link">
+                            <span>Voir le détail</span>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </a>
+                    </article>
+
+                    <!-- Phase 2 — Configuration -->
+                    <article class="phase-card phase-card--config">
+                        <div class="phase-card__number">02</div>
+                        <span class="phase-card__label">Ensuite</span>
+                        <h3 class="phase-card__title">On installe tout ce qu'il faut</h3>
+                        <p class="phase-card__desc">GTM, pixels, API de conversion, consent mode, tracking server-side... On configure l'ensemble de vos outils pour que chaque euro investi en pub soit mesuré.</p>
+                        <ul class="phase-card__list">
+                            <li>Fondations : GTM, GA4, Consent</li>
+                            <li>Pixels : Meta, TikTok, LinkedIn...</li>
+                            <li>Tracking avancé server-side</li>
+                            <li>E-commerce & comportement</li>
+                        </ul>
+                        <a href="#phase-config" class="phase-card__link">
+                            <span>Voir le détail</span>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </a>
+                    </article>
+
+                    <!-- Phase 3 — Board global (SPOTLIGHT) -->
+                    <article class="phase-card phase-card--board">
+                        <span class="phase-card__badge-spotlight">
+                            <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            Signature Regen
+                        </span>
+                        <div class="phase-card__number">03</div>
+                        <span class="phase-card__label">Puis</span>
+                        <h3 class="phase-card__title">On vous rend les clés</h3>
+                        <p class="phase-card__desc">Pas de dépendance. Vous accédez à un tableau de bord sur-mesure qui centralise toutes vos données — ads, web, ventes — dans un seul écran que vous contrôlez.</p>
+                        <ul class="phase-card__list">
+                            <li>Dashboard client personnalisé</li>
+                            <li>Vue groupe multi-marques</li>
+                            <li>ROAS croisés entre canaux</li>
+                            <li>Historique & export CSV</li>
+                        </ul>
+                        <a href="#phase-board" class="phase-card__link">
+                            <span>Découvrir le dashboard</span>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== PHASE 1 — AUDIT (détail) ===================== -->
+        <section class="phase-detail phase-detail--audit" id="phase-audit">
+            <div class="phase-detail__container">
+                <div class="phase-detail__header reveal">
+                    <div class="phase-detail__number">01</div>
+                    <div class="phase-detail__text-head">
+                        <span class="phase-detail__label">Phase 1 · Audit</span>
+                        <h2 class="phase-detail__title">On commence toujours par regarder ce qui existe</h2>
                     </div>
+                </div>
 
-                    <!-- Panel de détails à droite -->
-                    <div class="services-explorer__details">
-                        <!-- GTM -->
-                        <div class="services-explorer__panel active" data-panel="gtm">
-                            <div class="services-explorer__panel-header">
-                                <div class="services-explorer__panel-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                                </div>
-                                <h3 class="services-explorer__panel-title">Google Tag Manager</h3>
-                            </div>
-                            <p class="services-explorer__panel-desc">Le gestionnaire de balises qui centralise tous vos scripts de tracking. Déployez vos tags sans toucher au code source de votre site.</p>
-                            <ul class="services-explorer__panel-list">
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Configuration complète du conteneur GTM</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Création des balises, déclencheurs et variables</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Intégration GA4, Meta Pixel, Conversions API</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Tracking e-commerce et événements personnalisés</li>
-                            </ul>
-                            <a href="contact.html" class="btn btn--primary">Configurer mon GTM</a>
+                <div class="audit-grid reveal">
+                    <div class="audit-item">
+                        <div class="audit-item__icon">
+                            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         </div>
-
-                        <!-- GA4 -->
-                        <div class="services-explorer__panel" data-panel="ga4">
-                            <div class="services-explorer__panel-header">
-                                <div class="services-explorer__panel-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                                </div>
-                                <h3 class="services-explorer__panel-title">Google Analytics 4</h3>
-                            </div>
-                            <p class="services-explorer__panel-desc">L'analytics nouvelle génération basé sur les événements. Comprenez le parcours complet de vos utilisateurs, de la première visite à la conversion.</p>
-                            <ul class="services-explorer__panel-list">
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Migration UA → GA4 ou installation from scratch</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Configuration des événements et conversions</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Rapports personnalisés et explorations</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Intégration Google Ads et BigQuery</li>
-                            </ul>
-                            <a href="contact.html" class="btn btn--primary">Installer GA4</a>
+                        <div class="audit-item__content">
+                            <h3>Tracking existant</h3>
+                            <p>On inspecte tous vos pixels, tags, conversions. Ce qui est bien installé, ce qui est cassé, ce qui manque. Rien ne passe entre les mailles.</p>
                         </div>
-
-                        <!-- Meta -->
-                        <div class="services-explorer__panel" data-panel="meta">
-                            <div class="services-explorer__panel-header">
-                                <div class="services-explorer__panel-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
-                                </div>
-                                <h3 class="services-explorer__panel-title">Meta Pixel</h3>
-                            </div>
-                            <p class="services-explorer__panel-desc">Maximisez la précision de vos campagnes Facebook et Instagram. Le pixel Meta track vos visiteurs pour optimiser vos audiences et conversions.</p>
-                            <ul class="services-explorer__panel-list">
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Installation du Meta Pixel via GTM</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Configuration des événements standard et custom</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Création d'audiences de retargeting</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Suivi des conversions : achat, lead, ajout panier</li>
-                            </ul>
-                            <a href="contact.html" class="btn btn--primary">Installer le Pixel</a>
+                    </div>
+                    <div class="audit-item">
+                        <div class="audit-item__icon">
+                            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         </div>
-
-                        <!-- CAPI -->
-                        <div class="services-explorer__panel" data-panel="capi">
-                            <div class="services-explorer__panel-header">
-                                <div class="services-explorer__panel-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-                                </div>
-                                <h3 class="services-explorer__panel-title">Conversion API (Server-Side)</h3>
-                            </div>
-                            <p class="services-explorer__panel-desc">L'avenir du tracking. En envoyant les données depuis votre serveur, vous contournez les bloqueurs et récupérez jusqu'à 45% de données supplémentaires.</p>
-                            <ul class="services-explorer__panel-list">
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Configuration de GTM Server-Side</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Hébergement cloud (Google Cloud, AWS)</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Déduplication Pixel / CAPI</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Compatible cookieless et iOS 14+</li>
-                            </ul>
-                            <a href="contact.html" class="btn btn--primary">Passer au server-side</a>
+                        <div class="audit-item__content">
+                            <h3>Conformité RGPD</h3>
+                            <p>Consent Mode V2, gestion des cookies, respect du choix utilisateur. On vérifie que vous êtes à jour avec les exigences européennes.</p>
                         </div>
-
-                        <!-- UTM -->
-                        <div class="services-explorer__panel" data-panel="utm">
-                            <div class="services-explorer__panel-header">
-                                <div class="services-explorer__panel-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-                                </div>
-                                <h3 class="services-explorer__panel-title">Paramètres UTM</h3>
-                            </div>
-                            <p class="services-explorer__panel-desc">Tracez l'origine exacte de chaque visiteur. Les UTM permettent d'identifier précisément quelle campagne, source et contenu génèrent vos conversions.</p>
-                            <ul class="services-explorer__panel-list">
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Création d'une convention de nommage UTM</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Générateur d'URL personnalisé</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Intégration dans vos rapports GA4</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Formation à l'utilisation des UTM</li>
-                            </ul>
-                            <a href="contact.html" class="btn btn--primary">Structurer mes UTM</a>
+                    </div>
+                    <div class="audit-item">
+                        <div class="audit-item__icon">
+                            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                         </div>
-
-                        <!-- Consent -->
-                        <div class="services-explorer__panel services-explorer__panel--purple" data-panel="consent">
-                            <div class="services-explorer__panel-header">
-                                <div class="services-explorer__panel-icon services-explorer__panel-icon--purple">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                </div>
-                                <h3 class="services-explorer__panel-title">Consent Mode V2</h3>
-                            </div>
-                            <p class="services-explorer__panel-desc">Obligatoire depuis mars 2024 pour tous les annonceurs Google en Europe. Sans lui, vous perdez vos données publicitaires ET risquez jusqu'à 4% de votre CA.</p>
-                            <ul class="services-explorer__panel-list">
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Installation d'une CMP certifiée Google</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Configuration du Consent Mode V2 dans GTM</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Conformité RGPD, ePrivacy et DMA</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Préservation des données malgré les refus</li>
-                            </ul>
-                            <a href="contact.html" class="btn btn--primary">Me mettre en conformité</a>
+                        <div class="audit-item__content">
+                            <h3>Qualité des données ads</h3>
+                            <p>Vos conversions remontent-elles vraiment dans Meta, Google Ads, TikTok ? Sont-elles fiables, dédoublonnées, attribuées correctement ?</p>
                         </div>
-
-                        <!-- E-commerce -->
-                        <div class="services-explorer__panel" data-panel="ecommerce">
-                            <div class="services-explorer__panel-header">
-                                <div class="services-explorer__panel-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-                                </div>
-                                <h3 class="services-explorer__panel-title">Enhanced E-commerce</h3>
-                            </div>
-                            <p class="services-explorer__panel-desc">Suivi avancé des parcours d'achat et des transactions. Identifiez où vos clients abandonnent et optimisez chaque étape du tunnel de conversion.</p>
-                            <ul class="services-explorer__panel-list">
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Tracking des impressions produits</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Suivi ajout panier / wishlist</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Analyse du checkout funnel</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Rapports de performance produits</li>
-                            </ul>
-                            <a href="contact.html" class="btn btn--primary">Tracker mon e-commerce</a>
+                    </div>
+                    <div class="audit-item">
+                        <div class="audit-item__icon">
+                            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                         </div>
-
-                        <!-- LinkedIn -->
-                        <div class="services-explorer__panel" data-panel="linkedin">
-                            <div class="services-explorer__panel-header">
-                                <div class="services-explorer__panel-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                                </div>
-                                <h3 class="services-explorer__panel-title">LinkedIn Insight Tag</h3>
-                            </div>
-                            <p class="services-explorer__panel-desc">Pixel LinkedIn pour le suivi des conversions B2B et le retargeting professionnel. Indispensable pour vos campagnes de génération de leads.</p>
-                            <ul class="services-explorer__panel-list">
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Installation du LinkedIn Insight Tag</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Configuration des conversions</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Création d'audiences de retargeting</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Analyse des données démographiques</li>
-                            </ul>
-                            <a href="contact.html" class="btn btn--primary">Installer LinkedIn</a>
-                        </div>
-
-                        <!-- Custom -->
-                        <div class="services-explorer__panel" data-panel="custom">
-                            <div class="services-explorer__panel-header">
-                                <div class="services-explorer__panel-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                                </div>
-                                <h3 class="services-explorer__panel-title">Événements Personnalisés</h3>
-                            </div>
-                            <p class="services-explorer__panel-desc">Événements sur mesure adaptés à vos objectifs business spécifiques. Trackez exactement ce qui compte pour votre activité.</p>
-                            <ul class="services-explorer__panel-list">
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Définition des KPIs personnalisés</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Création d'événements sur mesure</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Tracking de formulaires et CTA</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Mesure d'engagement (scroll, vidéo, temps)</li>
-                            </ul>
-                            <a href="contact.html" class="btn btn--primary">Créer mes événements</a>
+                        <div class="audit-item__content">
+                            <h3>Baseline de performance</h3>
+                            <p>ROAS actuel, CPA, coût d'acquisition par canal. On pose un point zéro chiffré pour mesurer concrètement ce qu'on va améliorer ensemble.</p>
                         </div>
                     </div>
                 </div>
+
+                <div class="audit-deliverable reveal">
+                    <div class="audit-deliverable__icon">
+                        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+                    </div>
+                    <div class="audit-deliverable__text">
+                        <div class="audit-deliverable__title">Livrable : rapport d'audit complet</div>
+                        <p class="audit-deliverable__desc">Un document clair avec tous les constats, les priorités et les recommandations chiffrées. Pas de jargon, pas de blabla — que du concret.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== PHASE 2 — CONFIGURATION (détail) ===================== -->
+        <section class="phase-detail phase-detail--config" id="phase-config">
+            <div class="phase-detail__container">
+                <div class="phase-detail__header reveal">
+                    <div class="phase-detail__number">02</div>
+                    <div class="phase-detail__text-head">
+                        <span class="phase-detail__label">Phase 2 · Configuration</span>
+                        <h2 class="phase-detail__title">On installe tout ce qu'il faut pour bien mesurer</h2>
+                    </div>
+                </div>
+
+                <p class="config-intro reveal">
+                    Chaque outil a un rôle précis. On ne sur-installe pas, on configure ce qui vous sert selon votre activité — mais on a l'expertise sur l'ensemble de l'écosystème ads & analytics.
+                </p>
+
+                <div class="config-categories reveal">
+                    <!-- Fondations -->
+                    <div class="config-category">
+                        <div class="config-category__head">
+                            <div class="config-category__emoji">🏗️</div>
+                            <h3 class="config-category__title">Fondations</h3>
+                        </div>
+                        <ul class="config-category__list">
+                            <li>Google Tag Manager (GTM)</li>
+                            <li>Google Analytics 4 (GA4)</li>
+                            <li>Consent Mode V2</li>
+                            <li>Data Layer e-commerce</li>
+                            <li>Google Ads Conversion</li>
+                        </ul>
+                    </div>
+
+                    <!-- Pixels publicitaires -->
+                    <div class="config-category">
+                        <div class="config-category__head">
+                            <div class="config-category__emoji">📱</div>
+                            <h3 class="config-category__title">Pixels publicitaires</h3>
+                        </div>
+                        <ul class="config-category__list">
+                            <li>Meta Pixel + CAPI</li>
+                            <li>TikTok Pixel</li>
+                            <li>LinkedIn Insight Tag</li>
+                            <li>Pinterest Tag</li>
+                            <li>Snapchat Pixel</li>
+                        </ul>
+                    </div>
+
+                    <!-- Tracking avancé -->
+                    <div class="config-category">
+                        <div class="config-category__head">
+                            <div class="config-category__emoji">🎯</div>
+                            <h3 class="config-category__title">Tracking avancé</h3>
+                        </div>
+                        <ul class="config-category__list">
+                            <li>Server-side GTM</li>
+                            <li>Enhanced Conversions</li>
+                            <li>Cross-domain tracking</li>
+                            <li>Offline Conversions (CRM → Ads)</li>
+                            <li>UTM conventions</li>
+                        </ul>
+                    </div>
+
+                    <!-- E-commerce -->
+                    <div class="config-category">
+                        <div class="config-category__head">
+                            <div class="config-category__emoji">🛒</div>
+                            <h3 class="config-category__title">E-commerce</h3>
+                        </div>
+                        <ul class="config-category__list">
+                            <li>Enhanced E-commerce GA4</li>
+                            <li>Shopify / WooCommerce</li>
+                            <li>Prestashop</li>
+                            <li>Product Feed Google Merchant</li>
+                            <li>Catalog Meta & TikTok</li>
+                        </ul>
+                    </div>
+
+                    <!-- Comportement -->
+                    <div class="config-category">
+                        <div class="config-category__head">
+                            <div class="config-category__emoji">👁️</div>
+                            <h3 class="config-category__title">Comportement utilisateur</h3>
+                        </div>
+                        <ul class="config-category__list">
+                            <li>Microsoft Clarity</li>
+                            <li>Hotjar (heatmaps)</li>
+                            <li>Call Tracking</li>
+                            <li>Events personnalisés</li>
+                            <li>Scroll & engagement</li>
+                        </ul>
+                    </div>
+
+                    <!-- Reporting & Data -->
+                    <div class="config-category">
+                        <div class="config-category__head">
+                            <div class="config-category__emoji">📊</div>
+                            <h3 class="config-category__title">Reporting & Data</h3>
+                        </div>
+                        <ul class="config-category__list">
+                            <li>Looker Studio dashboards</li>
+                            <li>Google BigQuery</li>
+                            <li>Connecteurs multi-plateformes</li>
+                            <li>Rapports automatisés</li>
+                            <li>Exports personnalisés</li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -481,92 +1166,121 @@
             </div>
         </section>
 
-        <!-- ===================== PROCESS SIMPLE ===================== -->
-        <section class="pole-section pole-section--light" id="process-data">
-            <div class="container">
-                <div class="section__header reveal">
-                    <span class="section__badge">Notre process</span>
-                    <h2 class="section__title">4 étapes pour un tracking fiable</h2>
-                    <p class="section__subtitle">Un processus clair et efficace, de l'audit à la formation.</p>
-                </div>
-
-                <div class="process-simple reveal">
-                    <div class="process-simple__step">
-                        <div class="process-simple__icon">
-                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"/>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                            </svg>
-                        </div>
-                        <div class="process-simple__number">01</div>
-                        <h3 class="process-simple__title">Audit</h3>
-                        <p class="process-simple__text">Analyse de votre configuration actuelle et identification des opportunités.</p>
-                    </div>
-
-                    <div class="process-simple__connector">
-                        <svg viewBox="0 0 40 12" width="40" height="12">
-                            <path d="M0 6 L30 6 M25 1 L35 6 L25 11" fill="none" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </div>
-
-                    <div class="process-simple__step">
-                        <div class="process-simple__icon">
-                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="3"/>
-                                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
-                            </svg>
-                        </div>
-                        <div class="process-simple__number">02</div>
-                        <h3 class="process-simple__title">Configuration</h3>
-                        <p class="process-simple__text">Installation de GTM, GA4, pixels et paramétrage complet de vos outils.</p>
-                    </div>
-
-                    <div class="process-simple__connector">
-                        <svg viewBox="0 0 40 12" width="40" height="12">
-                            <path d="M0 6 L30 6 M25 1 L35 6 L25 11" fill="none" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </div>
-
-                    <div class="process-simple__step">
-                        <div class="process-simple__icon">
-                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                <polyline points="22 4 12 14.01 9 11.01"/>
-                            </svg>
-                        </div>
-                        <div class="process-simple__number">03</div>
-                        <h3 class="process-simple__title">Tests & validation</h3>
-                        <p class="process-simple__text">Vérification complète du tracking et mise en conformité RGPD.</p>
-                    </div>
-
-                    <div class="process-simple__connector">
-                        <svg viewBox="0 0 40 12" width="40" height="12">
-                            <path d="M0 6 L30 6 M25 1 L35 6 L25 11" fill="none" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </div>
-
-                    <div class="process-simple__step">
-                        <div class="process-simple__icon">
-                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                            </svg>
-                        </div>
-                        <div class="process-simple__number">04</div>
-                        <h3 class="process-simple__title">Formation & suivi</h3>
-                        <p class="process-simple__text">Formation à vos outils et accompagnement trimestriel garanti.</p>
+        <!-- ===================== PHASE 3 — BOARD DE GESTION GLOBALE (SPOTLIGHT) ===================== -->
+        <section class="phase-detail phase-detail--board" id="phase-board">
+            <div class="phase-detail__container">
+                <div class="phase-detail__header reveal">
+                    <div class="phase-detail__number">03</div>
+                    <div class="phase-detail__text-head">
+                        <span class="phase-detail__label">Phase 3 · Pilotage</span>
+                        <h2 class="phase-detail__title">On vous rend les clés de vos données</h2>
                     </div>
                 </div>
 
-                <div class="process-simple__promise reveal">
-                    <div class="process-simple__promise-icon">
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#05C08A" stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
+                <div class="board-layout reveal">
+                    <!-- Texte gauche -->
+                    <div class="board-intro">
+                        <span class="board-intro__tagline">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="display:inline-block;vertical-align:middle;margin-right:4px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            Notre différence
+                        </span>
+                        <h3 class="board-intro__title">
+                            Un tableau de bord qui <span class="highlight">vous appartient</span>
+                        </h3>
+                        <p class="board-intro__desc">
+                            Pas de dépendance à notre agence. Après la configuration, on vous livre un écosystème sur-mesure qui centralise toutes vos données marketing dans un seul écran. Vous pilotez, vous comprenez, vous décidez.
+                        </p>
+
+                        <div class="board-features">
+                            <div class="board-feature">
+                                <span class="board-feature__emoji">📊</span>
+                                <span class="board-feature__label">Dashboard personnalisé</span>
+                            </div>
+                            <div class="board-feature">
+                                <span class="board-feature__emoji">🏢</span>
+                                <span class="board-feature__label">Vue groupe multi-marques</span>
+                            </div>
+                            <div class="board-feature">
+                                <span class="board-feature__emoji">🔄</span>
+                                <span class="board-feature__label">Multi-sources centralisées</span>
+                            </div>
+                            <div class="board-feature">
+                                <span class="board-feature__emoji">💰</span>
+                                <span class="board-feature__label">ROAS croisés par canal</span>
+                            </div>
+                            <div class="board-feature">
+                                <span class="board-feature__emoji">📅</span>
+                                <span class="board-feature__label">Historique & comparaisons</span>
+                            </div>
+                            <div class="board-feature">
+                                <span class="board-feature__emoji">🏆</span>
+                                <span class="board-feature__label">Top produits automatique</span>
+                            </div>
+                            <div class="board-feature">
+                                <span class="board-feature__emoji">🎯</span>
+                                <span class="board-feature__label">Attribution multi-touch</span>
+                            </div>
+                            <div class="board-feature">
+                                <span class="board-feature__emoji">📤</span>
+                                <span class="board-feature__label">Export CSV & API</span>
+                            </div>
+                        </div>
+
+                        <a href="contact.html" class="board-cta">
+                            <span>Découvrir le dashboard</span>
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </a>
                     </div>
-                    <p class="process-simple__promise-text"><strong>Notre engagement :</strong> Transparence totale. Vous avez un accès complet à tous vos outils et nous vous formons à les utiliser.</p>
+
+                    <!-- Mockup droite -->
+                    <div class="board-mockup">
+                        <div class="board-mockup__frame">
+                            <div class="board-mockup__header">
+                                <span class="board-mockup__dot"></span>
+                                <span class="board-mockup__dot"></span>
+                                <span class="board-mockup__dot"></span>
+                                <span class="board-mockup__title">dashboard.regen-agency.fr</span>
+                            </div>
+
+                            <div class="board-mockup__kpis">
+                                <div class="board-kpi">
+                                    <div class="board-kpi__label">ROAS</div>
+                                    <div class="board-kpi__value">4.8x</div>
+                                    <div class="board-kpi__trend">↑ +12%</div>
+                                </div>
+                                <div class="board-kpi">
+                                    <div class="board-kpi__label">CPA</div>
+                                    <div class="board-kpi__value">18€</div>
+                                    <div class="board-kpi__trend">↓ -8%</div>
+                                </div>
+                                <div class="board-kpi">
+                                    <div class="board-kpi__label">Conversions</div>
+                                    <div class="board-kpi__value">1 247</div>
+                                    <div class="board-kpi__trend">↑ +24%</div>
+                                </div>
+                            </div>
+
+                            <div class="board-mockup__chart">
+                                <svg viewBox="0 0 300 80" preserveAspectRatio="none">
+                                    <defs>
+                                        <linearGradient id="chart-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#5CE6A8" stop-opacity="0.6"/>
+                                            <stop offset="100%" stop-color="#05C08A" stop-opacity="0"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M0,60 L25,50 L50,55 L75,35 L100,40 L125,25 L150,30 L175,15 L200,20 L225,10 L250,18 L275,8 L300,12 L300,80 L0,80 Z" fill="url(#chart-grad)"/>
+                                    <path d="M0,60 L25,50 L50,55 L75,35 L100,40 L125,25 L150,30 L175,15 L200,20 L225,10 L250,18 L275,8 L300,12" fill="none" stroke="#5CE6A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+
+                            <div class="board-mockup__sources">
+                                <div class="board-source">Google Ads</div>
+                                <div class="board-source">Meta Ads</div>
+                                <div class="board-source">GA4</div>
+                                <div class="board-source">Shopify</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
