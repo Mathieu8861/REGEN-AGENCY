@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>CRM — Mockup Regen Agency</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #2FB963;
+            --green-light: #e8f9ef;
+            --green-dark: #27a356;
+            --dark: #1a2332;
+            --primary: #173C3A;
+            --accent: #05C08A;
+            --gray: #6b7280;
+            --gray-light: #f3f4f6;
+            --gray-border: #e5e7eb;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+            --sidebar-w: 240px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #f0f3f1;
+            min-height: 100vh;
+            color: var(--primary);
+            display: flex;
+        }
+
+        /* ─────────────────────────── SIDEBAR ─────────────────────────── */
+        .sidebar {
+            width: var(--sidebar-w);
+            min-height: 100vh;
+            background: white;
+            border-right: 1px solid var(--gray-border);
+            padding: 24px 16px;
+            position: sticky;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar__logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px 16px 8px;
+            border-bottom: 1px solid var(--gray-border);
+        }
+        .sidebar__logo-mark {
+            width: 36px; height: 36px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--green);
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+        .sidebar__logo-text {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--dark);
+        }
+        .sidebar__logo-text span { color: var(--green); }
+
+        .sidebar__section-title {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--gray);
+            padding: 0 8px;
+            margin-bottom: 6px;
+        }
+
+        .sidebar__nav {
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        .sidebar__link {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .sidebar__link:hover {
+            background: var(--gray-light);
+            color: var(--dark);
+        }
+        .sidebar__link.active {
+            background: var(--green-light);
+            color: var(--primary);
+        }
+        .sidebar__link.active .sidebar__link-icon { color: var(--green); }
+        .sidebar__link-icon { color: var(--gray); display: flex; }
+        .sidebar__link-icon svg { width: 18px; height: 18px; }
+
+        /* Sidebar filters (contextuels à la page CRM) */
+        .sidebar__filter-group {
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .sidebar__filter {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sidebar__filter:hover { background: var(--gray-light); color: var(--dark); }
+        .sidebar__filter.active { background: var(--primary); color: white; }
+        .sidebar__filter-count {
+            background: rgba(0,0,0,0.08);
+            font-size: 0.7rem;
+            padding: 1px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+        .sidebar__filter.active .sidebar__filter-count { background: rgba(255,255,255,0.2); color: white; }
+
+        /* ─────────────────────────── MAIN ─────────────────────────── */
+        .main {
+            flex: 1;
+            padding: 28px 32px;
+            min-width: 0;
+            overflow-x: hidden;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gray-border);
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .page-header-left { display: flex; align-items: center; gap: 14px; }
+        .page-title {
+            font-size: 1.4rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+        .page-title span { color: var(--green); }
+        .page-subtitle {
+            font-size: 0.82rem;
+            color: var(--gray);
+            margin-top: 2px;
+        }
+        .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+        .btn {
+            padding: 9px 18px;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 2px solid;
+        }
+        .btn svg { width: 14px; height: 14px; }
+        .btn--primary { background: var(--green); color: white; border-color: var(--green); }
+        .btn--primary:hover { background: var(--green-dark); border-color: var(--green-dark); }
+        .btn--ghost { background: transparent; color: var(--gray); border-color: #d1d5db; }
+        .btn--ghost:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* ─────────────────────── BIG TOGGLE Prospects / Clients ─────────────────────── */
+        .big-toggle {
+            display: flex;
+            background: white;
+            border-radius: 14px;
+            padding: 6px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            gap: 4px;
+            max-width: 520px;
+        }
+        .big-toggle__btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .big-toggle__btn svg { width: 18px; height: 18px; }
+        .big-toggle__btn:hover { color: var(--dark); }
+        .big-toggle__btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(23,60,58,0.2);
+        }
+        .big-toggle__btn.active.is-clients {
+            background: var(--green);
+            box-shadow: 0 2px 8px rgba(47,185,99,0.25);
+        }
+        .big-toggle__count {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 22px; height: 22px;
+            padding: 0 7px;
+            background: rgba(0,0,0,0.06);
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+        .big-toggle__btn.active .big-toggle__count {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        /* ─────────────────────── STATS BAR ─────────────────────── */
+        .stats-bar {
+            display: flex;
+            gap: 0;
+            margin-bottom: 22px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .stat-item {
+            flex: 1;
+            padding: 16px 14px;
+            text-align: center;
+            border-right: 1px solid #f0f0f0;
+        }
+        .stat-item:last-child { border-right: none; }
+        .stat-item__value { font-size: 1.4rem; font-weight: 800; color: var(--dark); }
+        .stat-item__label {
+            font-size: 0.65rem;
+            color: var(--gray);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .stat-item--green .stat-item__value { color: var(--green); }
+        .stat-item--blue .stat-item__value { color: #3b82f6; }
+        .stat-item--amber .stat-item__value { color: #f59e0b; }
+        .stat-item--purple .stat-item__value { color: #8b5cf6; }
+        .stat-item--red .stat-item__value { color: #ef4444; }
+
+        /* ─────────────────────── KANBAN ─────────────────────── */
+        .kanban-board {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            min-height: 520px;
+        }
+        .kanban-board::-webkit-scrollbar { height: 8px; }
+        .kanban-board::-webkit-scrollbar-thumb { background: #c7d1ca; border-radius: 4px; }
+
+        .kanban-column {
+            min-width: 270px;
+            flex: 1;
+            background: #e9ede b;
+            background: #e7ebe8;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+        }
+        .column-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0,0,0,0.06);
+        }
+        .column-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .column-label {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--dark);
+        }
+        .column-count {
+            margin-left: auto;
+            background: rgba(0,0,0,0.08);
+            font-size: 0.72rem;
+            font-weight: 700;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 7px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 60px;
+        }
+
+        /* Card base */
+        .card {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: box-shadow 0.2s, transform 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-1px);
+        }
+        .card__company {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-bottom: 2px;
+        }
+        .card__contact {
+            font-size: 0.76rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        .card__meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .card__badges {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 9px;
+            border-radius: 50px;
+            font-size: 0.66rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .badge svg { width: 10px; height: 10px; }
+        .badge--recurrent { background: #ede9fe; color: #7c3aed; }
+        .badge--oneshot { background: #fef3c7; color: #b45309; }
+        .badge--priority-haute { background: #fed7aa; color: #c2410c; }
+        .badge--priority-urgente { background: #fecaca; color: #b91c1c; }
+        .badge--source { background: var(--gray-light); color: var(--gray); }
+
+        .card__amount {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            background: var(--green-light);
+            border-radius: 8px;
+        }
+        .card__amount-value {
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: var(--primary);
+        }
+        .card__amount-unit {
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .card__footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--gray-border);
+            font-size: 0.72rem;
+            color: var(--gray);
+        }
+        .card__footer-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .card__footer-item svg { width: 12px; height: 12px; }
+
+        .card__action {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: #fefce8;
+            font-size: 0.72rem;
+            color: #ca8a04;
+            font-weight: 600;
+        }
+        .card__action svg { width: 12px; height: 12px; }
+        .card__action--overdue { background: #fef2f2; color: #dc2626; }
+        .card__action--today { background: #fefce8; color: #ca8a04; }
+        .card__action--scheduled { background: #f0f9ff; color: #0369a1; }
+
+        /* Project progress (for client cards) */
+        .card__progress {
+            margin-top: 8px;
+        }
+        .card__progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .card__progress-bar {
+            height: 6px;
+            background: var(--gray-light);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .card__progress-fill {
+            height: 100%;
+            background: var(--green);
+            border-radius: 10px;
+        }
+
+        /* Cards colored border by stage */
+        .card--nouveau { border-left-color: #6b7280; }
+        .card--qualifie { border-left-color: #3b82f6; }
+        .card--premier_echange { border-left-color: #f59e0b; }
+        .card--proposition { border-left-color: #8b5cf6; }
+        .card--gagne { border-left-color: #2FB963; }
+        .card--perdu { border-left-color: #ef4444; }
+        .card--onboarding { border-left-color: #3b82f6; }
+        .card--actif { border-left-color: #2FB963; }
+        .card--renouvellement { border-left-color: #f59e0b; }
+        .card--ancien { border-left-color: #9ca3af; }
+
+        .view { display: none; }
+        .view.active { display: block; }
+
+        /* Info banner */
+        .info-banner {
+            background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+            border: 1px solid #c7d2fe;
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.82rem;
+            color: #3730a3;
+        }
+        .info-banner svg {
+            flex-shrink: 0;
+            width: 18px; height: 18px;
+            color: #6366f1;
+            margin-top: 1px;
+        }
+        .info-banner strong { font-weight: 700; }
+
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main { padding: 16px; }
+            .big-toggle { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ────────────── SIDEBAR ────────────── -->
+<aside class="sidebar">
+    <div class="sidebar__logo">
+        <div class="sidebar__logo-mark">R</div>
+        <div class="sidebar__logo-text">Regen<span>.</span></div>
+    </div>
+
+    <nav>
+        <div class="sidebar__section-title">Navigation</div>
+        <div class="sidebar__nav">
+            <a class="sidebar__link">
+                <span class="sidebar__link-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/></svg></span>
+                Dashboard
+            </a>
+            <a class="sidebar__link active">
+                <span class="sidebar__link-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                CRM
+            </a>
+            <a class="sidebar__link">
+                <span class="sidebar__link-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
+                Documents
+            </a>
+            <a class="sidebar__link">
+                <span class="sidebar__link-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h18v18H3zM3 9h18M9 21V9"/></svg></span>
+                Comptabilité
+            </a>
+            <a class="sidebar__link">
+                <span class="sidebar__link-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+                Tâches
+            </a>
+            <a class="sidebar__link">
+                <span class="sidebar__link-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 1 0 20M2 12h20"/></svg></span>
+                Profil agence
+            </a>
+        </div>
+    </nav>
+
+    <div>
+        <div class="sidebar__section-title">Filtres rapides</div>
+        <div class="sidebar__filter-group">
+            <div class="sidebar__filter active">
+                <span>Tous</span>
+                <span class="sidebar__filter-count">23</span>
+            </div>
+            <div class="sidebar__filter">
+                <span>Chauds (haute priorité)</span>
+                <span class="sidebar__filter-count">4</span>
+            </div>
+            <div class="sidebar__filter">
+                <span>À relancer</span>
+                <span class="sidebar__filter-count">7</span>
+            </div>
+            <div class="sidebar__filter">
+                <span>Sans activité 30j+</span>
+                <span class="sidebar__filter-count">3</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top:auto;padding:12px;background:var(--gray-light);border-radius:10px;font-size:0.75rem;color:var(--gray);line-height:1.5">
+        <strong style="color:var(--dark);display:block;margin-bottom:4px">💡 Mockup</strong>
+        Ceci est une maquette visuelle. Clique les toggles / filtres pour voir l'interaction.
+    </div>
+</aside>
+
+<!-- ────────────── MAIN ────────────── -->
+<main class="main">
+
+    <div class="page-header">
+        <div class="page-header-left">
+            <div>
+                <div class="page-title">CRM<span>.</span> <span style="color:var(--green)">Regen</span></div>
+                <div class="page-subtitle">Gestion unifiée de la relation prospects & clients</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn--ghost">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Vue tableau
+            </button>
+            <button class="btn btn--primary">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                Nouveau contact
+            </button>
+        </div>
+    </div>
+
+    <!-- Gros toggle Prospects / Clients -->
+    <div class="big-toggle">
+        <button class="big-toggle__btn active" onclick="switchView('prospects', this)">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 11l-3 3-3-3M20 14v-4"/></svg>
+            Prospects
+            <span class="big-toggle__count">14</span>
+        </button>
+        <button class="big-toggle__btn is-clients" onclick="switchView('clients', this)">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/></svg>
+            Clients
+            <span class="big-toggle__count">9</span>
+        </button>
+    </div>
+
+    <!-- ───────────────── VIEW PROSPECTS ───────────────── -->
+    <div class="view active" id="view-prospects">
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-item__value">14</div>
+                <div class="stat-item__label">Prospects actifs</div>
+            </div>
+            <div class="stat-item stat-item--blue">
+                <div class="stat-item__value">8</div>
+                <div class="stat-item__label">Qualifiés</div>
+            </div>
+            <div class="stat-item stat-item--amber">
+                <div class="stat-item__value">3</div>
+                <div class="stat-item__label">En proposition</div>
+            </div>
+            <div class="stat-item stat-item--green">
+                <div class="stat-item__value">2</div>
+                <div class="stat-item__label">À convertir</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-item__value">14j</div>
+                <div class="stat-item__label">Cycle moyen</div>
+            </div>
+            <div class="stat-item stat-item--green">
+                <div class="stat-item__value">38%</div>
+                <div class="stat-item__label">Taux conversion</div>
+            </div>
+        </div>
+
+        <div class="kanban-board">
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#6b7280"></div>
+                    <span class="column-label">Nouveau</span>
+                    <span class="column-count">3</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--nouveau">
+                        <div class="card__badges">
+                            <span class="badge badge--source">LinkedIn</span>
+                        </div>
+                        <div class="card__company">Boutique Nord</div>
+                        <div class="card__contact">Laurent M.</div>
+                        <div class="card__footer">
+                            <div class="card__footer-item">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                Ajouté il y a 2j
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card card--nouveau">
+                        <div class="card__badges">
+                            <span class="badge badge--source">Bouche à oreille</span>
+                        </div>
+                        <div class="card__company">Atelier Duval</div>
+                        <div class="card__contact">Pascal Duval</div>
+                    </div>
+                    <div class="card card--nouveau">
+                        <div class="card__badges">
+                            <span class="badge badge--source">Form site</span>
+                        </div>
+                        <div class="card__company">Studio Kappa</div>
+                        <div class="card__contact">Anna L.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#3b82f6"></div>
+                    <span class="column-label">Qualifié</span>
+                    <span class="column-count">4</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--qualifie">
+                        <div class="card__badges">
+                            <span class="badge badge--priority-haute">Priorité haute</span>
+                        </div>
+                        <div class="card__company">IBCO Distribution</div>
+                        <div class="card__contact">M. Bernard</div>
+                        <div class="card__action card__action--today">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.9.34 1.78.63 2.63a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.45-1.2a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.63A2 2 0 0 1 22 16.92z"/></svg>
+                            Rappel à faire aujourd'hui
+                        </div>
+                    </div>
+                    <div class="card card--qualifie">
+                        <div class="card__company">Maison Terra</div>
+                        <div class="card__contact">Claire V.</div>
+                    </div>
+                    <div class="card card--qualifie">
+                        <div class="card__company">Le Petit Journal</div>
+                        <div class="card__contact">Thomas R.</div>
+                    </div>
+                    <div class="card card--qualifie">
+                        <div class="card__company">Coiffeur Lacan</div>
+                        <div class="card__contact">Élodie L.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#f59e0b"></div>
+                    <span class="column-label">1er échange</span>
+                    <span class="column-count">4</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--premier_echange">
+                        <div class="card__company">AY Champagne</div>
+                        <div class="card__contact">CS Agéen — 25/01</div>
+                        <div class="card__footer">
+                            <div class="card__footer-item">Brandboard fait</div>
+                        </div>
+                    </div>
+                    <div class="card card--premier_echange">
+                        <div class="card__badges">
+                            <span class="badge badge--priority-urgente">Urgent</span>
+                        </div>
+                        <div class="card__company">FLO (IKNO)</div>
+                        <div class="card__contact">Florian</div>
+                        <div class="card__action card__action--overdue">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                            Relance en retard (3j)
+                        </div>
+                    </div>
+                    <div class="card card--premier_echange">
+                        <div class="card__company">Boulangerie Marnier</div>
+                        <div class="card__contact">Sophie M.</div>
+                    </div>
+                    <div class="card card--premier_echange">
+                        <div class="card__company">Cabinet Lefèvre</div>
+                        <div class="card__contact">Me Lefèvre</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#8b5cf6"></div>
+                    <span class="column-label">Proposition envoyée</span>
+                    <span class="column-count">3</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--proposition">
+                        <div class="card__badges">
+                            <span class="badge badge--priority-urgente">Urgent</span>
+                        </div>
+                        <div class="card__company">Château Villers-Bocage</div>
+                        <div class="card__contact">SO EVENTS</div>
+                        <div class="card__amount">
+                            <span class="card__amount-value">5 900 €</span>
+                            <span class="card__amount-unit">+ SEA 700€/mo</span>
+                        </div>
+                        <div class="card__action card__action--scheduled">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                            Relance prévue dans 4j
+                        </div>
+                    </div>
+                    <div class="card card--proposition">
+                        <div class="card__company">Design Hub</div>
+                        <div class="card__contact">Marie L.</div>
+                        <div class="card__amount">
+                            <span class="card__amount-value">3 200 €</span>
+                        </div>
+                    </div>
+                    <div class="card card--proposition">
+                        <div class="card__company">Restaurant La Source</div>
+                        <div class="card__contact">Paul V.</div>
+                        <div class="card__amount">
+                            <span class="card__amount-value">4 800 €</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#2FB963"></div>
+                    <span class="column-label">Gagné → À convertir</span>
+                    <span class="column-count">2</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--gagne" style="background:linear-gradient(135deg,#fff,var(--green-light));border:1.5px solid #a7f3d0">
+                        <div class="card__badges">
+                            <span class="badge" style="background:var(--green);color:white">🎉 Signé</span>
+                        </div>
+                        <div class="card__company">Nouveau Client X</div>
+                        <div class="card__contact">Jean B.</div>
+                        <div class="card__amount">
+                            <span class="card__amount-value">1 200 €/mo</span>
+                        </div>
+                        <button class="btn btn--primary" style="width:100%;margin-top:8px;font-size:0.75rem;padding:8px">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            Convertir en client
+                        </button>
+                    </div>
+                    <div class="card card--gagne" style="background:linear-gradient(135deg,#fff,var(--green-light));border:1.5px solid #a7f3d0">
+                        <div class="card__badges">
+                            <span class="badge" style="background:var(--green);color:white">🎉 Signé</span>
+                        </div>
+                        <div class="card__company">Agence Primo</div>
+                        <div class="card__contact">Claire T.</div>
+                        <button class="btn btn--primary" style="width:100%;margin-top:8px;font-size:0.75rem;padding:8px">Convertir en client</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#ef4444"></div>
+                    <span class="column-label">Perdu</span>
+                    <span class="column-count">2</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--perdu" style="opacity:0.7">
+                        <div class="card__company">Archi Studio</div>
+                        <div class="card__contact">Pas donné suite</div>
+                    </div>
+                    <div class="card card--perdu" style="opacity:0.7">
+                        <div class="card__company">Cave du coin</div>
+                        <div class="card__contact">Budget trop serré</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ───────────────── VIEW CLIENTS ───────────────── -->
+    <div class="view" id="view-clients">
+
+        <div class="info-banner">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <div>
+                <strong>Distinction One-shot vs Récurrent :</strong>
+                Les projets <span style="padding:1px 6px;background:#fef3c7;color:#b45309;border-radius:4px;font-weight:700">One-shot</span> (site livré, paiement unique) restent en colonne <strong>Actif</strong> puis basculent en <strong>Ancien client</strong> après la période de garantie. Les <span style="padding:1px 6px;background:#ede9fe;color:#7c3aed;border-radius:4px;font-weight:700">Récurrents</span> (abonnement mensuel) vivent entre <strong>Actif</strong> et <strong>Renouvellement</strong>.
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item stat-item--green">
+                <div class="stat-item__value">9</div>
+                <div class="stat-item__label">Clients actifs</div>
+            </div>
+            <div class="stat-item stat-item--purple">
+                <div class="stat-item__value">3</div>
+                <div class="stat-item__label">Récurrents</div>
+            </div>
+            <div class="stat-item stat-item--amber">
+                <div class="stat-item__value">6</div>
+                <div class="stat-item__label">One-shot</div>
+            </div>
+            <div class="stat-item stat-item--green">
+                <div class="stat-item__value">4 350 €</div>
+                <div class="stat-item__label">MRR</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-item__value">2</div>
+                <div class="stat-item__label">À renouveler</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-item__value">1</div>
+                <div class="stat-item__label">Anciens</div>
+            </div>
+        </div>
+
+        <div class="kanban-board">
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#2FB963"></div>
+                    <span class="column-label">Signé</span>
+                    <span class="column-count">1</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--gagne">
+                        <div class="card__badges">
+                            <span class="badge badge--recurrent">Récurrent</span>
+                        </div>
+                        <div class="card__company">Klarent</div>
+                        <div class="card__contact">Pack Full Acquisition</div>
+                        <div class="card__amount">
+                            <span class="card__amount-value">1 450 €</span>
+                            <span class="card__amount-unit">/mo</span>
+                        </div>
+                        <div class="card__action card__action--today">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                            Onboarding à programmer
+                        </div>
+                        <div class="card__footer">
+                            <div class="card__footer-item">Signé le 22/04/2026</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#3b82f6"></div>
+                    <span class="column-label">Onboarding</span>
+                    <span class="column-count">1</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--onboarding">
+                        <div class="card__badges">
+                            <span class="badge badge--oneshot">One-shot</span>
+                        </div>
+                        <div class="card__company">Breakfast Club</div>
+                        <div class="card__contact">Démo en cours</div>
+                        <div class="card__amount">
+                            <span class="card__amount-value">3 800 €</span>
+                            <span class="card__amount-unit">one-shot</span>
+                        </div>
+                        <div class="card__progress">
+                            <div class="card__progress-label">
+                                <span>Collecte brief</span>
+                                <span>60%</span>
+                            </div>
+                            <div class="card__progress-bar">
+                                <div class="card__progress-fill" style="width:60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#2FB963"></div>
+                    <span class="column-label">Actif</span>
+                    <span class="column-count">5</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--actif">
+                        <div class="card__badges">
+                            <span class="badge badge--oneshot">One-shot</span>
+                        </div>
+                        <div class="card__company">MJ Renov</div>
+                        <div class="card__contact">Site livré & en prod</div>
+                        <div class="card__amount">
+                            <span class="card__amount-value">2 400 €</span>
+                            <span class="card__amount-unit">one-shot · livré</span>
+                        </div>
+                        <div class="card__footer">
+                            <div class="card__footer-item">Garantie : 2 mois restants</div>
+                        </div>
+                    </div>
+                    <div class="card card--actif">
+                        <div class="card__badges">
+                            <span class="badge badge--oneshot">One-shot</span>
+                        </div>
+                        <div class="card__company">MIRA</div>
+                        <div class="card__contact">Site up to date · repo privé</div>
+                        <div class="card__footer">
+                            <div class="card__footer-item">Livré 29/01/2026</div>
+                        </div>
+                    </div>
+                    <div class="card card--actif">
+                        <div class="card__badges">
+                            <span class="badge badge--recurrent">Récurrent</span>
+                        </div>
+                        <div class="card__company">Alliance REN (Dofus)</div>
+                        <div class="card__contact">Site communauté</div>
+                        <div class="card__amount">
+                            <span class="card__amount-value">150 €</span>
+                            <span class="card__amount-unit">/mo hébergement</span>
+                        </div>
+                    </div>
+                    <div class="card card--actif">
+                        <div class="card__badges">
+                            <span class="badge badge--oneshot">One-shot</span>
+                        </div>
+                        <div class="card__company">Regen Agency</div>
+                        <div class="card__contact">Site agence · en prod</div>
+                    </div>
+                    <div class="card card--actif">
+                        <div class="card__badges">
+                            <span class="badge badge--recurrent">Récurrent</span>
+                        </div>
+                        <div class="card__company">Client récurrent démo</div>
+                        <div class="card__contact">Support + évolutions</div>
+                        <div class="card__amount">
+                            <span class="card__amount-value">450 €</span>
+                            <span class="card__amount-unit">/mo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#f59e0b"></div>
+                    <span class="column-label">Renouvellement</span>
+                    <span class="column-count">1</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--renouvellement">
+                        <div class="card__badges">
+                            <span class="badge badge--recurrent">Récurrent</span>
+                            <span class="badge badge--priority-haute">À relancer</span>
+                        </div>
+                        <div class="card__company">Client abo expirant</div>
+                        <div class="card__contact">Fin de période ferme</div>
+                        <div class="card__amount">
+                            <span class="card__amount-value">350 €</span>
+                            <span class="card__amount-unit">/mo</span>
+                        </div>
+                        <div class="card__action card__action--overdue">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                            Échéance dans 12j
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-dot" style="background:#9ca3af"></div>
+                    <span class="column-label">Ancien client</span>
+                    <span class="column-count">1</span>
+                </div>
+                <div class="cards-container">
+                    <div class="card card--ancien" style="opacity:0.75">
+                        <div class="card__badges">
+                            <span class="badge badge--oneshot">One-shot</span>
+                        </div>
+                        <div class="card__company">Sock Up</div>
+                        <div class="card__contact">Archive 2023</div>
+                        <div class="card__footer">
+                            <div class="card__footer-item">Relance annuelle possible</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    function switchView(view, btn) {
+        document.querySelectorAll('.big-toggle__btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('view-' + view).classList.add('active');
+    }
+
+    // Sidebar filter click
+    document.querySelectorAll('.sidebar__filter').forEach(f => {
+        f.addEventListener('click', () => {
+            document.querySelectorAll('.sidebar__filter').forEach(x => x.classList.remove('active'));
+            f.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

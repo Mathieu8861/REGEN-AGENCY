@@ -779,21 +779,16 @@
             var logoutBtn = document.getElementById('logoutBtn');
 
             // === AUTH CHECK ===
+            // Si déjà auth, redirige direct sur le CRM (l'ancien hub d'accueil n'existe plus).
             function checkAuth() {
                 if (sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true') {
-                    showAdmin();
+                    window.location.href = 'admin/prospects.html';
                 }
-            }
-
-            // === SHOW / HIDE ===
-            function showAdmin() {
-                loginScreen.classList.add('hidden');
-                adminPanel.classList.add('visible');
             }
 
             function showLogin() {
                 loginScreen.classList.remove('hidden');
-                adminPanel.classList.remove('visible');
+                if (adminPanel) adminPanel.classList.remove('visible');
                 adminPassword.value = '';
             }
 
@@ -803,7 +798,8 @@
 
                 if (adminPassword.value === ADMIN_PASSWORD) {
                     sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
-                    showAdmin();
+                    // Redirection directe vers le CRM (nouvelle home admin).
+                    window.location.href = 'admin/prospects.html';
                 } else {
                     adminPassword.classList.add('error');
                     adminError.classList.add('visible');
@@ -816,10 +812,13 @@
             });
 
             // === LOGOUT ===
-            logoutBtn.addEventListener('click', function() {
-                sessionStorage.removeItem(ADMIN_SESSION_KEY);
-                showLogin();
-            });
+            // Conservé pour compatibilité si logoutBtn existe encore dans le DOM.
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+                    showLogin();
+                });
+            }
 
             // === CLIENT LOGIN (Supabase Auth) ===
             var SUPABASE_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';

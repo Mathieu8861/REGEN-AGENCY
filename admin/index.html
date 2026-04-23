@@ -6,9 +6,16 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Admin - Regen Agency</title>
     <link rel="icon" type="image/png" href="../favicon.png">
-    <script>window.location.href = '../connexion.html';</script>
+    <script>
+        // Si déjà auth, redirige direct sur le CRM, sinon sur la connexion.
+        if (sessionStorage.getItem('regen_admin_auth') === 'true') {
+            window.location.href = 'prospects.html';
+        } else {
+            window.location.href = '../connexion.html';
+        }
+    </script>
 </head>
 <body>
-    <p>Redirection vers <a href="../connexion.html">l'espace utilisateur</a>...</p>
+    <p>Redirection...</p>
 </body>
 </html>
