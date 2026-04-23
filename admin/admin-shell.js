@@ -116,8 +116,8 @@
                     '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
                     'Performance Ads') +
                 link('documents.html', 'documents',
-                    '<path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
-                    'Documents') +
+                    '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+                    'Ressources') +
                 link('comptabilite.html', 'comptabilite',
                     '<path d="M3 3h18v18H3zM3 9h18M9 21V9"/>',
                     'Comptabilité') +
