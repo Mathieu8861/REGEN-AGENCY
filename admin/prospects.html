@@ -1540,6 +1540,89 @@
             .contract-details__grid { grid-template-columns: 1fr; gap: 4px; }
         }
 
+        /* ═══ Widget Performance Ads dans la fiche client ═══ */
+        .performance-ads-widget {
+            margin: 10px 20px 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px 18px;
+        }
+        .performance-ads-widget__header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 14px; padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            gap: 10px;
+        }
+        .performance-ads-widget__title {
+            display: flex; align-items: center; gap: 7px;
+            font-weight: 700; font-size: 0.92rem; color: var(--primary);
+        }
+        .performance-ads-widget__title svg { width: 16px; height: 16px; color: var(--green); }
+        .performance-ads-widget__link {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 11px; border-radius: 7px;
+            background: var(--green-light); color: var(--primary);
+            font-family: inherit; font-size: 0.72rem; font-weight: 700;
+            text-decoration: none; border: 1px solid #86efac;
+            transition: all 0.15s; cursor: pointer;
+        }
+        .performance-ads-widget__link:hover { background: var(--green); color: white; border-color: var(--green); }
+        .performance-ads-widget__link svg { width: 11px; height: 11px; }
+
+        .performance-ads-widget__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+        }
+        .performance-ads-widget__kpi {
+            padding: 12px;
+            background: #fafbfc;
+            border-radius: 10px;
+            border: 1px solid #f3f4f6;
+        }
+        .performance-ads-widget__kpi-label {
+            font-size: 0.66rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--gray); margin-bottom: 4px;
+        }
+        .performance-ads-widget__kpi-value {
+            font-size: 1.3rem; font-weight: 800; color: var(--dark);
+            line-height: 1.1;
+        }
+        .performance-ads-widget__kpi-sub {
+            font-size: 0.7rem; color: var(--gray); font-weight: 600;
+            margin-top: 2px;
+        }
+        .performance-ads-widget__kpi--primary .performance-ads-widget__kpi-value { color: var(--green); }
+        .performance-ads-widget__kpi--roas.--good .performance-ads-widget__kpi-value { color: #059669; }
+        .performance-ads-widget__kpi--roas.--medium .performance-ads-widget__kpi-value { color: #b45309; }
+        .performance-ads-widget__kpi--roas.--bad .performance-ads-widget__kpi-value { color: #dc2626; }
+
+        .performance-ads-widget__loading {
+            padding: 14px; text-align: center;
+            color: var(--gray); font-size: 0.82rem;
+        }
+        .performance-ads-widget__empty {
+            padding: 16px; text-align: center;
+            color: var(--gray); font-size: 0.82rem;
+            background: #fafbfc; border-radius: 8px;
+        }
+        .performance-ads-widget__accounts {
+            display: flex; gap: 6px; flex-wrap: wrap;
+            margin-top: 12px; padding-top: 10px;
+            border-top: 1px dashed #e5e7eb;
+        }
+        .performance-ads-widget__account-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 9px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: 700;
+            background: #f3f4f6; color: var(--dark);
+        }
+        .performance-ads-widget__account-pill--google { background: #fef3c7; color: #b45309; }
+        .performance-ads-widget__account-pill--meta { background: #dbeafe; color: #1d4ed8; }
+        .performance-ads-widget__account-pill--tiktok { background: #f3f4f6; color: #111827; }
+
         /* Action à réaliser sur card client (+ stats) */
         .client-card__action {
             display: flex; align-items: center; gap: 7px;
@@ -2784,33 +2867,37 @@
     // ── LOAD PROSPECTS ──
     async function loadProspects() {
         var res = await sb.from('prospects').select('*').eq('agency_id', AGENCY_ID).order('created_at', { ascending: false });
-        var all = res.data || [];
-        // Exclure de la vue Prospects uniquement ceux convertis via la modal "Convertir en client"
-        // (presence d'un converted_client_id = conversion officielle, row client creee).
-        // On garde les prospects avec relationship_type='client_existant' : c'est juste une annotation
-        // (un client existant peut avoir une nouvelle prospection en cours pour un autre service).
-        prospects = all.filter(function(p) {
-            return !p.converted_client_id;
-        });
+        // On garde TOUS les prospects en cache (y compris convertis) pour que openPanel / banners fonctionnent
+        // sur n'importe quel contact, y compris les clients.
+        prospects = res.data || [];
         renderKanban();
         renderTable();
         updateStats();
     }
 
+    // Filtre appliqué uniquement à l'AFFICHAGE du kanban/table (pas au cache)
+    function getVisibleProspects() {
+        return prospects.filter(function(p) {
+            return !p.converted_client_id;
+        });
+    }
+
     function updateStats() {
-        document.getElementById('statTotal').textContent = prospects.length;
-        document.getElementById('statNew').textContent = prospects.filter(function(p) { return p.stage === 'nouveau'; }).length;
-        var inProgress = prospects.filter(function(p) { return ['premier_echange', 'proposition_envoyee'].indexOf(p.stage) !== -1; }).length;
+        var visible = getVisibleProspects();
+        document.getElementById('statTotal').textContent = visible.length;
+        document.getElementById('statNew').textContent = visible.filter(function(p) { return p.stage === 'nouveau'; }).length;
+        var inProgress = visible.filter(function(p) { return ['premier_echange', 'proposition_envoyee'].indexOf(p.stage) !== -1; }).length;
         document.getElementById('statInProgress').textContent = inProgress;
-        document.getElementById('statWon').textContent = prospects.filter(function(p) { return p.stage === 'gagne'; }).length;
-        document.getElementById('statLost').textContent = prospects.filter(function(p) { return p.stage === 'perdu'; }).length;
+        document.getElementById('statWon').textContent = visible.filter(function(p) { return p.stage === 'gagne'; }).length;
+        document.getElementById('statLost').textContent = visible.filter(function(p) { return p.stage === 'perdu'; }).length;
     }
 
     function renderKanban() {
+        var visible = getVisibleProspects();
         STAGES.forEach(function(stage) {
             var container = document.querySelector('.cards-container[data-stage="' + stage.key + '"]');
             var countEl = document.querySelector('[data-count="' + stage.key + '"]');
-            var stageProspects = prospects.filter(function(p) { return p.stage === stage.key; });
+            var stageProspects = visible.filter(function(p) { return p.stage === stage.key; });
             countEl.textContent = stageProspects.length;
             container.innerHTML = stageProspects.map(function(p) {
                 var pri = getPriorityInfo(p.priority);
@@ -2834,7 +2921,7 @@
 
     function renderTable() {
         var tbody = document.getElementById('tableBody');
-        tbody.innerHTML = prospects.map(function(p) {
+        tbody.innerHTML = getVisibleProspects().map(function(p) {
             var pri = getPriorityInfo(p.priority);
             return '<tr onclick="openPanel(\'' + p.id + '\')" style="cursor:pointer">' +
                 '<td style="font-weight:700;">' + escapeHtml(p.company_name) + '</td>' +
@@ -3154,8 +3241,27 @@
         if (updated) {
             currentProspect = Object.assign(currentProspect, data);
             document.getElementById('panelCompany').textContent = data.company_name;
+
+            // Sync des infos communes vers la row clients liée si elle existe
+            if (currentProspect.converted_client_id) {
+                var clientContactName = [data.contact_first_name, data.contact_last_name].filter(Boolean).join(' ') || null;
+                var clientSync = {
+                    name: data.company_name,
+                    website: data.company_website,
+                    sector: data.company_sector,
+                    contact_name: clientContactName,
+                    contact_email: data.contact_email,
+                    contact_phone: data.contact_phone
+                };
+                var syncRes = await sb.from('clients').update(clientSync).eq('id', currentProspect.converted_client_id);
+                if (syncRes.error) {
+                    console.warn('Sync client failed:', syncRes.error);
+                }
+            }
+
             toast('Informations enregistrees');
             await loadProspects();
+            await loadClients();
         }
     }
     window.saveProspectInfo = saveProspectInfo;
@@ -7048,6 +7154,14 @@
             details.className = 'contract-details';
             details.innerHTML = renderContractDetails(p);
             infoBanner.insertAdjacentElement('afterend', details);
+
+            // Widget Performance Ads (chargé en async, inséré après le contract-details)
+            var adsWidget = document.createElement('div');
+            adsWidget.id = 'performanceAdsWidget';
+            adsWidget.className = 'performance-ads-widget';
+            adsWidget.innerHTML = '<div class="performance-ads-widget__loading">Chargement des performances Ads...</div>';
+            details.insertAdjacentElement('afterend', adsWidget);
+            loadPerformanceAdsWidget(p.converted_client_id);
             return;
         }
 
@@ -7131,17 +7245,158 @@
             (p.contract_notes ? '<div class="contract-details__notes"><strong>Notes :</strong> ' + escapeHtml(p.contract_notes) + '</div>' : '');
     }
 
+    // ═══════════════════════════════════════════════════════
+    // WIDGET PERFORMANCE ADS dans la fiche client
+    // ═══════════════════════════════════════════════════════
+    async function loadPerformanceAdsWidget(clientId) {
+        var container = document.getElementById('performanceAdsWidget');
+        if (!container || !clientId) return;
+
+        // Fenêtre des 30 derniers jours
+        var today = new Date();
+        var thirtyDaysAgo = new Date(today.getTime() - 30 * 86400000);
+        var fromDate = thirtyDaysAgo.toISOString().split('T')[0];
+
+        // Fetch en parallèle : weekly_spend, orders, ad_accounts
+        var [spendRes, ordersRes, accountsRes] = await Promise.all([
+            sb.from('ad_weekly_spend').select('spend, revenue, orders_count, platform, year, week').eq('client_id', clientId),
+            sb.from('orders').select('total_ttc, order_date, channel').eq('client_id', clientId).gte('order_date', fromDate),
+            sb.from('ad_accounts').select('platform, name').eq('client_id', clientId)
+        ]);
+
+        var allSpend = spendRes.data || [];
+        var orders = ordersRes.data || [];
+        var accounts = accountsRes.data || [];
+
+        // Filtre ad_weekly_spend sur les 30 derniers jours (approximation par année/semaine)
+        var cutoffMillis = thirtyDaysAgo.getTime();
+        var recentSpend = allSpend.filter(function(s) {
+            // Convertit année+semaine en date approximative (lundi de la semaine ISO)
+            var d = new Date(s.year, 0, 1 + (s.week - 1) * 7);
+            return d.getTime() >= cutoffMillis;
+        });
+
+        var totalSpend = recentSpend.reduce(function(sum, s) { return sum + (parseFloat(s.spend) || 0); }, 0);
+        var totalRevenueSpend = recentSpend.reduce(function(sum, s) { return sum + (parseFloat(s.revenue) || 0); }, 0);
+        var totalOrdersSpend = recentSpend.reduce(function(sum, s) { return sum + (s.orders_count || 0); }, 0);
+
+        var totalOrdersCA = orders.reduce(function(sum, o) { return sum + (parseFloat(o.total_ttc) || 0); }, 0);
+        var ordersCount = orders.length;
+
+        // Source la plus fiable pour revenue : orders si > 0, sinon ad_weekly_spend.revenue
+        var revenue = totalOrdersCA > 0 ? totalOrdersCA : totalRevenueSpend;
+        var effectiveOrdersCount = ordersCount > 0 ? ordersCount : totalOrdersSpend;
+        var roas = totalSpend > 0 ? revenue / totalSpend : 0;
+
+        // Compte les comptes Ads par plateforme
+        var accountsByPlatform = {};
+        accounts.forEach(function(a) {
+            accountsByPlatform[a.platform] = (accountsByPlatform[a.platform] || 0) + 1;
+        });
+
+        var hasData = totalSpend > 0 || revenue > 0 || accounts.length > 0;
+
+        if (!hasData) {
+            container.innerHTML =
+                '<div class="performance-ads-widget__header">' +
+                    '<div class="performance-ads-widget__title">' +
+                        '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>' +
+                        'Performance Ads' +
+                    '</div>' +
+                    '<a class="performance-ads-widget__link" href="/admin/clients.html" target="_blank">' +
+                        'Dashboard Ads' +
+                        '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>' +
+                    '</a>' +
+                '</div>' +
+                '<div class="performance-ads-widget__empty">Aucune donnée Ads disponible sur les 30 derniers jours. Configure les comptes Ads côté Dashboard pour voir les KPIs ici.</div>';
+            return;
+        }
+
+        // Calcul du niveau ROAS (bon/moyen/mauvais)
+        var roasClass = 'medium';
+        if (roas >= 3) roasClass = 'good';
+        else if (roas > 0 && roas < 1.5) roasClass = 'bad';
+
+        var fmt = function(n) { return Math.round(n).toLocaleString('fr-FR'); };
+        var fmtRoas = function(n) { return n > 0 ? n.toFixed(2) + 'x' : '—'; };
+
+        var accountsHtml = '';
+        if (accounts.length > 0) {
+            var pillsHtml = Object.keys(accountsByPlatform).map(function(p) {
+                var label = { google_ads: 'Google', meta_ads: 'Meta', tiktok_ads: 'TikTok' }[p] || p;
+                var cls = { google_ads: 'google', meta_ads: 'meta', tiktok_ads: 'tiktok' }[p] || '';
+                return '<span class="performance-ads-widget__account-pill performance-ads-widget__account-pill--' + cls + '">' + label + ' · ' + accountsByPlatform[p] + ' compte' + (accountsByPlatform[p] > 1 ? 's' : '') + '</span>';
+            }).join('');
+            accountsHtml = '<div class="performance-ads-widget__accounts">' + pillsHtml + '</div>';
+        }
+
+        container.innerHTML =
+            '<div class="performance-ads-widget__header">' +
+                '<div class="performance-ads-widget__title">' +
+                    '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>' +
+                    'Performance Ads <span style="font-size:0.7rem;font-weight:600;color:var(--gray);margin-left:4px;">(30 derniers jours)</span>' +
+                '</div>' +
+                '<a class="performance-ads-widget__link" href="/admin/clients.html" target="_blank">' +
+                    'Dashboard Ads' +
+                    '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>' +
+                '</a>' +
+            '</div>' +
+            '<div class="performance-ads-widget__grid">' +
+                '<div class="performance-ads-widget__kpi">' +
+                    '<div class="performance-ads-widget__kpi-label">Dépense</div>' +
+                    '<div class="performance-ads-widget__kpi-value">' + fmt(totalSpend) + ' €</div>' +
+                '</div>' +
+                '<div class="performance-ads-widget__kpi performance-ads-widget__kpi--primary">' +
+                    '<div class="performance-ads-widget__kpi-label">CA généré</div>' +
+                    '<div class="performance-ads-widget__kpi-value">' + fmt(revenue) + ' €</div>' +
+                '</div>' +
+                '<div class="performance-ads-widget__kpi performance-ads-widget__kpi--roas --' + roasClass + '">' +
+                    '<div class="performance-ads-widget__kpi-label">ROAS</div>' +
+                    '<div class="performance-ads-widget__kpi-value">' + fmtRoas(roas) + '</div>' +
+                '</div>' +
+                '<div class="performance-ads-widget__kpi">' +
+                    '<div class="performance-ads-widget__kpi-label">Commandes</div>' +
+                    '<div class="performance-ads-widget__kpi-value">' + effectiveOrdersCount + '</div>' +
+                    (effectiveOrdersCount > 0 ? '<div class="performance-ads-widget__kpi-sub">Panier moyen ' + fmt(revenue / effectiveOrdersCount) + ' €</div>' : '') +
+                '</div>' +
+            '</div>' +
+            accountsHtml;
+    }
+    window.loadPerformanceAdsWidget = loadPerformanceAdsWidget;
+
     // ── Met à jour le compteur Prospects du big toggle ──
     var _originalLoadProspects = loadProspects;
     loadProspects = async function() {
         await _originalLoadProspects();
-        document.getElementById('countProspects').textContent = prospects.length;
+        document.getElementById('countProspects').textContent = getVisibleProspects().length;
     };
     window.loadProspects = loadProspects;
 
     // ── INIT ──
-    loadProspects();
-    loadClients();
+    (async function init() {
+        await loadProspects();
+        await loadClients();
+
+        // Deep link : ?openClient=<client_id> (ex: depuis clients.html "Fiche CRM")
+        var params = new URLSearchParams(window.location.search);
+        var clientId = params.get('openClient');
+        if (clientId) {
+            // Cherche le client, puis ouvre sa fiche (crée le prospect lié si besoin)
+            var c = clients.find(function(x) { return x.id === clientId; });
+            if (c) {
+                switchCrmView('clients');
+                if (c.prospect_id) {
+                    openPanel(c.prospect_id);
+                } else {
+                    openClientWithoutProspect(clientId);
+                }
+            } else {
+                toast('Client introuvable', 'error');
+            }
+            // Nettoie l'URL pour éviter re-trigger au refresh
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    })();
 
 })();
 </script>

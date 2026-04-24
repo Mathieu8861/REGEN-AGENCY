@@ -539,6 +539,12 @@
             <div class="client-links" id="client-info"></div>
             <div style="margin-left:auto; display:flex; gap:8px;" data-admin-only>
                 <button class="btn btn--primary btn--sm" id="add-client-btn">+ Nouveau client</button>
+                <button class="btn btn--sm" id="crm-link-btn" style="background:#173C3A; color:white; border:none; display:none;" title="Ouvrir la fiche CRM de ce client">
+                    <span style="display:inline-flex;align-items:center;gap:6px;">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:13px;height:13px;"><path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/></svg>
+                        Fiche CRM
+                    </span>
+                </button>
                 <button class="btn btn--sm btn--config" id="config-client-btn">&#9881; Configuration</button>
             </div>
         </div>
@@ -1427,6 +1433,17 @@
             currentClient = null;
         }
 
+        function updateCrmLinkBtn() {
+            var btn = document.getElementById('crm-link-btn');
+            if (!btn) return;
+            btn.style.display = (currentClient && !isClientMode) ? '' : 'none';
+            btn.onclick = function() {
+                if (currentClient) {
+                    window.location.href = 'prospects.html?openClient=' + currentClient.id;
+                }
+            };
+        }
+
         select.addEventListener('change', function() {
             if (select.value === '__all__') {
                 currentClient = null;
@@ -1438,7 +1455,9 @@
                 currentClient = clients.find(function(c) { return c.id === select.value; });
                 loadAllData();
             }
+            updateCrmLinkBtn();
         });
+        updateCrmLinkBtn();
 
         // Default view
         if (isClientMode && clientGroupName) {
