@@ -64,6 +64,10 @@
         .btn--icon { padding: 6px 10px; min-width: 34px; justify-content: center; }
         .btn--accent { background: var(--accent); color: white; border-color: var(--accent); }
         .btn--accent:hover { opacity: 0.9; }
+        /* Boutons IA : violet cohérent avec la Synthèse IA */
+        .btn--ai { background: #7c3aed; color: white; border-color: #7c3aed; }
+        .btn--ai:hover { background: #6d28d9; border-color: #6d28d9; }
+        .btn--ai:disabled { background: #c4b5fd; border-color: #c4b5fd; cursor: wait; }
 
         .view-toggle { display: flex; border: 2px solid #d1d5db; border-radius: 50px; overflow: hidden; }
         .view-toggle button {
@@ -2175,7 +2179,7 @@
                 </div>
                 <div id="linksList"></div>
                 <div style="margin-top:12px;">
-                    <button class="btn btn--accent btn--sm" onclick="analyzeLinks()"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z"/></svg>Analyser les liens avec l'IA</span></button>
+                    <button class="btn btn--ai btn--sm" onclick="analyzeLinks()"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z"/></svg>Analyser les liens avec l'IA</span></button>
                 </div>
                 <div id="linksAiResult"></div>
 
@@ -2215,7 +2219,7 @@
                 <!-- ═══ Synthese ═══ -->
                 <h4 style="font-size:0.85rem; font-weight:700; color:var(--dark); margin-bottom:12px;">Synthese IA</h4>
                 <p style="font-size:0.78rem; color:var(--gray); margin-bottom:10px;">Genere un resume global du prospect a partir de toutes les donnees collectees.</p>
-                <button class="btn btn--accent btn--sm" onclick="generateSynthesis()" id="btnGenerateSynthesis"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z"/></svg>Générer une synthèse</span></button>
+                <button class="btn btn--ai btn--sm" onclick="generateSynthesis()" id="btnGenerateSynthesis"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z"/></svg>Générer une synthèse</span></button>
                 <div id="synthesisResult" style="margin-top:12px;"></div>
 
                 <!-- ═══ Proposition commerciale ═══ -->
@@ -2240,7 +2244,7 @@
                     <label class="form-label">Contexte / precisions (optionnel)</label>
                     <input class="form-input" id="propContext" placeholder="Ex: Le client veut demarrer avec Google Ads uniquement, budget 500EUR/mois...">
                 </div>
-                <button class="btn btn--accent btn--sm" onclick="generateProposalWithServices()" id="btnGenerateProposal"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Générer la proposition</span></button>
+                <button class="btn btn--ai btn--sm" onclick="generateProposalWithServices()" id="btnGenerateProposal"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Générer la proposition</span></button>
 
                 <div id="proposalResult" style="display:none; margin-top:16px;">
                     <div style="display:flex; gap:8px; justify-content:flex-end; margin-bottom:12px;">
@@ -2254,7 +2258,7 @@
                         <label class="form-label" style="margin-bottom:6px;">Modifications a appliquer</label>
                         <textarea class="form-textarea" id="proposalModifications" rows="2" style="font-size:0.82rem; min-height:60px;" placeholder="Ex: Retirer le SEO, augmenter le budget Google Ads a 1000EUR, ajouter une remise de 10%..."></textarea>
                         <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
-                            <button class="btn btn--accent btn--sm" onclick="regenerateProposalWithModifs()"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z"/></svg>Régénérer avec modifications</span></button>
+                            <button class="btn btn--ai btn--sm" onclick="regenerateProposalWithModifs()"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z"/></svg>Régénérer avec modifications</span></button>
                         </div>
                     </div>
                 </div>
@@ -2287,7 +2291,7 @@
                     <label class="form-label">Contexte / consigne (optionnel)</label>
                     <input class="form-input" id="emailContext" placeholder="Ex: On a eu un appel hier, il hesite entre nous et une autre agence...">
                 </div>
-                <button class="btn btn--accent btn--sm" onclick="generateEmailWithContext()" style="margin-bottom:12px;"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>Générer l'email</span></button>
+                <button class="btn btn--ai btn--sm" onclick="generateEmailWithContext()" style="margin-bottom:12px;"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>Générer l'email</span></button>
 
                 <div id="propositionContent" style="display:none;">
                     <div class="form-group" style="margin-bottom:12px;">
@@ -3740,7 +3744,7 @@
             html += '<div style="display:flex;align-items:center;gap:8px;">';
             html += '<span style="font-size:0.75rem;color:#888;">' + dateStr + '</span>';
             if (!summary) {
-                html += '<button class="btn btn--accent btn--sm" style="font-size:0.7rem;padding:4px 10px;" onclick="summarizeExchange(\'' + ex.id + '\')"><span style="display:inline-flex;align-items:center;gap:5px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:11px;height:11px;"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z"/></svg>Résumer</span></button>';
+                html += '<button class="btn btn--ai btn--sm" style="font-size:0.7rem;padding:4px 10px;" onclick="summarizeExchange(\'' + ex.id + '\')"><span style="display:inline-flex;align-items:center;gap:5px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:11px;height:11px;"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z"/></svg>Résumer</span></button>';
             }
             html += '<button style="background:none;border:none;cursor:pointer;color:#ef4444;display:inline-flex;padding:4px;" onclick="deleteExchange(\'' + ex.id + '\')" title="Supprimer"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M18 6L6 18M6 6l12 12"/></svg></button>';
             html += '</div></div>';
@@ -4421,7 +4425,7 @@
             '<div class="activity-inline-form__actions">' +
                 '<button class="btn btn--ghost btn--sm" onclick="closeInlineForm()">Annuler</button>' +
                 '<button class="btn btn--primary btn--sm" onclick="submitInlineExchange(false)">Enregistrer</button>' +
-                '<button class="btn btn--accent btn--sm" onclick="submitInlineExchange(true)"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:13px;height:13px;"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z"/></svg>Enregistrer + résumer IA</span></button>' +
+                '<button class="btn btn--ai btn--sm" onclick="submitInlineExchange(true)"><span style="display:inline-flex;align-items:center;gap:6px;"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:13px;height:13px;"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z"/></svg>Enregistrer + résumer IA</span></button>' +
             '</div>';
         form.style.display = 'block';
         setTimeout(function() { document.getElementById('inlineExchangeTitle').focus(); }, 50);
