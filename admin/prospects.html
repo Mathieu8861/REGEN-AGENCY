@@ -2784,7 +2784,12 @@
     // ── LOAD PROSPECTS ──
     async function loadProspects() {
         var res = await sb.from('prospects').select('*').eq('agency_id', AGENCY_ID).order('created_at', { ascending: false });
-        prospects = res.data || [];
+        var all = res.data || [];
+        // Exclure de la vue Prospects ceux qui sont deja convertis en client
+        // (ils restent en DB pour l'historique, et sont visibles dans la vue Clients)
+        prospects = all.filter(function(p) {
+            return !p.converted_client_id && p.relationship_type !== 'client_existant' && p.relationship_type !== 'ancien_client';
+        });
         renderKanban();
         renderTable();
         updateStats();
