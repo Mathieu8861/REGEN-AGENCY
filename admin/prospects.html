@@ -6556,7 +6556,7 @@
 
         var onClickHandler = prospect.id
             ? 'openPanel(\'' + prospect.id + '\')'
-            : 'toast(\'Ce client n\\\'est pas encore lié à un prospect — bientôt disponible\',\'success\')';
+            : 'openClientWithoutProspect(\'' + c.id + '\')';
 
         return '<div class="client-card" data-client-id="' + c.id + '" onclick="' + onClickHandler + '">' +
             '<div class="client-card__top">' +
@@ -6589,6 +6589,50 @@
         var btn = e.target.closest('[data-client-filter]');
         if (btn) setClientFilter(btn.dataset.clientFilter);
     });
+
+    // ── Ouvrir un client non lié à un prospect : on crée la fiche prospect à la volée ──
+    async function openClientWithoutProspect(clientId) {
+        var c = clients.find(function(x) { return x.id === clientId; });
+        if (!c) { toast('Client introuvable', 'error'); return; }
+
+        toast('Création de la fiche détaillée...', 'info');
+
+        // Split le nom en prénom / nom si possible
+        var firstName = null, lastName = null;
+        if (c.contact_name) {
+            var parts = c.contact_name.trim().split(/\s+/);
+            firstName = parts[0] || null;
+            lastName = parts.slice(1).join(' ') || null;
+        }
+
+        // Crée un prospect avec les infos du client existant
+        var prospectData = {
+            agency_id: AGENCY_ID,
+            company_name: c.name,
+            company_website: c.website || null,
+            company_sector: c.sector || null,
+            contact_first_name: firstName,
+            contact_last_name: lastName,
+            contact_email: c.contact_email || null,
+            contact_phone: c.contact_phone || null,
+            stage: 'gagne', // ils sont deja clients = stage gagne
+            relationship_type: 'client_existant',
+            ai_context: c.ai_summary || null,
+            converted_client_id: c.id
+        };
+        var ins = await sb.from('prospects').insert([prospectData]).select();
+        if (ins.error) { toast('Erreur : ' + ins.error.message, 'error'); return; }
+        var newProspect = ins.data[0];
+
+        // Met à jour le client avec le prospect_id
+        await sb.from('clients').update({ prospect_id: newProspect.id }).eq('id', c.id);
+
+        // Recharge et ouvre le panel
+        await loadProspects();
+        await loadClients();
+        openPanel(newProspect.id);
+    }
+    window.openClientWithoutProspect = openClientWithoutProspect;
 
     // ── NOUVEAU CLIENT (placeholder : renvoie vers la création de prospect pour l'instant) ──
     function openNewClientModal() {
