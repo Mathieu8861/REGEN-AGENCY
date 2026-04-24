@@ -3076,6 +3076,20 @@
         var btn = document.querySelector('.panel-sidebar__item[data-ptab="' + tabName + '"]');
         if (btn) btn.classList.add('--active');
 
+        // Scroll automatique vers le haut du contenu (on garde pas la position du tab précédent)
+        var scrollers = [
+            document.querySelector('.panel-content'),
+            document.querySelector('.prospect-panel'),
+            tab
+        ];
+        scrollers.forEach(function(el) {
+            if (el && typeof el.scrollTo === 'function') {
+                try { el.scrollTo({ top: 0, behavior: 'instant' }); } catch (e) { el.scrollTop = 0; }
+            } else if (el) {
+                el.scrollTop = 0;
+            }
+        });
+
         // Onglet Activité : charge la timeline unifiée à chaque activation
         if (tabName === 'suivi' && currentProspectId) {
             loadActivityTimeline(currentProspectId);
