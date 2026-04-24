@@ -6591,11 +6591,12 @@
     });
 
     // ── Ouvrir un client non lié à un prospect : on crée la fiche prospect à la volée ──
+    // Et on récupère TOUTES les infos déjà connues (services Ads, follow-ups, plateforme, notes)
     async function openClientWithoutProspect(clientId) {
         var c = clients.find(function(x) { return x.id === clientId; });
         if (!c) { toast('Client introuvable', 'error'); return; }
 
-        toast('Création de la fiche détaillée...', 'info');
+        toast('Création de la fiche détaillée avec les infos client...', 'info');
 
         // Split le nom en prénom / nom si possible
         var firstName = null, lastName = null;
@@ -6604,6 +6605,24 @@
             firstName = parts[0] || null;
             lastName = parts.slice(1).join(' ') || null;
         }
+
+        // Fetch les données liées au client en parallèle (services Ads + follow-ups)
+        var [servicesRes, followUpsRes] = await Promise.all([
+            sb.from('client_services').select('*').eq('client_id', c.id),
+            sb.from('client_follow_ups').select('*').eq('client_id', c.id).order('created_at', { ascending: true })
+        ]);
+        var clientServices = servicesRes.data || [];
+        var clientFollowUps = followUpsRes.data || [];
+
+        // Construit un ai_context enrichi avec les infos connues
+        var contextLines = [];
+        if (c.ai_summary) contextLines.push(c.ai_summary);
+        if (c.platform && c.platform !== 'other') contextLines.push('Plateforme : ' + c.platform);
+        if (c.relationship_status) contextLines.push('Statut : ' + c.relationship_status);
+        if (clientServices.length > 0) {
+            contextLines.push('Services en cours : ' + clientServices.map(function(s) { return s.service_label; }).join(', '));
+        }
+        if (c.notes) contextLines.push(c.notes);
 
         // Crée un prospect avec les infos du client existant
         var prospectData = {
@@ -6615,14 +6634,65 @@
             contact_last_name: lastName,
             contact_email: c.contact_email || null,
             contact_phone: c.contact_phone || null,
-            stage: 'gagne', // ils sont deja clients = stage gagne
+            stage: 'gagne',
             relationship_type: 'client_existant',
-            ai_context: c.ai_summary || null,
+            ai_context: contextLines.join('\n\n') || null,
             converted_client_id: c.id
         };
         var ins = await sb.from('prospects').insert([prospectData]).select();
         if (ins.error) { toast('Erreur : ' + ins.error.message, 'error'); return; }
         var newProspect = ins.data[0];
+
+        // Copie les services client → prospect_services
+        if (clientServices.length > 0) {
+            var servicesToInsert = clientServices.map(function(s) {
+                // Mappe les statuts client → prospect (prospect a plus de valeurs)
+                var statusMap = {
+                    discussion: 'besoin_exprime',
+                    devis_envoye: 'devis_envoye',
+                    en_cours: 'en_cours',
+                    livre: 'livre',
+                    recurrent: 'recurrent',
+                    annule: 'annule'
+                };
+                return {
+                    prospect_id: newProspect.id,
+                    service_type: s.service_type,
+                    service_label: s.service_label,
+                    status: statusMap[s.status] || 'en_cours',
+                    price_ht: s.price_ht,
+                    started_at: s.started_at,
+                    delivered_at: s.delivered_at,
+                    notes: s.notes
+                };
+            });
+            await sb.from('prospect_services').insert(servicesToInsert);
+        }
+
+        // Copie les follow-ups client → prospect_follow_ups
+        if (clientFollowUps.length > 0) {
+            var fupsToInsert = clientFollowUps.map(function(f) {
+                return {
+                    prospect_id: newProspect.id,
+                    note: f.note,
+                    category: f.category,
+                    created_by: f.created_by || 'migration'
+                };
+            });
+            await sb.from('prospect_follow_ups').insert(fupsToInsert);
+        }
+
+        // Crée une activity "import" pour tracer la reprise
+        var importSummary = 'Fiche créée automatiquement à partir du client existant.';
+        if (clientServices.length > 0) importSummary += ' ' + clientServices.length + ' service(s) importé(s).';
+        if (clientFollowUps.length > 0) importSummary += ' ' + clientFollowUps.length + ' note(s) de suivi importée(s).';
+        await sb.from('prospect_activities').insert([{
+            prospect_id: newProspect.id,
+            activity_type: 'note',
+            title: 'Fiche détaillée activée',
+            content: importSummary,
+            created_by: 'system'
+        }]);
 
         // Met à jour le client avec le prospect_id
         await sb.from('clients').update({ prospect_id: newProspect.id }).eq('id', c.id);
