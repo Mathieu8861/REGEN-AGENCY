@@ -477,6 +477,62 @@
         .attr-roas--ok { background: #fef3c7; color: #d97706; }
         .attr-roas--bad { background: #fee2e2; color: #ef4444; }
 
+        /* Bulle info (tooltip) pour expliquer un KPI au hover/click */
+        .info-bubble {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 14px; height: 14px;
+            margin-left: 4px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #6b7280;
+            font-size: 0.62rem; font-weight: 800;
+            font-family: inherit;
+            cursor: help;
+            position: relative;
+            vertical-align: middle;
+            transition: all 0.15s;
+        }
+        .info-bubble:hover, .info-bubble:focus { background: var(--green, #2FB963); color: white; outline: none; }
+        .info-bubble__content {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 240px; max-width: 320px;
+            padding: 10px 12px;
+            background: var(--card-bg, white);
+            border: 1px solid var(--card-border, #e5e7eb);
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            font-size: 0.78rem; font-weight: 500;
+            color: var(--dark, #1a2332);
+            line-height: 1.45;
+            text-align: left; text-transform: none; letter-spacing: 0;
+            z-index: 100;
+            white-space: normal;
+        }
+        .info-bubble__content::before {
+            content: ''; position: absolute;
+            top: -5px; right: 6px;
+            width: 10px; height: 10px;
+            background: inherit;
+            border-left: 1px solid var(--card-border, #e5e7eb);
+            border-top: 1px solid var(--card-border, #e5e7eb);
+            transform: rotate(45deg);
+        }
+        .info-bubble__content strong { color: var(--green, #2FB963); }
+        .info-bubble__content code {
+            display: inline-block;
+            padding: 1px 6px; margin: 1px 0;
+            background: var(--hover-bg, #f3f4f6);
+            border-radius: 4px;
+            font-size: 0.74rem;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+        .info-bubble:hover .info-bubble__content,
+        .info-bubble:focus .info-bubble__content,
+        .info-bubble:focus-within .info-bubble__content { display: block; }
+
         /* Tableau "Performance par client" : separation visuelle du groupe de droite */
         .perf-clients-table th.perf-clients-divider,
         .perf-clients-table td.perf-clients-divider {
@@ -1676,7 +1732,7 @@
         html += '<th class="text-right">CA Ads</th>';
         html += '<th class="text-right">Commandes</th>';
         html += '<th class="text-right">Spend</th>';
-        html += '<th class="text-right">ROAS Site</th>';
+        html += '<th class="text-right">ROAS Site' + infoBubble('<strong>ROAS Site</strong> = <code>CA Ads / Spend</code><br><br>Calculé à partir des commandes <strong>réellement passées sur ton site</strong> et attribuées aux Ads via le tracking UTM (channel = google_ads, meta_ads, tiktok_ads).<br><br>C\'est la mesure côté <strong>site/CMS</strong> — différente du ROAS Gads/Meta qui prend les conversions remontées par chaque plateforme (souvent surestimées).') + '</th>';
         html += '<th class="text-right">CPA</th>';
         // Groupe de droite (séparé) — KPIs détaillés clients
         html += '<th class="text-right perf-clients-divider">CA Total</th>';
@@ -1992,7 +2048,7 @@
 
         var html = '<div class="table-wrap"><table class="attr-table"><thead><tr>';
         html += '<th style="text-align:left;">Source</th>';
-        html += '<th>ROAS Site</th>';
+        html += '<th>ROAS Site' + infoBubble('<strong>ROAS Site</strong> = <code>CA / Spend</code><br><br>Calculé à partir des commandes <strong>réellement passées sur le site</strong> attribuées à cette source via UTM. Mesure côté site/CMS — souvent plus juste que les conversions remontées par les plateformes Ads.') + '</th>';
         html += '<th>ROAS Gads</th>';
         html += '<th>Commandes</th>';
         html += '<th>CA</th>';
@@ -3642,6 +3698,14 @@
     // ═══════════════════════════════════════
     function formatMoney(n) {
         return parseFloat(n || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' EUR';
+    }
+
+    // Bulle info (tooltip) pour expliquer un KPI. Hover, click ou tab + entrer.
+    function infoBubble(html) {
+        return '<span class="info-bubble" tabindex="0" role="button" aria-label="Plus d\'infos">' +
+                'i' +
+                '<span class="info-bubble__content">' + html + '</span>' +
+            '</span>';
     }
     function formatDate(d) {
         if (!d) return '-';
