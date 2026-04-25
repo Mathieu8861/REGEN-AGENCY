@@ -5,10 +5,14 @@
  */
 (function() {
     var ADMIN_SESSION_KEY = 'regen_admin_auth';
+    var isAdmin = sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
 
-    // ── Auth check : redirige si pas connecté ──
-    if (sessionStorage.getItem(ADMIN_SESSION_KEY) !== 'true') {
-        window.location.href = '../connexion.html';
+    // Mode CLIENT (session Supabase Auth, sans flag admin) :
+    // ne pas injecter la sidebar admin et ne pas rediriger.
+    // La page (ex: clients.html) gere son propre check d'auth client.
+    if (!isAdmin) {
+        // On laisse le flow de la page continuer.
+        // Si vraiment aucune session existe, c'est la page elle-meme qui redirigera.
         return;
     }
 
