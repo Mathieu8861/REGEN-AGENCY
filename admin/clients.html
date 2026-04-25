@@ -1687,8 +1687,8 @@
         sorted.forEach(function(cm) {
             if (cm.ca === 0 && cm.orders === 0 && cm.spend === 0) return;
             html += '<tr>';
-            html += '<td style="text-align:left; font-weight:700;">' + cm.name + '</td>';
-            html += '<td class="text-right text-bold" style="color:var(--green);">' + formatMoney(cm.adsCA) + '</td>';
+            html += '<td style="text-align:left;">' + cm.name + '</td>';
+            html += '<td class="text-right" style="color:var(--green);">' + formatMoney(cm.adsCA) + '</td>';
             html += '<td class="text-right">' + cm.adsOrders + '</td>';
             html += '<td class="text-right">' + (cm.spend > 0 ? formatMoney(cm.spend) : '-') + '</td>';
             html += '<td class="text-right">' + roasBadge(cm.roas) + '</td>';
