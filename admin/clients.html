@@ -483,7 +483,7 @@
             width: 16px; height: 16px;
             margin-left: 6px;
             border-radius: 50%;
-            background: #ef4444;
+            background: #f87171;
             color: white;
             font-size: 0.7rem; font-weight: 800;
             font-family: inherit;
@@ -491,9 +491,9 @@
             position: relative;
             vertical-align: middle;
             transition: all 0.15s;
-            box-shadow: 0 0 0 2px rgba(239,68,68,0.18);
+            box-shadow: 0 0 0 2px rgba(248,113,113,0.18);
         }
-        .info-bubble:hover, .info-bubble:focus { background: #dc2626; outline: none; box-shadow: 0 0 0 3px rgba(239,68,68,0.28); }
+        .info-bubble:hover, .info-bubble:focus { background: #ef4444; outline: none; box-shadow: 0 0 0 3px rgba(248,113,113,0.28); }
         .info-bubble__content {
             display: none;
             position: absolute;
@@ -3704,7 +3704,7 @@
     // Bulle info (tooltip) pour expliquer un KPI. Hover, click ou tab + entrer.
     function infoBubble(html) {
         return '<span class="info-bubble" tabindex="0" role="button" aria-label="Plus d\'infos">' +
-                '!' +
+                '?' +
                 '<span class="info-bubble__content">' + html + '</span>' +
             '</span>';
     }
