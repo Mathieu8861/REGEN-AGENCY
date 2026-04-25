@@ -477,6 +477,16 @@
         .attr-roas--ok { background: #fef3c7; color: #d97706; }
         .attr-roas--bad { background: #fee2e2; color: #ef4444; }
 
+        /* Tableau "Performance par client" : separation visuelle du groupe de droite */
+        .perf-clients-table th.perf-clients-divider,
+        .perf-clients-table td.perf-clients-divider {
+            border-left: 2px solid var(--table-header-border, #e5e7eb);
+            padding-left: 14px;
+        }
+        .perf-clients-table th.perf-clients-divider {
+            background: var(--hover-bg, #fafbfc);
+        }
+
         .hidden { display: none !important; }
 
         /* ─── Responsive ─── */
@@ -1650,50 +1660,62 @@
             return cm;
         }).sort(function(a, b) { return b.adsCA - a.adsCA; });
 
-        var html = '<div class="table-wrap"><table><thead><tr>';
-        html += '<th style="text-align:left;">Client</th><th class="text-right">CA Ads</th><th class="text-right">CA Total</th><th class="text-right">Commandes</th><th class="text-right">Spend</th><th class="text-right">ROAS Site</th><th class="text-right">ROAS Ads</th><th class="text-right">ROAS Meta</th><th class="text-right">CPA</th>';
+        // Helper barème ROAS : rouge 0-2, orange 2-4, vert >4
+        function roasClassOf(v) {
+            if (v <= 0) return '';
+            if (v > 4) return 'attr-roas--good';
+            if (v >= 2) return 'attr-roas--ok';
+            return 'attr-roas--bad';
+        }
+        function roasBadge(v) {
+            return v > 0 ? '<span class="attr-roas-badge ' + roasClassOf(v) + '">' + v.toFixed(2) + '</span>' : '-';
+        }
+
+        var html = '<div class="table-wrap"><table class="perf-clients-table"><thead><tr>';
+        html += '<th style="text-align:left;">Client</th>';
+        html += '<th class="text-right">CA Ads</th>';
+        html += '<th class="text-right">Commandes</th>';
+        html += '<th class="text-right">Spend</th>';
+        html += '<th class="text-right">ROAS Site</th>';
+        html += '<th class="text-right">CPA</th>';
+        // Groupe de droite (séparé) — KPIs détaillés clients
+        html += '<th class="text-right perf-clients-divider">CA Total</th>';
+        html += '<th class="text-right">ROAS Ads</th>';
+        html += '<th class="text-right">ROAS Meta</th>';
         html += '</tr></thead><tbody>';
 
         sorted.forEach(function(cm) {
             if (cm.ca === 0 && cm.orders === 0 && cm.spend === 0) return;
-            var roasClass = cm.roas >= 5 ? 'attr-roas--good' : cm.roas >= 2 ? 'attr-roas--ok' : cm.roas > 0 ? 'attr-roas--bad' : '';
-            var roasHtml = cm.spend > 0 ? '<span class="attr-roas-badge ' + roasClass + '">' + cm.roas.toFixed(2) + '</span>' : '-';
-            var roasGClass = cm.roasGads >= 5 ? 'attr-roas--good' : cm.roasGads >= 2 ? 'attr-roas--ok' : cm.roasGads > 0 ? 'attr-roas--bad' : '';
-            var roasGHtml = cm.roasGads > 0 ? '<span class="attr-roas-badge ' + roasGClass + '">' + cm.roasGads.toFixed(2) + '</span>' : '-';
-            var roasMClass = cm.roasMeta >= 5 ? 'attr-roas--good' : cm.roasMeta >= 2 ? 'attr-roas--ok' : cm.roasMeta > 0 ? 'attr-roas--bad' : '';
-            var roasMHtml = cm.roasMeta > 0 ? '<span class="attr-roas-badge ' + roasMClass + '">' + cm.roasMeta.toFixed(2) + '</span>' : '-';
             html += '<tr>';
             html += '<td style="text-align:left; font-weight:700;">' + cm.name + '</td>';
             html += '<td class="text-right text-bold" style="color:var(--green);">' + formatMoney(cm.adsCA) + '</td>';
-            html += '<td class="text-right text-muted">' + formatMoney(cm.ca) + '</td>';
             html += '<td class="text-right">' + cm.adsOrders + '</td>';
             html += '<td class="text-right">' + (cm.spend > 0 ? formatMoney(cm.spend) : '-') + '</td>';
-            html += '<td class="text-right">' + roasHtml + '</td>';
-            html += '<td class="text-right">' + roasGHtml + '</td>';
-            html += '<td class="text-right">' + roasMHtml + '</td>';
+            html += '<td class="text-right">' + roasBadge(cm.roas) + '</td>';
             html += '<td class="text-right">' + (cm.cpa > 0 ? formatMoney(cm.cpa) : '-') + '</td>';
+            // Groupe droite séparé
+            html += '<td class="text-right text-muted perf-clients-divider">' + formatMoney(cm.ca) + '</td>';
+            html += '<td class="text-right">' + roasBadge(cm.roasGads) + '</td>';
+            html += '<td class="text-right">' + roasBadge(cm.roasMeta) + '</td>';
             html += '</tr>';
         });
 
-        // Total row
+        // Total row : valeurs en gras pour les faire ressortir
         var totalGadsRevenue = clients.reduce(function(s, cl) { return s + (clientMap[cl.id].gadsRevenue || 0); }, 0);
         var totalMetaRevenue = clients.reduce(function(s, cl) { return s + (clientMap[cl.id].metaRevenue || 0); }, 0);
         var tRoas = totalSpend > 0 ? totalAdsCA / totalSpend : 0;
         var tRoasG = totalGadsRevenue > 0 && totalSpend > 0 ? totalGadsRevenue / totalSpend : 0;
         var tRoasM = totalMetaRevenue > 0 && totalSpend > 0 ? totalMetaRevenue / totalSpend : 0;
-        var tRoasClass = tRoas >= 5 ? 'attr-roas--good' : tRoas >= 2 ? 'attr-roas--ok' : tRoas > 0 ? 'attr-roas--bad' : '';
-        var tRoasGClass = tRoasG >= 5 ? 'attr-roas--good' : tRoasG >= 2 ? 'attr-roas--ok' : tRoasG > 0 ? 'attr-roas--bad' : '';
-        var tRoasMClass = tRoasM >= 5 ? 'attr-roas--good' : tRoasM >= 2 ? 'attr-roas--ok' : tRoasM > 0 ? 'attr-roas--bad' : '';
         html += '<tr class="attr-total">';
-        html += '<td style="text-align:left;">Total (' + clients.length + ' clients)</td>';
-        html += '<td class="text-right" style="color:var(--green);">' + formatMoney(totalAdsCA) + '</td>';
-        html += '<td class="text-right text-muted">' + formatMoney(totalCA) + '</td>';
-        html += '<td class="text-right">' + totalAdsOrders + '</td>';
-        html += '<td class="text-right">' + (totalSpend > 0 ? formatMoney(totalSpend) : '-') + '</td>';
-        html += '<td class="text-right">' + (totalSpend > 0 ? '<span class="attr-roas-badge ' + tRoasClass + '">' + tRoas.toFixed(2) + '</span>' : '-') + '</td>';
-        html += '<td class="text-right">' + (tRoasG > 0 ? '<span class="attr-roas-badge ' + tRoasGClass + '">' + tRoasG.toFixed(2) + '</span>' : '-') + '</td>';
-        html += '<td class="text-right">' + (tRoasM > 0 ? '<span class="attr-roas-badge ' + tRoasMClass + '">' + tRoasM.toFixed(2) + '</span>' : '-') + '</td>';
-        html += '<td class="text-right">' + (totalAdsOrders > 0 && totalSpend > 0 ? formatMoney(totalSpend / totalAdsOrders) : '-') + '</td>';
+        html += '<td style="text-align:left;"><strong>Total (' + clients.length + ' clients)</strong></td>';
+        html += '<td class="text-right text-bold" style="color:var(--green);">' + formatMoney(totalAdsCA) + '</td>';
+        html += '<td class="text-right text-bold">' + totalAdsOrders + '</td>';
+        html += '<td class="text-right text-bold">' + (totalSpend > 0 ? formatMoney(totalSpend) : '-') + '</td>';
+        html += '<td class="text-right text-bold">' + (totalSpend > 0 ? '<span class="attr-roas-badge ' + roasClassOf(tRoas) + '">' + tRoas.toFixed(2) + '</span>' : '-') + '</td>';
+        html += '<td class="text-right text-bold">' + (totalAdsOrders > 0 && totalSpend > 0 ? formatMoney(totalSpend / totalAdsOrders) : '-') + '</td>';
+        html += '<td class="text-right text-bold perf-clients-divider">' + formatMoney(totalCA) + '</td>';
+        html += '<td class="text-right text-bold">' + (tRoasG > 0 ? '<span class="attr-roas-badge ' + roasClassOf(tRoasG) + '">' + tRoasG.toFixed(2) + '</span>' : '-') + '</td>';
+        html += '<td class="text-right text-bold">' + (tRoasM > 0 ? '<span class="attr-roas-badge ' + roasClassOf(tRoasM) + '">' + tRoasM.toFixed(2) + '</span>' : '-') + '</td>';
         html += '</tr></tbody></table></div>';
         document.getElementById('agency-client-table').innerHTML = html;
 
