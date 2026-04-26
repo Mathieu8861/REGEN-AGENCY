@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -180,6 +181,35 @@
 
         .task-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
         .task-card.dragging { opacity: 0.5; cursor: grabbing; }
+
+        /* Cards prospect : remontees depuis le CRM (next_action), non draggables */
+        .task-card--prospect {
+            cursor: pointer;
+            border-left: 3px solid #8b5cf6;
+            background: linear-gradient(135deg, #faf5ff, #fff 50%);
+        }
+        .task-card--prospect:hover { border-left-color: #6d28d9; }
+        .task-card__source-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.62rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.4px;
+            padding: 2px 7px; border-radius: 50px;
+            background: #ede9fe; color: #6d28d9;
+            margin-right: 6px;
+        }
+        .task-card__company {
+            font-size: 0.72rem; font-weight: 600;
+            color: #6b7280; margin-top: 2px;
+        }
+        .task-card__due {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.7rem; font-weight: 700;
+            padding: 2px 8px; border-radius: 50px;
+            margin-top: 6px;
+        }
+        .task-card__due--overdue { background: #fee2e2; color: #dc2626; }
+        .task-card__due--today { background: #fef3c7; color: #b45309; }
+        .task-card__due--future { background: #dbeafe; color: #1d4ed8; }
 
         .task-card-top {
             display: flex;
@@ -669,6 +699,13 @@
         // ══════════════════════
         var TASKS_KEY = 'regen_admin_tasks';
         var tasks = [];
+        var prospectActions = []; // Cache des next_action des prospects (lecture DB)
+
+        // ── Supabase init ──
+        var SUPABASE_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
+        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
+        var AGENCY_ID = '00000000-0000-0000-0000-000000000001';
+        var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
         function loadTasks() {
             try { tasks = JSON.parse(localStorage.getItem(TASKS_KEY)) || []; }
@@ -677,14 +714,79 @@
 
         function saveTasks() { localStorage.setItem(TASKS_KEY, JSON.stringify(tasks)); }
 
+        // ── Fetch les next_action des prospects ──
+        async function loadProspectActions() {
+            if (!sb) return;
+            var res = await sb.from('prospects')
+                .select('id, company_name, next_action, next_action_date, contact_first_name, contact_last_name, converted_client_id, stage')
+                .eq('agency_id', AGENCY_ID)
+                .not('next_action', 'is', null);
+            prospectActions = (res.data || []).filter(function(p) { return p.next_action && p.next_action.trim() !== ''; });
+            renderKanban();
+        }
+
         function renderKanban() {
+            // Pour chaque action prospect : déterminer dans quelle colonne la mettre (par urgence)
+            var today = new Date(); today.setHours(0, 0, 0, 0);
+            var prospectsByCol = { todo: [], progress: [], done: [] };
+            prospectActions.forEach(function(p) {
+                if (!p.next_action_date) {
+                    prospectsByCol.todo.push(p); // pas de date = à faire
+                    return;
+                }
+                var d = new Date(p.next_action_date); d.setHours(0, 0, 0, 0);
+                var diff = Math.round((d - today) / 86400000);
+                if (diff <= 0) prospectsByCol.progress.push(p); // aujourd'hui ou en retard
+                else prospectsByCol.todo.push(p); // dans le futur
+            });
+
             ['todo', 'progress', 'done'].forEach(function(col) {
                 var container = document.getElementById('cards-' + col);
                 var countEl = document.getElementById('count-' + col);
                 var colTasks = tasks.filter(function(t) { return t.column === col; });
-                countEl.textContent = colTasks.length;
+                var colProspects = prospectsByCol[col];
+                countEl.textContent = colTasks.length + colProspects.length;
                 container.innerHTML = '';
 
+                // 1) Cards prospect (remontées DB) en haut
+                colProspects.forEach(function(p) {
+                    var card = document.createElement('div');
+                    card.className = 'task-card task-card--prospect';
+                    card.dataset.prospectId = p.id;
+                    card.title = 'Cliquer pour ouvrir la fiche CRM';
+
+                    var contactName = [p.contact_first_name, p.contact_last_name].filter(Boolean).join(' ');
+                    var displayName = p.company_name + (contactName ? ' · ' + contactName : '');
+
+                    var dueHtml = '';
+                    if (p.next_action_date) {
+                        var d = new Date(p.next_action_date); d.setHours(0, 0, 0, 0);
+                        var diff = Math.round((d - today) / 86400000);
+                        var dueCls, dueLabel;
+                        if (diff < 0) { dueCls = 'overdue'; dueLabel = 'En retard de ' + Math.abs(diff) + ' j'; }
+                        else if (diff === 0) { dueCls = 'today'; dueLabel = "Aujourd'hui"; }
+                        else if (diff === 1) { dueCls = 'future'; dueLabel = 'Demain'; }
+                        else if (diff <= 7) { dueCls = 'future'; dueLabel = 'Dans ' + diff + ' j'; }
+                        else { dueCls = 'future'; dueLabel = new Date(p.next_action_date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }); }
+                        dueHtml = '<span class="task-card__due task-card__due--' + dueCls + '">📅 ' + dueLabel + '</span>';
+                    }
+
+                    var label = p.converted_client_id ? 'CLIENT' : 'PROSPECT';
+                    card.innerHTML =
+                        '<div class="task-card-top">' +
+                            '<span class="task-card__source-badge">' + label + '</span>' +
+                            '<span class="task-title">' + esc(p.next_action) + '</span>' +
+                        '</div>' +
+                        '<div class="task-card__company">' + esc(displayName) + '</div>' +
+                        dueHtml;
+                    card.addEventListener('click', function() {
+                        var url = '/admin/prospects.html?openProspect=' + p.id;
+                        window.location.href = url;
+                    });
+                    container.appendChild(card);
+                });
+
+                // 2) Cards tâches locales (localStorage, draggables)
                 colTasks.forEach(function(t) {
                     var card = document.createElement('div');
                     card.className = 'task-card';
@@ -997,6 +1099,8 @@
         renderKanban();
         loadProspects();
         renderProspects();
+        // Fetch async les next_action des prospects depuis la DB et re-render le kanban
+        loadProspectActions();
     })();
     </script>
     <script src="admin-shell.js"></script>

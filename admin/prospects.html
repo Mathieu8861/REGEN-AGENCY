@@ -7389,11 +7389,12 @@
         await loadProspects();
         await loadClients();
 
-        // Deep link : ?openClient=<client_id> (ex: depuis clients.html "Fiche CRM")
+        // Deep links
         var params = new URLSearchParams(window.location.search);
+
+        // ?openClient=<client_id> (ex: depuis clients.html "Fiche CRM")
         var clientId = params.get('openClient');
         if (clientId) {
-            // Cherche le client, puis ouvre sa fiche (crée le prospect lié si besoin)
             var c = clients.find(function(x) { return x.id === clientId; });
             if (c) {
                 switchCrmView('clients');
@@ -7405,7 +7406,24 @@
             } else {
                 toast('Client introuvable', 'error');
             }
-            // Nettoie l'URL pour éviter re-trigger au refresh
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+
+        // ?openProspect=<prospect_id> (ex: depuis taches.html "card prospect")
+        var prospectId = params.get('openProspect');
+        if (prospectId) {
+            var p = prospects.find(function(x) { return x.id === prospectId; });
+            if (p) {
+                // Si c'est un client converti, basculer en vue Clients
+                if (p.converted_client_id) {
+                    switchCrmView('clients');
+                } else {
+                    switchCrmView('prospects');
+                }
+                openPanel(prospectId);
+            } else {
+                toast('Prospect introuvable', 'error');
+            }
             window.history.replaceState({}, '', window.location.pathname);
         }
     })();
