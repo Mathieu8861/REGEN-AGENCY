@@ -7259,36 +7259,42 @@
         var thirtyDaysAgo = new Date(today.getTime() - 30 * 86400000);
         var fromDate = thirtyDaysAgo.toISOString().split('T')[0];
 
-        // Fetch en parallèle : weekly_spend, orders, ad_accounts
-        var [spendRes, ordersRes, accountsRes] = await Promise.all([
-            sb.from('ad_weekly_spend').select('spend, revenue, orders_count, platform, year, week').eq('client_id', clientId),
-            sb.from('orders').select('total_ttc, order_date, channel').eq('client_id', clientId).gte('order_date', fromDate),
-            sb.from('ad_accounts').select('platform, name').eq('client_id', clientId)
-        ]);
-
-        var allSpend = spendRes.data || [];
-        var orders = ordersRes.data || [];
+        // Étape 1 : Fetch ad_accounts du client
+        var accountsRes = await sb.from('ad_accounts').select('id, platform, name').eq('client_id', clientId);
         var accounts = accountsRes.data || [];
 
-        // Filtre ad_weekly_spend sur les 30 derniers jours (approximation par année/semaine)
-        var cutoffMillis = thirtyDaysAgo.getTime();
-        var recentSpend = allSpend.filter(function(s) {
-            // Convertit année+semaine en date approximative (lundi de la semaine ISO)
-            var d = new Date(s.year, 0, 1 + (s.week - 1) * 7);
-            return d.getTime() >= cutoffMillis;
-        });
+        // Étape 2 : Fetch les campagnes liées (pour pouvoir agréger les daily_metrics)
+        var totalSpend = 0;
+        if (accounts.length > 0) {
+            var accIds = accounts.map(function(a) { return a.id; });
+            var campRes = await sb.from('ad_campaigns').select('id').in('ad_account_id', accIds);
+            var camps = campRes.data || [];
+            if (camps.length > 0) {
+                var campIds = camps.map(function(c) { return c.id; });
+                var metricsRes = await sb.from('ad_daily_metrics').select('spend')
+                    .in('campaign_id', campIds)
+                    .gte('date', fromDate);
+                totalSpend = (metricsRes.data || []).reduce(function(sum, m) { return sum + (parseFloat(m.spend) || 0); }, 0);
+            }
+        }
 
-        var totalSpend = recentSpend.reduce(function(sum, s) { return sum + (parseFloat(s.spend) || 0); }, 0);
-        var totalRevenueSpend = recentSpend.reduce(function(sum, s) { return sum + (parseFloat(s.revenue) || 0); }, 0);
-        var totalOrdersSpend = recentSpend.reduce(function(sum, s) { return sum + (s.orders_count || 0); }, 0);
+        // Étape 3 : Fetch orders sur 30j et filtrer paid channels
+        var paidChannels = ['google_ads', 'meta_ads', 'tiktok_ads'];
+        var ordersRes = await sb.from('orders').select('total_ttc, channel')
+            .eq('client_id', clientId)
+            .gte('order_date', fromDate);
+        var orders = ordersRes.data || [];
+        var adsOrders = orders.filter(function(o) { return paidChannels.indexOf(o.channel) !== -1; });
 
-        var totalOrdersCA = orders.reduce(function(sum, o) { return sum + (parseFloat(o.total_ttc) || 0); }, 0);
-        var ordersCount = orders.length;
+        // Revenue & count des commandes Ads uniquement (pas le CA global)
+        var revenueAds = adsOrders.reduce(function(sum, o) { return sum + (parseFloat(o.total_ttc) || 0); }, 0);
+        var ordersCountAds = adsOrders.length;
 
-        // Source la plus fiable pour revenue : orders si > 0, sinon ad_weekly_spend.revenue
-        var revenue = totalOrdersCA > 0 ? totalOrdersCA : totalRevenueSpend;
-        var effectiveOrdersCount = ordersCount > 0 ? ordersCount : totalOrdersSpend;
-        var roas = totalSpend > 0 ? revenue / totalSpend : 0;
+        // ROAS Site = CA Ads / Spend (capé à 20x pour eviter aberrations)
+        var ROAS_CAP = 20;
+        var roasRaw = totalSpend > 0 ? revenueAds / totalSpend : 0;
+        var roas = Math.min(roasRaw, ROAS_CAP);
+        var roasOverCap = roasRaw > ROAS_CAP;
 
         // Compte les comptes Ads par plateforme
         var accountsByPlatform = {};
@@ -7296,7 +7302,7 @@
             accountsByPlatform[a.platform] = (accountsByPlatform[a.platform] || 0) + 1;
         });
 
-        var hasData = totalSpend > 0 || revenue > 0 || accounts.length > 0;
+        var hasData = totalSpend > 0 || revenueAds > 0 || accounts.length > 0;
 
         if (!hasData) {
             container.innerHTML =
@@ -7314,13 +7320,17 @@
             return;
         }
 
-        // Calcul du niveau ROAS (bon/moyen/mauvais)
+        // Niveau ROAS Site (barème uniformisé : rouge 0-2 / orange 2-4 / vert >4)
         var roasClass = 'medium';
-        if (roas >= 3) roasClass = 'good';
-        else if (roas > 0 && roas < 1.5) roasClass = 'bad';
+        if (roasRaw > 4) roasClass = 'good';
+        else if (roasRaw > 0 && roasRaw < 2) roasClass = 'bad';
 
         var fmt = function(n) { return Math.round(n).toLocaleString('fr-FR'); };
-        var fmtRoas = function(n) { return n > 0 ? n.toFixed(2) + 'x' : '—'; };
+        var fmtRoas = function(n) {
+            if (n <= 0) return '—';
+            if (roasOverCap) return ROAS_CAP + 'x+';
+            return n.toFixed(2) + 'x';
+        };
 
         var accountsHtml = '';
         if (accounts.length > 0) {
@@ -7345,21 +7355,21 @@
             '</div>' +
             '<div class="performance-ads-widget__grid">' +
                 '<div class="performance-ads-widget__kpi">' +
-                    '<div class="performance-ads-widget__kpi-label">Dépense</div>' +
+                    '<div class="performance-ads-widget__kpi-label">Dépense Ads</div>' +
                     '<div class="performance-ads-widget__kpi-value">' + fmt(totalSpend) + ' €</div>' +
                 '</div>' +
                 '<div class="performance-ads-widget__kpi performance-ads-widget__kpi--primary">' +
-                    '<div class="performance-ads-widget__kpi-label">CA généré</div>' +
-                    '<div class="performance-ads-widget__kpi-value">' + fmt(revenue) + ' €</div>' +
+                    '<div class="performance-ads-widget__kpi-label">CA Ads</div>' +
+                    '<div class="performance-ads-widget__kpi-value">' + fmt(revenueAds) + ' €</div>' +
                 '</div>' +
                 '<div class="performance-ads-widget__kpi performance-ads-widget__kpi--roas --' + roasClass + '">' +
-                    '<div class="performance-ads-widget__kpi-label">ROAS</div>' +
-                    '<div class="performance-ads-widget__kpi-value">' + fmtRoas(roas) + '</div>' +
+                    '<div class="performance-ads-widget__kpi-label">ROAS Site</div>' +
+                    '<div class="performance-ads-widget__kpi-value">' + fmtRoas(roasRaw) + '</div>' +
                 '</div>' +
                 '<div class="performance-ads-widget__kpi">' +
-                    '<div class="performance-ads-widget__kpi-label">Commandes</div>' +
-                    '<div class="performance-ads-widget__kpi-value">' + effectiveOrdersCount + '</div>' +
-                    (effectiveOrdersCount > 0 ? '<div class="performance-ads-widget__kpi-sub">Panier moyen ' + fmt(revenue / effectiveOrdersCount) + ' €</div>' : '') +
+                    '<div class="performance-ads-widget__kpi-label">Commandes Ads</div>' +
+                    '<div class="performance-ads-widget__kpi-value">' + ordersCountAds + '</div>' +
+                    (ordersCountAds > 0 ? '<div class="performance-ads-widget__kpi-sub">Panier moyen ' + fmt(revenueAds / ordersCountAds) + ' €</div>' : '') +
                 '</div>' +
             '</div>' +
             accountsHtml;
