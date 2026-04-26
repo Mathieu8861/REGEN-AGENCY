@@ -1063,7 +1063,8 @@
             });
         }
 
-        document.getElementById('btnAddProspect').addEventListener('click', addProspect);
+        var btnAddProspect = document.getElementById('btnAddProspect');
+        if (btnAddProspect) btnAddProspect.addEventListener('click', addProspect);
 
         // ── LOGOUT ──
         document.getElementById('btnLogout').addEventListener('click', function() {
