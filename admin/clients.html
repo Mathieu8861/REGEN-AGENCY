@@ -315,6 +315,7 @@
             transition: height 0.5s ease; position: relative;
         }
         .evo-bar__fill--ca { background: linear-gradient(180deg, var(--green), #05C08A); }
+        .evo-bar__fill--adsCA { background: linear-gradient(180deg, #14b8a6, #0d9488); }
         .evo-bar__fill--spend { background: linear-gradient(180deg, #f59e0b, #d97706); }
         .evo-bar__fill--roas { background: linear-gradient(180deg, #8b5cf6, #6d28d9); }
         .evo-bar__value {
@@ -326,6 +327,7 @@
         .evo-legend__item { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 600; color: var(--gray); }
         .evo-legend__dot { width: 10px; height: 10px; border-radius: 3px; }
         .evo-legend__dot--ca { background: linear-gradient(135deg, var(--green), #05C08A); }
+        .evo-legend__dot--adsCA { background: linear-gradient(135deg, #14b8a6, #0d9488); }
         .evo-legend__dot--spend { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .evo-legend__dot--roas { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
 
@@ -1834,6 +1836,8 @@
         }
 
         var paidChannels = ['google_ads', 'meta_ads', 'tiktok_ads'];
+        // Cap ROAS pour eviter les valeurs aberrantes (si Spend tres faible avec CA Ads important)
+        var ROAS_CAP = 20;
         var data = months.map(function(m) {
             var key = m.from.substring(0, 7);
             var mOrders = allOrders.filter(function(o) { return o.order_date >= m.from && o.order_date <= m.to; });
@@ -1841,24 +1845,55 @@
             var adsCA = mOrders.filter(function(o) { return paidChannels.indexOf(o.channel) !== -1; })
                 .reduce(function(s, o) { return s + parseFloat(o.total_ttc || 0); }, 0);
             var spend = spendByMonth[key] || 0;
-            return { label: m.label, ca: ca, spend: spend, roas: spend > 0 ? adsCA / spend : 0 };
+            // ROAS Site = CA Ads (commandes attribuees Ads via UTM) / Depenses Ads
+            var roasRaw = spend > 0 ? adsCA / spend : 0;
+            var roasCapped = Math.min(roasRaw, ROAS_CAP);
+            return {
+                label: m.label,
+                ca: ca,
+                adsCA: adsCA,
+                spend: spend,
+                roas: roasCapped,
+                roasRaw: roasRaw,
+                roasOverCap: roasRaw > ROAS_CAP
+            };
         });
 
         var maxCA = Math.max.apply(null, data.map(function(d) { return d.ca; })) || 1;
+        var maxAdsCA = Math.max.apply(null, data.map(function(d) { return d.adsCA; })) || 1;
         var maxSpend = Math.max.apply(null, data.map(function(d) { return d.spend; })) || 1;
         var maxROAS = Math.max.apply(null, data.map(function(d) { return d.roas; })) || 1;
 
         var html = '<div class="evo-chart">';
-        html += '<div class="evo-legend"><div class="evo-legend__item"><div class="evo-legend__dot evo-legend__dot--ca"></div> CA Total</div><div class="evo-legend__item"><div class="evo-legend__dot evo-legend__dot--spend"></div> Depenses Ads</div><div class="evo-legend__item"><div class="evo-legend__dot evo-legend__dot--roas"></div> ROAS Ads</div></div>';
+        html += '<div class="evo-legend">' +
+            '<div class="evo-legend__item"><div class="evo-legend__dot evo-legend__dot--ca"></div> CA Total</div>' +
+            '<div class="evo-legend__item"><div class="evo-legend__dot evo-legend__dot--adsCA"></div> CA Ads</div>' +
+            '<div class="evo-legend__item"><div class="evo-legend__dot evo-legend__dot--spend"></div> Dépenses Ads</div>' +
+            '<div class="evo-legend__item"><div class="evo-legend__dot evo-legend__dot--roas"></div> ROAS Site</div>' +
+        '</div>';
 
-        ['ca', 'spend', 'roas'].forEach(function(metric) {
-            var titles = { ca: "Chiffre d'affaires", spend: 'Depenses Ads', roas: 'ROAS Ads' };
-            var max = metric === 'ca' ? maxCA : metric === 'spend' ? maxSpend : maxROAS;
+        var titles = {
+            ca: "CA Total",
+            adsCA: "CA Ads",
+            spend: "Dépenses Ads",
+            roas: "ROAS Site"
+        };
+        var maxes = { ca: maxCA, adsCA: maxAdsCA, spend: maxSpend, roas: maxROAS };
+
+        ['ca', 'adsCA', 'spend', 'roas'].forEach(function(metric) {
+            var max = maxes[metric];
             html += '<div class="evo-chart__row"><div class="evo-chart__label">' + titles[metric] + '</div><div class="evo-chart__bars">';
             data.forEach(function(d) {
-                var val = metric === 'ca' ? d.ca : metric === 'spend' ? d.spend : d.roas;
+                var val = d[metric];
                 var h = max > 0 ? Math.max(2, (val / max) * 120) : 2;
-                var label = metric === 'roas' ? (val > 0 ? val.toFixed(1) + 'x' : '') : (val > 0 ? formatCompact(val) : '');
+                var label;
+                if (metric === 'roas') {
+                    if (val <= 0) label = '';
+                    else if (d.roasOverCap) label = ROAS_CAP + 'x+';
+                    else label = val.toFixed(1) + 'x';
+                } else {
+                    label = val > 0 ? formatCompact(val) : '';
+                }
                 html += '<div class="evo-bar"><div class="evo-bar__value">' + label + '</div><div class="evo-bar__fill evo-bar__fill--' + metric + '" style="height:' + h + 'px;"></div><div class="evo-bar__month">' + d.label + '</div></div>';
             });
             html += '</div></div>';
