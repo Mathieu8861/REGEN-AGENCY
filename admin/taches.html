@@ -182,21 +182,32 @@
         .task-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
         .task-card.dragging { opacity: 0.5; cursor: grabbing; }
 
-        /* Cards prospect : remontees depuis le CRM (next_action), non draggables */
+        /* Couleur de fond selon l'origine de la tâche :
+           - Manuelle (locale) : ambre transparent
+           - Prospect (DB) : mauve transparent
+           - Client (DB)   : vert transparent */
+        .task-card--manual { background: rgba(245, 158, 11, 0.07); }
         .task-card--prospect {
             cursor: pointer;
-            border-left: 3px solid #8b5cf6;
-            background: linear-gradient(135deg, #faf5ff, #fff 50%);
+            background: rgba(139, 92, 246, 0.10);
         }
-        .task-card--prospect:hover { border-left-color: #6d28d9; }
+        .task-card--client {
+            cursor: pointer;
+            background: rgba(47, 185, 99, 0.10);
+        }
+        .task-card--prospect:hover { background: rgba(139, 92, 246, 0.16); }
+        .task-card--client:hover   { background: rgba(47, 185, 99, 0.16); }
+        .task-card--manual:hover   { background: rgba(245, 158, 11, 0.13); }
+
         .task-card__source-badge {
             display: inline-flex; align-items: center; gap: 4px;
             font-size: 0.62rem; font-weight: 800;
             text-transform: uppercase; letter-spacing: 0.4px;
             padding: 2px 7px; border-radius: 50px;
-            background: #ede9fe; color: #6d28d9;
             margin-right: 6px;
         }
+        .task-card__source-badge--prospect { background: #ede9fe; color: #6d28d9; }
+        .task-card__source-badge--client { background: #d1fae5; color: #059669; }
         .task-card__company {
             font-size: 0.72rem; font-weight: 600;
             color: #6b7280; margin-top: 2px;
@@ -724,10 +735,11 @@
                 countEl.textContent = colTasks.length + colProspects.length;
                 container.innerHTML = '';
 
-                // 1) Cards prospect (remontées DB) en haut
+                // 1) Cards prospect/client (remontées DB) en haut
                 colProspects.forEach(function(p) {
+                    var isClient = !!p.converted_client_id;
                     var card = document.createElement('div');
-                    card.className = 'task-card task-card--prospect';
+                    card.className = 'task-card ' + (isClient ? 'task-card--client' : 'task-card--prospect');
                     card.dataset.prospectId = p.id;
                     card.title = 'Cliquer pour ouvrir la fiche CRM';
 
@@ -747,10 +759,11 @@
                         dueHtml = '<span class="task-card__due task-card__due--' + dueCls + '">📅 ' + dueLabel + '</span>';
                     }
 
-                    var label = p.converted_client_id ? 'CLIENT' : 'PROSPECT';
+                    var label = isClient ? 'CLIENT' : 'PROSPECT';
+                    var badgeCls = isClient ? 'task-card__source-badge--client' : 'task-card__source-badge--prospect';
                     card.innerHTML =
                         '<div class="task-card-top">' +
-                            '<span class="task-card__source-badge">' + label + '</span>' +
+                            '<span class="task-card__source-badge ' + badgeCls + '">' + label + '</span>' +
                             '<span class="task-title">' + esc(p.next_action) + '</span>' +
                         '</div>' +
                         '<div class="task-card__company">' + esc(displayName) + '</div>' +
@@ -765,7 +778,7 @@
                 // 2) Cards tâches locales (localStorage, draggables)
                 colTasks.forEach(function(t) {
                     var card = document.createElement('div');
-                    card.className = 'task-card';
+                    card.className = 'task-card task-card--manual';
                     card.draggable = true;
                     card.dataset.id = t.id;
                     card.innerHTML =
