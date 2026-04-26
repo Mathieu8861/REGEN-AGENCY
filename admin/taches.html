@@ -575,31 +575,7 @@
             </div>
         </div>
 
-        <!-- SECTION: PROSPECTS -->
-        <div class="section-divider">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <h2>Suivi des prospects</h2>
-            <button class="btn btn-add" id="btnAddProspect"><span>+</span> Nouveau prospect</button>
-        </div>
-
-        <div class="prospects-wrapper">
-            <table class="prospects-table">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Contact</th>
-                        <th>Entreprise</th>
-                        <th>Statut</th>
-                        <th>Canal</th>
-                        <th>Assign&eacute; &agrave;</th>
-                        <th>Dernier contact</th>
-                        <th>Notes</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="prospectsBody"></tbody>
-            </table>
-        </div>
+        <!-- (Section 'Suivi des prospects' supprimee : doublon avec le CRM /admin/prospects.html) -->
 
         <footer class="admin-footer">Regen Agency &copy; 2025</footer>
     </div>
@@ -904,6 +880,7 @@
 
         function renderProspects() {
             var body = document.getElementById('prospectsBody');
+            if (!body) return; // section supprimee : doublon avec le CRM
             body.innerHTML = '';
 
             // Sort by status order
@@ -1097,9 +1074,7 @@
         // ── INIT ──
         loadTasks();
         renderKanban();
-        loadProspects();
-        renderProspects();
-        // Fetch async les next_action des prospects depuis la DB et re-render le kanban
+        // Fetch async les next_action des prospects/clients depuis la DB et re-render le kanban
         loadProspectActions();
     })();
     </script>
