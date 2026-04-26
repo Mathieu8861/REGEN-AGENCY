@@ -627,6 +627,16 @@
                     <option value="done">Termin&eacute;</option>
                 </select>
             </div>
+            <div class="modal-field">
+                <label for="taskLink">Associer à un prospect / client <span style="color:#9ca3af;font-weight:400;font-size:0.78rem;">(optionnel)</span></label>
+                <select id="taskLink">
+                    <option value="">Aucun (tâche standalone)</option>
+                </select>
+            </div>
+            <div class="modal-field" id="taskDateField" style="display:none;">
+                <label for="taskDate">Date d'échéance</label>
+                <input type="date" id="taskDate">
+            </div>
             <div class="modal-actions">
                 <button class="btn btn-cancel" id="taskCancel">Annuler</button>
                 <button class="btn btn-submit" id="taskSubmit">Ajouter</button>
@@ -701,30 +711,115 @@
 
         function saveTasks() { localStorage.setItem(TASKS_KEY, JSON.stringify(tasks)); }
 
-        // ── Fetch les next_action des prospects ──
+        // ── Fetch toutes les tâches DB (prospect_activities type=task) ──
         async function loadProspectActions() {
             if (!sb) return;
-            var res = await sb.from('prospects')
-                .select('id, company_name, next_action, next_action_date, contact_first_name, contact_last_name, converted_client_id, stage')
+            // 1) Fetch les activities type=task avec leur prospect
+            var actsRes = await sb.from('prospect_activities')
+                .select('id, prospect_id, title, content, metadata, created_at, prospect:prospect_id(id, company_name, contact_first_name, contact_last_name, converted_client_id, agency_id, next_action, next_action_date)')
+                .eq('activity_type', 'task')
+                .order('created_at', { ascending: false });
+            var acts = (actsRes.data || []).filter(function(a) {
+                return a.prospect && a.prospect.agency_id === AGENCY_ID;
+            });
+
+            // 2) Inclure aussi les next_action des prospects qui n'ont pas de row activity (fallback historique)
+            var existingProspectIds = {};
+            acts.forEach(function(a) { if (a.title === a.prospect.next_action) existingProspectIds[a.prospect.id] = true; });
+
+            var pRes = await sb.from('prospects')
+                .select('id, company_name, next_action, next_action_date, contact_first_name, contact_last_name, converted_client_id')
                 .eq('agency_id', AGENCY_ID)
                 .not('next_action', 'is', null);
-            prospectActions = (res.data || []).filter(function(p) { return p.next_action && p.next_action.trim() !== ''; });
+            (pRes.data || []).forEach(function(p) {
+                if (!p.next_action || p.next_action.trim() === '') return;
+                if (existingProspectIds[p.id]) return;
+                // Pseudo-activity à partir du next_action (pour les prospects sans row task)
+                acts.push({
+                    id: 'pseudo-' + p.id,
+                    prospect_id: p.id,
+                    title: p.next_action,
+                    content: null,
+                    metadata: { date: p.next_action_date, source: 'next_action', pseudo: true },
+                    created_at: new Date().toISOString(),
+                    prospect: p
+                });
+            });
+
+            prospectActions = acts;
             renderKanban();
         }
 
+        // ── Charge la liste de tous les prospects/clients pour le dropdown 'Associer à' ──
+        var allProspectsForLink = [];
+        async function loadAllProspectsForLink() {
+            if (!sb) return;
+            var res = await sb.from('prospects')
+                .select('id, company_name, contact_first_name, contact_last_name, converted_client_id')
+                .eq('agency_id', AGENCY_ID)
+                .order('company_name');
+            allProspectsForLink = res.data || [];
+            var sel = document.getElementById('taskLink');
+            if (!sel) return;
+            // Ne garde que la 1ere option ('Aucun') et ajoute les prospects
+            sel.innerHTML = '<option value="">Aucun (tâche standalone)</option>';
+            // Sépare prospects et clients
+            var clients = allProspectsForLink.filter(function(p) { return p.converted_client_id; });
+            var prospects = allProspectsForLink.filter(function(p) { return !p.converted_client_id; });
+            if (clients.length > 0) {
+                var grpC = document.createElement('optgroup');
+                grpC.label = 'Clients';
+                clients.forEach(function(p) {
+                    var o = document.createElement('option');
+                    o.value = p.id; o.textContent = p.company_name;
+                    grpC.appendChild(o);
+                });
+                sel.appendChild(grpC);
+            }
+            if (prospects.length > 0) {
+                var grpP = document.createElement('optgroup');
+                grpP.label = 'Prospects';
+                prospects.forEach(function(p) {
+                    var o = document.createElement('option');
+                    o.value = p.id; o.textContent = p.company_name;
+                    grpP.appendChild(o);
+                });
+                sel.appendChild(grpP);
+            }
+        }
+
+        // Affiche le champ 'date' uniquement si un prospect est associé
+        function bindTaskLinkChange() {
+            var sel = document.getElementById('taskLink');
+            var dateField = document.getElementById('taskDateField');
+            if (sel && dateField) {
+                sel.addEventListener('change', function() {
+                    dateField.style.display = sel.value ? '' : 'none';
+                });
+            }
+        }
+
         function renderKanban() {
-            // Pour chaque action prospect : déterminer dans quelle colonne la mettre (par urgence)
+            // Pour chaque tâche prospect/client : déterminer la colonne
+            // - metadata.done = true → 'done'
+            // - metadata.date <= today (ou en retard) → 'progress'
+            // - sinon → 'todo'
             var today = new Date(); today.setHours(0, 0, 0, 0);
             var prospectsByCol = { todo: [], progress: [], done: [] };
-            prospectActions.forEach(function(p) {
-                if (!p.next_action_date) {
-                    prospectsByCol.todo.push(p); // pas de date = à faire
+            prospectActions.forEach(function(task) {
+                var meta = task.metadata || {};
+                if (meta.done) {
+                    prospectsByCol.done.push(task);
                     return;
                 }
-                var d = new Date(p.next_action_date); d.setHours(0, 0, 0, 0);
+                if (!meta.date) {
+                    prospectsByCol.todo.push(task);
+                    return;
+                }
+                var d = new Date(meta.date); d.setHours(0, 0, 0, 0);
                 var diff = Math.round((d - today) / 86400000);
-                if (diff <= 0) prospectsByCol.progress.push(p); // aujourd'hui ou en retard
-                else prospectsByCol.todo.push(p); // dans le futur
+                if (diff <= 0) prospectsByCol.progress.push(task);
+                else prospectsByCol.todo.push(task);
             });
 
             ['todo', 'progress', 'done'].forEach(function(col) {
@@ -735,40 +830,53 @@
                 countEl.textContent = colTasks.length + colProspects.length;
                 container.innerHTML = '';
 
-                // 1) Cards prospect/client (remontées DB) en haut
-                colProspects.forEach(function(p) {
+                // 1) Cards tâches DB (liées à un prospect/client)
+                // Attention : `colProspects` contient maintenant des objets `task` (depuis prospect_activities)
+                colProspects.forEach(function(task) {
+                    var p = task.prospect;
                     var isClient = !!p.converted_client_id;
                     var card = document.createElement('div');
                     card.className = 'task-card ' + (isClient ? 'task-card--client' : 'task-card--prospect');
+                    card.dataset.taskActivityId = task.id;
                     card.dataset.prospectId = p.id;
-                    card.title = 'Cliquer pour ouvrir la fiche CRM';
+                    card.dataset.source = isClient ? 'client' : 'prospect';
+                    card.draggable = true;
+                    card.title = 'Cliquer pour ouvrir la fiche CRM · Drag pour changer de colonne';
 
                     var contactName = [p.contact_first_name, p.contact_last_name].filter(Boolean).join(' ');
                     var displayName = p.company_name + (contactName ? ' · ' + contactName : '');
 
+                    var meta = task.metadata || {};
+                    var dueDate = meta.date || null;
+                    var isDone = !!meta.done;
+
                     var dueHtml = '';
-                    if (p.next_action_date) {
-                        var d = new Date(p.next_action_date); d.setHours(0, 0, 0, 0);
+                    if (dueDate) {
+                        var d = new Date(dueDate); d.setHours(0, 0, 0, 0);
                         var diff = Math.round((d - today) / 86400000);
                         var dueCls, dueLabel;
-                        if (diff < 0) { dueCls = 'overdue'; dueLabel = 'En retard de ' + Math.abs(diff) + ' j'; }
+                        if (isDone) { dueCls = 'done'; dueLabel = 'Fait'; }
+                        else if (diff < 0) { dueCls = 'overdue'; dueLabel = 'En retard de ' + Math.abs(diff) + ' j'; }
                         else if (diff === 0) { dueCls = 'today'; dueLabel = "Aujourd'hui"; }
                         else if (diff === 1) { dueCls = 'future'; dueLabel = 'Demain'; }
                         else if (diff <= 7) { dueCls = 'future'; dueLabel = 'Dans ' + diff + ' j'; }
-                        else { dueCls = 'future'; dueLabel = new Date(p.next_action_date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }); }
+                        else { dueCls = 'future'; dueLabel = new Date(dueDate).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }); }
                         dueHtml = '<span class="task-card__due task-card__due--' + dueCls + '">📅 ' + dueLabel + '</span>';
                     }
 
                     var label = isClient ? 'CLIENT' : 'PROSPECT';
                     var badgeCls = isClient ? 'task-card__source-badge--client' : 'task-card__source-badge--prospect';
+                    var deleteBtn = '<button class="task-delete task-delete--db" data-task-id="' + task.id + '" data-prospect-id="' + p.id + '" data-pseudo="' + (meta.pseudo ? '1' : '0') + '" title="Supprimer la tâche">&times;</button>';
                     card.innerHTML =
                         '<div class="task-card-top">' +
                             '<span class="task-card__source-badge ' + badgeCls + '">' + label + '</span>' +
-                            '<span class="task-title">' + esc(p.next_action) + '</span>' +
+                            '<span class="task-title">' + esc(task.title) + '</span>' +
+                            deleteBtn +
                         '</div>' +
                         '<div class="task-card__company">' + esc(displayName) + '</div>' +
                         dueHtml;
-                    card.addEventListener('click', function() {
+                    card.addEventListener('click', function(e) {
+                        if (e.target.closest('.task-delete')) return; // on ignore si clic sur la croix
                         var url = '/admin/prospects.html?openProspect=' + p.id;
                         window.location.href = url;
                     });
@@ -826,7 +934,14 @@
         function bindKanbanEvents() {
             document.querySelectorAll('.task-card').forEach(function(card) {
                 card.addEventListener('dragstart', function(e) {
-                    e.dataTransfer.setData('text/plain', card.dataset.id);
+                    var payload;
+                    if (card.dataset.taskActivityId) {
+                        // Card prospect/client (DB)
+                        payload = JSON.stringify({ kind: 'db', id: card.dataset.taskActivityId, prospectId: card.dataset.prospectId });
+                    } else {
+                        payload = JSON.stringify({ kind: 'local', id: card.dataset.id });
+                    }
+                    e.dataTransfer.setData('text/plain', payload);
                     card.classList.add('dragging');
                 });
                 card.addEventListener('dragend', function() { card.classList.remove('dragging'); });
@@ -835,20 +950,93 @@
             document.querySelectorAll('.kanban-column').forEach(function(col) {
                 col.addEventListener('dragover', function(e) { e.preventDefault(); col.classList.add('drag-over'); });
                 col.addEventListener('dragleave', function() { col.classList.remove('drag-over'); });
-                col.addEventListener('drop', function(e) {
+                col.addEventListener('drop', async function(e) {
                     e.preventDefault();
                     col.classList.remove('drag-over');
-                    var id = e.dataTransfer.getData('text/plain');
-                    if (id) moveTask(id, col.dataset.column);
+                    var raw = e.dataTransfer.getData('text/plain');
+                    if (!raw) return;
+                    var payload;
+                    try { payload = JSON.parse(raw); } catch(err) { payload = { kind: 'local', id: raw }; }
+
+                    var newCol = col.dataset.column;
+                    if (payload.kind === 'local') {
+                        moveTask(payload.id, newCol);
+                    } else if (payload.kind === 'db') {
+                        await moveDbTask(payload.id, payload.prospectId, newCol);
+                    }
                 });
             });
 
-            document.querySelectorAll('.task-delete').forEach(function(btn) {
+            // Delete : tâches manuelles (localStorage)
+            document.querySelectorAll('.task-delete:not(.task-delete--db)').forEach(function(btn) {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     deleteTask(btn.dataset.id);
                 });
             });
+
+            // Delete : tâches DB (prospect/client)
+            document.querySelectorAll('.task-delete--db').forEach(function(btn) {
+                btn.addEventListener('click', async function(e) {
+                    e.stopPropagation();
+                    if (!confirm('Supprimer cette tâche ? Elle disparaîtra aussi du CRM.')) return;
+                    await deleteDbTask(btn.dataset.taskId, btn.dataset.prospectId, btn.dataset.pseudo === '1');
+                });
+            });
+        }
+
+        // ── Move tâche DB (prospect/client) au drop ──
+        async function moveDbTask(taskId, prospectId, newCol) {
+            if (!sb) return;
+            var task = prospectActions.find(function(t) { return t.id === taskId; });
+            if (!task) return;
+            var meta = task.metadata || {};
+
+            if (newCol === 'done') {
+                meta.done = true;
+                meta.done_at = new Date().toISOString();
+            } else {
+                meta.done = false;
+                delete meta.done_at;
+            }
+
+            // Si pseudo (next_action sans row activity) → on doit créer la row pour pouvoir tracker
+            if (meta.pseudo) {
+                delete meta.pseudo;
+                var ins = await sb.from('prospect_activities').insert([{
+                    prospect_id: prospectId,
+                    activity_type: 'task',
+                    title: task.title,
+                    metadata: meta,
+                    created_by: 'admin'
+                }]);
+                if (ins.error) { alert('Erreur : ' + ins.error.message); return; }
+            } else {
+                var up = await sb.from('prospect_activities').update({ metadata: meta }).eq('id', taskId);
+                if (up.error) { alert('Erreur : ' + up.error.message); return; }
+            }
+
+            // Si la tâche était le next_action et qu'elle devient done → retire next_action
+            if (newCol === 'done' && task.prospect && task.prospect.next_action === task.title) {
+                await sb.from('prospects').update({ next_action: null, next_action_date: null }).eq('id', prospectId);
+            }
+
+            await loadProspectActions();
+        }
+
+        // ── Delete tâche DB ──
+        async function deleteDbTask(taskId, prospectId, isPseudo) {
+            if (!sb) return;
+            if (!isPseudo) {
+                var del = await sb.from('prospect_activities').delete().eq('id', taskId);
+                if (del.error) { alert('Erreur : ' + del.error.message); return; }
+            }
+            // Si la tâche supprimée correspond au next_action → on le clear
+            var task = prospectActions.find(function(t) { return t.id === taskId; });
+            if (task && task.prospect && task.prospect.next_action === task.title) {
+                await sb.from('prospects').update({ next_action: null, next_action_date: null }).eq('id', prospectId);
+            }
+            await loadProspectActions();
         }
 
         // Task Modal
@@ -859,23 +1047,55 @@
             document.getElementById('taskPriority').value = 'medium';
             document.getElementById('taskAssignee').value = '';
             document.getElementById('taskColumn').value = 'todo';
+            var linkSel = document.getElementById('taskLink');
+            if (linkSel) linkSel.value = '';
+            var dateInput = document.getElementById('taskDate');
+            if (dateInput) dateInput.value = '';
+            var dateField = document.getElementById('taskDateField');
+            if (dateField) dateField.style.display = 'none';
             taskModal.classList.add('active');
             setTimeout(function() { document.getElementById('taskTitle').focus(); }, 100);
         });
         document.getElementById('taskCancel').addEventListener('click', function() { taskModal.classList.remove('active'); });
         taskModal.addEventListener('click', function(e) { if (e.target === taskModal) taskModal.classList.remove('active'); });
 
-        document.getElementById('taskSubmit').addEventListener('click', function() {
+        document.getElementById('taskSubmit').addEventListener('click', async function() {
             var title = document.getElementById('taskTitle').value.trim();
             if (!title) { document.getElementById('taskTitle').style.borderColor = '#ef4444'; return; }
-            addTask(
-                title,
-                document.getElementById('taskDesc').value.trim(),
-                document.getElementById('taskPriority').value,
-                document.getElementById('taskAssignee').value,
-                document.getElementById('taskColumn').value
-            );
-            taskModal.classList.remove('active');
+            var desc = document.getElementById('taskDesc').value.trim();
+            var priority = document.getElementById('taskPriority').value;
+            var assignee = document.getElementById('taskAssignee').value;
+            var column = document.getElementById('taskColumn').value;
+            var prospectId = document.getElementById('taskLink').value;
+            var dueDate = document.getElementById('taskDate').value || null;
+
+            if (prospectId && sb) {
+                // Tâche associée à un prospect/client → INSERT en DB + UPDATE next_action
+                var actRes = await sb.from('prospect_activities').insert([{
+                    prospect_id: prospectId,
+                    activity_type: 'task',
+                    title: title,
+                    content: desc || null,
+                    metadata: { date: dueDate, priority: priority, assignee: assignee, source: 'taches_page' },
+                    created_by: 'admin'
+                }]);
+                if (actRes.error) {
+                    alert('Erreur DB : ' + actRes.error.message);
+                    return;
+                }
+                // La derniere tache associee devient le next_action du prospect
+                await sb.from('prospects').update({
+                    next_action: title,
+                    next_action_date: dueDate
+                }).eq('id', prospectId);
+                taskModal.classList.remove('active');
+                // Recharge depuis DB
+                await loadProspectActions();
+            } else {
+                // Tâche standalone (localStorage, comme avant)
+                addTask(title, desc, priority, assignee, column);
+                taskModal.classList.remove('active');
+            }
         });
 
         // ══════════════════════
@@ -1090,6 +1310,9 @@
         renderKanban();
         // Fetch async les next_action des prospects/clients depuis la DB et re-render le kanban
         loadProspectActions();
+        // Charge la liste des prospects pour le dropdown 'Associer à' du modal
+        loadAllProspectsForLink();
+        bindTaskLinkChange();
     })();
     </script>
     <script src="admin-shell.js"></script>
