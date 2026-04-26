@@ -7122,6 +7122,8 @@
         if (existing) existing.remove();
         var existingDetails = document.getElementById('contractDetails');
         if (existingDetails) existingDetails.remove();
+        var existingWidget = document.getElementById('performanceAdsWidget');
+        if (existingWidget) existingWidget.remove();
 
         var p = prospects.find(function(x) { return x.id === prospectId; });
         if (!p) return;
