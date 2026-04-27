@@ -264,6 +264,21 @@
                 <input class="form-input" id="wizEmail" type="email" placeholder="contact@acme.com">
             </div>
             <div class="form-field">
+                <label class="form-label">Type de prestation envisagée</label>
+                <select class="form-select" id="wizServiceType">
+                    <option value="">— Choisir —</option>
+                    <option value="site-creation">Création de site web (vitrine / e-commerce / SaaS)</option>
+                    <option value="site-refonte">Refonte de site existant</option>
+                    <option value="ads">Gestion publicitaire (Ads — Google / Meta)</option>
+                    <option value="seo">SEO / Référencement naturel</option>
+                    <option value="audit">Audit (technique / SEO / acquisition)</option>
+                    <option value="problem">Résolution de problématique (tracking, hack, bug, récup compte...)</option>
+                    <option value="branding">Branding / Identité visuelle</option>
+                    <option value="maintenance">Maintenance / Hébergement</option>
+                    <option value="other">Autre</option>
+                </select>
+            </div>
+            <div class="form-field">
                 <label class="form-label">Objectif du formulaire (optionnel)</label>
                 <select class="form-select" id="wizObjective">
                     <option value="">Aucun</option>
@@ -310,7 +325,19 @@
     var allForms = [];
     var allProspects = [];
     var wizardStep = 1;
-    var wizardData = { attachMode: 'existing', prospectId: null, company: '', firstName: '', email: '', objective: '' };
+    var wizardData = { attachMode: 'existing', prospectId: null, company: '', firstName: '', email: '', objective: '', serviceType: '' };
+
+    var SERVICE_LABELS = {
+        'site-creation': 'Création de site web',
+        'site-refonte': 'Refonte de site existant',
+        'ads': 'Gestion publicitaire (Ads)',
+        'seo': 'SEO / Référencement naturel',
+        'audit': 'Audit (technique / SEO / acquisition)',
+        'problem': 'Résolution de problématique',
+        'branding': 'Branding / Identité visuelle',
+        'maintenance': 'Maintenance / Hébergement',
+        'other': 'Autre'
+    };
 
     function escapeHtml(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
     function toast(msg, type) {
@@ -376,7 +403,7 @@
         grid.innerHTML = allForms.map(function(f) {
             var p = f.prospect || {};
             var contactName = [p.contact_first_name, p.contact_last_name].filter(Boolean).join(' ');
-            var publicUrl = window.location.origin + '/prospect-form.html?token=' + f.token;
+            var publicUrl = window.location.origin + '/prospect-form.html?t=' + f.token;
             var statusCls, statusLabel;
             if (f._responseCount > 0) { statusCls = 'filled'; statusLabel = '✓ Rempli'; }
             else if (f.is_active) { statusCls = 'active'; statusLabel = '● Actif'; }
@@ -446,12 +473,13 @@
     // ── WIZARD ──
     window.openWizard = function() {
         wizardStep = 1;
-        wizardData = { attachMode: 'existing', prospectId: null, company: '', firstName: '', email: '', objective: '' };
+        wizardData = { attachMode: 'existing', prospectId: null, company: '', firstName: '', email: '', objective: '', serviceType: '' };
         document.getElementById('wizProspectId').value = '';
         document.getElementById('wizCompany').value = '';
         document.getElementById('wizFirstName').value = '';
         document.getElementById('wizEmail').value = '';
         document.getElementById('wizObjective').value = '';
+        document.getElementById('wizServiceType').value = '';
         document.getElementById('wizardSuccess').style.display = 'none';
         document.getElementById('wizardSuccess').innerHTML = '';
         showStep(1);
@@ -496,6 +524,7 @@
             wizardData.firstName = document.getElementById('wizFirstName').value.trim();
             wizardData.email = document.getElementById('wizEmail').value.trim();
             wizardData.objective = document.getElementById('wizObjective').value;
+            wizardData.serviceType = document.getElementById('wizServiceType').value;
             showStep(3);
         } else if (wizardStep === 3) {
             await generateForm();
@@ -514,6 +543,7 @@
             '• Rattachement : ' + rattachement + '<br>' +
             (wizardData.firstName ? '• Prénom destinataire : ' + escapeHtml(wizardData.firstName) + '<br>' : '') +
             (wizardData.email ? '• Email : ' + escapeHtml(wizardData.email) + '<br>' : '') +
+            (wizardData.serviceType ? '• Prestation : <strong>' + escapeHtml(SERVICE_LABELS[wizardData.serviceType] || wizardData.serviceType) + '</strong><br>' : '') +
             (wizardData.objective ? '• Objectif : ' + escapeHtml(wizardData.objective) + '<br>' : '');
         document.getElementById('wizardRecap').innerHTML = html;
     }
@@ -549,10 +579,16 @@
             }
         }
 
-        // Crée le formulaire
+        // Crée le formulaire (titre = prestation si renseignée, sinon objectif, sinon générique)
+        var formTitle = 'Questionnaire prospect';
+        if (wizardData.serviceType) {
+            formTitle = 'Questionnaire — ' + (SERVICE_LABELS[wizardData.serviceType] || wizardData.serviceType);
+        } else if (wizardData.objective) {
+            formTitle = 'Questionnaire ' + wizardData.objective;
+        }
         var formInsert = {
             prospect_id: prospectId,
-            form_title: wizardData.objective ? 'Questionnaire ' + wizardData.objective : 'Questionnaire prospect',
+            form_title: formTitle,
             is_active: true
         };
         var fIns = await sb.from('prospect_forms').insert([formInsert]).select();
@@ -562,7 +598,7 @@
             return;
         }
         var newForm = fIns.data[0];
-        var publicUrl = window.location.origin + '/prospect-form.html?token=' + newForm.token;
+        var publicUrl = window.location.origin + '/prospect-form.html?t=' + newForm.token;
 
         // Affiche le succès
         document.getElementById('wizardRecap').style.display = 'none';

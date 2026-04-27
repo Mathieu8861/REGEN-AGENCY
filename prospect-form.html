@@ -895,7 +895,8 @@
             }
 
             function getToken() {
-                return new URLSearchParams(window.location.search).get('t');
+                var p = new URLSearchParams(window.location.search);
+                return p.get('t') || p.get('token');
             }
 
             // --- Init ---
