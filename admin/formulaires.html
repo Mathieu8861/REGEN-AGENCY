@@ -223,6 +223,7 @@
             <div class="wizard-step-indicator__dot --active" data-step="1"></div>
             <div class="wizard-step-indicator__dot" data-step="2"></div>
             <div class="wizard-step-indicator__dot" data-step="3"></div>
+            <div class="wizard-step-indicator__dot" data-step="4"></div>
         </div>
 
         <!-- STEP 1 : Rattachement -->
@@ -290,9 +291,65 @@
             </div>
         </div>
 
-        <!-- STEP 3 : Récap + génération -->
+        <!-- STEP 3 : Contexte interne CRM -->
         <div class="wizard-step" data-step="3" style="display:none;">
-            <div id="wizardRecap" style="background:#fafbfc;border:1px solid var(--gray-border);border-radius:10px;padding:14px;margin-bottom:14px;font-size:0.85rem;line-height:1.6;"></div>
+            <p style="font-size:0.82rem;color:var(--gray);margin-bottom:14px;">Ces infos enrichissent la <strong>fiche CRM du prospect</strong> et restent invisibles pour le destinataire.</p>
+            <div class="form-field">
+                <label class="form-label">Source du contact</label>
+                <select class="form-select" id="wizSource">
+                    <option value="">— Pas renseigné —</option>
+                    <option value="recommandation">Recommandation</option>
+                    <option value="inbound">Inbound (formulaire / contact site)</option>
+                    <option value="email">Prospection email</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="reseau">Réseau pro</option>
+                    <option value="salon">Salon / événement</option>
+                    <option value="appel">Appel entrant</option>
+                    <option value="autre">Autre</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label class="form-label">Budget pressenti</label>
+                <select class="form-select" id="wizBudget">
+                    <option value="">— Pas renseigné —</option>
+                    <option value="lt-2k">&lt; 2 000 €</option>
+                    <option value="2-5k">2 000 - 5 000 €</option>
+                    <option value="5-10k">5 000 - 10 000 €</option>
+                    <option value="10-25k">10 000 - 25 000 €</option>
+                    <option value="gt-25k">&gt; 25 000 €</option>
+                    <option value="recurring">Récurrent / mensuel</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label class="form-label">Urgence / deadline</label>
+                <select class="form-select" id="wizUrgency">
+                    <option value="">— Pas renseigné —</option>
+                    <option value="low">Pas pressé</option>
+                    <option value="medium">1 à 3 mois</option>
+                    <option value="high">Sous 1 mois</option>
+                    <option value="urgent">Immédiat</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label class="form-label">Notes internes (contexte, infos clés...)</label>
+                <textarea class="form-textarea" id="wizNotes" rows="3" placeholder="Ex: rencontré au salon, recommandé par X, a déjà un site mais veut une refonte..."></textarea>
+            </div>
+        </div>
+
+        <!-- STEP 4 : Validité du lien + Récap + génération -->
+        <div class="wizard-step" data-step="4" style="display:none;">
+            <p style="font-size:0.82rem;color:var(--gray);margin-bottom:14px;">Définis la validité du lien (optionnel), puis génère le formulaire.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-field">
+                    <label class="form-label">Date d'expiration</label>
+                    <input class="form-input" id="wizExpiresAt" type="date">
+                </div>
+                <div class="form-field">
+                    <label class="form-label">Réponses max</label>
+                    <input class="form-input" id="wizMaxResponses" type="number" min="1" max="100" value="1">
+                </div>
+            </div>
+            <div id="wizardRecap" style="background:#fafbfc;border:1px solid var(--gray-border);border-radius:10px;padding:14px;margin-top:8px;margin-bottom:14px;font-size:0.85rem;line-height:1.6;"></div>
             <div id="wizardSuccess" style="display:none;"></div>
         </div>
 
@@ -325,7 +382,12 @@
     var allForms = [];
     var allProspects = [];
     var wizardStep = 1;
-    var wizardData = { attachMode: 'existing', prospectId: null, company: '', firstName: '', email: '', objective: '', serviceType: '' };
+    var wizardData = {
+        attachMode: 'existing', prospectId: null, company: '',
+        firstName: '', email: '', objective: '', serviceType: '',
+        source: '', budget: '', urgency: '', notes: '',
+        expiresAt: '', maxResponses: 1
+    };
 
     var SERVICE_LABELS = {
         'site-creation': 'Création de site web',
@@ -337,6 +399,58 @@
         'branding': 'Branding / Identité visuelle',
         'maintenance': 'Maintenance / Hébergement',
         'other': 'Autre'
+    };
+
+    // Mapping serviceType wizard → data-service du form public (pour pré-sélection ?svc=)
+    var SVC_TO_FORM = {
+        'site-creation': 'creation_site',
+        'site-refonte': 'creation_site',
+        'ads': 'gestion_pub',
+        'seo': 'seo'
+        // audit / problem / branding / maintenance / other → pas de pré-sélection
+    };
+
+    // Mapping source UI → enum DB
+    var SOURCE_DB_MAP = {
+        'recommandation': 'recommandation',
+        'inbound': 'site_web',
+        'email': 'email_froid',
+        'linkedin': 'linkedin',
+        'reseau': 'reseau',
+        'salon': 'salon',
+        'appel': 'appel_entrant',
+        'autre': 'autre'
+    };
+    var SOURCE_LABELS = {
+        'recommandation': 'Recommandation',
+        'inbound': 'Inbound (site)',
+        'email': 'Prospection email',
+        'linkedin': 'LinkedIn',
+        'reseau': 'Réseau pro',
+        'salon': 'Salon / événement',
+        'appel': 'Appel entrant',
+        'autre': 'Autre'
+    };
+
+    // Budget : valeur médiane stockée dans budget_estimate + label affiché
+    var BUDGET_MEDIANS = {
+        'lt-2k': 1500, '2-5k': 3500, '5-10k': 7500,
+        '10-25k': 17500, 'gt-25k': 30000, 'recurring': null
+    };
+    var BUDGET_LABELS = {
+        'lt-2k': '< 2 000 €',
+        '2-5k': '2 000 - 5 000 €',
+        '5-10k': '5 000 - 10 000 €',
+        '10-25k': '10 000 - 25 000 €',
+        'gt-25k': '> 25 000 €',
+        'recurring': 'Récurrent / mensuel'
+    };
+
+    var URGENCY_LABELS = {
+        'low': 'Pas pressé',
+        'medium': '1 à 3 mois',
+        'high': 'Sous 1 mois',
+        'urgent': 'Immédiat'
     };
 
     function escapeHtml(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
@@ -473,15 +587,24 @@
     // ── WIZARD ──
     window.openWizard = function() {
         wizardStep = 1;
-        wizardData = { attachMode: 'existing', prospectId: null, company: '', firstName: '', email: '', objective: '', serviceType: '' };
-        document.getElementById('wizProspectId').value = '';
-        document.getElementById('wizCompany').value = '';
-        document.getElementById('wizFirstName').value = '';
-        document.getElementById('wizEmail').value = '';
-        document.getElementById('wizObjective').value = '';
-        document.getElementById('wizServiceType').value = '';
+        wizardData = {
+            attachMode: 'existing', prospectId: null, company: '',
+            firstName: '', email: '', objective: '', serviceType: '',
+            source: '', budget: '', urgency: '', notes: '',
+            expiresAt: '', maxResponses: 1
+        };
+        ['wizProspectId','wizCompany','wizFirstName','wizEmail','wizObjective','wizServiceType','wizSource','wizBudget','wizUrgency','wizNotes','wizExpiresAt'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        var maxR = document.getElementById('wizMaxResponses');
+        if (maxR) maxR.value = '1';
         document.getElementById('wizardSuccess').style.display = 'none';
         document.getElementById('wizardSuccess').innerHTML = '';
+        var recap = document.getElementById('wizardRecap');
+        if (recap) recap.style.display = '';
+        var nextBtn = document.getElementById('wizNextBtn');
+        if (nextBtn) nextBtn.style.display = '';
         showStep(1);
         document.getElementById('wizardOverlay').classList.add('--open');
     };
@@ -506,8 +629,8 @@
             d.classList.toggle('--active', parseInt(d.dataset.step) <= n);
         });
         document.getElementById('wizPrevBtn').style.display = n > 1 ? '' : 'none';
-        document.getElementById('wizNextBtn').textContent = n < 3 ? 'Suivant' : 'Générer le formulaire';
-        if (n === 3) renderRecap();
+        document.getElementById('wizNextBtn').textContent = n < 4 ? 'Suivant' : 'Générer le formulaire';
+        if (n === 4) renderRecap();
     }
 
     window.wizardNext = async function() {
@@ -527,6 +650,14 @@
             wizardData.serviceType = document.getElementById('wizServiceType').value;
             showStep(3);
         } else if (wizardStep === 3) {
+            wizardData.source = document.getElementById('wizSource').value;
+            wizardData.budget = document.getElementById('wizBudget').value;
+            wizardData.urgency = document.getElementById('wizUrgency').value;
+            wizardData.notes = document.getElementById('wizNotes').value.trim();
+            showStep(4);
+        } else if (wizardStep === 4) {
+            wizardData.expiresAt = document.getElementById('wizExpiresAt').value;
+            wizardData.maxResponses = parseInt(document.getElementById('wizMaxResponses').value, 10) || 1;
             await generateForm();
         }
     };
@@ -539,13 +670,37 @@
         var rattachement = wizardData.attachMode === 'existing'
             ? (p ? '<strong>' + escapeHtml(p.company_name) + '</strong> (existant)' : '—')
             : '<strong>' + escapeHtml(wizardData.company) + '</strong> (nouveau prospect créé à la génération)';
+        var notesPreview = wizardData.notes ? (wizardData.notes.length > 80 ? wizardData.notes.substring(0, 80) + '...' : wizardData.notes) : '';
         var html = '<strong>Récapitulatif</strong><br>' +
             '• Rattachement : ' + rattachement + '<br>' +
             (wizardData.firstName ? '• Prénom destinataire : ' + escapeHtml(wizardData.firstName) + '<br>' : '') +
             (wizardData.email ? '• Email : ' + escapeHtml(wizardData.email) + '<br>' : '') +
             (wizardData.serviceType ? '• Prestation : <strong>' + escapeHtml(SERVICE_LABELS[wizardData.serviceType] || wizardData.serviceType) + '</strong><br>' : '') +
-            (wizardData.objective ? '• Objectif : ' + escapeHtml(wizardData.objective) + '<br>' : '');
+            (wizardData.objective ? '• Objectif : ' + escapeHtml(wizardData.objective) + '<br>' : '') +
+            (wizardData.source ? '• Source : ' + escapeHtml(SOURCE_LABELS[wizardData.source] || wizardData.source) + '<br>' : '') +
+            (wizardData.budget ? '• Budget : ' + escapeHtml(BUDGET_LABELS[wizardData.budget] || wizardData.budget) + '<br>' : '') +
+            (wizardData.urgency ? '• Urgence : ' + escapeHtml(URGENCY_LABELS[wizardData.urgency] || wizardData.urgency) + '<br>' : '') +
+            (notesPreview ? '• Notes : ' + escapeHtml(notesPreview) + '<br>' : '') +
+            '<hr style="border:none;border-top:1px dashed var(--gray-border);margin:8px 0;">' +
+            '• ' + (wizardData.expiresAt ? 'Expire le : <strong>' + escapeHtml(wizardData.expiresAt) + '</strong>' : 'Pas d\'expiration') + '<br>' +
+            '• Réponses max : <strong>' + wizardData.maxResponses + '</strong>';
         document.getElementById('wizardRecap').innerHTML = html;
+    }
+
+    // Construit le payload "enrichissement CRM" depuis wizardData
+    function buildProspectPayload() {
+        var p = {};
+        if (wizardData.firstName) p.contact_first_name = wizardData.firstName;
+        if (wizardData.email) p.contact_email = wizardData.email;
+        if (wizardData.source && SOURCE_DB_MAP[wizardData.source]) p.source = SOURCE_DB_MAP[wizardData.source];
+        if (wizardData.budget) {
+            var med = BUDGET_MEDIANS[wizardData.budget];
+            if (med !== null && med !== undefined) p.budget_estimate = med;
+        }
+        if (wizardData.urgency) p.priority = wizardData.urgency;
+        if (wizardData.notes) p.needs_summary = wizardData.notes;
+        if (wizardData.serviceType) p.services_interested = [wizardData.serviceType];
+        return p;
     }
 
     async function generateForm() {
@@ -553,29 +708,27 @@
         btn.disabled = true; btn.textContent = 'Génération...';
 
         var prospectId = wizardData.prospectId;
+        var enrichPayload = buildProspectPayload();
 
-        // Si nouveau contact : créer un prospect d'abord
+        // Si nouveau contact : créer un prospect d'abord (en intégrant tout le contexte CRM)
         if (wizardData.attachMode === 'new') {
-            var pIns = await sb.from('prospects').insert([{
+            var newProspect = Object.assign({
                 agency_id: AGENCY_ID,
                 company_name: wizardData.company,
-                contact_first_name: wizardData.firstName || null,
-                contact_email: wizardData.email || null,
                 stage: 'nouveau'
-            }]).select();
+            }, enrichPayload);
+            var pIns = await sb.from('prospects').insert([newProspect]).select();
             if (pIns.error) {
                 toast('Erreur création prospect : ' + pIns.error.message, 'error');
                 btn.disabled = false; btn.textContent = 'Générer le formulaire';
                 return;
             }
             prospectId = pIns.data[0].id;
-        } else if (wizardData.firstName || wizardData.email) {
+        } else if (Object.keys(enrichPayload).length > 0) {
             // Enrichir le prospect existant avec les infos données
-            var update = {};
-            if (wizardData.firstName) update.contact_first_name = wizardData.firstName;
-            if (wizardData.email) update.contact_email = wizardData.email;
-            if (Object.keys(update).length > 0) {
-                await sb.from('prospects').update(update).eq('id', prospectId);
+            var upd = await sb.from('prospects').update(enrichPayload).eq('id', prospectId);
+            if (upd.error) {
+                console.warn('Enrichissement partiel échoué :', upd.error.message);
             }
         }
 
@@ -589,8 +742,13 @@
         var formInsert = {
             prospect_id: prospectId,
             form_title: formTitle,
-            is_active: true
+            is_active: true,
+            max_responses: wizardData.maxResponses || 1
         };
+        if (wizardData.expiresAt) {
+            // Le lien expire à 23:59:59 de la date choisie
+            formInsert.expires_at = wizardData.expiresAt + 'T23:59:59';
+        }
         var fIns = await sb.from('prospect_forms').insert([formInsert]).select();
         if (fIns.error) {
             toast('Erreur : ' + fIns.error.message, 'error');
@@ -599,6 +757,10 @@
         }
         var newForm = fIns.data[0];
         var publicUrl = window.location.origin + '/prospect-form.html?t=' + newForm.token;
+        // Pré-sélection prestation côté form public (si mapping dispo)
+        if (wizardData.serviceType && SVC_TO_FORM[wizardData.serviceType]) {
+            publicUrl += '&svc=' + SVC_TO_FORM[wizardData.serviceType];
+        }
 
         // Affiche le succès
         document.getElementById('wizardRecap').style.display = 'none';

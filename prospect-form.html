@@ -922,9 +922,22 @@
                     }
 
                     formConfig = data;
-                    document.getElementById('form-title').textContent = data.title || 'Questionnaire';
-                    document.title = (data.title || 'Questionnaire') + ' - Regen Agency';
+                    document.getElementById('form-title').textContent = data.form_title || data.title || 'Questionnaire';
+                    document.title = (data.form_title || data.title || 'Questionnaire') + ' - Regen Agency';
                     showState('form');
+
+                    // Pré-sélection de la prestation depuis ?svc= (auto-coche la service-card)
+                    var preSvc = new URLSearchParams(window.location.search).get('svc');
+                    if (preSvc) {
+                        var card = document.querySelector('.service-card[data-service="' + preSvc + '"]');
+                        if (card) {
+                            var cb = card.querySelector('input[type="checkbox"]');
+                            if (cb && !cb.checked) {
+                                cb.checked = true;
+                                cb.dispatchEvent(new Event('change'));
+                            }
+                        }
+                    }
 
                 } catch (err) {
                     console.error('Init error:', err);
