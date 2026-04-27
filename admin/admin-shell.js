@@ -21,6 +21,8 @@
     function isActive(key) {
         if (key === 'crm') return page === 'prospects.html' || page === '' || page === 'index.html';
         if (key === 'performance') return page === 'clients.html';
+        if (key === 'formulaires') return page === 'formulaires.html';
+        if (key === 'reseaux') return page === 'reseaux-sociaux.html';
         if (key === 'dashboard') return page === 'dashboard.html';
         if (key === 'documents') return page === 'documents.html';
         if (key === 'comptabilite') return page === 'comptabilite.html';
@@ -119,6 +121,12 @@
                 link('clients.html', 'performance',
                     '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
                     'Performance Ads') +
+                link('formulaires.html', 'formulaires',
+                    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6M9 9h2"/>',
+                    'Formulaires') +
+                link('reseaux-sociaux.html', 'reseaux',
+                    '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+                    'Réseaux sociaux') +
                 link('documents.html', 'documents',
                     '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
                     'Ressources') +

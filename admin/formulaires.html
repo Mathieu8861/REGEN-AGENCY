@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Formulaires - Regen Agency</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #2FB963;
+            --green-light: #e8f9ef;
+            --green-dark: #27a356;
+            --primary: #173C3A;
+            --dark: #1a2332;
+            --gray: #6b7280;
+            --gray-light: #f3f4f6;
+            --gray-border: #e5e7eb;
+            --radius: 14px;
+            --radius-sm: 10px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Quicksand', sans-serif; background: #f0f3f1; min-height: 100vh; color: var(--primary); padding: 0; }
+        .container { padding: 28px 32px; }
+
+        .page-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 20px; margin-bottom: 24px;
+            border-bottom: 2px solid var(--gray-border);
+            flex-wrap: wrap; gap: 12px;
+        }
+        .page-title { font-size: 1.4rem; color: var(--dark); font-weight: 700; }
+        .page-title span { color: var(--green); }
+        .page-subtitle { font-size: 0.85rem; color: var(--gray); margin-top: 2px; }
+
+        .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 50px; font-family: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: 2px solid; transition: all 0.2s; text-decoration: none; }
+        .btn--primary { background: var(--green); color: white; border-color: var(--green); }
+        .btn--primary:hover { background: var(--green-dark); border-color: var(--green-dark); }
+        .btn--ghost { background: transparent; color: var(--gray); border-color: var(--gray-border); }
+        .btn--ghost:hover { border-color: var(--primary); color: var(--primary); }
+        .btn--danger { background: transparent; color: #ef4444; border-color: #fca5a5; }
+        .btn--danger:hover { background: #ef4444; color: white; border-color: #ef4444; }
+        .btn--sm { padding: 6px 12px; font-size: 0.75rem; }
+        .btn svg { width: 14px; height: 14px; }
+
+        .stats-bar { display: flex; gap: 0; margin-bottom: 24px; background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+        .stat-item { flex: 1; padding: 16px 14px; text-align: center; border-right: 1px solid #f0f0f0; }
+        .stat-item:last-child { border-right: none; }
+        .stat-item__value { font-size: 1.4rem; font-weight: 800; color: var(--dark); }
+        .stat-item__label { font-size: 0.66rem; color: var(--gray); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        .stat-item--green .stat-item__value { color: var(--green); }
+        .stat-item--blue .stat-item__value { color: #3b82f6; }
+        .stat-item--amber .stat-item__value { color: #f59e0b; }
+
+        /* Liste de formulaires */
+        .forms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        .form-card {
+            background: white;
+            border: 1.5px solid var(--gray-border);
+            border-radius: var(--radius);
+            padding: 18px;
+            transition: all 0.2s;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .form-card:hover { border-color: var(--green); box-shadow: var(--shadow); transform: translateY(-1px); }
+        .form-card__header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .form-card__company { font-size: 1rem; font-weight: 700; color: var(--dark); flex: 1; min-width: 0; }
+        .form-card__sub { font-size: 0.78rem; color: var(--gray); font-weight: 500; }
+        .form-card__status {
+            font-size: 0.62rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            padding: 3px 9px; border-radius: 50px;
+            flex-shrink: 0;
+        }
+        .form-card__status--active { background: #d1fae5; color: #059669; }
+        .form-card__status--inactive { background: #f3f4f6; color: var(--gray); }
+        .form-card__status--filled { background: #ede9fe; color: #7c3aed; }
+        .form-card__meta { display: flex; align-items: center; gap: 10px; font-size: 0.74rem; color: var(--gray); }
+        .form-card__meta-item { display: flex; align-items: center; gap: 4px; }
+        .form-card__meta-item svg { width: 12px; height: 12px; }
+        .form-card__actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; padding-top: 10px; border-top: 1px dashed var(--gray-border); }
+        .form-card__link {
+            background: var(--green-light); color: var(--primary);
+            border: 1px solid #86efac;
+            padding: 6px 12px; border-radius: 8px;
+            font-size: 0.74rem; font-weight: 700;
+            cursor: pointer; flex: 1; text-align: center;
+            display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .form-card__link:hover { background: var(--green); color: white; }
+        .form-card__link svg { width: 11px; height: 11px; }
+
+        .empty-state {
+            background: white; border-radius: var(--radius); box-shadow: var(--shadow);
+            padding: 56px 24px; text-align: center; color: var(--gray);
+            grid-column: 1 / -1;
+        }
+        .empty-state__icon { width: 48px; height: 48px; margin: 0 auto 12px; color: #d1d5db; }
+        .empty-state h3 { color: var(--dark); font-size: 1.05rem; margin-bottom: 6px; }
+        .empty-state p { font-size: 0.88rem; margin-bottom: 16px; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+        /* Wizard modal */
+        .wizard-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 3000; display: none; align-items: center; justify-content: center;
+        }
+        .wizard-overlay.--open { display: flex; }
+        .wizard-modal {
+            background: white; border-radius: var(--radius);
+            padding: 28px 30px; max-width: 560px; width: 92%;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+        }
+        .wizard-modal h3 { font-size: 1.15rem; color: var(--dark); margin-bottom: 4px; }
+        .wizard-modal h3 span { color: var(--green); }
+        .wizard-modal__sub { font-size: 0.85rem; color: var(--gray); margin-bottom: 20px; }
+        .wizard-step-indicator { display: flex; gap: 6px; margin-bottom: 20px; }
+        .wizard-step-indicator__dot {
+            flex: 1; height: 4px; border-radius: 4px;
+            background: var(--gray-border);
+            transition: background 0.2s;
+        }
+        .wizard-step-indicator__dot.--active { background: var(--green); }
+
+        .form-field { margin-bottom: 14px; }
+        .form-label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--primary); margin-bottom: 5px; }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 9px 12px; border: 2px solid var(--gray-border);
+            border-radius: var(--radius-sm); font-family: inherit; font-size: 0.85rem;
+            background: white; color: var(--dark); transition: border-color 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--green); }
+
+        .wizard-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .wizard-choice__btn {
+            padding: 14px; border: 2px solid var(--gray-border);
+            border-radius: 12px; background: white;
+            cursor: pointer; transition: all 0.2s;
+            font-family: inherit; font-size: 0.85rem; font-weight: 600;
+            color: var(--dark);
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            text-align: center;
+        }
+        .wizard-choice__btn:hover { border-color: var(--green); }
+        .wizard-choice__btn.--active { border-color: var(--green); background: var(--green-light); color: var(--primary); }
+        .wizard-choice__btn-icon { font-size: 1.4rem; }
+
+        .wizard-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--gray-border); }
+
+        .wizard-success {
+            background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+            border: 1.5px solid #86efac;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+        .wizard-success__title { font-weight: 700; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .wizard-success__url {
+            display: flex; align-items: center; gap: 8px;
+            background: white; padding: 10px 12px; border-radius: 8px;
+            border: 1px solid #d1d5db; font-size: 0.82rem;
+            font-family: ui-monospace, monospace;
+            word-break: break-all;
+        }
+        .wizard-success__copy {
+            margin-left: auto; padding: 5px 12px; border-radius: 6px;
+            background: var(--green); color: white; border: none;
+            font-family: inherit; font-size: 0.74rem; font-weight: 700;
+            cursor: pointer; flex-shrink: 0;
+        }
+        .wizard-success__copy:hover { background: var(--green-dark); }
+
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 5000; display: flex; flex-direction: column; gap: 8px; }
+        .toast { padding: 12px 18px; background: var(--dark); color: white; border-radius: 10px; font-size: 0.85rem; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .toast--success { background: var(--green); }
+        .toast--error { background: #ef4444; }
+
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            .stats-bar { flex-wrap: wrap; }
+            .stat-item { min-width: 50%; }
+            .forms-grid { grid-template-columns: 1fr; }
+            .wizard-choice { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Formulaires<span>.</span></h1>
+            <p class="page-subtitle">Crée et partage des formulaires de qualification — les réponses alimentent automatiquement le CRM</p>
+        </div>
+        <button class="btn btn--primary" id="btnNewForm">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Nouveau formulaire
+        </button>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item"><div class="stat-item__value" id="statTotal">0</div><div class="stat-item__label">Formulaires créés</div></div>
+        <div class="stat-item stat-item--green"><div class="stat-item__value" id="statActive">0</div><div class="stat-item__label">Actifs</div></div>
+        <div class="stat-item stat-item--blue"><div class="stat-item__value" id="statResponses">0</div><div class="stat-item__label">Réponses reçues</div></div>
+        <div class="stat-item stat-item--amber"><div class="stat-item__value" id="statPending">0</div><div class="stat-item__label">En attente</div></div>
+    </div>
+
+    <div class="forms-grid" id="formsGrid"></div>
+</div>
+
+<!-- WIZARD MODAL -->
+<div class="wizard-overlay" id="wizardOverlay" onclick="if(event.target===this)closeWizard()">
+    <div class="wizard-modal">
+        <h3>Nouveau <span>formulaire</span></h3>
+        <div class="wizard-modal__sub" id="wizardSub">Configure ton formulaire en quelques étapes</div>
+        <div class="wizard-step-indicator">
+            <div class="wizard-step-indicator__dot --active" data-step="1"></div>
+            <div class="wizard-step-indicator__dot" data-step="2"></div>
+            <div class="wizard-step-indicator__dot" data-step="3"></div>
+        </div>
+
+        <!-- STEP 1 : Rattachement -->
+        <div class="wizard-step" data-step="1">
+            <div class="form-field">
+                <label class="form-label">Tu rattaches ce formulaire à un prospect existant ?</label>
+                <div class="wizard-choice">
+                    <button type="button" class="wizard-choice__btn --active" data-attach="existing" onclick="selectAttachMode('existing')">
+                        <span class="wizard-choice__btn-icon">📎</span>
+                        Prospect existant
+                    </button>
+                    <button type="button" class="wizard-choice__btn" data-attach="new" onclick="selectAttachMode('new')">
+                        <span class="wizard-choice__btn-icon">✨</span>
+                        Nouveau contact
+                    </button>
+                </div>
+            </div>
+            <div class="form-field" id="prospectSelectField">
+                <label class="form-label">Quel prospect / client ?</label>
+                <select class="form-select" id="wizProspectId">
+                    <option value="">Choisis dans la liste...</option>
+                </select>
+            </div>
+            <div class="form-field" id="newCompanyField" style="display:none;">
+                <label class="form-label">Nom de l'entreprise destinataire <span style="color:#ef4444;">*</span></label>
+                <input class="form-input" id="wizCompany" placeholder="Ex: Acme SAS">
+            </div>
+        </div>
+
+        <!-- STEP 2 : Infos basiques (que TU connais déjà) -->
+        <div class="wizard-step" data-step="2" style="display:none;">
+            <p style="font-size:0.82rem;color:var(--gray);margin-bottom:14px;">Pré-remplis ce que tu sais déjà. Le destinataire complétera le reste.</p>
+            <div class="form-field">
+                <label class="form-label">Prénom de la personne</label>
+                <input class="form-input" id="wizFirstName" placeholder="Ex: Hugo">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Email (si tu l'as)</label>
+                <input class="form-input" id="wizEmail" type="email" placeholder="contact@acme.com">
+            </div>
+            <div class="form-field">
+                <label class="form-label">Objectif du formulaire (optionnel)</label>
+                <select class="form-select" id="wizObjective">
+                    <option value="">Aucun</option>
+                    <option value="qualification">Qualification (nouveau client)</option>
+                    <option value="audit">Audit (situation actuelle)</option>
+                    <option value="brief">Brief créa / projet</option>
+                    <option value="onboarding">Onboarding (démarrage prestation)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- STEP 3 : Récap + génération -->
+        <div class="wizard-step" data-step="3" style="display:none;">
+            <div id="wizardRecap" style="background:#fafbfc;border:1px solid var(--gray-border);border-radius:10px;padding:14px;margin-bottom:14px;font-size:0.85rem;line-height:1.6;"></div>
+            <div id="wizardSuccess" style="display:none;"></div>
+        </div>
+
+        <div class="wizard-actions">
+            <button class="btn btn--ghost" id="wizPrevBtn" onclick="wizardPrev()" style="display:none;">Précédent</button>
+            <div style="flex:1;"></div>
+            <button class="btn btn--ghost" onclick="closeWizard()">Annuler</button>
+            <button class="btn btn--primary" id="wizNextBtn" onclick="wizardNext()">Suivant</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function() {
+    'use strict';
+
+    if (sessionStorage.getItem('regen_admin_auth') !== 'true') {
+        window.location.href = '../connexion.html';
+        return;
+    }
+
+    var SUPABASE_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
+    var AGENCY_ID = '00000000-0000-0000-0000-000000000001';
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    var allForms = [];
+    var allProspects = [];
+    var wizardStep = 1;
+    var wizardData = { attachMode: 'existing', prospectId: null, company: '', firstName: '', email: '', objective: '' };
+
+    function escapeHtml(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+    function toast(msg, type) {
+        var t = document.createElement('div');
+        t.className = 'toast toast--' + (type || 'success');
+        t.textContent = msg;
+        document.getElementById('toastContainer').appendChild(t);
+        setTimeout(function() { t.remove(); }, 3000);
+    }
+
+    async function loadAll() {
+        // 1) Fetch les formulaires + jointure avec prospect
+        var fRes = await sb.from('prospect_forms')
+            .select('*, prospect:prospect_id(id, company_name, contact_first_name, contact_last_name, agency_id)')
+            .order('created_at', { ascending: false });
+        allForms = (fRes.data || []).filter(function(f) { return f.prospect && f.prospect.agency_id === AGENCY_ID; });
+
+        // 2) Fetch nombre de réponses par formulaire
+        var rIds = allForms.map(function(f) { return f.id; });
+        var responsesByForm = {};
+        if (rIds.length > 0) {
+            var rRes = await sb.from('prospect_form_responses').select('form_id').in('form_id', rIds);
+            (rRes.data || []).forEach(function(r) {
+                responsesByForm[r.form_id] = (responsesByForm[r.form_id] || 0) + 1;
+            });
+        }
+        allForms.forEach(function(f) { f._responseCount = responsesByForm[f.id] || 0; });
+
+        // 3) Fetch tous les prospects (pour le wizard)
+        var pRes = await sb.from('prospects')
+            .select('id, company_name, contact_first_name, contact_last_name, contact_email, converted_client_id')
+            .eq('agency_id', AGENCY_ID)
+            .order('company_name');
+        allProspects = pRes.data || [];
+
+        renderForms();
+        populateProspectDropdown();
+    }
+
+    function renderForms() {
+        var grid = document.getElementById('formsGrid');
+        var total = allForms.length;
+        var active = allForms.filter(function(f) { return f.is_active; }).length;
+        var responses = allForms.reduce(function(s, f) { return s + f._responseCount; }, 0);
+        var pending = allForms.filter(function(f) { return f.is_active && f._responseCount === 0; }).length;
+
+        document.getElementById('statTotal').textContent = total;
+        document.getElementById('statActive').textContent = active;
+        document.getElementById('statResponses').textContent = responses;
+        document.getElementById('statPending').textContent = pending;
+
+        if (total === 0) {
+            grid.innerHTML =
+                '<div class="empty-state">' +
+                    '<svg class="empty-state__icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6M9 9h2"/></svg>' +
+                    '<h3>Aucun formulaire pour le moment</h3>' +
+                    '<p>Crée un formulaire de qualification, partage le lien, et les réponses alimentent automatiquement la fiche du prospect dans le CRM.</p>' +
+                    '<button class="btn btn--primary" onclick="openWizard()"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Créer mon premier formulaire</button>' +
+                '</div>';
+            return;
+        }
+
+        grid.innerHTML = allForms.map(function(f) {
+            var p = f.prospect || {};
+            var contactName = [p.contact_first_name, p.contact_last_name].filter(Boolean).join(' ');
+            var publicUrl = window.location.origin + '/prospect-form.html?token=' + f.token;
+            var statusCls, statusLabel;
+            if (f._responseCount > 0) { statusCls = 'filled'; statusLabel = '✓ Rempli'; }
+            else if (f.is_active) { statusCls = 'active'; statusLabel = '● Actif'; }
+            else { statusCls = 'inactive'; statusLabel = 'Inactif'; }
+
+            return '<div class="form-card">' +
+                '<div class="form-card__header">' +
+                    '<div>' +
+                        '<div class="form-card__company">' + escapeHtml(p.company_name || 'Sans nom') + '</div>' +
+                        (contactName ? '<div class="form-card__sub">' + escapeHtml(contactName) + '</div>' : '') +
+                    '</div>' +
+                    '<span class="form-card__status form-card__status--' + statusCls + '">' + statusLabel + '</span>' +
+                '</div>' +
+                '<div class="form-card__meta">' +
+                    '<span class="form-card__meta-item">' +
+                        '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' +
+                        new Date(f.created_at).toLocaleDateString('fr-FR') +
+                    '</span>' +
+                    '<span class="form-card__meta-item">' +
+                        '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
+                        f._responseCount + ' réponse' + (f._responseCount > 1 ? 's' : '') +
+                    '</span>' +
+                '</div>' +
+                '<div class="form-card__actions">' +
+                    '<a class="form-card__link" href="' + publicUrl + '" target="_blank">' +
+                        '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>' +
+                        'Aperçu' +
+                    '</a>' +
+                    '<button class="btn btn--ghost btn--sm" onclick="copyLink(\'' + publicUrl + '\')">' +
+                        '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+                        'Copier le lien' +
+                    '</button>' +
+                    (p.id ? '<a class="btn btn--ghost btn--sm" href="prospects.html?openProspect=' + p.id + '">Fiche CRM</a>' : '') +
+                    '<button class="btn btn--danger btn--sm" onclick="deleteForm(\'' + f.id + '\')">Supprimer</button>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    function populateProspectDropdown() {
+        var sel = document.getElementById('wizProspectId');
+        var clients = allProspects.filter(function(p) { return p.converted_client_id; });
+        var prospects = allProspects.filter(function(p) { return !p.converted_client_id; });
+        sel.innerHTML = '<option value="">Choisis dans la liste...</option>';
+        if (clients.length > 0) {
+            var grpC = document.createElement('optgroup');
+            grpC.label = 'Clients';
+            clients.forEach(function(p) {
+                var o = document.createElement('option');
+                o.value = p.id; o.textContent = p.company_name;
+                grpC.appendChild(o);
+            });
+            sel.appendChild(grpC);
+        }
+        if (prospects.length > 0) {
+            var grpP = document.createElement('optgroup');
+            grpP.label = 'Prospects';
+            prospects.forEach(function(p) {
+                var o = document.createElement('option');
+                o.value = p.id; o.textContent = p.company_name;
+                grpP.appendChild(o);
+            });
+            sel.appendChild(grpP);
+        }
+    }
+
+    // ── WIZARD ──
+    window.openWizard = function() {
+        wizardStep = 1;
+        wizardData = { attachMode: 'existing', prospectId: null, company: '', firstName: '', email: '', objective: '' };
+        document.getElementById('wizProspectId').value = '';
+        document.getElementById('wizCompany').value = '';
+        document.getElementById('wizFirstName').value = '';
+        document.getElementById('wizEmail').value = '';
+        document.getElementById('wizObjective').value = '';
+        document.getElementById('wizardSuccess').style.display = 'none';
+        document.getElementById('wizardSuccess').innerHTML = '';
+        showStep(1);
+        document.getElementById('wizardOverlay').classList.add('--open');
+    };
+    window.closeWizard = function() {
+        document.getElementById('wizardOverlay').classList.remove('--open');
+    };
+    window.selectAttachMode = function(mode) {
+        wizardData.attachMode = mode;
+        document.querySelectorAll('[data-attach]').forEach(function(b) {
+            b.classList.toggle('--active', b.dataset.attach === mode);
+        });
+        document.getElementById('prospectSelectField').style.display = mode === 'existing' ? '' : 'none';
+        document.getElementById('newCompanyField').style.display = mode === 'new' ? '' : 'none';
+    };
+
+    function showStep(n) {
+        wizardStep = n;
+        document.querySelectorAll('.wizard-step').forEach(function(s) {
+            s.style.display = parseInt(s.dataset.step) === n ? '' : 'none';
+        });
+        document.querySelectorAll('.wizard-step-indicator__dot').forEach(function(d) {
+            d.classList.toggle('--active', parseInt(d.dataset.step) <= n);
+        });
+        document.getElementById('wizPrevBtn').style.display = n > 1 ? '' : 'none';
+        document.getElementById('wizNextBtn').textContent = n < 3 ? 'Suivant' : 'Générer le formulaire';
+        if (n === 3) renderRecap();
+    }
+
+    window.wizardNext = async function() {
+        if (wizardStep === 1) {
+            if (wizardData.attachMode === 'existing') {
+                wizardData.prospectId = document.getElementById('wizProspectId').value;
+                if (!wizardData.prospectId) { toast('Choisis un prospect dans la liste', 'error'); return; }
+            } else {
+                wizardData.company = document.getElementById('wizCompany').value.trim();
+                if (!wizardData.company) { toast("Renseigne le nom de l'entreprise", 'error'); return; }
+            }
+            showStep(2);
+        } else if (wizardStep === 2) {
+            wizardData.firstName = document.getElementById('wizFirstName').value.trim();
+            wizardData.email = document.getElementById('wizEmail').value.trim();
+            wizardData.objective = document.getElementById('wizObjective').value;
+            showStep(3);
+        } else if (wizardStep === 3) {
+            await generateForm();
+        }
+    };
+    window.wizardPrev = function() {
+        if (wizardStep > 1) showStep(wizardStep - 1);
+    };
+
+    function renderRecap() {
+        var p = wizardData.prospectId ? allProspects.find(function(x) { return x.id === wizardData.prospectId; }) : null;
+        var rattachement = wizardData.attachMode === 'existing'
+            ? (p ? '<strong>' + escapeHtml(p.company_name) + '</strong> (existant)' : '—')
+            : '<strong>' + escapeHtml(wizardData.company) + '</strong> (nouveau prospect créé à la génération)';
+        var html = '<strong>Récapitulatif</strong><br>' +
+            '• Rattachement : ' + rattachement + '<br>' +
+            (wizardData.firstName ? '• Prénom destinataire : ' + escapeHtml(wizardData.firstName) + '<br>' : '') +
+            (wizardData.email ? '• Email : ' + escapeHtml(wizardData.email) + '<br>' : '') +
+            (wizardData.objective ? '• Objectif : ' + escapeHtml(wizardData.objective) + '<br>' : '');
+        document.getElementById('wizardRecap').innerHTML = html;
+    }
+
+    async function generateForm() {
+        var btn = document.getElementById('wizNextBtn');
+        btn.disabled = true; btn.textContent = 'Génération...';
+
+        var prospectId = wizardData.prospectId;
+
+        // Si nouveau contact : créer un prospect d'abord
+        if (wizardData.attachMode === 'new') {
+            var pIns = await sb.from('prospects').insert([{
+                agency_id: AGENCY_ID,
+                company_name: wizardData.company,
+                contact_first_name: wizardData.firstName || null,
+                contact_email: wizardData.email || null,
+                stage: 'nouveau'
+            }]).select();
+            if (pIns.error) {
+                toast('Erreur création prospect : ' + pIns.error.message, 'error');
+                btn.disabled = false; btn.textContent = 'Générer le formulaire';
+                return;
+            }
+            prospectId = pIns.data[0].id;
+        } else if (wizardData.firstName || wizardData.email) {
+            // Enrichir le prospect existant avec les infos données
+            var update = {};
+            if (wizardData.firstName) update.contact_first_name = wizardData.firstName;
+            if (wizardData.email) update.contact_email = wizardData.email;
+            if (Object.keys(update).length > 0) {
+                await sb.from('prospects').update(update).eq('id', prospectId);
+            }
+        }
+
+        // Crée le formulaire
+        var formInsert = {
+            prospect_id: prospectId,
+            form_title: wizardData.objective ? 'Questionnaire ' + wizardData.objective : 'Questionnaire prospect',
+            is_active: true
+        };
+        var fIns = await sb.from('prospect_forms').insert([formInsert]).select();
+        if (fIns.error) {
+            toast('Erreur : ' + fIns.error.message, 'error');
+            btn.disabled = false; btn.textContent = 'Générer le formulaire';
+            return;
+        }
+        var newForm = fIns.data[0];
+        var publicUrl = window.location.origin + '/prospect-form.html?token=' + newForm.token;
+
+        // Affiche le succès
+        document.getElementById('wizardRecap').style.display = 'none';
+        var success = document.getElementById('wizardSuccess');
+        success.style.display = '';
+        success.innerHTML =
+            '<div class="wizard-success">' +
+                '<div class="wizard-success__title">' +
+                    '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--green);"><polyline points="20 6 9 17 4 12"/></svg>' +
+                    'Formulaire créé avec succès !' +
+                '</div>' +
+                '<div class="wizard-success__url">' +
+                    '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;">' + publicUrl + '</span>' +
+                    '<button class="wizard-success__copy" onclick="copyLink(\'' + publicUrl + '\')">Copier</button>' +
+                '</div>' +
+            '</div>' +
+            '<p style="font-size:0.85rem;color:var(--gray);">Partage ce lien à ton destinataire. Les réponses arriveront dans la fiche CRM du prospect.</p>';
+
+        btn.style.display = 'none';
+        document.getElementById('wizPrevBtn').style.display = 'none';
+
+        await loadAll();
+    }
+
+    window.copyLink = function(url) {
+        navigator.clipboard.writeText(url).then(function() {
+            toast('Lien copié !');
+        }).catch(function() { toast('Erreur copie', 'error'); });
+    };
+
+    window.deleteForm = async function(id) {
+        if (!confirm('Supprimer ce formulaire et toutes ses réponses ?')) return;
+        await sb.from('prospect_form_responses').delete().eq('form_id', id);
+        await sb.from('prospect_forms').delete().eq('id', id);
+        toast('Formulaire supprimé');
+        await loadAll();
+    };
+
+    document.getElementById('btnNewForm').addEventListener('click', openWizard);
+
+    loadAll();
+})();
+</script>
+<script src="admin-shell.js"></script>
+</body>
+</html>
