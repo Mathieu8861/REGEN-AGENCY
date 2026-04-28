@@ -2046,14 +2046,16 @@
             }
         });
 
-        // Update stat cards
-        var aov = totalOrders > 0 ? totalCA / totalOrders : 0;
+        // Update stat cards (Ads-only — cohérent avec la vue agency)
+        // Les 6 cards affichent les KPI restreints aux canaux payants (google_ads / meta_ads / tiktok_ads),
+        // sauf "Dépenses Ads" qui reste totalSpend par définition.
+        var adsAov = adsOrders > 0 ? adsCA / adsOrders : 0;
         var cpa = adsOrders > 0 && totalSpend > 0 ? totalSpend / adsOrders : 0;
-        document.getElementById('stat-ca').textContent = formatMoney(totalCA);
-        document.getElementById('stat-orders').textContent = totalOrders;
+        document.getElementById('stat-ca').textContent = formatMoney(adsCA);
+        document.getElementById('stat-orders').textContent = adsOrders;
         document.getElementById('stat-ads').textContent = totalSpend > 0 ? formatMoney(totalSpend) : '-';
         document.getElementById('stat-roas').textContent = totalSpend > 0 ? (adsCA / totalSpend).toFixed(2) + 'x' : '-';
-        document.getElementById('stat-aov').textContent = formatMoney(aov);
+        document.getElementById('stat-aov').textContent = formatMoney(adsAov);
         document.getElementById('stat-cpa').textContent = totalSpend > 0 ? formatMoney(cpa) : '-';
 
         // Build attribution table
