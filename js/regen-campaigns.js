@@ -319,7 +319,7 @@
             html += '<td><span class="rc-channel-badge rc-channel-badge--' + c.platform + '"><span class="rc-channel-badge__dot"></span>' + info.label + '</span></td>';
             html += '<td class="rc-text-right">' + window.REGEN.formatMoney(c.spend) + '</td>';
             html += '<td class="rc-text-right rc-text-bold">' + window.REGEN.formatMoney(c.attributed_revenue) + '</td>';
-            html += '<td class="rc-text-right">' + window.REGEN.formatROAS(roas) + '</td>';
+            html += '<td class="rc-text-right">' + window.REGEN.formatROASPill(roas) + '</td>';
             html += '<td class="rc-text-right">' + window.REGEN.formatNumber(c.impressions) + '</td>';
             html += '<td class="rc-text-right">' + window.REGEN.formatNumber(c.clicks) + '</td>';
             html += '<td class="rc-text-right">' + window.REGEN.formatMoney(cpc) + '</td>';
@@ -337,7 +337,7 @@
         html += '<td></td>';
         html += '<td class="rc-text-right">' + window.REGEN.formatMoney(totals.spend) + '</td>';
         html += '<td class="rc-text-right">' + window.REGEN.formatMoney(totals.revenue) + '</td>';
-        html += '<td class="rc-text-right">' + window.REGEN.formatROAS(totalRoas) + '</td>';
+        html += '<td class="rc-text-right">' + window.REGEN.formatROASPill(totalRoas) + '</td>';
         html += '<td class="rc-text-right">' + window.REGEN.formatNumber(totals.impressions) + '</td>';
         html += '<td class="rc-text-right">' + window.REGEN.formatNumber(totals.clicks) + '</td>';
         html += '<td class="rc-text-right">' + window.REGEN.formatMoney(totalCpc) + '</td>';

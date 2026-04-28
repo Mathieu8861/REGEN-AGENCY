@@ -265,6 +265,15 @@
         return (value || 0).toFixed(2) + 'x';
     };
 
+    // Format ROAS as colored pill (HTML). Seuils : <2 rouge, 2-4 orange, >=4 vert
+    window.REGEN.formatROASPill = function (value) {
+        var v = parseFloat(value) || 0;
+        var cls = 'rc-roas-badge--bad';
+        if (v >= 4) cls = 'rc-roas-badge--good';
+        else if (v >= 2) cls = 'rc-roas-badge--ok';
+        return '<span class="rc-roas-badge ' + cls + '">' + v.toFixed(2) + 'x</span>';
+    };
+
     // Format date
     window.REGEN.formatDate = function (dateStr) {
         if (!dateStr) return '-';

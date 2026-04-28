@@ -116,72 +116,31 @@
 
             <!-- Content -->
             <div class="rc-content">
-                <!-- KPI Cards -->
-                <div class="rc-kpi-grid" id="kpi-grid">
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">Chiffre d'affaires</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--green">&#8364;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="kpi-revenue">--</div>
-                        <div class="rc-kpi-card__trend rc-kpi-card__trend--neutral" id="kpi-revenue-trend">
-                            vs periode precedente
-                        </div>
+                <!-- KPI Cards (stat-bar harmonisée) -->
+                <div class="rc-stats-grid" id="kpi-grid">
+                    <div class="rc-stat-card rc-stat-card--green">
+                        <div class="rc-stat-card__value" id="kpi-revenue">--</div>
+                        <div class="rc-stat-card__label">Chiffre d'affaires</div>
                     </div>
-
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">Depense Ads</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--blue">&#9733;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="kpi-spend">--</div>
-                        <div class="rc-kpi-card__trend rc-kpi-card__trend--neutral" id="kpi-spend-trend">
-                            vs periode precedente
-                        </div>
+                    <div class="rc-stat-card rc-stat-card--blue">
+                        <div class="rc-stat-card__value" id="kpi-orders">--</div>
+                        <div class="rc-stat-card__label">Commandes</div>
                     </div>
-
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">ROAS</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--green">&#215;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="kpi-roas">--</div>
-                        <div class="rc-kpi-card__trend rc-kpi-card__trend--neutral" id="kpi-roas-trend">
-                            vs periode precedente
-                        </div>
+                    <div class="rc-stat-card rc-stat-card--orange">
+                        <div class="rc-stat-card__value" id="kpi-spend">--</div>
+                        <div class="rc-stat-card__label">Depense Ads</div>
                     </div>
-
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">Commandes</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--orange">&#35;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="kpi-orders">--</div>
-                        <div class="rc-kpi-card__trend rc-kpi-card__trend--neutral" id="kpi-orders-trend">
-                            vs periode precedente
-                        </div>
+                    <div class="rc-stat-card rc-stat-card--purple">
+                        <div class="rc-stat-card__value" id="kpi-roas">--</div>
+                        <div class="rc-stat-card__label">ROAS</div>
                     </div>
-
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">Panier Moyen</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--green">&#128722;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="kpi-basket">--</div>
-                        <div class="rc-kpi-card__trend rc-kpi-card__trend--neutral" id="kpi-basket-trend">
-                            vs periode precedente
-                        </div>
+                    <div class="rc-stat-card rc-stat-card--teal">
+                        <div class="rc-stat-card__value" id="kpi-basket">--</div>
+                        <div class="rc-stat-card__label">Panier Moyen</div>
                     </div>
-
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">Taux de conversion</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--blue">%</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="kpi-conversion">--</div>
-                        <div class="rc-kpi-card__trend rc-kpi-card__trend--neutral" id="kpi-conversion-trend">
-                            vs periode precedente
-                        </div>
+                    <div class="rc-stat-card rc-stat-card--rose">
+                        <div class="rc-stat-card__value" id="kpi-conversion">--</div>
+                        <div class="rc-stat-card__label">Taux de conversion</div>
                     </div>
                 </div>
 

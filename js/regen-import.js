@@ -400,7 +400,7 @@
                 html += '<td>S' + row.week + '</td>';
                 html += '<td class="rc-text-right">' + window.REGEN.formatMoney(row.spend) + '</td>';
                 html += '<td class="rc-text-right">' + window.REGEN.formatMoney(row.revenue) + '</td>';
-                html += '<td class="rc-text-right">' + window.REGEN.formatROAS(roas) + '</td>';
+                html += '<td class="rc-text-right">' + window.REGEN.formatROASPill(roas) + '</td>';
                 html += '<td class="rc-text-right">' + (row.orders_count || 0) + '</td>';
                 html += '</tr>';
             });

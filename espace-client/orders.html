@@ -105,28 +105,19 @@
             </header>
 
             <div class="rc-content">
-                <!-- KPI Summary -->
-                <div class="rc-kpi-grid">
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">Commandes</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--orange">&#35;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="orders-kpi-count">--</div>
+                <!-- KPI Summary (stat-bar harmonisée) -->
+                <div class="rc-stats-grid">
+                    <div class="rc-stat-card rc-stat-card--green">
+                        <div class="rc-stat-card__value" id="orders-kpi-revenue">--</div>
+                        <div class="rc-stat-card__label">CA Total</div>
                     </div>
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">CA Total</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--green">&#8364;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="orders-kpi-revenue">--</div>
+                    <div class="rc-stat-card rc-stat-card--blue">
+                        <div class="rc-stat-card__value" id="orders-kpi-count">--</div>
+                        <div class="rc-stat-card__label">Commandes</div>
                     </div>
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">Panier Moyen</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--blue">&#128722;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="orders-kpi-basket">--</div>
+                    <div class="rc-stat-card rc-stat-card--teal">
+                        <div class="rc-stat-card__value" id="orders-kpi-basket">--</div>
+                        <div class="rc-stat-card__label">Panier Moyen</div>
                     </div>
                 </div>
 

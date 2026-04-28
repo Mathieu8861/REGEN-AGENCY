@@ -113,34 +113,30 @@
 
             <div class="rc-content">
                 <!-- Global KPIs (all clients combined) -->
-                <div class="rc-kpi-grid" id="global-kpis">
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">CA Total Agence</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--green">&#8364;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="global-revenue">--</div>
+                <div class="rc-stats-grid" id="global-kpis">
+                    <div class="rc-stat-card rc-stat-card--green">
+                        <div class="rc-stat-card__value" id="global-revenue">--</div>
+                        <div class="rc-stat-card__label">CA Total Agence</div>
                     </div>
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">Depense Ads Totale</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--blue">&#9733;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="global-spend">--</div>
+                    <div class="rc-stat-card rc-stat-card--blue">
+                        <div class="rc-stat-card__value" id="global-orders">--</div>
+                        <div class="rc-stat-card__label">Commandes</div>
                     </div>
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">ROAS Moyen</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--green">&#215;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="global-roas">--</div>
+                    <div class="rc-stat-card rc-stat-card--orange">
+                        <div class="rc-stat-card__value" id="global-spend">--</div>
+                        <div class="rc-stat-card__label">Depenses Ads</div>
                     </div>
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">Commandes Totales</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--orange">&#35;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="global-orders">--</div>
+                    <div class="rc-stat-card rc-stat-card--purple">
+                        <div class="rc-stat-card__value" id="global-roas">--</div>
+                        <div class="rc-stat-card__label">ROAS Moyen</div>
+                    </div>
+                    <div class="rc-stat-card rc-stat-card--teal">
+                        <div class="rc-stat-card__value" id="global-basket">--</div>
+                        <div class="rc-stat-card__label">Panier Moyen</div>
+                    </div>
+                    <div class="rc-stat-card rc-stat-card--rose">
+                        <div class="rc-stat-card__value" id="global-cpa">--</div>
+                        <div class="rc-stat-card__label">CPA</div>
                     </div>
                 </div>
 
@@ -260,10 +256,14 @@
 
             // Update global KPIs
             var globalRoas = globalSpend > 0 ? globalRevenue / globalSpend : 0;
+            var globalBasket = globalOrders > 0 ? globalRevenue / globalOrders : 0;
+            var globalCpa = globalOrders > 0 ? globalSpend / globalOrders : 0;
             animateKPI('global-revenue', globalRevenue, window.REGEN.formatMoney);
+            animateKPI('global-orders', globalOrders, window.REGEN.formatNumber);
             animateKPI('global-spend', globalSpend, window.REGEN.formatMoney);
             animateKPI('global-roas', globalRoas, window.REGEN.formatROAS);
-            animateKPI('global-orders', globalOrders, window.REGEN.formatNumber);
+            animateKPI('global-basket', globalBasket, window.REGEN.formatMoney);
+            animateKPI('global-cpa', globalCpa, window.REGEN.formatMoney);
 
             // Sort by revenue descending
             clientsData.sort(function (a, b) { return b.revenue - a.revenue; });
@@ -310,7 +310,7 @@
                 html += '</td>';
                 html += '<td class="rc-text-right rc-text-bold">' + window.REGEN.formatMoney(group.revenue) + '</td>';
                 html += '<td class="rc-text-right">' + window.REGEN.formatMoney(group.spend) + '</td>';
-                html += '<td class="rc-text-right">' + window.REGEN.formatROAS(groupRoas) + '</td>';
+                html += '<td class="rc-text-right">' + window.REGEN.formatROASPill(groupRoas) + '</td>';
                 html += '<td class="rc-text-right">' + group.orders + '</td>';
                 html += '<td class="rc-text-right">' + window.REGEN.formatMoney(groupBasket) + '</td>';
                 html += '<td></td>';
@@ -326,7 +326,7 @@
                     html += '</td>';
                     html += '<td class="rc-text-right rc-text-bold">' + window.REGEN.formatMoney(d.revenue) + '</td>';
                     html += '<td class="rc-text-right">' + window.REGEN.formatMoney(d.spend) + '</td>';
-                    html += '<td class="rc-text-right">' + window.REGEN.formatROAS(d.roas) + '</td>';
+                    html += '<td class="rc-text-right">' + window.REGEN.formatROASPill(d.roas) + '</td>';
                     html += '<td class="rc-text-right">' + d.orders + '</td>';
                     html += '<td class="rc-text-right">' + window.REGEN.formatMoney(d.basket) + '</td>';
                     html += '<td class="rc-text-right"><a href="dashboard.html" class="rc-btn rc-btn--secondary rc-btn--sm" onclick="localStorage.setItem(\'regen_selected_client\',\'' + d.client.id + '\')">Voir</a></td>';
@@ -344,7 +344,7 @@
                 html += '</td>';
                 html += '<td class="rc-text-right rc-text-bold">' + window.REGEN.formatMoney(d.revenue) + '</td>';
                 html += '<td class="rc-text-right">' + window.REGEN.formatMoney(d.spend) + '</td>';
-                html += '<td class="rc-text-right">' + window.REGEN.formatROAS(d.roas) + '</td>';
+                html += '<td class="rc-text-right">' + window.REGEN.formatROASPill(d.roas) + '</td>';
                 html += '<td class="rc-text-right">' + d.orders + '</td>';
                 html += '<td class="rc-text-right">' + window.REGEN.formatMoney(d.basket) + '</td>';
                 html += '<td class="rc-text-right"><a href="dashboard.html" class="rc-btn rc-btn--secondary rc-btn--sm" onclick="localStorage.setItem(\'regen_selected_client\',\'' + d.client.id + '\')">Voir</a></td>';
@@ -357,7 +357,7 @@
             html += '<td><strong>Total Agence</strong></td>';
             html += '<td class="rc-text-right">' + window.REGEN.formatMoney(globalRevenue) + '</td>';
             html += '<td class="rc-text-right">' + window.REGEN.formatMoney(globalSpend) + '</td>';
-            html += '<td class="rc-text-right">' + window.REGEN.formatROAS(globalRoas) + '</td>';
+            html += '<td class="rc-text-right">' + window.REGEN.formatROASPill(globalRoas) + '</td>';
             html += '<td class="rc-text-right">' + globalOrders + '</td>';
             html += '<td class="rc-text-right">' + window.REGEN.formatMoney(totalBasket) + '</td>';
             html += '<td></td>';

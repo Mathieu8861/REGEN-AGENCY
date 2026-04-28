@@ -114,35 +114,23 @@
 
             <!-- Content -->
             <div class="rc-content">
-                <!-- KPI Cards -->
-                <div class="rc-kpi-grid" id="campaign-kpis">
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">Depense Totale</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--blue">&#9733;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="camp-kpi-spend">--</div>
+                <!-- KPI Cards (stat-bar harmonisée) -->
+                <div class="rc-stats-grid rc-stats-grid--cols-4" id="campaign-kpis">
+                    <div class="rc-stat-card rc-stat-card--orange">
+                        <div class="rc-stat-card__value" id="camp-kpi-spend">--</div>
+                        <div class="rc-stat-card__label">Depense Totale</div>
                     </div>
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">CA Attribue</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--green">&#8364;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="camp-kpi-revenue">--</div>
+                    <div class="rc-stat-card rc-stat-card--green">
+                        <div class="rc-stat-card__value" id="camp-kpi-revenue">--</div>
+                        <div class="rc-stat-card__label">CA Attribue</div>
                     </div>
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">ROAS Global</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--green">&#215;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="camp-kpi-roas">--</div>
+                    <div class="rc-stat-card rc-stat-card--purple">
+                        <div class="rc-stat-card__value" id="camp-kpi-roas">--</div>
+                        <div class="rc-stat-card__label">ROAS Global</div>
                     </div>
-                    <div class="rc-kpi-card">
-                        <div class="rc-kpi-card__header">
-                            <span class="rc-kpi-card__label">CPC Moyen</span>
-                            <div class="rc-kpi-card__icon rc-kpi-card__icon--orange">&#8364;</div>
-                        </div>
-                        <div class="rc-kpi-card__value" id="camp-kpi-cpc">--</div>
+                    <div class="rc-stat-card rc-stat-card--blue">
+                        <div class="rc-stat-card__value" id="camp-kpi-cpc">--</div>
+                        <div class="rc-stat-card__label">CPC Moyen</div>
                     </div>
                 </div>
 
