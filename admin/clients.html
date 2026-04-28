@@ -2082,15 +2082,16 @@
             return;
         }
 
-        var html = '<div class="table-wrap"><table class="attr-table"><thead><tr>';
+        // Colonnes alignées sur la vue agency : Entité | CA | Commandes | Spend | ROAS Site | CPA | (sep) | AOV | ROAS Gads
+        var html = '<div class="table-wrap"><table class="attr-table perf-clients-table"><thead><tr>';
         html += '<th style="text-align:left;">Source</th>';
-        html += '<th>ROAS Site' + infoBubble('<strong>ROAS Site</strong> = <code>CA / Spend</code><br><br>Calculé à partir des commandes <strong>réellement passées sur le site</strong> attribuées à cette source via UTM. Mesure côté site/CMS — souvent plus juste que les conversions remontées par les plateformes Ads.') + '</th>';
-        html += '<th>ROAS Gads</th>';
-        html += '<th>Commandes</th>';
-        html += '<th>CA</th>';
-        html += '<th>Spend</th>';
-        html += '<th>CPA</th>';
-        html += '<th>AOV</th>';
+        html += '<th class="text-right">CA</th>';
+        html += '<th class="text-right">Commandes</th>';
+        html += '<th class="text-right">Spend</th>';
+        html += '<th class="text-right">ROAS Site' + infoBubble('<strong>ROAS Site</strong> = <code>CA / Spend</code><br><br>Calculé à partir des commandes <strong>réellement passées sur le site</strong> attribuées à cette source via UTM. Mesure côté site/CMS — souvent plus juste que les conversions remontées par les plateformes Ads.') + '</th>';
+        html += '<th class="text-right">CPA</th>';
+        html += '<th class="text-right perf-clients-divider">AOV</th>';
+        html += '<th class="text-right">ROAS Gads</th>';
         html += '</tr></thead><tbody>';
 
         var totalGadsRev = 0;
@@ -2110,13 +2111,13 @@
 
             html += '<tr>';
             html += '<td><div class="attr-source"><div class="attr-source-icon ' + cfg.iconClass + '">' + cfg.icon + '</div>' + cfg.label + '</div></td>';
-            html += '<td>' + roasHtml + '</td>';
-            html += '<td>' + roasGHtml + '</td>';
-            html += '<td class="text-bold">' + d.count + '</td>';
-            html += '<td class="text-bold">' + formatMoney(d.revenue) + '</td>';
-            html += '<td>' + (d.spend > 0 ? formatMoney(d.spend) : '-') + '</td>';
-            html += '<td>' + (cpa > 0 ? formatMoney(cpa) : '-') + '</td>';
-            html += '<td>' + formatMoney(aov) + '</td>';
+            html += '<td class="text-right text-bold">' + formatMoney(d.revenue) + '</td>';
+            html += '<td class="text-right">' + d.count + '</td>';
+            html += '<td class="text-right">' + (d.spend > 0 ? formatMoney(d.spend) : '-') + '</td>';
+            html += '<td class="text-right">' + roasHtml + '</td>';
+            html += '<td class="text-right">' + (cpa > 0 ? formatMoney(cpa) : '-') + '</td>';
+            html += '<td class="text-right perf-clients-divider">' + formatMoney(aov) + '</td>';
+            html += '<td class="text-right">' + roasGHtml + '</td>';
             html += '</tr>';
         });
 
@@ -2129,14 +2130,14 @@
         var totalRoasGClass = totalRoasGads >= 5 ? 'attr-roas--good' : totalRoasGads >= 2 ? 'attr-roas--ok' : totalRoasGads > 0 ? 'attr-roas--bad' : '';
 
         html += '<tr class="attr-total">';
-        html += '<td>(' + keys.length + ' Sources)</td>';
-        html += '<td>' + (totalSpend > 0 ? '<span class="attr-roas-badge ' + totalRoasClass + '">' + totalRoas.toFixed(2) + '</span>' : '-') + '</td>';
-        html += '<td>' + (totalRoasGads > 0 ? '<span class="attr-roas-badge ' + totalRoasGClass + '">' + totalRoasGads.toFixed(2) + '</span>' : '-') + '</td>';
-        html += '<td>' + totalOrders + '</td>';
-        html += '<td>' + formatMoney(totalCA) + '</td>';
-        html += '<td>' + (totalSpend > 0 ? formatMoney(totalSpend) : '-') + '</td>';
-        html += '<td>' + (totalCpa > 0 ? formatMoney(totalCpa) : '-') + '</td>';
-        html += '<td>' + formatMoney(totalAov) + '</td>';
+        html += '<td><strong>Total (' + keys.length + ' source' + (keys.length > 1 ? 's' : '') + ')</strong></td>';
+        html += '<td class="text-right">' + formatMoney(totalCA) + '</td>';
+        html += '<td class="text-right">' + totalOrders + '</td>';
+        html += '<td class="text-right">' + (totalSpend > 0 ? formatMoney(totalSpend) : '-') + '</td>';
+        html += '<td class="text-right">' + (totalSpend > 0 ? '<span class="attr-roas-badge ' + totalRoasClass + '">' + totalRoas.toFixed(2) + '</span>' : '-') + '</td>';
+        html += '<td class="text-right">' + (totalCpa > 0 ? formatMoney(totalCpa) : '-') + '</td>';
+        html += '<td class="text-right perf-clients-divider">' + formatMoney(totalAov) + '</td>';
+        html += '<td class="text-right">' + (totalRoasGads > 0 ? '<span class="attr-roas-badge ' + totalRoasGClass + '">' + totalRoasGads.toFixed(2) + '</span>' : '-') + '</td>';
         html += '</tr>';
 
         html += '</tbody></table></div>';
@@ -2154,11 +2155,22 @@
             days[o.order_date].revenue += parseFloat(o.total_ttc || 0);
         });
 
-        var html = '<div class="table-wrap" style="max-height:300px; overflow-y:auto;"><table><thead><tr><th>Date</th><th class="text-right">Commandes</th><th class="text-right">CA</th><th class="text-right">Panier moyen</th></tr></thead><tbody>';
+        var totalCount = 0, totalRevenue = 0;
+        var html = '<div class="table-wrap" style="max-height:300px; overflow-y:auto;"><table class="attr-table"><thead><tr><th>Date</th><th class="text-right">Commandes</th><th class="text-right">CA</th><th class="text-right">Panier moyen</th></tr></thead><tbody>';
         Object.keys(days).sort().reverse().forEach(function(d) {
             var avg = days[d].count > 0 ? days[d].revenue / days[d].count : 0;
+            totalCount += days[d].count;
+            totalRevenue += days[d].revenue;
             html += '<tr><td>' + formatDate(d) + '</td><td class="text-right">' + days[d].count + '</td><td class="text-right text-bold">' + formatMoney(days[d].revenue) + '</td><td class="text-right">' + formatMoney(avg) + '</td></tr>';
         });
+        // Ligne total
+        var totalAvg = totalCount > 0 ? totalRevenue / totalCount : 0;
+        html += '<tr class="attr-total">';
+        html += '<td><strong>Total (' + Object.keys(days).length + ' jour' + (Object.keys(days).length > 1 ? 's' : '') + ')</strong></td>';
+        html += '<td class="text-right">' + totalCount + '</td>';
+        html += '<td class="text-right">' + formatMoney(totalRevenue) + '</td>';
+        html += '<td class="text-right">' + formatMoney(totalAvg) + '</td>';
+        html += '</tr>';
         html += '</tbody></table></div>';
         container.innerHTML = html;
     }
@@ -2561,23 +2573,42 @@
 
         if (orders.length === 0) { container.innerHTML = '<p class="text-muted text-sm">Aucune commande importee.</p>'; return; }
 
-        var html = '<div class="table-wrap" style="max-height:500px; overflow-y:auto;"><table><thead><tr><th>ID</th><th>Ref</th><th>Date</th><th class="text-right">Total TTC</th><th>Canal</th><th>Produit principal</th></tr></thead><tbody>';
+        var html = '<div class="table-wrap" style="max-height:500px; overflow-y:auto;"><table class="attr-table"><thead><tr>';
+        html += '<th style="text-align:left;">ID</th>';
+        html += '<th>Ref</th>';
+        html += '<th>Date</th>';
+        html += '<th class="text-right">Total TTC</th>';
+        html += '<th>Canal</th>';
+        html += '<th>Produit principal</th>';
+        html += '</tr></thead><tbody>';
+
+        var totalRevenue = 0;
         orders.forEach(function(o) {
             var ch = o.channel || 'direct';
-            var label = { google_ads:'Google Ads', meta_ads:'Meta Ads', tiktok_ads:'TikTok Ads', email:'Email', direct:'Direct', referral:'Referral', organic:'Organic' }[ch] || ch;
+            // Mapping vers icônes colorées (cohérence avec agency view)
+            var srcCfg = (typeof SOURCE_CONFIG !== 'undefined' && SOURCE_CONFIG[ch]) || { label: ch, icon: '?', iconClass: 'attr-icon--direct' };
             // Get main product (first one, typically the most expensive)
             var mainProduct = '-';
             if (o.order_items && o.order_items.length > 0) {
                 mainProduct = o.order_items[0].product_name || '-';
                 if (mainProduct.length > 50) mainProduct = mainProduct.substring(0, 50) + '...';
             }
+            totalRevenue += parseFloat(o.total_ttc || 0);
             html += '<tr><td>' + (o.external_id || '-') + '</td>';
             html += '<td><code style="font-size:0.75rem; background:var(--hover-bg); padding:2px 6px; border-radius:4px;">' + (o.reference || '-') + '</code></td>';
             html += '<td>' + formatDate(o.order_date) + '</td>';
             html += '<td class="text-right text-bold">' + formatMoney(o.total_ttc) + '</td>';
-            html += '<td><span class="channel-badge channel-badge--' + ch + '">' + label + '</span></td>';
+            html += '<td><div class="attr-source"><div class="attr-source-icon ' + srcCfg.iconClass + '">' + srcCfg.icon + '</div>' + srcCfg.label + '</div></td>';
             html += '<td class="text-sm text-muted">' + mainProduct + '</td></tr>';
         });
+
+        // Ligne total
+        html += '<tr class="attr-total">';
+        html += '<td colspan="3"><strong>Total (' + orders.length + ' commande' + (orders.length > 1 ? 's' : '') + ')</strong></td>';
+        html += '<td class="text-right">' + formatMoney(totalRevenue) + '</td>';
+        html += '<td colspan="2">—</td>';
+        html += '</tr>';
+
         html += '</tbody></table></div>';
         container.innerHTML = html;
     }
@@ -3542,7 +3573,19 @@
         var from30 = new Date(); from30.setDate(from30.getDate() - 30);
         var fromStr = from30.toISOString().split('T')[0];
 
-        var html = '<div class="table-wrap"><table><thead><tr><th>Campagne</th><th>Plateforme</th><th>Statut</th><th class="text-right">Depense (30j)</th><th class="text-right">Clics</th><th class="text-right">Impressions</th><th class="text-right">CPC</th><th class="text-right">Conversions</th></tr></thead><tbody>';
+        var html = '<div class="table-wrap"><table class="attr-table"><thead><tr>';
+        html += '<th style="text-align:left;">Campagne</th>';
+        html += '<th>Plateforme</th>';
+        html += '<th>Statut</th>';
+        html += '<th class="text-right">Depense (30j)</th>';
+        html += '<th class="text-right">Clics</th>';
+        html += '<th class="text-right">Impressions</th>';
+        html += '<th class="text-right">CPC</th>';
+        html += '<th class="text-right">Conversions</th>';
+        html += '</tr></thead><tbody>';
+
+        // Aggrégats pour la ligne total
+        var grandSpend = 0, grandClicks = 0, grandImpr = 0, grandConv = 0;
 
         for (var c = 0; c < allCampaigns.length; c++) {
             var camp = allCampaigns[c];
@@ -3557,13 +3600,23 @@
                 totConv += parseFloat(m.conversions || 0);
             });
 
+            grandSpend += totSpend;
+            grandClicks += totClicks;
+            grandImpr += totImpr;
+            grandConv += totConv;
+
             var avgCpc = totClicks > 0 ? (totSpend / totClicks) : 0;
-            var plabel = { google_ads: 'Google Ads', meta_ads: 'Meta Ads', tiktok_ads: 'TikTok Ads' }[camp.platform] || camp.platform;
+            // Icône colorée par plateforme (cohérence agency view)
+            var platformIcon = {
+                google_ads: { label: 'Google Ads', icon: 'G', cls: 'attr-icon--google' },
+                meta_ads: { label: 'Meta Ads', icon: 'M', cls: 'attr-icon--meta' },
+                tiktok_ads: { label: 'TikTok Ads', icon: 'T', cls: 'attr-icon--tiktok' }
+            }[camp.platform] || { label: camp.platform, icon: '?', cls: 'attr-icon--direct' };
             var statusBadge = camp.status === 'enabled' || camp.status === 'active' ? '<span style="color:#10b981; font-weight:700;">Actif</span>' : '<span class="text-muted">' + (camp.status || '-') + '</span>';
 
             html += '<tr>';
             html += '<td class="text-bold">' + (camp.name || camp.external_id) + '</td>';
-            html += '<td><span class="channel-badge channel-badge--' + camp.platform + '">' + plabel + '</span></td>';
+            html += '<td><div class="attr-source"><div class="attr-source-icon ' + platformIcon.cls + '">' + platformIcon.icon + '</div>' + platformIcon.label + '</div></td>';
             html += '<td>' + statusBadge + '</td>';
             html += '<td class="text-right text-bold">' + formatMoney(totSpend) + '</td>';
             html += '<td class="text-right">' + totClicks.toLocaleString('fr-FR') + '</td>';
@@ -3572,6 +3625,19 @@
             html += '<td class="text-right">' + totConv.toFixed(1) + '</td>';
             html += '</tr>';
         }
+
+        // Ligne total
+        var grandCpc = grandClicks > 0 ? grandSpend / grandClicks : 0;
+        html += '<tr class="attr-total">';
+        html += '<td><strong>Total (' + allCampaigns.length + ' campagne' + (allCampaigns.length > 1 ? 's' : '') + ')</strong></td>';
+        html += '<td>—</td>';
+        html += '<td>—</td>';
+        html += '<td class="text-right">' + formatMoney(grandSpend) + '</td>';
+        html += '<td class="text-right">' + grandClicks.toLocaleString('fr-FR') + '</td>';
+        html += '<td class="text-right">' + grandImpr.toLocaleString('fr-FR') + '</td>';
+        html += '<td class="text-right">' + formatMoney(grandCpc) + '</td>';
+        html += '<td class="text-right">' + grandConv.toFixed(1) + '</td>';
+        html += '</tr>';
 
         html += '</tbody></table></div>';
         container.innerHTML = html;
