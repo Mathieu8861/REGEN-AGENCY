@@ -142,10 +142,29 @@
             '</div>' +
         '</nav>' +
 
-        '<button class="admin-shell__logout" type="button" onclick="(function(){sessionStorage.removeItem(\'regen_admin_auth\'); window.location.href=\'../connexion.html\';})()">' +
+        '<button class="admin-shell__logout" type="button" onclick="window.regenAdminLogout()">' +
             '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>' +
             'Déconnexion' +
         '</button>';
+
+    // Logout admin = clear session Supabase + clear flag UI + redirect
+    // Indispensable pour pas garder une session zombie qui filtrerait les RLS au prochain login.
+    window.regenAdminLogout = async function() {
+        try {
+            // Si une instance Supabase existe déjà sur la page (créée par la page courante),
+            // on l'utilise. Sinon on en crée une à la volée juste pour le signOut.
+            var sb = (window.REGEN && window.REGEN.supabase) || window.regenSupabaseInstance || null;
+            if (!sb && window.supabase) {
+                sb = window.supabase.createClient(
+                    'https://jrhqqsybebdkoqrnogez.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8'
+                );
+            }
+            if (sb) await sb.auth.signOut();
+        } catch(e) { /* on ignore — l'important c'est de quitter */ }
+        sessionStorage.removeItem('regen_admin_auth');
+        window.location.href = '../connexion.html';
+    };
 
     // Insère la sidebar comme premier enfant du body
     if (document.body) {

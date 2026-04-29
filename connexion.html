@@ -766,9 +766,15 @@
     <script>
         (function() {
             // === CONFIGURATION ===
-            var ADMIN_PASSWORD = 'regen8861';
+            // Email du compte Supabase Auth dédié à l'admin (rôle 'admin' dans la table profiles).
+            // Le password n'est PAS stocké en clair — il est saisi à chaque login via signInWithPassword().
+            var ADMIN_EMAIL = 'contact.regenagency@gmail.com';
             var ADMIN_SESSION_KEY = 'regen_admin_auth';
-            // Future: var CLIENT_SESSION_KEY = 'regen_client_auth';
+
+            // Supabase client (utilisé pour les 2 logins : admin et client)
+            var SUPABASE_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
+            var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
+            var sbClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
             // === ELEMENTS ===
             var loginScreen = document.getElementById('loginScreen');
@@ -792,44 +798,68 @@
                 adminPassword.value = '';
             }
 
-            // === ADMIN LOGIN ===
-            adminForm.addEventListener('submit', function(e) {
+            function showAdminError(msg) {
+                adminPassword.classList.add('error');
+                adminError.textContent = msg || 'Mot de passe incorrect.';
+                adminError.classList.add('visible');
+                setTimeout(function() {
+                    adminPassword.classList.remove('error');
+                    adminError.classList.remove('visible');
+                }, 3000);
+            }
+
+            // === ADMIN LOGIN (Supabase Auth + flag UI) ===
+            // Avant : check d'un password en dur en JS → flag JS → redirect (mais pas de session Supabase = bug RLS).
+            // Maintenant : on signe IN via Supabase Auth pour avoir un vrai auth.uid() avec rôle 'admin' dans profiles.
+            adminForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
+                if (!sbClient) { showAdminError('Erreur de connexion à Supabase.'); return; }
 
-                if (adminPassword.value === ADMIN_PASSWORD) {
-                    sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
-                    // Redirection directe vers le CRM (nouvelle home admin).
-                    window.location.href = 'admin/prospects.html';
-                } else {
-                    adminPassword.classList.add('error');
-                    adminError.classList.add('visible');
+                var pwd = adminPassword.value;
+                if (!pwd) return;
 
-                    setTimeout(function() {
-                        adminPassword.classList.remove('error');
-                        adminError.classList.remove('visible');
-                    }, 2000);
+                // 1. Forcer un signOut préalable pour ne pas hériter d'une session client précédente
+                try { await sbClient.auth.signOut(); } catch(e) { /* ignore */ }
+
+                // 2. Tenter le signInWithPassword
+                var res = await sbClient.auth.signInWithPassword({ email: ADMIN_EMAIL, password: pwd });
+                if (res.error) {
+                    showAdminError('Mot de passe incorrect.');
+                    return;
                 }
+
+                // 3. Vérifier que le profile a bien le rôle 'admin' ou 'staff'
+                var uid = res.data.user.id;
+                var profRes = await sbClient.from('profiles').select('role').eq('id', uid).single();
+                var role = profRes.data && profRes.data.role;
+                if (role !== 'admin' && role !== 'staff') {
+                    await sbClient.auth.signOut();
+                    showAdminError('Compte sans privilège admin.');
+                    return;
+                }
+
+                // 4. Set le flag UI + redirect
+                sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
+                window.location.href = 'admin/prospects.html';
             });
 
             // === LOGOUT ===
             // Conservé pour compatibilité si logoutBtn existe encore dans le DOM.
             if (logoutBtn) {
-                logoutBtn.addEventListener('click', function() {
+                logoutBtn.addEventListener('click', async function() {
+                    if (sbClient) { try { await sbClient.auth.signOut(); } catch(e) {} }
                     sessionStorage.removeItem(ADMIN_SESSION_KEY);
                     showLogin();
                 });
             }
 
             // === CLIENT LOGIN (Supabase Auth) ===
-            var SUPABASE_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
-            var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
+            // sbClient est déjà créé en haut (ligne ~774) et partagé pour les 2 logins.
 
             var clientLoginBtn = document.getElementById('client-login-btn');
             var clientError = document.getElementById('client-login-error');
 
-            if (clientLoginBtn && window.supabase) {
-                var sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+            if (clientLoginBtn && sbClient) {
                 clientLoginBtn.addEventListener('click', async function() {
                     var email = document.getElementById('client-email').value.trim();
                     var password = document.getElementById('client-password').value;
@@ -843,6 +873,11 @@
 
                     clientLoginBtn.textContent = 'Connexion...';
                     clientLoginBtn.disabled = true;
+
+                    // Forcer un signOut préalable pour pas hériter d'une session admin précédente
+                    try { await sbClient.auth.signOut(); } catch(e) {}
+                    // Et clear le flag admin si présent
+                    sessionStorage.removeItem(ADMIN_SESSION_KEY);
 
                     var res = await sbClient.auth.signInWithPassword({ email: email, password: password });
 
