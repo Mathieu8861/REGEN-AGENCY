@@ -550,7 +550,7 @@ p:last-child {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(180deg, var(--color-light) 0%, var(--color-white) 100%);
+    background: var(--color-white);
 }
 
 .hero__content {
@@ -1129,7 +1129,7 @@ p:last-child {
 /* 11. COLLABORATION                           */
 /* ============================================ */
 .section--collab {
-    background: linear-gradient(180deg, #ffffff 0%, #f0f5f4 100%);
+    background: var(--color-white);
     position: relative;
     overflow: hidden;
 }
@@ -1170,7 +1170,7 @@ p:last-child {
     border: 2px dashed rgba(var(--color-secondary-rgb), 0.3);
 }
 
-.collab__video {
+.collab__image {
     width: 100%;
     max-width: 460px;
     aspect-ratio: 1;
