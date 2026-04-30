@@ -515,10 +515,17 @@
         if (!video) return;
 
         video.addEventListener('ended', function() {
-            video.pause();
-            // currentTime à 0.001 (et non 0) pour forcer un seek qui re-render la 1ère frame.
-            // Sur 0 strict certains navigateurs gardent la dernière frame en buffer visuel.
-            video.currentTime = 0.001;
+            // Bug navigateur connu : pause() + currentTime=0 ne re-render pas toujours
+            // la frame 0 (Chrome/Edge gardent la dernière frame en buffer).
+            // Hack : on seek à 0, puis on déclenche un play() court qui force le navigateur
+            // à charger et afficher la frame 0, puis on pause immédiatement dans le .then().
+            video.currentTime = 0;
+            const p = video.play();
+            if (p && typeof p.then === 'function') {
+                p.then(function() { video.pause(); }).catch(function() { video.pause(); });
+            } else {
+                video.pause();
+            }
         });
     }
 
