@@ -4495,6 +4495,10 @@
         var date = document.getElementById('inlineActionDate').value;
         if (!title) { toast('Titre requis', 'error'); return; }
 
+        // Comportement "remplacement" : marquer les anciennes tâches non-done comme done
+        // (1 prospect = 1 tâche active maximum dans le kanban Tâches)
+        await markPreviousTasksDone(currentProspectId);
+
         // Met à jour next_action sur le prospect + crée un activity
         await sb.from('prospects').update({ next_action: title, next_action_date: date || null }).eq('id', currentProspectId);
         await sb.from('prospect_activities').insert([{
@@ -4511,6 +4515,28 @@
         loadActivityTimeline(currentProspectId);
     }
     window.submitInlineAction = submitInlineAction;
+
+    // Marque toutes les activités type=task non-done d'un prospect comme done (replaced=true)
+    // Utilisé pour le comportement "1 next_action active à la fois" — quand on ajoute une nouvelle
+    // action, l'ancienne sort automatiquement du kanban Tâches en passant en "Terminé".
+    async function markPreviousTasksDone(prospectId) {
+        if (!sb || !prospectId) return;
+        var res = await sb.from('prospect_activities')
+            .select('id, metadata')
+            .eq('prospect_id', prospectId)
+            .eq('activity_type', 'task');
+        var rows = (res.data || []);
+        for (var i = 0; i < rows.length; i++) {
+            var t = rows[i];
+            var meta = t.metadata || {};
+            if (meta.done) continue; // déjà done, on skip
+            meta.done = true;
+            meta.replaced = true;
+            meta.replaced_at = new Date().toISOString();
+            await sb.from('prospect_activities').update({ metadata: meta }).eq('id', t.id);
+        }
+    }
+    window.markPreviousTasksDone = markPreviousTasksDone;
 
     function openAddExchangeInline() {
         var form = document.getElementById('activityInlineForm');

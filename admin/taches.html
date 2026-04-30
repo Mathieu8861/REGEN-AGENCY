@@ -720,8 +720,39 @@
                 .eq('activity_type', 'task')
                 .order('created_at', { ascending: false });
             var acts = (actsRes.data || []).filter(function(a) {
-                return a.prospect && a.prospect.agency_id === AGENCY_ID;
+                if (!a.prospect || a.prospect.agency_id !== AGENCY_ID) return false;
+                // Exclure les tâches "remplacées" — elles ne doivent plus apparaître dans le kanban,
+                // elles vivent uniquement dans la timeline d'activité du prospect (historique).
+                var meta = a.metadata || {};
+                if (meta.replaced === true) return false;
+                return true;
             });
+
+            // ── Auto-clean rétroactif des doublons hérités du bug précédent ─────────────
+            // Si plusieurs tasks non-done existent pour un même prospect, on garde la plus récente
+            // (déjà triée par created_at desc) et on marque les autres comme replaced=true en DB.
+            // Ce nettoyage ne s'exécute qu'une fois — au 2e load les rows sont déjà filtrées.
+            var seenProspect = {};
+            var actsClean = [];
+            for (var i = 0; i < acts.length; i++) {
+                var a = acts[i];
+                var meta = a.metadata || {};
+                // On laisse passer les "done" (ils restent dans la colonne Terminé du kanban)
+                if (meta.done) { actsClean.push(a); continue; }
+                // Pour les non-done : 1 seule task active par prospect
+                if (seenProspect[a.prospect_id]) {
+                    // Doublon → marquer en replaced (asynchrone, ne bloque pas le rendu)
+                    var oldMeta = a.metadata || {};
+                    oldMeta.done = true;
+                    oldMeta.replaced = true;
+                    oldMeta.replaced_at = new Date().toISOString();
+                    sb.from('prospect_activities').update({ metadata: oldMeta }).eq('id', a.id).then(function() {});
+                    continue; // ne pas l'ajouter au render
+                }
+                seenProspect[a.prospect_id] = true;
+                actsClean.push(a);
+            }
+            acts = actsClean;
 
             // 2) Inclure aussi les next_action des prospects qui n'ont pas de row activity (fallback historique)
             var existingProspectIds = {};
@@ -748,6 +779,27 @@
 
             prospectActions = acts;
             renderKanban();
+        }
+
+        // ── Marque toutes les tâches non-done d'un prospect comme done (replaced=true)
+        // Utilisé pour le comportement "1 next_action active à la fois" — quand on ajoute une nouvelle
+        // action via le modal, l'ancienne sort du kanban automatiquement (gardée en DB pour l'historique).
+        async function markPreviousTasksDone(prospectId) {
+            if (!sb || !prospectId) return;
+            var res = await sb.from('prospect_activities')
+                .select('id, metadata')
+                .eq('prospect_id', prospectId)
+                .eq('activity_type', 'task');
+            var rows = (res.data || []);
+            for (var i = 0; i < rows.length; i++) {
+                var t = rows[i];
+                var meta = t.metadata || {};
+                if (meta.done) continue; // déjà done, on skip
+                meta.done = true;
+                meta.replaced = true;
+                meta.replaced_at = new Date().toISOString();
+                await sb.from('prospect_activities').update({ metadata: meta }).eq('id', t.id);
+            }
         }
 
         // ── Charge la liste de tous les prospects/clients pour le dropdown 'Associer à' ──
@@ -1070,6 +1122,10 @@
             var dueDate = document.getElementById('taskDate').value || null;
 
             if (prospectId && sb) {
+                // Comportement "remplacement" : marquer les anciennes tâches non-done de ce prospect
+                // comme done avant d'insérer la nouvelle (1 prospect = 1 tâche active dans le kanban).
+                await markPreviousTasksDone(prospectId);
+
                 // Tâche associée à un prospect/client → INSERT en DB + UPDATE next_action
                 var actRes = await sb.from('prospect_activities').insert([{
                     prospect_id: prospectId,
