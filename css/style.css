@@ -1082,7 +1082,7 @@ p:last-child {
 }
 
 .realisations__carousel .realisation-card {
-    flex: 0 0 280px;
+    flex: 0 0 210px;
     scroll-snap-align: start;
 }
 
@@ -1108,7 +1108,7 @@ p:last-child {
 
 /* Cards en carousel = format portrait (captures mobile 9:16 environ) */
 .realisations__carousel .realisation-card__image {
-    height: 480px;
+    height: 360px;
 }
 
 .realisation-card__image img {
@@ -1170,10 +1170,10 @@ p:last-child {
     }
     /* Carousel : cards plus étroites + image moins haute en mobile */
     .realisations__carousel .realisation-card {
-        flex: 0 0 240px;
+        flex: 0 0 180px;
     }
     .realisations__carousel .realisation-card__image {
-        height: 400px;
+        height: 300px;
     }
 }
 

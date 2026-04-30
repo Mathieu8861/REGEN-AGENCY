@@ -468,6 +468,60 @@
         });
     }
 
+    // --- Carousel "Nos réalisations" (.realisations__carousel) : wheel + drag pour scroll horizontal ---
+    function initPortfolioCarousel() {
+        const carousel = document.querySelector('.realisations__carousel');
+        if (!carousel) return;
+
+        // Molette verticale -> scroll horizontal (UX desktop)
+        carousel.addEventListener('wheel', function(e) {
+            // On ne convertit que si le mouvement vertical domine (sinon on laisse le scroll natif)
+            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+                e.preventDefault();
+                carousel.scrollBy({ left: e.deltaY * 1.5, behavior: 'auto' });
+            }
+        }, { passive: false });
+
+        // Drag à la souris pour scroller (style Apple TV)
+        let isDragging = false;
+        let startX = 0;
+        let scrollLeftStart = 0;
+        carousel.style.cursor = 'grab';
+
+        carousel.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            startX = e.pageX - carousel.offsetLeft;
+            scrollLeftStart = carousel.scrollLeft;
+            carousel.style.cursor = 'grabbing';
+        });
+        carousel.addEventListener('mouseleave', function() {
+            isDragging = false;
+            carousel.style.cursor = 'grab';
+        });
+        carousel.addEventListener('mouseup', function() {
+            isDragging = false;
+            carousel.style.cursor = 'grab';
+        });
+        carousel.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            carousel.scrollLeft = scrollLeftStart - ((e.pageX - carousel.offsetLeft) - startX) * 1.5;
+        });
+    }
+
+    // --- Vidéo hero : rejoue 1 fois puis revient sur la 1ère frame et s'arrête ---
+    function initHeroVideoLoop() {
+        const video = document.querySelector('.hero__video');
+        if (!video) return;
+
+        video.addEventListener('ended', function() {
+            video.pause();
+            // currentTime à 0.001 (et non 0) pour forcer un seek qui re-render la 1ère frame.
+            // Sur 0 strict certains navigateurs gardent la dernière frame en buffer visuel.
+            video.currentTime = 0.001;
+        });
+    }
+
     // --- Carousel résultats clients ---
     function initResultsCarousel() {
         document.querySelectorAll('.realisations-carousel').forEach(carousel => {
@@ -749,6 +803,8 @@
         initFaqAccordion();
         initTestimonialsCarousel();
         initRealisationsCarousel();
+        initPortfolioCarousel();
+        initHeroVideoLoop();
         initResultsCarousel();
         initScrollProgress();
         initDarkMode();
