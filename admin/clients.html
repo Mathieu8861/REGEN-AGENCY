@@ -3392,7 +3392,8 @@
                     isNewUser = true;
 
                     // Create user via Edge Function (auto-confirms email)
-                    var session = await sb.auth.getSession();
+                    var session = await sb.auth.refreshSession();
+                    if (!session.data.session) throw new Error('Session expirée, veuillez vous reconnecter');
                     var createRes = await fetch(SUPABASE_URL + '/functions/v1/bright-responder', {
                         method: 'POST',
                         headers: {
