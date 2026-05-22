@@ -1542,6 +1542,18 @@
     var dateRange = { from: null, to: null };
     var currentMonth = new Date();
 
+    // Paginated fetch — bypasses Supabase 1000-row default limit
+    async function fetchAll(buildQuery) {
+        var all = [], from = 0, size = 1000;
+        while (true) {
+            var res = await buildQuery().range(from, from + size - 1);
+            all = all.concat(res.data || []);
+            if (!res.data || res.data.length < size) break;
+            from += size;
+        }
+        return all;
+    }
+
     var MONTH_NAMES = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'];
 
     function initDateRange() {
@@ -1655,11 +1667,13 @@
                         var campAccMap = {};
                         camps.forEach(function(cp) { campAccMap[cp.id] = cp.ad_account_id; });
                         var campIds = camps.map(function(cp) { return cp.id; });
-                        var mRes = await sb.from('ad_daily_metrics').select('campaign_id, spend, revenue_reported')
-                            .in('campaign_id', campIds)
-                            .gte('date', dateRange.from)
-                            .lte('date', dateRange.to);
-                        (mRes.data || []).forEach(function(m) {
+                        var adMetrics = await fetchAll(function() {
+                            return sb.from('ad_daily_metrics').select('campaign_id, spend, revenue_reported')
+                                .in('campaign_id', campIds)
+                                .gte('date', dateRange.from)
+                                .lte('date', dateRange.to);
+                        });
+                        adMetrics.forEach(function(m) {
                             var accId = campAccMap[m.campaign_id];
                             var plat = accPlatMap[accId] || 'google_ads';
                             spendByClient[cid] += parseFloat(m.spend || 0);
@@ -1824,9 +1838,11 @@
                     var camps = cpRes.data || [];
                     if (camps.length > 0) {
                         var campIds = camps.map(function(cp) { return cp.id; });
-                        var mRes = await sb.from('ad_daily_metrics').select('date, spend')
-                            .in('campaign_id', campIds).gte('date', yearFrom).lte('date', yearTo);
-                        (mRes.data || []).forEach(function(m) {
+                        var spendMetrics = await fetchAll(function() {
+                            return sb.from('ad_daily_metrics').select('date, spend')
+                                .in('campaign_id', campIds).gte('date', yearFrom).lte('date', yearTo);
+                        });
+                        spendMetrics.forEach(function(m) {
                             var key = m.date.substring(0, 7);
                             spendByMonth[key] = (spendByMonth[key] || 0) + parseFloat(m.spend || 0);
                         });
@@ -1956,12 +1972,13 @@
         var fromStr = dateRange.from;
         var toStr = dateRange.to;
 
-        // Fetch orders in date range
-        var ordRes = await sb.from('orders').select('channel, total_ttc, order_date')
-            .eq('client_id', currentClient.id)
-            .gte('order_date', fromStr)
-            .lte('order_date', toStr);
-        var orders = ordRes.data || [];
+        // Fetch orders in date range (paginated)
+        var orders = await fetchAll(function() {
+            return sb.from('orders').select('channel, total_ttc, order_date')
+                .eq('client_id', currentClient.id)
+                .gte('order_date', fromStr)
+                .lte('order_date', toStr);
+        });
 
         // Fetch API daily metrics (filtered by date range) — priority source
         var apiSpend = { google_ads: 0, meta_ads: 0, tiktok_ads: 0 };
@@ -1982,11 +1999,12 @@
                     var campAccMap = {};
                     campaigns.forEach(function(c) { campAccMap[c.id] = c.ad_account_id; });
 
-                    var metRes = await sb.from('ad_daily_metrics').select('campaign_id, spend, revenue_reported')
-                        .in('campaign_id', campIds)
-                        .gte('date', fromStr)
-                        .lte('date', toStr);
-                    var metrics = metRes.data || [];
+                    var metrics = await fetchAll(function() {
+                        return sb.from('ad_daily_metrics').select('campaign_id, spend, revenue_reported')
+                            .in('campaign_id', campIds)
+                            .gte('date', fromStr)
+                            .lte('date', toStr);
+                    });
                     metrics.forEach(function(m) {
                         var accId = campAccMap[m.campaign_id];
                         var plat = accPlatMap[accId] || 'google_ads';
@@ -2194,11 +2212,12 @@
         var monthStart = formatISODate(new Date(year, month, 1));
         var monthEnd = formatISODate(new Date(year, month + 1, 0));
 
-        var ordRes = await sb.from('orders').select('channel, total_ttc, order_date')
-            .eq('client_id', currentClient.id)
-            .gte('order_date', monthStart)
-            .lte('order_date', monthEnd);
-        var orders = ordRes.data || [];
+        var orders = await fetchAll(function() {
+            return sb.from('orders').select('channel, total_ttc, order_date')
+                .eq('client_id', currentClient.id)
+                .gte('order_date', monthStart)
+                .lte('order_date', monthEnd);
+        });
 
         // Fetch spend: API daily metrics (priority) + manual fallback
         var apiDailySpend = [];
@@ -2212,11 +2231,12 @@
                 var campaigns = campRes.data || [];
                 if (campaigns.length > 0) {
                     var campIds = campaigns.map(function(c) { return c.id; });
-                    var metRes = await sb.from('ad_daily_metrics').select('date, spend')
-                        .in('campaign_id', campIds)
-                        .gte('date', monthStart)
-                        .lte('date', monthEnd);
-                    apiDailySpend = metRes.data || [];
+                    apiDailySpend = await fetchAll(function() {
+                        return sb.from('ad_daily_metrics').select('date, spend')
+                            .in('campaign_id', campIds)
+                            .gte('date', monthStart)
+                            .lte('date', monthEnd);
+                    });
                     hasApiSpend = apiDailySpend.length > 0;
                 }
             }
@@ -2343,23 +2363,13 @@
         var yearFrom = months[0].from;
         var yearTo = months[months.length - 1].to;
 
-        // Fetch all orders for 12 months (no row limit)
-        var allOrders = [];
-        var pageSize = 1000;
-        var offset = 0;
-        var hasMore = true;
-        while (hasMore) {
-            var ordRes = await sb.from('orders').select('channel, total_ttc, order_date')
+        // Fetch all orders for 12 months (paginated)
+        var orders = await fetchAll(function() {
+            return sb.from('orders').select('channel, total_ttc, order_date')
                 .eq('client_id', currentClient.id)
                 .gte('order_date', yearFrom)
-                .lte('order_date', yearTo)
-                .range(offset, offset + pageSize - 1);
-            var batch = ordRes.data || [];
-            allOrders = allOrders.concat(batch);
-            hasMore = batch.length === pageSize;
-            offset += pageSize;
-        }
-        var orders = allOrders;
+                .lte('order_date', yearTo);
+        });
 
         // Fetch API spend for 12 months
         var apiSpendByMonth = {};
@@ -2372,11 +2382,13 @@
                 var campaigns = campRes.data || [];
                 if (campaigns.length > 0) {
                     var campIds = campaigns.map(function(c) { return c.id; });
-                    var metRes = await sb.from('ad_daily_metrics').select('date, spend')
-                        .in('campaign_id', campIds)
-                        .gte('date', yearFrom)
-                        .lte('date', yearTo);
-                    (metRes.data || []).forEach(function(r) {
+                    var evoMetrics = await fetchAll(function() {
+                        return sb.from('ad_daily_metrics').select('date, spend')
+                            .in('campaign_id', campIds)
+                            .gte('date', yearFrom)
+                            .lte('date', yearTo);
+                    });
+                    evoMetrics.forEach(function(r) {
                         var key = r.date.substring(0, 7); // YYYY-MM
                         apiSpendByMonth[key] = (apiSpendByMonth[key] || 0) + parseFloat(r.spend || 0);
                     });
@@ -2475,12 +2487,13 @@
         var allContainer = document.getElementById('products-all-table');
         if (!currentClient) return;
 
-        // Fetch orders with items for the period
-        var res = await sb.from('orders').select('channel, total_ttc, order_items(product_name)')
-            .eq('client_id', currentClient.id)
-            .gte('order_date', dateRange.from)
-            .lte('order_date', dateRange.to);
-        var orders = res.data || [];
+        // Fetch orders with items for the period (paginated)
+        var orders = await fetchAll(function() {
+            return sb.from('orders').select('channel, total_ttc, order_items(product_name)')
+                .eq('client_id', currentClient.id)
+                .gte('order_date', dateRange.from)
+                .lte('order_date', dateRange.to);
+        });
 
         if (orders.length === 0) {
             adsContainer.innerHTML = '<p class="text-muted text-sm">Aucune commande sur cette periode.</p>';
