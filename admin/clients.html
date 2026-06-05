@@ -1255,6 +1255,10 @@
                             </h3>
                         </div>
                         <div class="bp-toolbar__right">
+                            <select id="bp-scope-select" class="form-input" style="padding:6px 12px;font-size:0.8rem;width:auto;display:none;">
+                                <option value="single">📍 Marque seule</option>
+                                <option value="group">🌐 Vue groupe</option>
+                            </select>
                             <select id="bp-year-select" class="form-input" style="padding:6px 12px;font-size:0.8rem;width:auto;">
                                 <option value="2026">2026</option>
                                 <option value="2025">2025</option>
@@ -4440,9 +4444,24 @@
         } catch(e) { isAdmin = false; }
         budgetState.isAdmin = isAdmin;
 
-        // Si le client courant fait partie d'un groupe, on charge tout le groupe
+        // ── Scope : Marque seule (par défaut) ou Vue groupe ──
+        // - Admin : peut choisir via le select. Si pas de group_name, le select reste caché.
+        // - Client : forcé à "single" (sa marque uniquement, le select reste caché).
+        var scopeSel = document.getElementById('bp-scope-select');
+        var scope = (scopeSel && isAdmin && currentClient.group_name) ? scopeSel.value : 'single';
+
+        // Mettre à jour les labels du select selon le client courant
+        if (scopeSel) {
+            var singleOpt = scopeSel.querySelector('option[value="single"]');
+            var groupOpt = scopeSel.querySelector('option[value="group"]');
+            if (singleOpt) singleOpt.textContent = '📍 ' + currentClient.name + ' seule';
+            if (groupOpt) groupOpt.textContent = '🌐 Vue groupe ' + (currentClient.group_name || '');
+            // Visible uniquement si admin ET client appartient à un groupe
+            scopeSel.style.display = (isAdmin && currentClient.group_name) ? '' : 'none';
+        }
+
         var clientsToShow = [currentClient];
-        if (currentClient.group_name) {
+        if (scope === 'group' && currentClient.group_name) {
             var grpRes = await sb.from('clients')
                 .select('id, name, group_name')
                 .eq('group_name', currentClient.group_name)
@@ -4599,6 +4618,11 @@
 
     function setupBudgetYearSelector() {
         var sel = document.getElementById('bp-year-select');
+        if (sel) sel.addEventListener('change', function() { loadBudgetTab(); });
+    }
+
+    function setupBudgetScopeSelector() {
+        var sel = document.getElementById('bp-scope-select');
         if (sel) sel.addEventListener('change', function() { loadBudgetTab(); });
     }
 
@@ -4848,6 +4872,7 @@
         hookBudgetTab();
         setupBudgetSubTabs();
         setupBudgetYearSelector();
+        setupBudgetScopeSelector();
         setupBudgetWeekly();
         setupAddPromoButton();
         setupBudgetExports();
