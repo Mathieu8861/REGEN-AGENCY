@@ -605,6 +605,31 @@
         .budget-kpi--purple .budget-kpi__icon { background: rgba(24, 119, 242, 0.12); color: #1877F2; }
         .budget-kpi--purple .budget-kpi__value { color: #1877F2; }
 
+        /* Barre de progression "depense / total" dans la 1ere KPI card */
+        .budget-kpi__progress {
+            margin-top: 10px;
+            height: 6px;
+            background: var(--card-border, #e5e7eb);
+            border-radius: 50px;
+            overflow: hidden;
+        }
+        .budget-kpi__progress-bar {
+            height: 100%;
+            border-radius: 50px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--green);
+        }
+        .budget-kpi__progress-bar.--ok { background: var(--green); }
+        .budget-kpi__progress-bar.--warn { background: #f59e0b; }
+        .budget-kpi__progress-bar.--danger { background: #ef4444; }
+        .budget-kpi__progress-label {
+            margin-top: 5px;
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
         .budget-alert {
             background: #fef3c7; color: #92400e;
             border: 1px solid #fbbf24;
@@ -1322,6 +1347,11 @@
                         <div class="budget-kpi__label">Budget Total Année</div>
                         <div class="budget-kpi__value" id="bp-total">—</div>
                         <div class="budget-kpi__sub" id="bp-total-sub">—</div>
+                        <!-- Barre de progression "dépensé / prévu" -->
+                        <div class="budget-kpi__progress">
+                            <div class="budget-kpi__progress-bar" id="bp-progress-fill" style="width:0%;"></div>
+                        </div>
+                        <div class="budget-kpi__progress-label" id="bp-progress-label">—</div>
                     </div>
                 </div>
                 <div class="budget-kpi budget-kpi--blue">
@@ -4626,10 +4656,11 @@
     }
 
     function renderBudgetKPIs() {
-        var totalAll = 0, totalGoogle = 0, totalMeta = 0;
+        var totalAll = 0, totalActual = 0, totalGoogle = 0, totalMeta = 0;
         budgetState.rows.forEach(function(r) {
             var amt = parseFloat(r.amount || 0);
             totalAll += amt;
+            if (r.is_actual) totalActual += amt;
             if (r.platform === 'google_ads') totalGoogle += amt;
             if (r.platform === 'meta_ads') totalMeta += amt;
         });
@@ -4641,6 +4672,21 @@
         setText('bp-google-sub', pct(totalGoogle));
         setText('bp-meta', formatMoney(totalMeta));
         setText('bp-meta-sub', pct(totalMeta));
+
+        // ── Barre de progression : depense reelle (is_actual=true) vs budget total annuel ──
+        var pctActual = totalAll > 0 ? (totalActual / totalAll * 100) : 0;
+        var fill = document.getElementById('bp-progress-fill');
+        if (fill) {
+            fill.style.width = Math.min(100, pctActual).toFixed(1) + '%';
+            // Couleur selon le taux : <60% vert, 60-85% orange, >85% rouge
+            fill.classList.remove('--ok', '--warn', '--danger');
+            if (pctActual >= 85) fill.classList.add('--danger');
+            else if (pctActual >= 60) fill.classList.add('--warn');
+            else fill.classList.add('--ok');
+        }
+        // Label sous la barre : "5 042 € dépensés · 18 %"
+        setText('bp-progress-label',
+            formatMoneyShort(totalActual) + ' dépensés · ' + Math.round(pctActual) + ' %');
     }
 
     function renderBudgetMonthly() {
