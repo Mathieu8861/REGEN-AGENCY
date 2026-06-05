@@ -660,6 +660,9 @@
             font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.6px;
             position: sticky; top: 0; z-index: 5;
         }
+        /* Sous-header (Google / Meta) : tous right-aligned pour matcher les chiffres
+           (surcharge le :first-child qui forcait Google a gauche) */
+        .bp-table thead tr:nth-child(2) th { text-align: right; }
         /* Header de marque : plus visible, fond solide + alignement centré */
         .bp-table thead .bp-th-brand {
             text-align: center;
