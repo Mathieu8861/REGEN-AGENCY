@@ -736,6 +736,30 @@
         .bp-month-icon { display: inline-block; margin-right: 6px; }
         .bp-table .bp-cell.--over { background: #fee2e2 !important; color: #991b1b; }
 
+        /* ── Mode VUE GROUPE : compactage du tableau ──
+           En vue consolide (6 marques x 2 plateformes = 12 colonnes + Mois + Total),
+           on compacte tout pour eviter le wrap des chiffres et garder le tableau lisible. */
+        .bp-table--group { font-size: 0.78rem; }
+        .bp-table--group th, .bp-table--group td { padding: 8px 7px; }
+        /* Header de marque : padding reduit + font legerement plus petit en group */
+        .bp-table--group thead .bp-th-brand {
+            padding: 9px 6px;
+            font-size: 0.72rem;
+            letter-spacing: 0.2px;
+        }
+        /* Pas de badge 'Réel' en vue groupe : remplace par un fond vert tres pale
+           sur toute la cellule pour indiquer que c'est une depense reelle. Plus discret,
+           gagne enormement de place horizontalement. */
+        .bp-table--group tbody td.bp-cell.--actual::before { content: none; }
+        .bp-table--group tbody td.bp-cell.--actual {
+            background: rgba(47, 185, 99, 0.07);
+            color: #047857;
+            font-weight: 600;
+        }
+        /* Ligne Total : padding reduit + font plus petit pour eviter le wrap */
+        .bp-table--group tfoot td { padding: 11px 7px; font-size: 0.78rem; }
+        .bp-table--group tfoot .bp-row-total td { font-size: 0.82rem; }
+
         .bp-hint {
             margin-top: 12px; padding: 9px 14px;
             background: rgba(47, 185, 99, 0.08);
@@ -4514,6 +4538,13 @@
         return '';
     }
 
+    // Format compact pour les totaux du tableau : "13 850 €" au lieu de "13 850,00 EUR"
+    // (evite que les cellules wrap sur 2 lignes en vue groupe)
+    function formatMoneyShort(n) {
+        var v = Math.round(parseFloat(n || 0));
+        return v.toLocaleString('fr-FR') + ' €';
+    }
+
     async function loadBudgetTab() {
         if (!sb) return;
 
@@ -4638,7 +4669,9 @@
         // Ligne 1 : bande de marques (BAMIX seule en mono, OXO|MARCATO|... en multi).
         // Les cellules au-dessus de "Mois" et "Total" restent vides (neutres).
         // Ligne 2 : tous les titres alignes (Mois, Google, Meta, ..., Total).
-        var html = '<div class="table-wrap"><table class="bp-table"><thead>';
+        // En mode group : classe .bp-table--group qui compacte tout pour gagner de la place.
+        var groupClass = (clients.length > 1) ? ' bp-table--group' : '';
+        var html = '<div class="table-wrap"><table class="bp-table' + groupClass + '"><thead>';
         html += '<tr><th class="bp-th-empty"></th>';
         clients.forEach(function(c) {
             html += '<th class="bp-th-brand' + brandColorClass(c.name) + '" colspan="2">' + escBudgetHtml(c.name) + '</th>';
@@ -4668,15 +4701,15 @@
                 colTotals[c.id].google_ads += g.amount;
                 colTotals[c.id].meta_ads += mt.amount;
             });
-            html += '<td class="bp-total">' + formatMoney(monthTotal) + '</td></tr>';
+            html += '<td class="bp-total">' + formatMoneyShort(monthTotal) + '</td></tr>';
             grandTotal += monthTotal;
         }
         html += '</tbody><tfoot><tr class="bp-row-total"><td><strong>Total ' + year + '</strong></td>';
         clients.forEach(function(c) {
-            html += '<td>' + formatMoney(colTotals[c.id].google_ads) + '</td>';
-            html += '<td>' + formatMoney(colTotals[c.id].meta_ads) + '</td>';
+            html += '<td>' + formatMoneyShort(colTotals[c.id].google_ads) + '</td>';
+            html += '<td>' + formatMoneyShort(colTotals[c.id].meta_ads) + '</td>';
         });
-        html += '<td>' + formatMoney(grandTotal) + '</td></tr></tfoot></table></div>';
+        html += '<td>' + formatMoneyShort(grandTotal) + '</td></tr></tfoot></table></div>';
 
         var container = document.getElementById('bp-monthly-table');
         if (container) container.innerHTML = html;
