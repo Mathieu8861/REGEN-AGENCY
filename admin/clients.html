@@ -658,7 +658,6 @@
         .bp-table thead th {
             background: var(--hover-bg, #f9fafb); font-weight: 700; color: var(--dark);
             font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.6px;
-            position: sticky; top: 0; z-index: 5;
         }
         /* Sous-header (Google / Meta) : tous right-aligned pour matcher les chiffres
            (surcharge le :first-child qui forcait Google a gauche) */
@@ -678,6 +677,11 @@
         .bp-table thead .bp-th-brand--bamix { background: #dbeafe; color: #1e3a8a; }
         .bp-table thead .bp-th-brand--vitamix { background: #d1fae5; color: #065f46; }
         .bp-table thead .bp-th-brand--emilehenry { background: #ede9fe; color: #5b21b6; }
+        /* Mode mono-brand : on retire le border-bottom epais qui creait une ligne
+           de coupure horizontale entre le titre BAMIX et les sous-titres Google/Meta.
+           La bande coloree apparait alors continue sur les 2 lignes du header. */
+        .bp-table thead .bp-th-mono.bp-th-brand,
+        .bp-table thead tr:nth-child(1) .bp-th-mono { border-bottom: none; }
         .bp-table tbody tr:hover td { background: var(--hover-bg, #fafbfc); }
         .bp-table tbody td.bp-cell {
             font-variant-numeric: tabular-nums;
@@ -4616,16 +4620,20 @@
             }
         });
 
-        // En mode marque seule : on étend la couleur de marque sur les cellules "Mois" et "Total"
-        // pour avoir une vraie bande horizontale colorée (au lieu d'un bloc au milieu).
-        var monoBrandClass = (clients.length === 1) ? ' bp-th-brand' + brandColorClass(clients[0].name) : '';
+        // En mode marque seule : on étend la couleur de marque sur TOUT le header
+        // (Mois + sous-titres Google/Meta + Total) pour avoir une vraie bande horizontale.
+        var isMonoBrand = clients.length === 1;
+        var monoBrandClass = isMonoBrand ? ' bp-th-brand' + brandColorClass(clients[0].name) + ' bp-th-mono' : '';
         var html = '<div class="table-wrap"><table class="bp-table"><thead><tr>';
         html += '<th rowspan="2" class="' + monoBrandClass + '">Mois</th>';
         clients.forEach(function(c) {
-            html += '<th class="bp-th-brand' + brandColorClass(c.name) + '" colspan="2">' + escBudgetHtml(c.name) + '</th>';
+            var monoExtra = isMonoBrand ? ' bp-th-mono' : '';
+            html += '<th class="bp-th-brand' + brandColorClass(c.name) + monoExtra + '" colspan="2">' + escBudgetHtml(c.name) + '</th>';
         });
         html += '<th rowspan="2" class="' + monoBrandClass + '">Total</th></tr><tr>';
-        clients.forEach(function() { html += '<th>Google</th><th>Meta</th>'; });
+        clients.forEach(function() {
+            html += '<th class="' + monoBrandClass + '">Google</th><th class="' + monoBrandClass + '">Meta</th>';
+        });
         html += '</tr></thead><tbody>';
 
         var grandTotal = 0;
