@@ -4616,8 +4616,7 @@
         clients.forEach(function(c) { colTotals[c.id] = { google_ads: 0, meta_ads: 0 }; });
 
         for (var m = 1; m <= 12; m++) {
-            var icon = BUDGET_MONTH_ICONS[m] || '';
-            html += '<tr><td><span class="bp-month-icon">' + icon + '</span>' + BUDGET_MONTHS[m-1] + '</td>';
+            html += '<tr><td>' + BUDGET_MONTHS[m-1] + '</td>';
             var monthTotal = 0;
             clients.forEach(function(c) {
                 var g = byClient[c.id][m].google_ads;
@@ -4802,7 +4801,7 @@
         var months = Object.keys(byMonth).map(function(x) { return parseInt(x, 10); }).sort(function(a, b) { return a - b; });
         var html = '';
         months.forEach(function(m) {
-            var label = (m === 0) ? 'Sans date' : (BUDGET_MONTH_ICONS[m] || '') + ' ' + BUDGET_MONTHS[m-1] + ' ' + budgetState.year;
+            var label = (m === 0) ? 'Sans date' : BUDGET_MONTHS[m-1] + ' ' + budgetState.year;
             html += '<div class="bp-month-section"><div class="bp-month-section__title">' + escBudgetHtml(label) + '</div>';
             html += '<div class="bp-promos-grid">';
             byMonth[m].forEach(function(p) { html += renderPromoCard(p); });
