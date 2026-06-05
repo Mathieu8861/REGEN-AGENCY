@@ -4400,6 +4400,460 @@
         });
     };
 
+    // ═══════════════════════════════════════
+    // BUDGET & PLANNING MODULE
+    // ═══════════════════════════════════════
+    var BUDGET_MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                         'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    var BUDGET_MONTH_ICONS = { 2:'💝', 3:'🐰', 4:'🐣', 5:'💐', 7:'🔥', 8:'🏖️', 10:'🎃', 11:'📢', 12:'🎄' };
+    var budgetState = { year: 2026, rows: [], clients: [], isAdmin: false };
+
+    function escBudgetHtml(s) {
+        var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
+    }
+
+    function brandColorClass(name) {
+        var key = (name || '').toLowerCase().replace(/\s+/g, '');
+        if (key.indexOf('marcato') >= 0) return ' bp-th-brand--marcato';
+        if (key.indexOf('nordic') >= 0 || key === 'nw') return ' bp-th-brand--nw';
+        if (key.indexOf('bamix') >= 0) return ' bp-th-brand--bamix';
+        if (key.indexOf('vitamix') >= 0) return ' bp-th-brand--vitamix';
+        if (key.indexOf('emile') >= 0 || key.indexOf('henry') >= 0) return ' bp-th-brand--emilehenry';
+        return '';
+    }
+
+    async function loadBudgetTab() {
+        if (!sb || !currentClient) {
+            var c = document.getElementById('bp-monthly-table');
+            if (c) c.innerHTML = '<p class="text-muted text-sm">Sélectionne un client.</p>';
+            return;
+        }
+
+        // Détermine si l'utilisateur courant peut éditer (admin/staff)
+        var isAdmin = false;
+        try {
+            var sess = await sb.auth.getSession();
+            if (sess.data && sess.data.session) {
+                var profRes = await sb.from('profiles').select('role').eq('id', sess.data.session.user.id).single();
+                isAdmin = profRes.data && (profRes.data.role === 'admin' || profRes.data.role === 'staff');
+            }
+        } catch(e) { isAdmin = false; }
+        budgetState.isAdmin = isAdmin;
+
+        // Si le client courant fait partie d'un groupe, on charge tout le groupe
+        var clientsToShow = [currentClient];
+        if (currentClient.group_name) {
+            var grpRes = await sb.from('clients')
+                .select('id, name, group_name')
+                .eq('group_name', currentClient.group_name)
+                .order('name');
+            if (grpRes.data && grpRes.data.length > 0) clientsToShow = grpRes.data;
+        }
+        budgetState.clients = clientsToShow;
+        var clientIds = clientsToShow.map(function(c) { return c.id; });
+
+        var yearSel = document.getElementById('bp-year-select');
+        var year = yearSel ? parseInt(yearSel.value, 10) : 2026;
+        budgetState.year = year;
+        var yearLabel = document.getElementById('bp-year-label');
+        if (yearLabel) yearLabel.textContent = year;
+
+        var bRes = await sb.from('client_budgets')
+            .select('*').in('client_id', clientIds).eq('year', year);
+        budgetState.rows = bRes.data || [];
+
+        renderBudgetMonthly();
+        renderBudgetKPIs();
+
+        var hint = document.getElementById('bp-edit-hint');
+        if (hint) hint.style.display = isAdmin ? 'block' : 'none';
+
+        loadBudgetPromos(clientIds, year);
+    }
+
+    function renderBudgetKPIs() {
+        var totalAll = 0, totalGoogle = 0, totalMeta = 0;
+        budgetState.rows.forEach(function(r) {
+            var amt = parseFloat(r.amount || 0);
+            totalAll += amt;
+            if (r.platform === 'google_ads') totalGoogle += amt;
+            if (r.platform === 'meta_ads') totalMeta += amt;
+        });
+        var pct = function(v) { return totalAll > 0 ? Math.round(v / totalAll * 100) + ' %' : '—'; };
+        var setText = function(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
+        setText('bp-total', formatMoney(totalAll));
+        setText('bp-total-sub', budgetState.year);
+        setText('bp-google', formatMoney(totalGoogle));
+        setText('bp-google-sub', pct(totalGoogle));
+        setText('bp-meta', formatMoney(totalMeta));
+        setText('bp-meta-sub', pct(totalMeta));
+    }
+
+    function renderBudgetMonthly() {
+        var clients = budgetState.clients;
+        var year = budgetState.year;
+        var canEdit = budgetState.isAdmin;
+
+        var byClient = {};
+        clients.forEach(function(c) {
+            byClient[c.id] = {};
+            for (var m = 1; m <= 12; m++) {
+                byClient[c.id][m] = {
+                    google_ads: { amount: 0, id: null, is_actual: false },
+                    meta_ads: { amount: 0, id: null, is_actual: false }
+                };
+            }
+        });
+        budgetState.rows.forEach(function(r) {
+            if (byClient[r.client_id] && byClient[r.client_id][r.month]) {
+                byClient[r.client_id][r.month][r.platform] = {
+                    amount: parseFloat(r.amount || 0), id: r.id, is_actual: r.is_actual
+                };
+            }
+        });
+
+        var html = '<div class="table-wrap"><table class="bp-table"><thead><tr><th rowspan="2">Mois</th>';
+        clients.forEach(function(c) {
+            html += '<th class="bp-th-brand' + brandColorClass(c.name) + '" colspan="2">' + escBudgetHtml(c.name) + '</th>';
+        });
+        html += '<th rowspan="2">Total</th></tr><tr>';
+        clients.forEach(function() { html += '<th>Google</th><th>Meta</th>'; });
+        html += '</tr></thead><tbody>';
+
+        var grandTotal = 0;
+        var colTotals = {};
+        clients.forEach(function(c) { colTotals[c.id] = { google_ads: 0, meta_ads: 0 }; });
+
+        for (var m = 1; m <= 12; m++) {
+            var icon = BUDGET_MONTH_ICONS[m] || '';
+            html += '<tr><td><span class="bp-month-icon">' + icon + '</span>' + BUDGET_MONTHS[m-1] + '</td>';
+            var monthTotal = 0;
+            clients.forEach(function(c) {
+                var g = byClient[c.id][m].google_ads;
+                var mt = byClient[c.id][m].meta_ads;
+                var canEditG = canEdit && !g.is_actual;
+                var canEditM = canEdit && !mt.is_actual;
+                html += '<td class="bp-cell' + (g.is_actual ? ' --actual' : '') + '" contenteditable="' + canEditG + '" data-cid="' + c.id + '" data-mon="' + m + '" data-plat="google_ads" data-id="' + (g.id || '') + '">' + Math.round(g.amount) + '</td>';
+                html += '<td class="bp-cell' + (mt.is_actual ? ' --actual' : '') + '" contenteditable="' + canEditM + '" data-cid="' + c.id + '" data-mon="' + m + '" data-plat="meta_ads" data-id="' + (mt.id || '') + '">' + Math.round(mt.amount) + '</td>';
+                monthTotal += g.amount + mt.amount;
+                colTotals[c.id].google_ads += g.amount;
+                colTotals[c.id].meta_ads += mt.amount;
+            });
+            html += '<td class="bp-total">' + formatMoney(monthTotal) + '</td></tr>';
+            grandTotal += monthTotal;
+        }
+        html += '</tbody><tfoot><tr class="bp-row-total"><td><strong>Total ' + year + '</strong></td>';
+        clients.forEach(function(c) {
+            html += '<td>' + formatMoney(colTotals[c.id].google_ads) + '</td>';
+            html += '<td>' + formatMoney(colTotals[c.id].meta_ads) + '</td>';
+        });
+        html += '<td>' + formatMoney(grandTotal) + '</td></tr></tfoot></table></div>';
+
+        var container = document.getElementById('bp-monthly-table');
+        if (container) container.innerHTML = html;
+
+        if (canEdit) bindBudgetCellEdits();
+    }
+
+    function bindBudgetCellEdits() {
+        document.querySelectorAll('#bp-monthly-table .bp-cell[contenteditable="true"]').forEach(function(cell) {
+            cell.addEventListener('blur', async function() {
+                var raw = (cell.textContent || '').replace(/[^0-9]/g, '');
+                var amt = parseInt(raw, 10) || 0;
+                cell.textContent = amt;
+                var clientId = cell.dataset.cid;
+                var month = parseInt(cell.dataset.mon, 10);
+                var platform = cell.dataset.plat;
+                var existingId = cell.dataset.id;
+
+                if (existingId) {
+                    var upd = await sb.from('client_budgets').update({ amount: amt }).eq('id', existingId);
+                    if (upd.error) { alert('Erreur sauvegarde : ' + upd.error.message); return; }
+                } else {
+                    var ins = await sb.from('client_budgets').insert([{
+                        client_id: clientId, year: budgetState.year, month: month,
+                        platform: platform, amount: amt, is_actual: false
+                    }]).select();
+                    if (ins.error) { alert('Erreur sauvegarde : ' + ins.error.message); return; }
+                    cell.dataset.id = ins.data[0].id;
+                }
+                loadBudgetTab();
+            });
+            cell.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') { e.preventDefault(); cell.blur(); }
+            });
+        });
+    }
+
+    function setupBudgetSubTabs() {
+        document.querySelectorAll('.budget-subtab').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.budget-subtab').forEach(function(b) { b.classList.remove('budget-subtab--active'); });
+                document.querySelectorAll('.budget-subtab-content').forEach(function(c) { c.classList.remove('budget-subtab-content--active'); });
+                btn.classList.add('budget-subtab--active');
+                var target = document.getElementById('bp-' + btn.dataset.subtab);
+                if (target) target.classList.add('budget-subtab-content--active');
+            });
+        });
+    }
+
+    function setupBudgetYearSelector() {
+        var sel = document.getElementById('bp-year-select');
+        if (sel) sel.addEventListener('change', function() { loadBudgetTab(); });
+    }
+
+    function setupBudgetWeekly() {
+        var btn = document.getElementById('bp-week-apply');
+        if (btn) btn.addEventListener('click', renderBudgetWeekly);
+    }
+
+    function renderBudgetWeekly() {
+        var from = parseInt(document.getElementById('bp-week-from').value, 10);
+        var to = parseInt(document.getElementById('bp-week-to').value, 10);
+        if (from > to) { alert('Le mois de début doit être avant le mois de fin'); return; }
+
+        var year = budgetState.year;
+        var clients = budgetState.clients;
+        var byClient = {};
+        clients.forEach(function(c) {
+            byClient[c.id] = {};
+            for (var m = 1; m <= 12; m++) byClient[c.id][m] = { google_ads: 0, meta_ads: 0 };
+        });
+        budgetState.rows.forEach(function(r) {
+            if (byClient[r.client_id] && byClient[r.client_id][r.month]) {
+                byClient[r.client_id][r.month][r.platform] = parseFloat(r.amount || 0);
+            }
+        });
+
+        var startDate = new Date(year, from - 1, 1);
+        var endDate = new Date(year, to, 0);
+        var weeks = [];
+        var cur = new Date(startDate);
+        while (cur.getDay() !== 1) cur.setDate(cur.getDate() - 1);
+        var safety = 0;
+        while (cur <= endDate && safety++ < 60) {
+            var ws = new Date(cur);
+            var we = new Date(cur); we.setDate(we.getDate() + 6);
+            if (we >= startDate) weeks.push({ start: ws, end: we });
+            cur.setDate(cur.getDate() + 7);
+        }
+
+        var html = '<div class="table-wrap"><table class="bp-table"><thead><tr><th rowspan="2">Semaine</th>';
+        clients.forEach(function(c) {
+            html += '<th class="bp-th-brand' + brandColorClass(c.name) + '" colspan="2">' + escBudgetHtml(c.name) + '</th>';
+        });
+        html += '<th rowspan="2">Total sem.</th></tr><tr>';
+        clients.forEach(function() { html += '<th>Google</th><th>Meta</th>'; });
+        html += '</tr></thead><tbody>';
+
+        var grandTot = 0, colTot = {};
+        clients.forEach(function(c) { colTot[c.id] = { google_ads: 0, meta_ads: 0 }; });
+
+        weeks.forEach(function(w) {
+            var label = w.start.toLocaleDateString('fr-FR', { day:'2-digit', month:'short' }) + ' → ' + w.end.toLocaleDateString('fr-FR', { day:'2-digit', month:'short' });
+            html += '<tr><td>' + label + '</td>';
+            var wTot = 0;
+            clients.forEach(function(c) {
+                var g = 0, mt = 0;
+                for (var d = 0; d < 7; d++) {
+                    var day = new Date(w.start); day.setDate(day.getDate() + d);
+                    if (day < startDate || day > endDate) continue;
+                    var month = day.getMonth() + 1;
+                    var dim = new Date(year, month, 0).getDate();
+                    g += (byClient[c.id][month].google_ads || 0) / dim;
+                    mt += (byClient[c.id][month].meta_ads || 0) / dim;
+                }
+                html += '<td>' + Math.round(g) + ' €</td><td>' + Math.round(mt) + ' €</td>';
+                wTot += g + mt;
+                colTot[c.id].google_ads += g;
+                colTot[c.id].meta_ads += mt;
+            });
+            html += '<td class="bp-total">' + formatMoney(wTot) + '</td></tr>';
+            grandTot += wTot;
+        });
+        html += '</tbody><tfoot><tr class="bp-row-total"><td><strong>Total</strong></td>';
+        clients.forEach(function(c) {
+            html += '<td>' + formatMoney(colTot[c.id].google_ads) + '</td><td>' + formatMoney(colTot[c.id].meta_ads) + '</td>';
+        });
+        html += '<td>' + formatMoney(grandTot) + '</td></tr></tfoot></table></div>';
+
+        document.getElementById('bp-weekly-table').innerHTML = html;
+    }
+
+    async function loadBudgetPromos(clientIds, year) {
+        var container = document.getElementById('bp-promos-grid');
+        if (!container) return;
+        var pRes = await sb.from('client_promos')
+            .select('*').in('client_id', clientIds).eq('year', year)
+            .order('month', { ascending: true });
+        renderBudgetPromos(pRes.data || []);
+    }
+
+    function renderBudgetPromos(promos) {
+        var container = document.getElementById('bp-promos-grid');
+        if (!container) return;
+        if (promos.length === 0) {
+            container.innerHTML = '<p class="text-muted text-sm">Aucune promo planifiée. ' +
+                (budgetState.isAdmin ? 'Clique sur "+ Ajouter une promo" pour démarrer.' : '') + '</p>';
+            return;
+        }
+        var byMonth = {};
+        promos.forEach(function(p) {
+            var m = p.month || 0;
+            if (!byMonth[m]) byMonth[m] = [];
+            byMonth[m].push(p);
+        });
+        var months = Object.keys(byMonth).map(function(x) { return parseInt(x, 10); }).sort(function(a, b) { return a - b; });
+        var html = '';
+        months.forEach(function(m) {
+            var label = (m === 0) ? 'Sans date' : (BUDGET_MONTH_ICONS[m] || '') + ' ' + BUDGET_MONTHS[m-1] + ' ' + budgetState.year;
+            html += '<div class="bp-month-section"><div class="bp-month-section__title">' + escBudgetHtml(label) + '</div>';
+            html += '<div class="bp-promos-grid">';
+            byMonth[m].forEach(function(p) { html += renderPromoCard(p); });
+            html += '</div></div>';
+        });
+        container.innerHTML = html;
+        bindPromoActions();
+    }
+
+    function renderPromoCard(p) {
+        var clientName = '';
+        var client = budgetState.clients.find(function(c) { return c.id === p.client_id; });
+        if (client) clientName = client.name;
+
+        var wordings = Array.isArray(p.wordings) ? p.wordings : [];
+        var perf = p.performance || {};
+
+        var wordingsHtml = '';
+        if (wordings.length > 0) {
+            wordingsHtml = '<div class="bp-promo__wordings">';
+            wordings.forEach(function(w) {
+                wordingsHtml += '<div class="bp-promo__wording">' +
+                    (w.label ? '<div class="bp-promo__wording-label">' + escBudgetHtml(w.label) + '</div>' : '') +
+                    escBudgetHtml(w.text || '') + '</div>';
+            });
+            wordingsHtml += '</div>';
+        }
+
+        var perfHtml = '';
+        if (perf.spend || perf.roas || perf.revenue) {
+            perfHtml = '<div class="bp-promo__perf"><div style="font-weight:800;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;color:#047857;">📊 Perfs ' + escBudgetHtml(perf.year_ref || '') + '</div><div class="bp-promo__perf-stats">';
+            if (perf.spend) perfHtml += '<div class="bp-promo__perf-stat"><div class="bp-promo__perf-label">Dépense</div><div class="bp-promo__perf-value">' + escBudgetHtml(perf.spend) + '€</div></div>';
+            if (perf.roas) perfHtml += '<div class="bp-promo__perf-stat"><div class="bp-promo__perf-label">ROAS</div><div class="bp-promo__perf-value">' + escBudgetHtml(perf.roas) + '</div></div>';
+            if (perf.revenue) perfHtml += '<div class="bp-promo__perf-stat"><div class="bp-promo__perf-label">CA</div><div class="bp-promo__perf-value">' + escBudgetHtml(perf.revenue) + '€</div></div>';
+            perfHtml += '</div></div>';
+        }
+
+        var actionsHtml = '';
+        if (budgetState.isAdmin) {
+            actionsHtml = '<div class="bp-promo__actions">' +
+                '<button class="btn btn--sm bp-promo-delete" data-id="' + p.id + '" style="background:transparent;border:1.5px solid #fca5a5;color:#ef4444;">Supprimer</button>' +
+                '</div>';
+        }
+
+        return '<div class="bp-promo">' +
+            '<span class="bp-promo__status --' + (p.status || 'planned') + '">' + (p.status || 'planned') + '</span>' +
+            (clientName ? '<div class="bp-promo__brand">' + escBudgetHtml(clientName) + '</div>' : '') +
+            '<div class="bp-promo__title">' + escBudgetHtml((p.emoji || '') + ' ' + (p.title || '')) + '</div>' +
+            ((p.date_start || p.date_end) ? '<div class="bp-promo__dates">📅 ' + (p.date_start ? formatDate(p.date_start) : '?') + ' → ' + (p.date_end ? formatDate(p.date_end) : '?') + '</div>' : '') +
+            (p.offer_text ? '<div class="bp-promo__offer"><strong>Offre :</strong> ' + escBudgetHtml(p.offer_text) + '</div>' : '') +
+            wordingsHtml + perfHtml + actionsHtml +
+        '</div>';
+    }
+
+    function bindPromoActions() {
+        document.querySelectorAll('.bp-promo-delete').forEach(function(btn) {
+            btn.addEventListener('click', async function() {
+                if (!confirm('Supprimer cette promo ?')) return;
+                var del = await sb.from('client_promos').delete().eq('id', btn.dataset.id);
+                if (del.error) { alert('Erreur : ' + del.error.message); return; }
+                loadBudgetTab();
+            });
+        });
+    }
+
+    function setupAddPromoButton() {
+        var btn = document.getElementById('bp-add-promo');
+        if (!btn) return;
+        btn.addEventListener('click', async function() {
+            if (!currentClient) { alert('Sélectionne d\'abord un client'); return; }
+            var title = prompt('Titre de la promo (ex: Saint-Valentin) :');
+            if (!title) return;
+            var month = prompt('Mois (1-12) :');
+            var monthInt = parseInt(month, 10);
+            if (!monthInt || monthInt < 1 || monthInt > 12) { alert('Mois invalide'); return; }
+            var offer = prompt('Offre courte (ex: 10€ de remise) :') || '';
+            var ins = await sb.from('client_promos').insert([{
+                client_id: currentClient.id, year: budgetState.year, month: monthInt,
+                title: title, offer_text: offer, status: 'planned'
+            }]);
+            if (ins.error) { alert('Erreur : ' + ins.error.message); return; }
+            loadBudgetTab();
+        });
+    }
+
+    function setupBudgetExports() {
+        var ej = document.getElementById('bp-export-json');
+        if (ej) ej.addEventListener('click', function() {
+            var data = { year: budgetState.year, clients: budgetState.clients.map(function(c) { return { id: c.id, name: c.name }; }), rows: budgetState.rows };
+            var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            var label = (currentClient.group_name || currentClient.name || 'client').replace(/\s+/g, '_');
+            a.href = url; a.download = 'budget_' + label + '_' + budgetState.year + '.json';
+            a.click(); URL.revokeObjectURL(url);
+        });
+        var ec = document.getElementById('bp-export-csv');
+        if (ec) ec.addEventListener('click', function() {
+            var clients = budgetState.clients;
+            var lines = [];
+            var head = ['Mois'];
+            clients.forEach(function(c) { head.push(c.name + ' Google'); head.push(c.name + ' Meta'); });
+            head.push('Total');
+            lines.push(head.join(';'));
+            var byClient = {};
+            clients.forEach(function(c) {
+                byClient[c.id] = {};
+                for (var m = 1; m <= 12; m++) byClient[c.id][m] = { google_ads: 0, meta_ads: 0 };
+            });
+            budgetState.rows.forEach(function(r) {
+                if (byClient[r.client_id] && byClient[r.client_id][r.month]) byClient[r.client_id][r.month][r.platform] = parseFloat(r.amount || 0);
+            });
+            for (var m = 1; m <= 12; m++) {
+                var row = [BUDGET_MONTHS[m-1]];
+                var tot = 0;
+                clients.forEach(function(c) {
+                    var g = byClient[c.id][m].google_ads, mt = byClient[c.id][m].meta_ads;
+                    row.push(Math.round(g)); row.push(Math.round(mt));
+                    tot += g + mt;
+                });
+                row.push(Math.round(tot));
+                lines.push(row.join(';'));
+            }
+            var blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            var label = (currentClient.group_name || currentClient.name || 'client').replace(/\s+/g, '_');
+            a.href = url; a.download = 'budget_' + label + '_' + budgetState.year + '.csv';
+            a.click(); URL.revokeObjectURL(url);
+        });
+    }
+
+    function hookBudgetTab() {
+        var btn = document.querySelector('.tab[data-tab="budget"]');
+        if (btn) btn.addEventListener('click', function() { loadBudgetTab(); });
+    }
+
+    function initBudgetModule() {
+        hookBudgetTab();
+        setupBudgetSubTabs();
+        setupBudgetYearSelector();
+        setupBudgetWeekly();
+        setupAddPromoButton();
+        setupBudgetExports();
+    }
+    initBudgetModule();
+
 })();
 </script>
 
