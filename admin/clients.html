@@ -559,6 +559,190 @@
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
+
+        /* ═══════════════════════════════════════
+           BUDGET & PLANNING — onglet dédié
+           ═══════════════════════════════════════ */
+        .budget-kpis {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 16px; margin-bottom: 18px;
+        }
+        .budget-kpi {
+            background: var(--card-bg, white); border: 1px solid var(--card-border, #e5e7eb);
+            border-radius: var(--radius, 14px); padding: 18px 20px;
+            display: flex; align-items: center; gap: 14px;
+            box-shadow: var(--shadow);
+        }
+        .budget-kpi__icon { font-size: 1.8rem; line-height: 1; }
+        .budget-kpi__main { flex: 1; }
+        .budget-kpi__label {
+            font-size: 0.7rem; color: var(--gray); font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px;
+        }
+        .budget-kpi__value { font-size: 1.4rem; font-weight: 800; line-height: 1.2; }
+        .budget-kpi__sub { font-size: 0.72rem; color: var(--gray); margin-top: 3px; font-weight: 600; }
+        .budget-kpi--green .budget-kpi__value { color: var(--green); }
+        .budget-kpi--blue .budget-kpi__value { color: #3b82f6; }
+        .budget-kpi--purple .budget-kpi__value { color: #8b5cf6; }
+
+        .budget-alert {
+            background: #fef3c7; color: #92400e;
+            border: 1px solid #fbbf24;
+            border-radius: 10px; padding: 12px 16px;
+            margin-bottom: 16px; font-size: 0.85rem; font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .budget-alert.--ok { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+        .budget-alert.--danger { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+        .budget-alert.hidden { display: none; }
+
+        .budget-subtabs {
+            display: flex; gap: 4px; margin-bottom: 14px;
+            border-bottom: 2px solid var(--card-border, #e5e7eb);
+        }
+        .budget-subtab {
+            padding: 10px 18px; font-family: inherit; font-size: 0.85rem; font-weight: 700;
+            background: transparent; color: var(--gray); border: none;
+            cursor: pointer; border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .budget-subtab:hover { color: var(--dark); }
+        .budget-subtab--active { color: var(--green); border-bottom-color: var(--green); }
+        .budget-subtab-content { display: none; }
+        .budget-subtab-content--active { display: block; }
+
+        .bp-toolbar {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 12px; margin-bottom: 14px; flex-wrap: wrap;
+        }
+        .bp-toolbar__left, .bp-toolbar__right {
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* Tableau budget mensuel */
+        .bp-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+        .bp-table th, .bp-table td {
+            padding: 8px 10px; border-bottom: 1px solid var(--card-border, #e5e7eb);
+            text-align: right;
+        }
+        .bp-table th:first-child, .bp-table td:first-child { text-align: left; }
+        .bp-table thead th {
+            background: var(--hover-bg, #f9fafb); font-weight: 700; color: var(--dark);
+            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;
+            position: sticky; top: 0; z-index: 5;
+        }
+        .bp-table thead .bp-th-brand { background: #e0e7ff; color: #4338ca; }
+        .bp-table thead .bp-th-brand--marcato { background: #fce7f3; color: #be185d; }
+        .bp-table thead .bp-th-brand--nw { background: #fef3c7; color: #92400e; }
+        .bp-table thead .bp-th-brand--bamix { background: #dbeafe; color: #1e3a8a; }
+        .bp-table thead .bp-th-brand--vitamix { background: #d1fae5; color: #065f46; }
+        .bp-table thead .bp-th-brand--emilehenry { background: #ede9fe; color: #5b21b6; }
+        .bp-table tbody tr:hover td { background: var(--hover-bg, #fafbfc); }
+        .bp-table tbody td.bp-cell {
+            font-variant-numeric: tabular-nums; cursor: text;
+            transition: background 0.15s;
+        }
+        .bp-table tbody td.bp-cell[contenteditable="true"] {
+            background: rgba(47, 185, 99, 0.06);
+        }
+        .bp-table tbody td.bp-cell[contenteditable="true"]:focus {
+            outline: 2px solid var(--green); outline-offset: -2px;
+            background: rgba(47, 185, 99, 0.12);
+        }
+        .bp-table tbody td.bp-cell.--actual { color: var(--gray); }
+        .bp-table tbody td.bp-cell.--actual::after { content: ' ✓'; color: var(--green); font-size: 0.7rem; }
+        .bp-table tbody td.bp-total { font-weight: 800; }
+        .bp-table tfoot td {
+            font-weight: 800; background: var(--hover-bg, #f0f5f4);
+            border-top: 2px solid var(--card-border, #e5e7eb);
+        }
+        .bp-table tfoot .bp-row-total td { background: #d1fae5; color: #065f46; }
+
+        .bp-month-icon { display: inline-block; margin-right: 4px; }
+        .bp-table .bp-cell.--over { background: #fee2e2 !important; color: #991b1b; }
+
+        .bp-hint {
+            margin-top: 10px; padding: 8px 12px;
+            background: #fef9c3; border-radius: 8px;
+            font-size: 0.78rem; color: #713f12; font-weight: 600;
+        }
+
+        .bp-weekly-controls {
+            display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+            font-size: 0.85rem; color: var(--dark); font-weight: 600;
+        }
+        .bp-weekly-controls label { display: flex; align-items: center; gap: 6px; }
+
+        /* Calendrier promos */
+        .bp-promos-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+        .bp-promo {
+            background: var(--card-bg, white);
+            border: 1px solid var(--card-border, #e5e7eb);
+            border-left: 4px solid var(--green);
+            border-radius: 12px; padding: 14px 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .bp-promo:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+        .bp-promo__status {
+            position: absolute; top: 10px; right: 12px;
+            font-size: 0.65rem; font-weight: 800; padding: 2px 8px;
+            border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .bp-promo__status.--done { background: #d1fae5; color: #065f46; }
+        .bp-promo__status.--planned { background: #fef3c7; color: #92400e; }
+        .bp-promo__status.--live { background: #dbeafe; color: #1e40af; }
+        .bp-promo__status.--cancelled { background: #f3f4f6; color: var(--gray); }
+        .bp-promo__brand {
+            display: inline-block; padding: 2px 10px;
+            border-radius: 50px; font-size: 0.68rem; font-weight: 800;
+            background: #e0e7ff; color: #4338ca; margin-bottom: 8px;
+        }
+        .bp-promo__title { font-size: 1.05rem; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+        .bp-promo__dates { font-size: 0.78rem; color: var(--gray); margin-bottom: 8px; font-weight: 600; }
+        .bp-promo__offer {
+            font-size: 0.82rem; padding: 8px 10px; background: var(--hover-bg, #fafbfc);
+            border-radius: 6px; margin-bottom: 10px;
+        }
+        .bp-promo__wordings { margin-top: 8px; }
+        .bp-promo__wording {
+            font-size: 0.78rem; padding: 8px 10px; margin-top: 6px;
+            background: #fef9c3; border-left: 3px solid #fbbf24; border-radius: 4px;
+            color: #713f12;
+        }
+        .bp-promo__wording-label { font-weight: 800; font-size: 0.7rem; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; color: #92400e; }
+        .bp-promo__perf {
+            margin-top: 10px; padding: 8px 10px;
+            background: #d1fae5; border-radius: 6px;
+            font-size: 0.78rem; color: #065f46;
+        }
+        .bp-promo__perf-stats { display: flex; gap: 12px; margin-top: 4px; }
+        .bp-promo__perf-stat { flex: 1; }
+        .bp-promo__perf-label { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #047857; }
+        .bp-promo__perf-value { font-size: 0.95rem; font-weight: 800; color: #065f46; }
+        .bp-promo__actions { margin-top: 10px; display: flex; gap: 6px; }
+
+        .bp-month-section {
+            margin-bottom: 24px;
+            padding: 14px 16px;
+            background: var(--hover-bg, #fafbfc);
+            border-radius: 10px;
+        }
+        .bp-month-section__title {
+            font-size: 1rem; font-weight: 800; color: var(--dark);
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .budget-kpis { grid-template-columns: 1fr; }
+            .bp-toolbar { flex-direction: column; align-items: flex-start; }
+            .bp-toolbar__right { flex-wrap: wrap; }
+            .bp-table { font-size: 0.74rem; }
+            .bp-table th, .bp-table td { padding: 6px 7px; }
+        }
     </style>
 </head>
 <body>
