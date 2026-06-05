@@ -855,6 +855,21 @@
         .bp-promo__perf-label { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #047857; }
         .bp-promo__perf-value { font-size: 0.95rem; font-weight: 800; color: #065f46; }
         .bp-promo__actions { margin-top: 10px; display: flex; gap: 6px; }
+        /* Liens (landings + drive) dans la card promo */
+        .bp-promo__links {
+            display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0;
+        }
+        .bp-promo__link {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 4px 10px; border-radius: 50px;
+            font-size: 0.72rem; font-weight: 700;
+            background: rgba(66, 133, 244, 0.1); color: #1d4ed8;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+        .bp-promo__link:hover { background: rgba(66, 133, 244, 0.22); }
+        .bp-promo__link--drive { background: rgba(47, 185, 99, 0.12); color: var(--green); }
+        .bp-promo__link--drive:hover { background: rgba(47, 185, 99, 0.25); }
 
         .bp-month-section {
             margin-bottom: 24px;
@@ -873,6 +888,106 @@
             .bp-toolbar__right { flex-wrap: wrap; }
             .bp-table { font-size: 0.74rem; }
             .bp-table th, .bp-table td { padding: 6px 7px; }
+        }
+
+        /* ═══════════════════════════════════════
+           MODAL "Promotion" — Ajout / édition
+           ═══════════════════════════════════════ */
+        .promo-modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: none; align-items: flex-start; justify-content: center;
+            z-index: 5000; padding: 5vh 20px;
+            overflow-y: auto;
+        }
+        .promo-modal-overlay.--open { display: flex; }
+        .promo-modal {
+            background: var(--card-bg, white);
+            border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%; max-width: 720px;
+            display: flex; flex-direction: column;
+            max-height: 90vh;
+        }
+        .promo-modal__header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px; border-bottom: 1px solid var(--card-border, #e5e7eb);
+        }
+        .promo-modal__header h3 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; }
+        .promo-modal__close {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--hover-bg, #f3f4f6); border: none; cursor: pointer;
+            font-size: 1.4rem; line-height: 1; color: var(--gray);
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s;
+        }
+        .promo-modal__close:hover { background: #fee2e2; color: #ef4444; }
+        .promo-modal__body {
+            padding: 20px 24px; overflow-y: auto; flex: 1;
+        }
+        .promo-modal__footer {
+            display: flex; justify-content: flex-end; gap: 10px;
+            padding: 16px 24px; border-top: 1px solid var(--card-border, #e5e7eb);
+        }
+        .promo-form-field { margin-bottom: 16px; }
+        .promo-form-field label {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            font-size: 0.78rem; font-weight: 700; color: var(--dark);
+            text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px;
+        }
+        .promo-form-field .form-input,
+        .promo-form-field .promo-form-textarea {
+            width: 100%; padding: 9px 12px;
+            border: 1.5px solid var(--card-border, #e5e7eb);
+            border-radius: 8px; font-size: 0.88rem; font-family: inherit;
+            background: var(--card-bg, white); color: var(--dark);
+            transition: border-color 0.15s;
+        }
+        .promo-form-field .form-input:focus,
+        .promo-form-field .promo-form-textarea:focus {
+            outline: none; border-color: var(--green);
+        }
+        .promo-form-textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+        .promo-form-row { display: grid; gap: 12px; }
+        .promo-form-row--2 { grid-template-columns: 1fr 1fr; }
+        .promo-form-row--3 { grid-template-columns: 1fr 1fr 1fr; }
+        .promo-form-add {
+            background: rgba(47, 185, 99, 0.12); color: var(--green);
+            border: none; padding: 4px 10px; border-radius: 50px;
+            font-size: 0.7rem; font-weight: 700; cursor: pointer;
+            text-transform: none; letter-spacing: 0;
+        }
+        .promo-form-add:hover { background: rgba(47, 185, 99, 0.22); }
+        .promo-form-section {
+            margin-top: 18px; padding-top: 16px;
+            border-top: 1px dashed var(--card-border, #e5e7eb);
+        }
+        .promo-form-section h4 {
+            font-size: 0.85rem; font-weight: 800; color: var(--dark);
+            margin-bottom: 12px;
+        }
+        /* Lignes dynamiques (liens / wordings) */
+        .promo-dyn-row {
+            display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px;
+        }
+        .promo-dyn-row .form-input,
+        .promo-dyn-row .promo-form-textarea { flex: 1; }
+        .promo-dyn-row__num {
+            flex-shrink: 0; width: 28px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--hover-bg, #f3f4f6);
+            color: var(--gray); font-weight: 800; font-size: 0.75rem;
+            border-radius: 6px;
+        }
+        .promo-dyn-row__remove {
+            flex-shrink: 0; width: 36px; height: 36px;
+            background: transparent; border: 1.5px solid #fca5a5;
+            color: #ef4444; border-radius: 6px; cursor: pointer;
+            font-size: 1.1rem; line-height: 1;
+        }
+        .promo-dyn-row__remove:hover { background: #ef4444; color: white; }
+        @media (max-width: 600px) {
+            .promo-form-row--2, .promo-form-row--3 { grid-template-columns: 1fr; }
+            .promo-modal { max-width: 100%; }
         }
     </style>
 </head>
@@ -1469,6 +1584,101 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- ── MODAL : Ajouter/éditer une promo ── -->
+        <div class="promo-modal-overlay" id="bp-promo-modal" onclick="if(event.target===this)window.closePromoModal()">
+            <div class="promo-modal">
+                <div class="promo-modal__header">
+                    <h3 id="bp-promo-modal-title">Nouvelle promotion</h3>
+                    <button class="promo-modal__close" type="button" onclick="window.closePromoModal()">×</button>
+                </div>
+                <div class="promo-modal__body">
+                    <div class="promo-form-row promo-form-row--3">
+                        <div class="promo-form-field">
+                            <label>Marque concernée *</label>
+                            <select id="bp-promo-client" class="form-input"></select>
+                        </div>
+                        <div class="promo-form-field">
+                            <label>Statut</label>
+                            <select id="bp-promo-status" class="form-input">
+                                <option value="planned">📅 Planifiée</option>
+                                <option value="live">🔥 En cours</option>
+                                <option value="done">✅ Terminée</option>
+                                <option value="cancelled">❌ Annulée</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="promo-form-field">
+                        <label>Nom de la promotion *</label>
+                        <input type="text" id="bp-promo-title" class="form-input" placeholder="Ex: Soldes janvier, Swiss Days, Fête des Mères...">
+                    </div>
+
+                    <div class="promo-form-row promo-form-row--2">
+                        <div class="promo-form-field">
+                            <label>Date début</label>
+                            <input type="date" id="bp-promo-date-start" class="form-input">
+                        </div>
+                        <div class="promo-form-field">
+                            <label>Date fin</label>
+                            <input type="date" id="bp-promo-date-end" class="form-input">
+                        </div>
+                    </div>
+
+                    <div class="promo-form-field">
+                        <label>Remise effective</label>
+                        <textarea id="bp-promo-remise" class="form-input promo-form-textarea" rows="3" placeholder="Ex: -10€ sur la collection / -19% pendant 1 semaine / Active 160w 164,90€ au lieu de 214,90€..."></textarea>
+                    </div>
+
+                    <!-- Liens landing (multiples) -->
+                    <div class="promo-form-field">
+                        <label>Liens landing pages
+                            <button type="button" class="promo-form-add" onclick="window.bpAddLandingLink()">+ ajouter un lien</button>
+                        </label>
+                        <div id="bp-promo-landings"></div>
+                    </div>
+
+                    <!-- Wordings (multiples) -->
+                    <div class="promo-form-field">
+                        <label>Options de wording
+                            <button type="button" class="promo-form-add" onclick="window.bpAddWording()">+ ajouter un wording</button>
+                        </label>
+                        <div id="bp-promo-wordings"></div>
+                    </div>
+
+                    <!-- Lien Drive -->
+                    <div class="promo-form-field">
+                        <label>Lien Google Drive (visuels source)</label>
+                        <input type="url" id="bp-promo-drive" class="form-input" placeholder="https://drive.google.com/drive/folders/...">
+                    </div>
+
+                    <!-- Dépenses ads (manuel pour MVP, sync auto en phase 3) -->
+                    <div class="promo-form-section">
+                        <h4>Performances <span style="color:var(--gray);font-weight:600;font-size:0.75rem;">(optionnel — saisie manuelle pour l'instant)</span></h4>
+                        <div class="promo-form-row promo-form-row--3">
+                            <div class="promo-form-field">
+                                <label>Dépense Google Ads (€)</label>
+                                <input type="number" id="bp-promo-spend-google" class="form-input" min="0" step="0.01" placeholder="0">
+                            </div>
+                            <div class="promo-form-field">
+                                <label>Dépense Meta Ads (€)</label>
+                                <input type="number" id="bp-promo-spend-meta" class="form-input" min="0" step="0.01" placeholder="0">
+                            </div>
+                            <div class="promo-form-field">
+                                <label>CA généré (€)</label>
+                                <input type="number" id="bp-promo-revenue" class="form-input" min="0" step="0.01" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="bp-promo-id" value="">
+                </div>
+                <div class="promo-modal__footer">
+                    <button class="btn btn--sm" type="button" onclick="window.closePromoModal()" style="background:var(--card-bg);border:1.5px solid var(--card-border);color:var(--dark);">Annuler</button>
+                    <button class="btn btn--sm btn--primary" type="button" onclick="window.bpSubmitPromo()">Enregistrer</button>
+                </div>
+            </div>
         </div>
 
         <!-- ── Tab: Campaigns ── -->
@@ -4935,42 +5145,84 @@
         if (client) clientName = client.name;
 
         var wordings = Array.isArray(p.wordings) ? p.wordings : [];
-        var perf = p.performance || {};
+        var landings = Array.isArray(p.landing_urls) ? p.landing_urls : [];
+
+        // Remise (texte long si dispo, sinon offer_text legacy)
+        var remiseTxt = (p.remise_text || p.offer_text || '').trim();
+        var remiseHtml = '';
+        if (remiseTxt) {
+            // Conserver les retours a la ligne pour les remises avec plusieurs lignes (ex: liste de prix)
+            remiseHtml = '<div class="bp-promo__offer"><strong>Remise :</strong><br><span style="white-space:pre-line;">' + escBudgetHtml(remiseTxt) + '</span></div>';
+        }
 
         var wordingsHtml = '';
         if (wordings.length > 0) {
             wordingsHtml = '<div class="bp-promo__wordings">';
-            wordings.forEach(function(w) {
+            wordings.forEach(function(w, i) {
                 wordingsHtml += '<div class="bp-promo__wording">' +
-                    (w.label ? '<div class="bp-promo__wording-label">' + escBudgetHtml(w.label) + '</div>' : '') +
+                    '<div class="bp-promo__wording-label">' + escBudgetHtml(w.label || ('Wording ' + (i + 1))) + '</div>' +
                     escBudgetHtml(w.text || '') + '</div>';
             });
             wordingsHtml += '</div>';
         }
 
+        // Liens : landing pages + drive
+        var linksHtml = '';
+        if (landings.length > 0 || p.drive_url) {
+            linksHtml = '<div class="bp-promo__links">';
+            landings.forEach(function(url, i) {
+                linksHtml += '<a href="' + escBudgetHtml(url) + '" target="_blank" rel="noopener" class="bp-promo__link">🔗 Landing ' + (landings.length > 1 ? (i + 1) : '') + '</a>';
+            });
+            if (p.drive_url) {
+                linksHtml += '<a href="' + escBudgetHtml(p.drive_url) + '" target="_blank" rel="noopener" class="bp-promo__link bp-promo__link--drive">📁 Visuels Drive</a>';
+            }
+            linksHtml += '</div>';
+        }
+
+        // Performances : depenses + CA + ROI calcule
+        var spendG = parseFloat(p.ads_spend_google || 0);
+        var spendM = parseFloat(p.ads_spend_meta || 0);
+        var rev = parseFloat(p.revenue_total || 0);
+        var totalSpend = spendG + spendM;
+        var roi = totalSpend > 0 ? (rev / totalSpend).toFixed(2) : null;
         var perfHtml = '';
-        if (perf.spend || perf.roas || perf.revenue) {
-            perfHtml = '<div class="bp-promo__perf"><div style="font-weight:800;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;color:#047857;">📊 Perfs ' + escBudgetHtml(perf.year_ref || '') + '</div><div class="bp-promo__perf-stats">';
-            if (perf.spend) perfHtml += '<div class="bp-promo__perf-stat"><div class="bp-promo__perf-label">Dépense</div><div class="bp-promo__perf-value">' + escBudgetHtml(perf.spend) + '€</div></div>';
-            if (perf.roas) perfHtml += '<div class="bp-promo__perf-stat"><div class="bp-promo__perf-label">ROAS</div><div class="bp-promo__perf-value">' + escBudgetHtml(perf.roas) + '</div></div>';
-            if (perf.revenue) perfHtml += '<div class="bp-promo__perf-stat"><div class="bp-promo__perf-label">CA</div><div class="bp-promo__perf-value">' + escBudgetHtml(perf.revenue) + '€</div></div>';
+        if (totalSpend > 0 || rev > 0) {
+            perfHtml = '<div class="bp-promo__perf">' +
+                '<div style="font-weight:800;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;color:#047857;">📊 Performances</div>' +
+                '<div class="bp-promo__perf-stats">';
+            if (spendG > 0) perfHtml += '<div class="bp-promo__perf-stat"><div class="bp-promo__perf-label">Google</div><div class="bp-promo__perf-value">' + formatMoneyShort(spendG) + '</div></div>';
+            if (spendM > 0) perfHtml += '<div class="bp-promo__perf-stat"><div class="bp-promo__perf-label">Meta</div><div class="bp-promo__perf-value">' + formatMoneyShort(spendM) + '</div></div>';
+            if (rev > 0) perfHtml += '<div class="bp-promo__perf-stat"><div class="bp-promo__perf-label">CA</div><div class="bp-promo__perf-value">' + formatMoneyShort(rev) + '</div></div>';
+            if (roi) perfHtml += '<div class="bp-promo__perf-stat"><div class="bp-promo__perf-label">ROAS</div><div class="bp-promo__perf-value">' + roi + 'x</div></div>';
             perfHtml += '</div></div>';
         }
 
         var actionsHtml = '';
         if (budgetState.isAdmin) {
             actionsHtml = '<div class="bp-promo__actions">' +
+                '<button class="btn btn--sm" onclick="window.bpEditPromo(\'' + p.id + '\')" style="background:rgba(47,185,99,0.12);color:var(--green);border:1.5px solid rgba(47,185,99,0.3);">Éditer</button>' +
                 '<button class="btn btn--sm bp-promo-delete" data-id="' + p.id + '" style="background:transparent;border:1.5px solid #fca5a5;color:#ef4444;">Supprimer</button>' +
                 '</div>';
+        }
+
+        var dateStr = '';
+        if (p.date_start || p.date_end) {
+            dateStr = '<div class="bp-promo__dates">📅 ' +
+                (p.date_start ? formatDate(p.date_start) : '?') +
+                ' → ' +
+                (p.date_end ? formatDate(p.date_end) : '?') + '</div>';
         }
 
         return '<div class="bp-promo">' +
             '<span class="bp-promo__status --' + (p.status || 'planned') + '">' + (p.status || 'planned') + '</span>' +
             (clientName ? '<div class="bp-promo__brand">' + escBudgetHtml(clientName) + '</div>' : '') +
             '<div class="bp-promo__title">' + escBudgetHtml((p.emoji || '') + ' ' + (p.title || '')) + '</div>' +
-            ((p.date_start || p.date_end) ? '<div class="bp-promo__dates">📅 ' + (p.date_start ? formatDate(p.date_start) : '?') + ' → ' + (p.date_end ? formatDate(p.date_end) : '?') + '</div>' : '') +
-            (p.offer_text ? '<div class="bp-promo__offer"><strong>Offre :</strong> ' + escBudgetHtml(p.offer_text) + '</div>' : '') +
-            wordingsHtml + perfHtml + actionsHtml +
+            dateStr +
+            remiseHtml +
+            linksHtml +
+            wordingsHtml +
+            perfHtml +
+            actionsHtml +
         '</div>';
     }
 
@@ -4985,25 +5237,216 @@
         });
     }
 
+    // ── Modal Promo : ouverture / fermeture / champs dynamiques / submit ──
+    function openPromoModal(promo) {
+        var modal = document.getElementById('bp-promo-modal');
+        if (!modal) return;
+
+        // Populate select des clients (toutes les marques du scope courant)
+        var clientSel = document.getElementById('bp-promo-client');
+        clientSel.innerHTML = '';
+        budgetState.clients.forEach(function(c) {
+            var o = document.createElement('option');
+            o.value = c.id; o.textContent = c.name;
+            clientSel.appendChild(o);
+        });
+
+        // Mode edition vs creation
+        if (promo) {
+            document.getElementById('bp-promo-modal-title').textContent = 'Éditer la promotion';
+            document.getElementById('bp-promo-id').value = promo.id;
+            clientSel.value = promo.client_id;
+            document.getElementById('bp-promo-status').value = promo.status || 'planned';
+            document.getElementById('bp-promo-title').value = promo.title || '';
+            document.getElementById('bp-promo-date-start').value = promo.date_start || '';
+            document.getElementById('bp-promo-date-end').value = promo.date_end || '';
+            document.getElementById('bp-promo-remise').value = promo.remise_text || promo.offer_text || '';
+            document.getElementById('bp-promo-drive').value = promo.drive_url || '';
+            document.getElementById('bp-promo-spend-google').value = promo.ads_spend_google || '';
+            document.getElementById('bp-promo-spend-meta').value = promo.ads_spend_meta || '';
+            document.getElementById('bp-promo-revenue').value = promo.revenue_total || '';
+            // Landing urls + wordings
+            renderLandingLinks(Array.isArray(promo.landing_urls) ? promo.landing_urls : []);
+            renderWordings(Array.isArray(promo.wordings) ? promo.wordings : []);
+        } else {
+            document.getElementById('bp-promo-modal-title').textContent = 'Nouvelle promotion';
+            document.getElementById('bp-promo-id').value = '';
+            // Default au currentClient si dispo, sinon premier de la liste
+            if (currentClient) clientSel.value = currentClient.id;
+            document.getElementById('bp-promo-status').value = 'planned';
+            document.getElementById('bp-promo-title').value = '';
+            document.getElementById('bp-promo-date-start').value = '';
+            document.getElementById('bp-promo-date-end').value = '';
+            document.getElementById('bp-promo-remise').value = '';
+            document.getElementById('bp-promo-drive').value = '';
+            document.getElementById('bp-promo-spend-google').value = '';
+            document.getElementById('bp-promo-spend-meta').value = '';
+            document.getElementById('bp-promo-revenue').value = '';
+            renderLandingLinks(['']); // 1 input vide par défaut
+            renderWordings([{ label: '', text: '' }]);
+        }
+
+        modal.classList.add('--open');
+    }
+
+    function renderLandingLinks(arr) {
+        var container = document.getElementById('bp-promo-landings');
+        if (!container) return;
+        container.innerHTML = '';
+        if (arr.length === 0) arr = [''];
+        arr.forEach(function(url, idx) {
+            var row = document.createElement('div');
+            row.className = 'promo-dyn-row';
+            row.innerHTML =
+                '<div class="promo-dyn-row__num">' + (idx + 1) + '</div>' +
+                '<input type="url" class="form-input bp-promo-landing-input" placeholder="https://..." value="' + escBudgetHtml(url) + '">' +
+                '<button type="button" class="promo-dyn-row__remove" onclick="this.parentNode.remove();window.bpRenumberDynRows(this);">×</button>';
+            container.appendChild(row);
+        });
+    }
+
+    function renderWordings(arr) {
+        var container = document.getElementById('bp-promo-wordings');
+        if (!container) return;
+        container.innerHTML = '';
+        if (arr.length === 0) arr = [{ label: '', text: '' }];
+        arr.forEach(function(w, idx) {
+            var row = document.createElement('div');
+            row.className = 'promo-dyn-row';
+            row.style.flexDirection = 'column';
+            row.innerHTML =
+                '<div style="display:flex;gap:8px;align-items:center;width:100%;">' +
+                    '<div class="promo-dyn-row__num">' + (idx + 1) + '</div>' +
+                    '<input type="text" class="form-input bp-promo-wording-label" placeholder="Label (ex: Aspirationnel, Question, CTA...)" value="' + escBudgetHtml(w.label || '') + '">' +
+                    '<button type="button" class="promo-dyn-row__remove" onclick="this.closest(\'.promo-dyn-row\').remove();">×</button>' +
+                '</div>' +
+                '<textarea class="form-input promo-form-textarea bp-promo-wording-text" rows="2" placeholder="Le texte de l\'annonce..." style="margin-top:6px;width:100%;">' + escBudgetHtml(w.text || '') + '</textarea>';
+            container.appendChild(row);
+        });
+    }
+
+    window.bpAddLandingLink = function() {
+        var container = document.getElementById('bp-promo-landings');
+        if (!container) return;
+        var idx = container.querySelectorAll('.promo-dyn-row').length;
+        var row = document.createElement('div');
+        row.className = 'promo-dyn-row';
+        row.innerHTML =
+            '<div class="promo-dyn-row__num">' + (idx + 1) + '</div>' +
+            '<input type="url" class="form-input bp-promo-landing-input" placeholder="https://...">' +
+            '<button type="button" class="promo-dyn-row__remove" onclick="this.parentNode.remove();window.bpRenumberDynRows(this);">×</button>';
+        container.appendChild(row);
+    };
+
+    window.bpAddWording = function() {
+        var container = document.getElementById('bp-promo-wordings');
+        if (!container) return;
+        var idx = container.querySelectorAll('.promo-dyn-row').length;
+        var row = document.createElement('div');
+        row.className = 'promo-dyn-row';
+        row.style.flexDirection = 'column';
+        row.innerHTML =
+            '<div style="display:flex;gap:8px;align-items:center;width:100%;">' +
+                '<div class="promo-dyn-row__num">' + (idx + 1) + '</div>' +
+                '<input type="text" class="form-input bp-promo-wording-label" placeholder="Label (ex: Aspirationnel, Question, CTA...)">' +
+                '<button type="button" class="promo-dyn-row__remove" onclick="this.closest(\'.promo-dyn-row\').remove();">×</button>' +
+            '</div>' +
+            '<textarea class="form-input promo-form-textarea bp-promo-wording-text" rows="2" placeholder="Le texte de l\'annonce..." style="margin-top:6px;width:100%;"></textarea>';
+        container.appendChild(row);
+    };
+
+    window.bpRenumberDynRows = function(_) {
+        // Re-numerote les badges 1/2/3 apres suppression
+        document.querySelectorAll('#bp-promo-landings .promo-dyn-row .promo-dyn-row__num').forEach(function(num, i) {
+            num.textContent = (i + 1);
+        });
+        document.querySelectorAll('#bp-promo-wordings .promo-dyn-row .promo-dyn-row__num').forEach(function(num, i) {
+            num.textContent = (i + 1);
+        });
+    };
+
+    window.closePromoModal = function() {
+        var modal = document.getElementById('bp-promo-modal');
+        if (modal) modal.classList.remove('--open');
+    };
+
+    window.bpSubmitPromo = async function() {
+        var title = document.getElementById('bp-promo-title').value.trim();
+        if (!title) { alert('Le nom de la promotion est requis'); return; }
+
+        var clientId = document.getElementById('bp-promo-client').value;
+        if (!clientId) { alert('Sélectionne une marque'); return; }
+
+        var promoId = document.getElementById('bp-promo-id').value;
+        var dateStart = document.getElementById('bp-promo-date-start').value || null;
+        var dateEnd = document.getElementById('bp-promo-date-end').value || null;
+        // Determine le mois depuis date_start si dispo, sinon mois courant
+        var monthDerived = dateStart ? (parseInt(dateStart.split('-')[1], 10) || null) : null;
+
+        // Recolte les liens landing (non vides)
+        var landings = [];
+        document.querySelectorAll('#bp-promo-landings .bp-promo-landing-input').forEach(function(inp) {
+            var v = inp.value.trim();
+            if (v) landings.push(v);
+        });
+
+        // Recolte les wordings (au moins texte non vide)
+        var wordings = [];
+        document.querySelectorAll('#bp-promo-wordings .promo-dyn-row').forEach(function(row) {
+            var label = (row.querySelector('.bp-promo-wording-label') || {}).value || '';
+            var text = (row.querySelector('.bp-promo-wording-text') || {}).value || '';
+            if (text.trim()) wordings.push({ label: label.trim(), text: text.trim() });
+        });
+
+        var payload = {
+            client_id: clientId,
+            year: budgetState.year,
+            month: monthDerived,
+            title: title,
+            date_start: dateStart,
+            date_end: dateEnd,
+            remise_text: document.getElementById('bp-promo-remise').value.trim() || null,
+            offer_text: document.getElementById('bp-promo-remise').value.trim().split('\n')[0] || null,
+            wordings: wordings,
+            landing_urls: landings,
+            drive_url: document.getElementById('bp-promo-drive').value.trim() || null,
+            status: document.getElementById('bp-promo-status').value,
+            ads_spend_google: parseFloat(document.getElementById('bp-promo-spend-google').value) || 0,
+            ads_spend_meta: parseFloat(document.getElementById('bp-promo-spend-meta').value) || 0,
+            revenue_total: parseFloat(document.getElementById('bp-promo-revenue').value) || 0
+        };
+
+        var res;
+        if (promoId) {
+            res = await sb.from('client_promos').update(payload).eq('id', promoId);
+        } else {
+            res = await sb.from('client_promos').insert([payload]);
+        }
+        if (res.error) { alert('Erreur : ' + res.error.message); return; }
+
+        window.closePromoModal();
+        loadBudgetTab();
+    };
+
     function setupAddPromoButton() {
         var btn = document.getElementById('bp-add-promo');
         if (!btn) return;
-        btn.addEventListener('click', async function() {
-            if (!currentClient) { alert('Sélectionne d\'abord un client'); return; }
-            var title = prompt('Titre de la promo (ex: Saint-Valentin) :');
-            if (!title) return;
-            var month = prompt('Mois (1-12) :');
-            var monthInt = parseInt(month, 10);
-            if (!monthInt || monthInt < 1 || monthInt > 12) { alert('Mois invalide'); return; }
-            var offer = prompt('Offre courte (ex: 10€ de remise) :') || '';
-            var ins = await sb.from('client_promos').insert([{
-                client_id: currentClient.id, year: budgetState.year, month: monthInt,
-                title: title, offer_text: offer, status: 'planned'
-            }]);
-            if (ins.error) { alert('Erreur : ' + ins.error.message); return; }
-            loadBudgetTab();
+        btn.addEventListener('click', function() {
+            if (budgetState.clients.length === 0) {
+                alert('Sélectionne d\'abord un client ou la vue groupe');
+                return;
+            }
+            openPromoModal(null);
         });
     }
+
+    window.bpEditPromo = function(id) {
+        // Recupere la promo depuis la DB pour avoir les donnees a jour
+        sb.from('client_promos').select('*').eq('id', id).single().then(function(res) {
+            if (res.error || !res.data) { alert('Promo introuvable'); return; }
+            openPromoModal(res.data);
+        });
+    };
 
     function setupBudgetExports() {
         var ej = document.getElementById('bp-export-json');
