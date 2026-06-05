@@ -4515,9 +4515,16 @@
     }
 
     async function loadBudgetTab() {
-        if (!sb || !currentClient) {
+        if (!sb) return;
+
+        // ── Détecte si le selecteur principal est en mode "Vue groupe E&CO" ──
+        var mainSelect = document.getElementById('client-select');
+        var isMainGroupView = mainSelect && mainSelect.value === '__group__';
+
+        // Si ni client selectionne ni vue groupe : on demande de selectionner
+        if (!currentClient && !isMainGroupView) {
             var c = document.getElementById('bp-monthly-table');
-            if (c) c.innerHTML = '<p class="text-muted text-sm">Sélectionne un client.</p>';
+            if (c) c.innerHTML = '<p class="text-muted text-sm">Sélectionne un client ou la vue groupe.</p>';
             return;
         }
 
@@ -4532,30 +4539,39 @@
         } catch(e) { isAdmin = false; }
         budgetState.isAdmin = isAdmin;
 
-        // ── Scope : Marque seule (par défaut) ou Vue groupe ──
-        // - Admin : peut choisir via le select. Si pas de group_name, le select reste caché.
-        // - Client : forcé à "single" (sa marque uniquement, le select reste caché).
+        // ── Determine la liste des clients a afficher ──
+        var clientsToShow = [];
         var scopeSel = document.getElementById('bp-scope-select');
-        var scope = (scopeSel && isAdmin && currentClient.group_name) ? scopeSel.value : 'single';
 
-        // Mettre à jour les labels du select selon le client courant
-        if (scopeSel) {
-            var singleOpt = scopeSel.querySelector('option[value="single"]');
-            var groupOpt = scopeSel.querySelector('option[value="group"]');
-            if (singleOpt) singleOpt.textContent = '📍 ' + currentClient.name + ' seule';
-            if (groupOpt) groupOpt.textContent = '🌐 Vue groupe ' + (currentClient.group_name || '');
-            // Visible uniquement si admin ET client appartient à un groupe
-            scopeSel.style.display = (isAdmin && currentClient.group_name) ? '' : 'none';
+        if (isMainGroupView) {
+            // Mode "Vue groupe" depuis le selecteur principal : on prend tous les clients du groupe.
+            // Le scope select local est cache (on est deja en vue groupe par definition).
+            clientsToShow = (typeof groupClients !== 'undefined' && groupClients.length > 0) ? groupClients : [];
+            if (scopeSel) scopeSel.style.display = 'none';
+            // Edition desactivee en vue groupe pour eviter de modifier la mauvaise marque par erreur
+            budgetState.isAdmin = false;
+        } else if (currentClient) {
+            // Mode marque selectionnee : scope select local pour basculer marque seule / groupe
+            var scope = (scopeSel && isAdmin && currentClient.group_name) ? scopeSel.value : 'single';
+
+            if (scopeSel) {
+                var singleOpt = scopeSel.querySelector('option[value="single"]');
+                var groupOpt = scopeSel.querySelector('option[value="group"]');
+                if (singleOpt) singleOpt.textContent = '📍 ' + currentClient.name + ' seule';
+                if (groupOpt) groupOpt.textContent = '🌐 Vue groupe ' + (currentClient.group_name || '');
+                scopeSel.style.display = (isAdmin && currentClient.group_name) ? '' : 'none';
+            }
+
+            clientsToShow = [currentClient];
+            if (scope === 'group' && currentClient.group_name) {
+                var grpRes = await sb.from('clients')
+                    .select('id, name, group_name')
+                    .eq('group_name', currentClient.group_name)
+                    .order('name');
+                if (grpRes.data && grpRes.data.length > 0) clientsToShow = grpRes.data;
+            }
         }
 
-        var clientsToShow = [currentClient];
-        if (scope === 'group' && currentClient.group_name) {
-            var grpRes = await sb.from('clients')
-                .select('id, name, group_name')
-                .eq('group_name', currentClient.group_name)
-                .order('name');
-            if (grpRes.data && grpRes.data.length > 0) clientsToShow = grpRes.data;
-        }
         budgetState.clients = clientsToShow;
         var clientIds = clientsToShow.map(function(c) { return c.id; });
 
@@ -4960,6 +4976,20 @@
     function hookBudgetTab() {
         var btn = document.querySelector('.tab[data-tab="budget"]');
         if (btn) btn.addEventListener('click', function() { loadBudgetTab(); });
+
+        // Si on change de client (ou bascule en Vue groupe) alors qu'on est sur le
+        // tab Budget, on recharge automatiquement le tableau.
+        var mainSelect = document.getElementById('client-select');
+        if (mainSelect) {
+            mainSelect.addEventListener('change', function() {
+                var activeTab = document.querySelector('.tab.tab--active');
+                if (activeTab && activeTab.dataset.tab === 'budget') {
+                    // Petit délai pour laisser les autres handlers (loadAllData / loadAgencyDashboard)
+                    // mettre à jour currentClient / groupClients avant qu'on lise leur valeur.
+                    setTimeout(loadBudgetTab, 150);
+                }
+            });
+        }
     }
 
     function initBudgetModule() {
