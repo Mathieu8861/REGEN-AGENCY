@@ -659,17 +659,21 @@
             background: var(--hover-bg, #f9fafb); font-weight: 700; color: var(--dark);
             font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.6px;
         }
-        /* Sous-header (Google / Meta) : tous right-aligned pour matcher les chiffres
-           (surcharge le :first-child qui forcait Google a gauche) */
-        .bp-table thead tr:nth-child(2) th { text-align: right; }
-        /* Header de marque : plus visible, fond solide + alignement centré */
+        /* Ligne 1 du header : juste les bandeaux de marques (le reste est vide/transparent).
+           Sur les cellules vides au-dessus de Mois et Total : on neutralise pour qu'on
+           ne voie qu'un blanc continu avec la card. */
+        .bp-table thead .bp-th-empty {
+            background: var(--card-bg, white);
+            border-bottom: none;
+            padding: 0;
+        }
+        /* Header de marque (BAMIX, OXO, ...) : pastel colore, centre, isole sur la ligne 1 */
         .bp-table thead .bp-th-brand {
             text-align: center;
             font-size: 0.78rem;
             font-weight: 800;
             letter-spacing: 0.4px;
             padding: 12px 10px;
-            border-bottom: 3px solid currentColor;
             background: #e0e7ff; color: #4338ca;
         }
         .bp-table thead .bp-th-brand--marcato { background: #fce7f3; color: #be185d; }
@@ -677,11 +681,6 @@
         .bp-table thead .bp-th-brand--bamix { background: #dbeafe; color: #1e3a8a; }
         .bp-table thead .bp-th-brand--vitamix { background: #d1fae5; color: #065f46; }
         .bp-table thead .bp-th-brand--emilehenry { background: #ede9fe; color: #5b21b6; }
-        /* Mode mono-brand : on retire le border-bottom epais qui creait une ligne
-           de coupure horizontale entre le titre BAMIX et les sous-titres Google/Meta.
-           La bande coloree apparait alors continue sur les 2 lignes du header. */
-        .bp-table thead .bp-th-mono.bp-th-brand,
-        .bp-table thead tr:nth-child(1) .bp-th-mono { border-bottom: none; }
         .bp-table tbody tr:hover td { background: var(--hover-bg, #fafbfc); }
         .bp-table tbody td.bp-cell {
             font-variant-numeric: tabular-nums;
@@ -4620,21 +4619,20 @@
             }
         });
 
-        // En mode marque seule : on étend la couleur de marque sur TOUT le header
-        // (Mois + sous-titres Google/Meta + Total) pour avoir une vraie bande horizontale.
-        var isMonoBrand = clients.length === 1;
-        var monoBrandClass = isMonoBrand ? ' bp-th-brand' + brandColorClass(clients[0].name) + ' bp-th-mono' : '';
-        var html = '<div class="table-wrap"><table class="bp-table"><thead><tr>';
-        html += '<th rowspan="2" class="' + monoBrandClass + '">Mois</th>';
+        // Ligne 1 : bande de marques (BAMIX seule en mono, OXO|MARCATO|... en multi).
+        // Les cellules au-dessus de "Mois" et "Total" restent vides (neutres).
+        // Ligne 2 : tous les titres alignes (Mois, Google, Meta, ..., Total).
+        var html = '<div class="table-wrap"><table class="bp-table"><thead>';
+        html += '<tr><th class="bp-th-empty"></th>';
         clients.forEach(function(c) {
-            var monoExtra = isMonoBrand ? ' bp-th-mono' : '';
-            html += '<th class="bp-th-brand' + brandColorClass(c.name) + monoExtra + '" colspan="2">' + escBudgetHtml(c.name) + '</th>';
+            html += '<th class="bp-th-brand' + brandColorClass(c.name) + '" colspan="2">' + escBudgetHtml(c.name) + '</th>';
         });
-        html += '<th rowspan="2" class="' + monoBrandClass + '">Total</th></tr><tr>';
+        html += '<th class="bp-th-empty"></th></tr>';
+        html += '<tr><th>Mois</th>';
         clients.forEach(function() {
-            html += '<th class="' + monoBrandClass + '">Google</th><th class="' + monoBrandClass + '">Meta</th>';
+            html += '<th>Google</th><th>Meta</th>';
         });
-        html += '</tr></thead><tbody>';
+        html += '<th>Total</th></tr></thead><tbody>';
 
         var grandTotal = 0;
         var colTotals = {};
