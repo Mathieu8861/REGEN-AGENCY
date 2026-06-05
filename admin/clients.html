@@ -1062,6 +1062,35 @@
         }
         .bp-promo__visual:hover { transform: scale(1.05); }
         .bp-promo__visual img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Videos dans la card */
+        .bp-promo__videos {
+            display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+        }
+        .bp-promo__video {
+            position: relative; display: block;
+            width: 120px; height: 68px;
+            border-radius: 6px; overflow: hidden;
+            border: 1px solid var(--card-border, #e5e7eb);
+            background: #000;
+            transition: transform 0.15s;
+        }
+        .bp-promo__video:hover { transform: scale(1.05); }
+        .bp-promo__video img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+        .bp-promo__video-play {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.6rem; text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        }
+        .bp-promo__video-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 6px 12px; border-radius: 50px;
+            font-size: 0.74rem; font-weight: 700;
+            background: rgba(239, 68, 68, 0.12); color: #dc2626;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+        .bp-promo__video-badge:hover { background: rgba(239, 68, 68, 0.22); }
     </style>
 </head>
 <body>
@@ -1710,6 +1739,14 @@
                             <button type="button" class="promo-form-add" onclick="window.bpAddLandingLink()">+ ajouter un lien</button>
                         </label>
                         <div id="bp-promo-landings"></div>
+                    </div>
+
+                    <!-- Liens vidéos (multiples) -->
+                    <div class="promo-form-field">
+                        <label>Liens vidéos (YouTube, Vimeo, Drive…)
+                            <button type="button" class="promo-form-add" onclick="window.bpAddVideoLink()">+ ajouter une vidéo</button>
+                        </label>
+                        <div id="bp-promo-videos"></div>
                     </div>
 
                     <!-- Wordings (multiples) -->
@@ -5279,6 +5316,29 @@
             visualsHtml += '</div>';
         }
 
+        // Videos (YouTube thumbnails si dispo, sinon badge avec plateforme detectee)
+        var videoUrls = Array.isArray(p.video_urls) ? p.video_urls : [];
+        var videosHtml = '';
+        if (videoUrls.length > 0) {
+            videosHtml = '<div class="bp-promo__videos">';
+            videoUrls.forEach(function(url) {
+                var info = getVideoInfo(url);
+                if (info.thumbnail) {
+                    // YouTube : thumbnail cliquable
+                    videosHtml += '<a href="' + escBudgetHtml(url) + '" target="_blank" rel="noopener" class="bp-promo__video" title="' + escBudgetHtml(info.label) + '">' +
+                        '<img src="' + escBudgetHtml(info.thumbnail) + '" alt="" loading="lazy">' +
+                        '<div class="bp-promo__video-play">▶</div>' +
+                    '</a>';
+                } else {
+                    // Vimeo / Drive / autre : badge texte
+                    videosHtml += '<a href="' + escBudgetHtml(url) + '" target="_blank" rel="noopener" class="bp-promo__video-badge">' +
+                        info.icon + ' ' + escBudgetHtml(info.label) +
+                    '</a>';
+                }
+            });
+            videosHtml += '</div>';
+        }
+
         // Performances : depenses + CA + ROI calcule
         var spendG = parseFloat(p.ads_spend_google || 0);
         var spendM = parseFloat(p.ads_spend_meta || 0);
@@ -5320,6 +5380,7 @@
             dateStr +
             remiseHtml +
             visualsHtml +
+            videosHtml +
             linksHtml +
             wordingsHtml +
             perfHtml +
@@ -5487,8 +5548,9 @@
             document.getElementById('bp-promo-spend-google').value = promo.ads_spend_google || '';
             document.getElementById('bp-promo-spend-meta').value = promo.ads_spend_meta || '';
             document.getElementById('bp-promo-revenue').value = promo.revenue_total || '';
-            // Landing urls + wordings
+            // Landing urls + videos + wordings
             renderLandingLinks(Array.isArray(promo.landing_urls) ? promo.landing_urls : []);
+            renderVideoLinks(Array.isArray(promo.video_urls) ? promo.video_urls : []);
             renderWordings(Array.isArray(promo.wordings) ? promo.wordings : []);
         } else {
             document.getElementById('bp-promo-modal-title').textContent = 'Nouvelle promotion';
@@ -5505,6 +5567,7 @@
             document.getElementById('bp-promo-spend-meta').value = '';
             document.getElementById('bp-promo-revenue').value = '';
             renderLandingLinks(['']); // 1 input vide par défaut
+            renderVideoLinks(['']);
             renderWordings([{ label: '', text: '' }]);
         }
 
@@ -5525,6 +5588,63 @@
                 '<button type="button" class="promo-dyn-row__remove" onclick="this.parentNode.remove();window.bpRenumberDynRows(this);">×</button>';
             container.appendChild(row);
         });
+    }
+
+    function renderVideoLinks(arr) {
+        var container = document.getElementById('bp-promo-videos');
+        if (!container) return;
+        container.innerHTML = '';
+        if (arr.length === 0) arr = [''];
+        arr.forEach(function(url, idx) {
+            var row = document.createElement('div');
+            row.className = 'promo-dyn-row';
+            row.innerHTML =
+                '<div class="promo-dyn-row__num">' + (idx + 1) + '</div>' +
+                '<input type="url" class="form-input bp-promo-video-input" placeholder="https://youtube.com/... ou Vimeo, Drive, Loom..." value="' + escBudgetHtml(url) + '">' +
+                '<button type="button" class="promo-dyn-row__remove" onclick="this.parentNode.remove();window.bpRenumberDynRows(this);">×</button>';
+            container.appendChild(row);
+        });
+    }
+
+    window.bpAddVideoLink = function() {
+        var container = document.getElementById('bp-promo-videos');
+        if (!container) return;
+        var idx = container.querySelectorAll('.promo-dyn-row').length;
+        var row = document.createElement('div');
+        row.className = 'promo-dyn-row';
+        row.innerHTML =
+            '<div class="promo-dyn-row__num">' + (idx + 1) + '</div>' +
+            '<input type="url" class="form-input bp-promo-video-input" placeholder="https://youtube.com/... ou Vimeo, Drive, Loom...">' +
+            '<button type="button" class="promo-dyn-row__remove" onclick="this.parentNode.remove();window.bpRenumberDynRows(this);">×</button>';
+        container.appendChild(row);
+    };
+
+    // Detecte la plateforme de l'URL video et retourne metadata + thumbnail si dispo
+    function getVideoInfo(url) {
+        url = String(url || '');
+        // YouTube : youtube.com/watch?v=XXX, youtu.be/XXX, youtube.com/embed/XXX, youtube.com/shorts/XXX
+        var ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        if (ytMatch) {
+            return {
+                platform: 'youtube',
+                label: 'YouTube',
+                icon: '▶',
+                thumbnail: 'https://img.youtube.com/vi/' + ytMatch[1] + '/hqdefault.jpg'
+            };
+        }
+        // Vimeo
+        if (/vimeo\.com\//.test(url)) {
+            return { platform: 'vimeo', label: 'Vimeo', icon: '◯', thumbnail: null };
+        }
+        // Drive
+        if (/drive\.google\.com/.test(url)) {
+            return { platform: 'drive', label: 'Drive', icon: '📁', thumbnail: null };
+        }
+        // Loom
+        if (/loom\.com/.test(url)) {
+            return { platform: 'loom', label: 'Loom', icon: '🎬', thumbnail: null };
+        }
+        return { platform: 'generic', label: 'Vidéo', icon: '📹', thumbnail: null };
     }
 
     function renderWordings(arr) {
@@ -5612,6 +5732,13 @@
             if (v) landings.push(v);
         });
 
+        // Recolte les liens videos (non vides)
+        var videos = [];
+        document.querySelectorAll('#bp-promo-videos .bp-promo-video-input').forEach(function(inp) {
+            var v = inp.value.trim();
+            if (v) videos.push(v);
+        });
+
         // Recolte les wordings (au moins texte non vide)
         var wordings = [];
         document.querySelectorAll('#bp-promo-wordings .promo-dyn-row').forEach(function(row) {
@@ -5641,6 +5768,7 @@
             offer_text: document.getElementById('bp-promo-remise').value.trim().split('\n')[0] || null,
             wordings: wordings,
             landing_urls: landings,
+            video_urls: videos,
             drive_url: document.getElementById('bp-promo-drive').value.trim() || null,
             visuals: allVisuals,
             status: document.getElementById('bp-promo-status').value,
