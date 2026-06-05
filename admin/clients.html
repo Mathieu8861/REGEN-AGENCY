@@ -4613,11 +4613,15 @@
             }
         });
 
-        var html = '<div class="table-wrap"><table class="bp-table"><thead><tr><th rowspan="2">Mois</th>';
+        // En mode marque seule : on étend la couleur de marque sur les cellules "Mois" et "Total"
+        // pour avoir une vraie bande horizontale colorée (au lieu d'un bloc au milieu).
+        var monoBrandClass = (clients.length === 1) ? ' bp-th-brand' + brandColorClass(clients[0].name) : '';
+        var html = '<div class="table-wrap"><table class="bp-table"><thead><tr>';
+        html += '<th rowspan="2" class="' + monoBrandClass + '">Mois</th>';
         clients.forEach(function(c) {
             html += '<th class="bp-th-brand' + brandColorClass(c.name) + '" colspan="2">' + escBudgetHtml(c.name) + '</th>';
         });
-        html += '<th rowspan="2">Total</th></tr><tr>';
+        html += '<th rowspan="2" class="' + monoBrandClass + '">Total</th></tr><tr>';
         clients.forEach(function() { html += '<th>Google</th><th>Meta</th>'; });
         html += '</tr></thead><tbody>';
 
