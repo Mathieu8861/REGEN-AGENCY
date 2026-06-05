@@ -983,6 +983,7 @@
         <!-- Tabs -->
         <div class="tabs">
             <button class="tab tab--active" data-tab="dashboard">Vue mensuelle</button>
+            <button class="tab" data-tab="budget">Budget &amp; Planning</button>
             <button class="tab" data-tab="campaigns">Campagnes</button>
             <button class="tab" data-tab="import" data-admin-only>Import CSV</button>
             <button class="tab" data-tab="orders">Commandes</button>
@@ -1016,6 +1017,128 @@
                     <div class="loading"><div class="spinner"></div><span>Chargement...</span></div>
                 </div>
             </div>
+        </div>
+
+        <!-- ── Tab: Budget & Planning ── -->
+        <div class="tab-content" id="tab-budget">
+
+            <!-- KPIs : 3 stat-cards (Budget total / Google / Meta) -->
+            <div class="budget-kpis">
+                <div class="budget-kpi budget-kpi--green">
+                    <div class="budget-kpi__icon">💰</div>
+                    <div class="budget-kpi__main">
+                        <div class="budget-kpi__label">Budget Total Année</div>
+                        <div class="budget-kpi__value" id="bp-total">—</div>
+                        <div class="budget-kpi__sub" id="bp-total-sub">—</div>
+                    </div>
+                </div>
+                <div class="budget-kpi budget-kpi--blue">
+                    <div class="budget-kpi__icon">🔵</div>
+                    <div class="budget-kpi__main">
+                        <div class="budget-kpi__label">Google Ads</div>
+                        <div class="budget-kpi__value" id="bp-google">—</div>
+                        <div class="budget-kpi__sub" id="bp-google-sub">—</div>
+                    </div>
+                </div>
+                <div class="budget-kpi budget-kpi--purple">
+                    <div class="budget-kpi__icon">📱</div>
+                    <div class="budget-kpi__main">
+                        <div class="budget-kpi__label">Meta Ads</div>
+                        <div class="budget-kpi__value" id="bp-meta">—</div>
+                        <div class="budget-kpi__sub" id="bp-meta-sub">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerte budget (visible si dépassement détecté) -->
+            <div id="bp-alert" class="budget-alert hidden"></div>
+
+            <!-- Sub-tabs internes : Budget mensuel / Hebdo / Promos -->
+            <div class="budget-subtabs">
+                <button class="budget-subtab budget-subtab--active" data-subtab="monthly">📊 Budget mensuel</button>
+                <button class="budget-subtab" data-subtab="weekly">📆 Breakdown hebdo</button>
+                <button class="budget-subtab" data-subtab="promos">🎯 Calendrier promos</button>
+            </div>
+
+            <!-- Sub-tab 1 : Budget mensuel éditable -->
+            <div class="budget-subtab-content budget-subtab-content--active" id="bp-monthly">
+                <div class="card">
+                    <div class="bp-toolbar">
+                        <div class="bp-toolbar__left">
+                            <h3 class="card__title" style="margin:0;">
+                                <span class="card__title-icon"><img src="../assets/images/data-science.png" alt=""></span>
+                                Budget mensuel <span id="bp-year-label" style="color:var(--gray);font-weight:600;">2026</span>
+                            </h3>
+                        </div>
+                        <div class="bp-toolbar__right">
+                            <select id="bp-year-select" class="form-input" style="padding:6px 12px;font-size:0.8rem;width:auto;">
+                                <option value="2026">2026</option>
+                                <option value="2025">2025</option>
+                                <option value="2027">2027</option>
+                            </select>
+                            <button class="btn btn--sm" id="bp-export-json" data-admin-only style="background:var(--card-bg);border:1.5px solid var(--card-border);color:var(--dark);">⬇️ Export JSON</button>
+                            <button class="btn btn--sm" id="bp-export-csv" style="background:var(--card-bg);border:1.5px solid var(--card-border);color:var(--dark);">⬇️ Export CSV</button>
+                        </div>
+                    </div>
+                    <div id="bp-monthly-table">
+                        <div class="loading"><div class="spinner"></div><span>Chargement du budget…</span></div>
+                    </div>
+                    <p class="bp-hint" id="bp-edit-hint" style="display:none;">💡 Clique sur une cellule pour éditer · l'auto-save se fait au blur.</p>
+                </div>
+            </div>
+
+            <!-- Sub-tab 2 : Breakdown hebdomadaire -->
+            <div class="budget-subtab-content" id="bp-weekly">
+                <div class="card">
+                    <h3 class="card__title">
+                        <span class="card__title-icon"><img src="../assets/images/statistiques.png" alt=""></span>
+                        Breakdown hebdomadaire — sélectionne une plage de mois
+                    </h3>
+                    <div class="bp-weekly-controls">
+                        <label>Du mois :
+                            <select id="bp-week-from" class="form-input" style="padding:6px 12px;font-size:0.8rem;width:auto;">
+                                <option value="1">Janvier</option><option value="2">Février</option><option value="3">Mars</option>
+                                <option value="4">Avril</option><option value="5">Mai</option><option value="6" selected>Juin</option>
+                                <option value="7">Juillet</option><option value="8">Août</option><option value="9">Septembre</option>
+                                <option value="10">Octobre</option><option value="11">Novembre</option><option value="12">Décembre</option>
+                            </select>
+                        </label>
+                        <label>Au mois :
+                            <select id="bp-week-to" class="form-input" style="padding:6px 12px;font-size:0.8rem;width:auto;">
+                                <option value="1">Janvier</option><option value="2">Février</option><option value="3">Mars</option>
+                                <option value="4">Avril</option><option value="5">Mai</option><option value="6">Juin</option>
+                                <option value="7">Juillet</option><option value="8" selected>Août</option><option value="9">Septembre</option>
+                                <option value="10">Octobre</option><option value="11">Novembre</option><option value="12">Décembre</option>
+                            </select>
+                        </label>
+                        <button class="btn btn--sm btn--primary" id="bp-week-apply">OK</button>
+                    </div>
+                    <div id="bp-weekly-table" style="margin-top:18px;">
+                        <p class="text-muted text-sm">Sélectionne une plage et clique sur OK pour calculer.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-tab 3 : Calendrier promos -->
+            <div class="budget-subtab-content" id="bp-promos">
+                <div class="card">
+                    <div class="bp-toolbar">
+                        <div class="bp-toolbar__left">
+                            <h3 class="card__title" style="margin:0;">
+                                <span class="card__title-icon"><img src="../assets/images/lancement-du-produit.png" alt=""></span>
+                                Calendrier promos
+                            </h3>
+                        </div>
+                        <div class="bp-toolbar__right">
+                            <button class="btn btn--sm btn--primary" id="bp-add-promo" data-admin-only>＋ Ajouter une promo</button>
+                        </div>
+                    </div>
+                    <div id="bp-promos-grid">
+                        <div class="loading"><div class="spinner"></div><span>Chargement…</span></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- ── Tab: Campaigns ── -->
