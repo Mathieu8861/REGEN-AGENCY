@@ -6,9 +6,10 @@
 - **Type :** Site vitrine + backoffice agence + espace client + backend
 - **Dossier :** `Création site Web/REGEN-AGENCY/`
 - **Git :** https://github.com/Mathieu8861/REGEN-AGENCY — **Branche :** main
-- **Dernier commit :** `beea01d` (17/04/2026) — "feat: ajouter video collaboration dans section Vous & Nous (index)"
-- **Statut git :** ✅ Clean (à jour avec remote)
+- **Dernier commit :** `fa065dd` (10/06/2026) — "feat(seo): robots.txt + sitemap.xml + memoire projet"
+- **Statut git :** ✅ Clean (à jour avec remote — seuls restent untracked : studio.* + image originale, volontaire)
 - **Statut :** 🟢 Refonte en cours, up to date avec le remote
+- **Prod actuelle :** ⚠️ regen-agency.com tourne encore sur **WordPress** (hébergé IONOS) — migration vers Vercel **reportée** tant que la refonte n'est pas finie (pages/éléments manquants)
 
 ## Stack technique
 - **Front :** HTML/CSS/JS vanilla (pas de framework), typo Quicksand
@@ -80,8 +81,17 @@
 | `009-client-context.sql` | **2 tables** + 2 policies | client_services, client_follow_ups |
 | `010-prospect-context.sql` | **2 tables** + 2 policies | prospect_services, prospect_follow_ups |
 | `011-next-action.sql` | Next action logic | (à détailler) |
+| `012-crm-unified.sql` | CRM unifié | prospect_id sur clients + champs contrat sur prospects + vue crm_contacts |
+| `013-rls-hardening.sql` | RLS sur 13 tables exposées | prospect_*, agency_*, client_services/follow_ups (warnings critical Supabase résolus) |
+| `014-client-budgets.sql` | **Module Budget & Planning** | client_budgets (budget mensuel/plateforme) + client_promos + RLS (client = read-only) + import 144 lignes E&CO 2026 |
+| `015-promo-fields.sql` | Champs promo enrichis | landing_urls, drive_url, visuals, remise_text, ads_spend_google/meta, revenue_total, top_products |
+| `016-promo-storage.sql` | Storage visuels | bucket `promo-visuals` (public, 5 Mo, images) + policies admin-only upload/delete |
+| `017-promo-videos.sql` | Vidéos promo | colonne video_urls (JSONB) |
+| `018-rls-reenable.sql` | Ré-activation RLS | 6 tables core (clients, client_users, integrations, ad_*) qui avaient été DISABLED pendant le debug d'avril |
+| `019-rls-fix-recursion.sql` | **Fix récursion RLS** | Cause racine du bug "données fantômes" : cycle policies clients↔client_users → cassé via user_can_access_client() SECURITY DEFINER + search_path fixé |
+| `020-promo-revenue-ads.sql` | CA Ads promo | colonne revenue_ads (séparée de revenue_total) pour le calcul auto des perfs |
 
-**Total : ~29 tables** (certaines en `CREATE TABLE IF NOT EXISTS` pour idempotence)
+**Total : ~31 tables** (certaines en `CREATE TABLE IF NOT EXISTS` pour idempotence)
 
 ⚠️ **Note importante :** les migrations SQL sont appliquées **directement** (pas via le système `supabase migrations` — `supabase migration list --linked` retourne vide). Si tu veux passer au système de migrations standard Supabase, il faudra faire `supabase db pull` pour récupérer l'état actuel.
 
@@ -117,11 +127,23 @@
 - Dev d'un plugin Prestashop propriétaire (`regentracking`) pour tracking e-commerce
 - Setup MCP pour automatiser Ads Meta/Google/Prestashop depuis Claude Desktop
 - **28/04/2026** : création `robots.txt` + `sitemap.xml` à la racine (bonne pratique SEO Regen). POC `studio.html` (vitrine WebGL/motion) tenté puis **abandonné le même jour** — gardé en bac à sable local, NON LIÉ depuis le site, à ne pas pousser. Voir section "studio.html — POC abandonné" plus haut.
+- **29/04/2026** : fix auth admin — le login admin passe par Supabase Auth (`contact.regenagency@gmail.com`, profile role=admin) avec signOut systématique avant chaque login. Fin du double login et des sessions zombies.
+- **10/06/2026 (grosse session)** :
+  - **Module Budget & Planning complet** (inspiré du fichier standalone de Jaemeson pour Émile & Co) : onglet dans `admin/clients.html` entre Vue mensuelle et Campagnes. Budget mensuel éditable (auto-save Supabase), vue marque seule / vue groupe E&CO, KPIs + barre de progression dépensé/total, breakdown hebdo, calendrier promos avec modal complet (remise, liens landing/vidéos multiples, wordings, lien Drive, upload visuels Storage, statuts), **calcul auto des perfs** (dépenses Google/Meta depuis ad_daily_metrics, CA Ads + CA total depuis orders, top 3 produits depuis order_items) + ROAS auto. Migrations 014→017 + 020. Client = lecture seule (RLS).
+  - **Fix définitif du bug "données fantômes"** : la cause racine était une récursion circulaire des policies RLS clients↔client_users (PostgreSQL "infinite recursion detected" → 500 sur toutes les requêtes). Migrations 018 (ré-enable RLS sur les 6 tables core désactivées pendant le debug d'avril) + 019 (cassage du cycle via user_can_access_client() SECURITY DEFINER). Warning critical Supabase résolu. Testé OK admin + client + syncs.
+  - Vercel ajouté dans Comptabilité (factures reçues par email).
+  - `robots.txt`, `sitemap.xml` et cette mémoire versionnés.
+  - **Décision : migration WordPress → Vercel REPORTÉE.** regen-agency.com tourne encore sur WordPress (IONOS) avec bugs récurrents si pas de maj hebdo. Plan de bascule validé dans son principe : (1) formulaire de contact recréé sur la refonte et branché CRM/Supabase (leads → kanban prospects), (2) parité des pages avec le WordPress, (3) canonical/og:url/sitemap → regen-agency.com, (4) vercel.json redirects 301, (5) bascule DNS chez IONOS (A 76.76.21.21 + CNAME www → cname.vercel-dns.com, zéro downtime), (6) résilier l'hébergement WP (PAS le domaine). En attente : site refonte pas fini (pages/éléments manquants).
 
 ## Prochaines étapes
-- Finaliser les pages manquantes / en cours de refonte
+- **Finaliser les pages manquantes / éléments incomplets du site public** (bloquant pour la migration)
+- **Formulaire de contact branché CRM** (parité avec le formulaire 2 étapes du WordPress, leads → table prospects) — à faire avant la bascule
+- **Migration domaine regen-agency.com WordPress → Vercel** (plan en 6 étapes ci-dessus, reporté)
+- Soumettre `sitemap.xml` à Google Search Console (+ Bing)
+- Réseaux sociaux : page admin placeholder en attente des specs Mathieu
+- `/espace-client/*` : trancher — pages stylées par erreur (le vrai espace client = admin/clients.html via RLS), revert ou conserver
+- Budget & Planning : exécuter les migrations 014→020 sur tout nouveau projet Supabase (déjà fait sur la prod)
 - Tester les edge functions Supabase (sync Ads, prospect-ai)
-- Déploiement prod
 
 ## Notes
 - Toujours vérifier `git status` avant de bosser sur ce projet
