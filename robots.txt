@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+
+# Bloquer les espaces privés et techniques
+Disallow: /admin/
+Disallow: /espace-client/
+Disallow: /api/
+Disallow: /supabase/
+Disallow: /sql/
+Disallow: /node_modules/
+Disallow: /regentracking/
+Disallow: /MCP*
+
+# Bloquer les pages techniques sans valeur SEO
+Disallow: /connexion.html
+Disallow: /prospect-form.html
+
+# Bloquer les fichiers de configuration
+Disallow: /package.json
+Disallow: /package-lock.json
+Disallow: /*.zip$
+
+# Sitemap
+Sitemap: https://regen-agency.com/sitemap.xml
