@@ -1692,6 +1692,71 @@ p:last-child {
     margin-bottom: var(--spacing-md);
 }
 
+/* ── Variante hero vert foncé (page Qui sommes-nous : intro + mission fusionnés) ── */
+.hero-page--dark {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: var(--spacing-2xl);
+    background:
+        radial-gradient(820px circle at 85% 0%, rgba(47, 185, 99, 0.22), transparent 55%),
+        radial-gradient(680px circle at 0% 100%, rgba(5, 192, 138, 0.15), transparent 55%),
+        linear-gradient(160deg, #1d4a47 0%, #143432 100%);
+}
+
+.hero-page--dark .container { position: relative; z-index: 1; }
+
+.hero-page__glow {
+    position: absolute; z-index: 0; pointer-events: none;
+    top: 60px; right: 10%; width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(47, 185, 99, 0.22), transparent 65%);
+}
+.hero-page__dots {
+    position: absolute; z-index: 0; pointer-events: none;
+    bottom: 40px; left: 7%; width: 170px; height: 170px;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.13) 2px, transparent 2px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(circle, #000 55%, transparent 75%);
+    mask-image: radial-gradient(circle, #000 55%, transparent 75%);
+}
+
+.hero-page__badge {
+    background: rgba(var(--color-secondary-rgb), 0.2);
+    color: #8ce8af;
+}
+
+/* Titre blanc (override du gradient sombre de base) + accent gradient sur le span */
+.hero-page--dark .hero-page__title {
+    background: none;
+    -webkit-text-fill-color: #ffffff;
+    color: #ffffff;
+}
+
+.hero-page--dark .hero-page__subtitle {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Bloc mission fusionné dans le hero */
+.hero-page__mission {
+    max-width: 760px;
+    margin: var(--spacing-2xl) auto 0;
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hero-page__mission-title {
+    font-size: 1.9rem;
+    line-height: 1.25;
+    color: #ffffff;
+    margin-bottom: var(--spacing-md);
+}
+
+.hero-page__mission-text {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.8;
+}
+.hero-page__mission-text strong { color: #8ce8af; }
+
 
 /* ============================================ */
 /* 14b. BANNIÈRE CTA PRÉ-FOOTER               */
