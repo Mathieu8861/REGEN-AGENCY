@@ -11,3 +11,5 @@ supabase/.temp/
 
 # Fichiers de passation temporaires (GDrive sync uniquement)
 HANDOVER-*.md
+
+.env.local

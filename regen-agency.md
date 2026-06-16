@@ -134,6 +134,7 @@
   - Vercel ajouté dans Comptabilité (factures reçues par email).
   - `robots.txt`, `sitemap.xml` et cette mémoire versionnés.
   - **Décision : migration WordPress → Vercel REPORTÉE.** regen-agency.com tourne encore sur WordPress (IONOS) avec bugs récurrents si pas de maj hebdo. Plan de bascule validé dans son principe : (1) formulaire de contact recréé sur la refonte et branché CRM/Supabase (leads → kanban prospects), (2) parité des pages avec le WordPress, (3) canonical/og:url/sitemap → regen-agency.com, (4) vercel.json redirects 301, (5) bascule DNS chez IONOS (A 76.76.21.21 + CNAME www → cname.vercel-dns.com, zéro downtime), (6) résilier l'hébergement WP (PAS le domaine). En attente : site refonte pas fini (pages/éléments manquants).
+- **11/06/2026** : Section "Nos résultats clients" (`site-marketing.html`) — ajout carte **DET** (det-site.vercel.app, badge orange #F26D2C, image `site_DET.jpg`) + **tag "Démo"** (pill glassmorphism, `.marquee-card__demo` en haut à droite du visuel) sur les 4 sites démo : MIRA, CS Agéen, IBCO, DET. Au passage : carte FLO corrigée (lien `flo-gamma.vercel.app` → **www.floapp.fr** + label "RH · Recrutement · No-code" → "SaaS · Propositions B2B · IA", ancien positionnement obsolète). Commit `eda3dc7` poussé → auto-deploy Vercel.
 
 ## Prochaines étapes
 - **Finaliser les pages manquantes / éléments incomplets du site public** (bloquant pour la migration)
