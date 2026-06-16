@@ -76,20 +76,42 @@
 
     <!-- Main -->
     <main>
-        <!-- Hero (intro + mission fusionnés, fond vert foncé) -->
+        <!-- Hero (intro + mission fusionnés, fond vert foncé, asymétrique) -->
         <section class="hero-page hero-page--dark">
             <span class="hero-page__glow" aria-hidden="true"></span>
             <span class="hero-page__dots" aria-hidden="true"></span>
             <div class="container">
-                <span class="section__badge hero-page__badge">À propos</span>
-                <h1 class="hero-page__title">Qui <span class="text-gradient">sommes-nous</span> ?</h1>
-                <p class="hero-page__subtitle">Et si on vous parlait un peu de notre façon de faire et penser ?</p>
+                <div class="hero-page__grid">
+                    <!-- Texte -->
+                    <div class="hero-page__text">
+                        <span class="section__badge hero-page__badge">À propos</span>
+                        <h1 class="hero-page__title">Qui <span class="text-gradient">sommes-nous</span> ?</h1>
+                        <p class="hero-page__subtitle">Et si on vous parlait un peu de notre façon de faire et penser ?</p>
 
-                <div class="hero-page__mission reveal">
-                    <h2 class="hero-page__mission-title">Chez Regen Agency, nous ne laissons rien au hasard.</h2>
-                    <p class="hero-page__mission-text">
-                        En plus de nos compétences, ce qui est généralement mis en avant par nos clients, ce sont nos <strong>motivations et nos valeurs</strong>. Nous avons à cœur de proposer des prestations de qualité qui répondent à vos besoins.
-                    </p>
+                        <div class="hero-page__mission reveal">
+                            <h2 class="hero-page__mission-title">Chez Regen Agency, nous ne laissons rien au hasard.</h2>
+                            <p class="hero-page__mission-text">
+                                En plus de nos compétences, ce qui est généralement mis en avant par nos clients, ce sont nos <strong>motivations et nos valeurs</strong>. Nous avons à cœur de proposer des prestations de qualité qui répondent à vos besoins.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Visuel : duo fondateurs -->
+                    <div class="hero-page__visual reveal">
+                        <span class="hero-visual__ring" aria-hidden="true"></span>
+                        <span class="hero-visual__dots" aria-hidden="true"></span>
+                        <span class="hero-visual__blob" aria-hidden="true"></span>
+                        <div class="hero-visual__photo hero-visual__photo--1">
+                            <img src="assets/images/mathieu.jpg" alt="Mathieu Duval, CEO de Regen Agency" loading="eager">
+                        </div>
+                        <div class="hero-visual__photo hero-visual__photo--2">
+                            <img src="assets/images/JAEMESON.jpg" alt="Jaemeson Dieu, Co-Founder de Regen Agency" loading="eager">
+                        </div>
+                        <div class="hero-visual__chip">
+                            <span class="hero-visual__chip-dot"></span>
+                            Mathieu &amp; Jaemeson
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
