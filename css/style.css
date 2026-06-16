@@ -3230,39 +3230,26 @@ p:last-child {
 }
 
 .section--team {
-    background: linear-gradient(180deg, #ffffff 0%, #f4f9f6 100%);
     position: relative;
     overflow: hidden;
+    /* Lueurs colorées coulées dans le fond (jamais coupées par le bord) + wash vert doux */
+    background:
+        radial-gradient(760px circle at 86% 18%, rgba(47, 185, 99, 0.13), transparent 58%),
+        radial-gradient(680px circle at 6% 90%, rgba(5, 192, 138, 0.11), transparent 55%),
+        linear-gradient(180deg, #eaf6f0 0%, #f3faf6 58%, #ecf6f0 100%);
 }
 
-/* ── Décor section team ── */
+/* ── Décor texture (dots) — 2 clusters entièrement contenus ── */
 .team-decor { position: absolute; pointer-events: none; z-index: 0; }
 .team-decor--dots {
-    top: 60px; right: -40px;
-    width: 260px; height: 260px;
-    background-image: radial-gradient(circle, rgba(var(--color-secondary-rgb), 0.18) 2px, transparent 2px);
+    width: 180px; height: 180px;
+    background-image: radial-gradient(circle, rgba(var(--color-secondary-rgb), 0.22) 2px, transparent 2px);
     background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(circle, #000 55%, transparent 75%);
+    mask-image: radial-gradient(circle, #000 55%, transparent 75%);
 }
-.team-decor--circle {
-    border-radius: 50%;
-    filter: blur(2px);
-}
-.team-decor--circle-1 {
-    top: -80px; left: -90px;
-    width: 320px; height: 320px;
-    background: radial-gradient(circle at 30% 30%, rgba(var(--color-secondary-rgb), 0.16), transparent 70%);
-}
-.team-decor--circle-2 {
-    bottom: -120px; right: 6%;
-    width: 380px; height: 380px;
-    background: radial-gradient(circle at 60% 40%, rgba(5, 192, 138, 0.13), transparent 70%);
-}
-.team-decor--ring {
-    bottom: 40px; left: -60px;
-    width: 200px; height: 200px;
-    border: 2px solid rgba(var(--color-secondary-rgb), 0.18);
-    border-radius: 50%;
-}
+.team-decor--dots-tr { top: 70px; right: 40px; }
+.team-decor--dots-bl { bottom: 60px; left: 36px; }
 
 .section--team .container { position: relative; z-index: 1; }
 .section--team .section__subtitle {
@@ -3446,24 +3433,23 @@ p:last-child {
 }
 
 .section--collaborators {
-    background: var(--color-light);
     position: relative;
     overflow: hidden;
+    /* Lueur douce coulée dans le fond + base légèrement teintée (pas de blanc plat) */
+    background:
+        radial-gradient(620px circle at 92% 80%, rgba(var(--color-secondary-rgb), 0.10), transparent 56%),
+        radial-gradient(540px circle at 4% 12%, rgba(5, 192, 138, 0.07), transparent 52%),
+        #f1f7f4;
 }
 
 .collab-decor { position: absolute; pointer-events: none; z-index: 0; }
 .collab-decor--dots {
-    bottom: 30px; left: -30px;
-    width: 220px; height: 220px;
-    background-image: radial-gradient(circle, rgba(var(--color-secondary-rgb), 0.16) 2px, transparent 2px);
+    bottom: 50px; left: 40px;
+    width: 170px; height: 170px;
+    background-image: radial-gradient(circle, rgba(var(--color-secondary-rgb), 0.2) 2px, transparent 2px);
     background-size: 22px 22px;
-}
-.collab-decor--circle {
-    top: -100px; right: -80px;
-    width: 340px; height: 340px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 40% 40%, rgba(var(--color-secondary-rgb), 0.12), transparent 70%);
-    filter: blur(2px);
+    -webkit-mask-image: radial-gradient(circle, #000 55%, transparent 75%);
+    mask-image: radial-gradient(circle, #000 55%, transparent 75%);
 }
 
 .section--collaborators .container { position: relative; z-index: 1; }
@@ -3703,13 +3689,8 @@ p:last-child {
         justify-content: center;
     }
 
-    /* Réduire les décors sur mobile pour éviter le débordement */
-    .team-decor--circle-1,
-    .team-decor--circle-2,
-    .team-decor--ring,
-    .collab-decor--circle {
-        display: none;
-    }
+    /* Alléger la texture dots sur mobile */
+    .team-decor--dots-bl { display: none; }
 
     .mission__title {
         font-size: 1.5rem;
