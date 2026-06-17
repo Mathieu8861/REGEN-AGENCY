@@ -1800,6 +1800,37 @@ p:last-child {
 .hero-visual__photo--1 { transform: translate(28px, -46px); z-index: 3; }
 .hero-visual__photo--2 { transform: translate(-28px, 52px); margin-left: -56px; z-index: 2; }
 
+/* Variante trio : 2 fondateurs en haut + Océane en bas (triangle qui se chevauche) */
+.hero-page__visual--trio {
+    display: block;
+    min-height: 400px;
+}
+.hero-page__visual--trio .hero-visual__photo {
+    position: absolute;
+    width: 178px;
+    height: 178px;
+    margin: 0;
+    transform: none;
+}
+.hero-page__visual--trio .hero-visual__photo--1 { top: 0; left: 16%; z-index: 3; }
+.hero-page__visual--trio .hero-visual__photo--2 { top: 24px; right: 16%; z-index: 3; }
+.hero-page__visual--trio .hero-visual__photo--3 {
+    width: 168px; height: 168px;
+    top: 150px; left: 50%; transform: translateX(-50%); z-index: 4;
+}
+.hero-page__visual--trio .hero-visual__blob { z-index: 0; }
+.hero-page__visual--trio .hero-visual__chip { bottom: 4px; right: 6%; }
+
+/* Petits laptops : colonne visuelle plus étroite → photos réduites pour
+   garder un chevauchement léger (évite que les fondateurs se masquent) */
+@media (min-width: 769px) and (max-width: 1100px) {
+    .hero-page__visual--trio { min-height: 360px; }
+    .hero-page__visual--trio .hero-visual__photo { width: 150px; height: 150px; }
+    .hero-page__visual--trio .hero-visual__photo--1 { left: 8%; }
+    .hero-page__visual--trio .hero-visual__photo--2 { right: 8%; }
+    .hero-page__visual--trio .hero-visual__photo--3 { width: 138px; height: 138px; top: 126px; }
+}
+
 /* Accents décoratifs flottants */
 .hero-visual__ring {
     position: absolute; z-index: 1; pointer-events: none;
@@ -2139,6 +2170,13 @@ p:last-child {
     .hero-visual__photo--2 { transform: translate(-18px, 38px); margin-left: -36px; }
     .hero-visual__ring { width: 90px; height: 90px; }
     .hero-visual__chip { font-size: 0.74rem; padding: 6px 12px; }
+
+    /* Trio compact en mobile */
+    .hero-page__visual--trio { min-height: 340px; }
+    .hero-page__visual--trio .hero-visual__photo { width: 134px; height: 134px; }
+    .hero-page__visual--trio .hero-visual__photo--1 { top: 0; left: 8%; }
+    .hero-page__visual--trio .hero-visual__photo--2 { top: 26px; right: 8%; }
+    .hero-page__visual--trio .hero-visual__photo--3 { width: 120px; height: 120px; top: 116px; bottom: auto; }
 
     .header {
         top: var(--spacing-sm);
