@@ -296,18 +296,24 @@
         //  shot  : nom du fichier capture dans assets/images/compta/ (ou null)
         // ═══════════════════════════════════════════════════════════════
         var SUBSCRIPTIONS = [
+            { name: 'RYDGE Conseil', cat: 'Compta', url: '', price: 283.40, cycle: 'monthly', source: 'email', shot: null },
+            { name: 'Allianz (assurance pro)', cat: 'Assurance', url: '', price: 77.90, cycle: 'monthly', source: 'email', shot: null },
+            { name: 'Abonnement non identifié', cat: '⚠️ À élucider', url: '', price: 19, cycle: 'monthly', source: 'email', shot: null },
             { name: 'Artlist',     cat: 'Créa',   url: 'https://artlist.io/account/invoices',            price: 39.99, cycle: 'monthly', source: 'portal', shot: 'artlist.jpg' },
             { name: 'Quicktalk',   cat: 'Outil',  url: 'https://app.quicktalk.com/billing',              price: 19, cycle: 'monthly', source: 'portal', shot: 'quicktalk.jpg' },
             { name: 'Adobe Stock',        cat: 'Créa', url: 'https://account.adobe.com/', price: 29.99, cycle: 'monthly', source: 'portal', shot: 'adobe.jpg' },
             { name: 'Adobe Creative Pro', cat: 'Créa', url: 'https://account.adobe.com/', price: 32.75, cycle: 'monthly', source: 'portal', shot: 'adobe.jpg' },
-            { name: 'ChatGPT',     cat: 'IA',     url: 'https://chatgpt.com/#settings/Account',           price: null, cycle: 'monthly', source: 'portal', shot: 'chatgpt.jpg' },
-            { name: 'OVH',         cat: 'Infra',  url: 'https://manager.eu.ovhcloud.com/#/billing/history', price: null, cycle: 'yearly', source: 'portal', shot: 'ovh.jpg' },
-            { name: 'Legalplace',  cat: 'Legal',  url: '',  price: null, cycle: 'monthly', source: 'email', shot: null },
-            { name: 'Google Play', cat: 'Outil',  url: '',  price: null, cycle: 'monthly', source: 'email', shot: null },
-            { name: 'Anthropic',   cat: 'IA',     url: '',  price: null, cycle: 'monthly', source: 'email', shot: null },
-            { name: 'IONOS',       cat: 'Infra',  url: '',  price: null, cycle: 'yearly',  source: 'email', shot: null },
-            { name: 'Supabase',    cat: 'Infra',  url: '',  price: null, cycle: 'monthly', source: 'email', shot: null },
-            { name: 'Vercel',      cat: 'Infra',  url: '',  price: null, cycle: 'monthly', source: 'email', shot: null }
+            { name: 'ChatGPT',     cat: 'IA',     url: 'https://chatgpt.com/#settings/Account',           price: 19.17, cycle: 'monthly', source: 'portal', shot: 'chatgpt.jpg' },
+            { name: 'OVH',         cat: 'Infra',  url: 'https://manager.eu.ovhcloud.com/#/billing/history', price: 5.14, cycle: 'monthly', source: 'portal', shot: 'ovh.jpg' },
+            { name: 'Legalplace',  cat: 'Legal',  url: '',  price: 31.50, cycle: 'monthly', source: 'email', shot: null },
+            { name: 'Google Workspace', cat: 'Outil',  url: '',  price: 5.80, cycle: 'monthly', source: 'email', shot: null },
+            { name: 'Google One',  cat: 'Outil',  url: '',  price: 9.99, cycle: 'monthly', source: 'email', shot: null },
+            { name: 'Anthropic',   cat: 'IA',     url: '',  price: 180, cycle: 'monthly', source: 'email', shot: null },
+            { name: 'IONOS',       cat: 'Infra',  url: '',  price: 7.50, cycle: 'monthly',  source: 'email', shot: null },
+            { name: 'Supabase',    cat: 'Infra',  url: '',  price: 31.69, cycle: 'monthly', source: 'email', shot: null }, /* $34.45 ≈ 0,92 €/$ */
+            { name: 'Vercel',      cat: 'Infra',  url: '',  price: 18.40, cycle: 'monthly', source: 'email', shot: null }, /* $20 HT / $24 TTC — démarré juin 2026 */
+            { name: 'Elementor',   cat: 'Créa',   url: '',  price: 70.80, cycle: 'yearly',  source: 'email', shot: null },
+            { name: 'Canva',       cat: 'Créa',   url: '',  price: 110, cycle: 'yearly',  source: 'email', shot: null }
         ];
         var SHOT_BASE = '../assets/images/compta/';
 
