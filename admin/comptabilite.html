@@ -10,11 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Quicksand', sans-serif;
@@ -26,183 +22,181 @@
             align-items: center;
         }
 
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            padding: 2rem 1.5rem 3rem;
-        }
+        .container { max-width: 1080px; width: 100%; padding: 2rem 1.5rem 3rem; }
 
         /* ── Header ── */
         .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
         }
-
-        .page-header-left {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .page-header-left img {
-            height: 40px;
-            width: auto;
-        }
-
-        .page-header-left h1 {
-            font-family: 'Quicksand', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--color-primary);
-        }
-
-        .page-header-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
+        .page-header-left { display: flex; align-items: center; gap: 0.75rem; }
+        .page-header-left img { height: 40px; width: auto; }
+        .page-header-left h1 { font-size: 1.5rem; font-weight: 700; color: var(--color-primary); }
+        .page-header-actions { display: flex; gap: 0.5rem; }
         .btn-header {
-            font-family: 'Quicksand', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 0.5rem 1.1rem;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s ease;
+            font-size: 0.85rem; font-weight: 600; padding: 0.5rem 1.1rem;
+            border-radius: 8px; border: none; cursor: pointer; text-decoration: none;
+            transition: all 0.2s ease; font-family: inherit;
         }
+        .btn-retour { background: #e8ede9; color: var(--color-primary); }
+        .btn-retour:hover { background: #dbe3dc; }
+        .btn-deconnexion { background: var(--color-primary); color: #fff; }
+        .btn-deconnexion:hover { opacity: 0.9; }
 
-        .btn-retour {
-            background: #e8ede9;
-            color: var(--color-primary);
+        /* ── KPIs dépenses ── */
+        .compta-kpis {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 0; margin-bottom: 2.5rem;
+            background: #fff; border: 1px solid #e8ede9; border-radius: 14px;
+            overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.05);
         }
-
-        .btn-retour:hover {
-            background: #dbe3dc;
+        .compta-kpi {
+            padding: 1.4rem 1.2rem; text-align: center;
+            border-right: 1px solid #e8ede9;
         }
-
-        .btn-deconnexion {
-            background: var(--color-primary);
-            color: #fff;
+        .compta-kpi:last-child { border-right: none; }
+        .compta-kpi__value { font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
+        .compta-kpi__label {
+            font-size: 0.68rem; color: #6b7280; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.6px; margin-top: 4px;
         }
-
-        .btn-deconnexion:hover {
-            opacity: 0.9;
-        }
+        .compta-kpi--month .compta-kpi__value { color: #2FB963; }
+        .compta-kpi--year .compta-kpi__value { color: #173C3A; }
+        .compta-kpi--count .compta-kpi__value { color: #3b82f6; }
 
         /* ── Section titles ── */
         .section-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'Quicksand', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--color-primary);
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 1.1rem; font-weight: 700; color: var(--color-primary);
             margin-bottom: 1rem;
         }
+        .section-title svg { width: 20px; height: 20px; flex-shrink: 0; }
+        section { margin-bottom: 2.5rem; }
 
-        .section-title svg {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-        }
-
-        section {
-            margin-bottom: 2.5rem;
-        }
-
-        /* ── Cards grid ── */
+        /* ── Dépôt RYDGE ── */
         .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 0.85rem;
         }
-
         .card-link {
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-            background: #fff;
-            border: 2px solid #e8ede9;
-            border-radius: 12px;
-            padding: 1rem 1.1rem;
-            text-decoration: none;
-            color: var(--color-dark);
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 600;
-            font-size: 0.92rem;
-            transition: all 0.2s ease;
+            display: flex; align-items: center; gap: 0.65rem;
+            background: #fff; border: 2px solid #e8ede9; border-radius: 12px;
+            padding: 1rem 1.1rem; text-decoration: none; color: var(--color-dark);
+            font-weight: 600; font-size: 0.92rem; transition: all 0.2s ease;
         }
-
         .card-link:hover {
-            border-color: #2FB963;
-            transform: translateY(-2px);
+            border-color: #2FB963; transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(47, 185, 99, 0.12);
         }
+        .card-link svg { width: 22px; height: 22px; flex-shrink: 0; color: #2FB963; }
 
-        .card-link svg {
-            width: 22px;
-            height: 22px;
-            flex-shrink: 0;
-            color: #2FB963;
+        /* ── Cartes abonnement enrichies ── */
+        .subs-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+            gap: 0.9rem;
         }
-
-        /* ── Tags / badges ── */
-        .tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
+        .sub-card {
+            background: #fff; border: 1.5px solid #e8ede9; border-radius: 14px;
+            padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.7rem;
+            transition: all 0.2s ease;
         }
-
-        .tag-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: #f0f7f2;
-            color: var(--color-primary);
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            padding: 0.45rem 0.9rem;
-            border-radius: 50px;
+        .sub-card:hover { border-color: #2FB963; box-shadow: 0 4px 14px rgba(47,185,99,0.1); }
+        .sub-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+        .sub-card__name { font-size: 1rem; font-weight: 700; color: var(--color-dark); }
+        .sub-card__cat {
+            font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+            color: #6b7280; background: #f0f3f1; padding: 2px 8px; border-radius: 50px;
+            margin-top: 3px; display: inline-block;
         }
-
-        .tag-badge svg {
-            width: 15px;
-            height: 15px;
-            flex-shrink: 0;
-            color: #2FB963;
+        .sub-card__price { text-align: right; flex-shrink: 0; }
+        .sub-card__price-val { font-size: 1.05rem; font-weight: 800; color: #173C3A; }
+        .sub-card__price-val.--empty { color: #cbd5e1; font-weight: 700; }
+        .sub-card__price-cycle { font-size: 0.66rem; color: #9ca3af; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+        .sub-card__actions { display: flex; gap: 0.4rem; margin-top: auto; }
+        .sub-btn {
+            flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+            font-size: 0.76rem; font-weight: 700; padding: 0.5rem 0.6rem; border-radius: 8px;
+            cursor: pointer; border: 1.5px solid; text-decoration: none; transition: all 0.15s; font-family: inherit;
         }
-
-        /* ── Footer ── */
-        .page-footer {
-            text-align: center;
-            padding: 2rem 0 1rem;
-            font-size: 0.8rem;
-            color: #999;
-            font-family: 'Quicksand', sans-serif;
+        .sub-btn svg { width: 13px; height: 13px; }
+        .sub-btn--access { background: #2FB963; border-color: #2FB963; color: #fff; }
+        .sub-btn--access:hover { background: #27a356; border-color: #27a356; }
+        .sub-btn--invoice { background: #fff; border-color: #d8e3dc; color: var(--color-primary); }
+        .sub-btn--invoice:hover { border-color: #2FB963; background: #f0f7f2; }
+        .sub-card__email-tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 0.72rem; font-weight: 700; color: #b45309;
+            background: #fef3c7; padding: 0.4rem 0.7rem; border-radius: 8px;
         }
+        .sub-card__email-tag svg { width: 13px; height: 13px; }
 
-        /* ── Responsive ── */
+        /* ── Tableau récap ── */
+        .table-wrap { overflow-x: auto; background: #fff; border: 1px solid #e8ede9; border-radius: 14px; }
+        .expenses-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+        .expenses-table th {
+            text-align: right; padding: 0.75rem 0.9rem; background: #f0f3f1;
+            font-size: 0.68rem; font-weight: 700; color: #173C3A;
+            text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+        }
+        .expenses-table th:first-child, .expenses-table td:first-child { text-align: left; }
+        .expenses-table td { padding: 0.7rem 0.9rem; border-top: 1px solid #eef2f0; text-align: right; font-variant-numeric: tabular-nums; }
+        .expenses-table tbody tr:hover td { background: #fafbfa; }
+        .expenses-table .exp-name { font-weight: 700; color: var(--color-dark); }
+        .expenses-table .exp-cat { font-size: 0.7rem; color: #9ca3af; font-weight: 600; }
+        .expenses-table .exp-cycle-badge {
+            font-size: 0.66rem; font-weight: 700; padding: 2px 8px; border-radius: 50px;
+        }
+        .exp-cycle-badge.--monthly { background: #e0f2fe; color: #0369a1; }
+        .exp-cycle-badge.--yearly { background: #ede9fe; color: #6d28d9; }
+        .expenses-table .--empty { color: #cbd5e1; }
+        .expenses-table tfoot td {
+            font-weight: 800; background: #f0f7f2; border-top: 2px solid #2FB963;
+            padding: 0.85rem 0.9rem; color: #173C3A;
+        }
+        .expenses-table tfoot .exp-total-month { color: #2FB963; font-size: 0.95rem; }
+        .expenses-table tfoot .exp-total-year { color: #173C3A; font-size: 0.95rem; }
+
+        .compta-hint {
+            margin-top: 0.8rem; font-size: 0.78rem; color: #6b7280;
+            background: #f0f7f2; border: 1px solid #d8e3dc; border-radius: 8px;
+            padding: 0.6rem 0.9rem; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .compta-hint svg { width: 15px; height: 15px; color: #2FB963; flex-shrink: 0; }
+
+        /* ── Modal capture ── */
+        .shot-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            display: none; align-items: center; justify-content: center; z-index: 4000; padding: 2rem;
+        }
+        .shot-modal.--open { display: flex; }
+        .shot-modal__box {
+            background: #fff; border-radius: 14px; max-width: 880px; width: 100%;
+            max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;
+        }
+        .shot-modal__header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.3rem; border-bottom: 1px solid #e8ede9;
+        }
+        .shot-modal__title { font-size: 1rem; font-weight: 700; color: var(--color-primary); }
+        .shot-modal__close {
+            width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer;
+            background: #f0f3f1; color: #6b7280; font-size: 1.3rem; line-height: 1;
+        }
+        .shot-modal__close:hover { background: #fee2e2; color: #ef4444; }
+        .shot-modal__body { padding: 1.2rem; overflow-y: auto; }
+        .shot-modal__img { width: 100%; border-radius: 10px; border: 1px solid #e8ede9; display: block; }
+        .shot-modal__empty { text-align: center; color: #9ca3af; padding: 3rem 1rem; font-weight: 600; }
+        .shot-modal__steps { margin-top: 1rem; }
+        .shot-modal__steps li { margin: 0.35rem 0 0.35rem 1.2rem; font-size: 0.88rem; color: #374151; line-height: 1.5; }
+
+        .page-footer { text-align: center; padding: 2rem 0 1rem; font-size: 0.8rem; color: #999; }
+
         @media (max-width: 600px) {
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .page-header-left h1 {
-                font-size: 1.25rem;
-            }
-
-            .cards-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            .page-header { flex-direction: column; align-items: flex-start; }
+            .compta-kpis { grid-template-columns: 1fr; }
+            .compta-kpi { border-right: none; border-bottom: 1px solid #e8ede9; }
+            .compta-kpi:last-child { border-bottom: none; }
+            .subs-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -221,6 +215,13 @@
             </div>
         </header>
 
+        <!-- KPIs dépenses -->
+        <div class="compta-kpis" id="compta-kpis">
+            <div class="compta-kpi compta-kpi--month"><div class="compta-kpi__value" id="kpi-month">—</div><div class="compta-kpi__label">Total / mois</div></div>
+            <div class="compta-kpi compta-kpi--year"><div class="compta-kpi__value" id="kpi-year">—</div><div class="compta-kpi__label">Total / an</div></div>
+            <div class="compta-kpi compta-kpi--count"><div class="compta-kpi__value" id="kpi-count">—</div><div class="compta-kpi__label">Abonnements</div></div>
+        </div>
+
         <!-- 1. Dépôt de documents -->
         <section>
             <h2 class="section-title">
@@ -235,93 +236,183 @@
             </div>
         </section>
 
-        <!-- 2. Abonnements — récupération de factures -->
+        <!-- 2. Abonnements -->
         <section>
             <h2 class="section-title">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                Abonnements — récupération de factures
+                Abonnements &amp; récupération de factures
             </h2>
-            <div class="cards-grid">
-                <!-- Artlist -->
-                <a href="https://artlist.io/account/invoices" target="_blank" rel="noopener noreferrer" class="card-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-                    Artlist
-                </a>
-                <!-- Quicktalk -->
-                <a href="https://app.quicktalk.com/billing" target="_blank" rel="noopener noreferrer" class="card-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    Quicktalk
-                </a>
-                <!-- Adobe -->
-                <a href="https://account.adobe.com/" target="_blank" rel="noopener noreferrer" class="card-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 22 22 22"/></svg>
-                    Adobe
-                </a>
-                <!-- ChatGPT -->
-                <a href="https://chatgpt.com/#settings/Account" target="_blank" rel="noopener noreferrer" class="card-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    ChatGPT
-                </a>
-                <!-- OVH -->
-                <a href="https://manager.eu.ovhcloud.com/#/billing/history" target="_blank" rel="noopener noreferrer" class="card-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-                    OVH
-                </a>
-            </div>
+            <div class="subs-grid" id="subs-grid"></div>
         </section>
 
-        <!-- 3. Factures reçues par email -->
+        <!-- 3. Récapitulatif des dépenses -->
         <section>
             <h2 class="section-title">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                Factures reçues par email
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>
+                Récapitulatif des dépenses
             </h2>
-            <div class="tags-container">
-                <span class="tag-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    Legalplace
-                </span>
-                <span class="tag-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    Google Play
-                </span>
-                <span class="tag-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    Anthropic
-                </span>
-                <span class="tag-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    IONOS
-                </span>
-                <span class="tag-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    Supabase
-                </span>
-                <span class="tag-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    Vercel
-                </span>
+            <div class="table-wrap">
+                <table class="expenses-table">
+                    <thead>
+                        <tr>
+                            <th>Abonnement</th>
+                            <th>Prix</th>
+                            <th>Cycle</th>
+                            <th>Coût / mois</th>
+                            <th>Coût / an</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenses-body"></tbody>
+                    <tfoot id="expenses-foot"></tfoot>
+                </table>
+            </div>
+            <div class="compta-hint">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Les coûts annuels sont normalisés (un abonnement mensuel = ×12, un annuel = /12 pour le coût mensuel). Prix HT.
             </div>
         </section>
 
         <!-- Footer -->
-        <footer class="page-footer">
-            Regen Agency &copy; 2025 - Espace réservé
-        </footer>
+        <footer class="page-footer">Regen Agency &copy; 2026 - Espace réservé</footer>
+    </div>
 
+    <!-- Modal capture parcours facture -->
+    <div class="shot-modal" id="shot-modal" onclick="if(event.target===this)closeShot()">
+        <div class="shot-modal__box">
+            <div class="shot-modal__header">
+                <span class="shot-modal__title" id="shot-title">Parcours facture</span>
+                <button class="shot-modal__close" type="button" onclick="closeShot()">×</button>
+            </div>
+            <div class="shot-modal__body" id="shot-body"></div>
+        </div>
     </div>
 
     <script>
-        // Auth check
+        // ═══════════════════════════════════════════════════════════════
+        //  DONNÉES ABONNEMENTS — édite ici (prix, cycle, captures)
+        //  price : nombre en € HT, ou null si pas encore renseigné
+        //  cycle : 'monthly' | 'yearly'
+        //  source: 'portal' (on va chercher la facture) | 'email' (reçue par mail)
+        //  shot  : nom du fichier capture dans assets/images/compta/ (ou null)
+        // ═══════════════════════════════════════════════════════════════
+        var SUBSCRIPTIONS = [
+            { name: 'Artlist',     cat: 'Créa',   url: 'https://artlist.io/account/invoices',            price: null, cycle: 'yearly',  source: 'portal', shot: 'artlist.jpg' },
+            { name: 'Quicktalk',   cat: 'Outil',  url: 'https://app.quicktalk.com/billing',              price: null, cycle: 'monthly', source: 'portal', shot: 'quicktalk.jpg' },
+            { name: 'Adobe',       cat: 'Créa',   url: 'https://account.adobe.com/',                      price: null, cycle: 'monthly', source: 'portal', shot: 'adobe.jpg' },
+            { name: 'ChatGPT',     cat: 'IA',     url: 'https://chatgpt.com/#settings/Account',           price: null, cycle: 'monthly', source: 'portal', shot: 'chatgpt.jpg' },
+            { name: 'OVH',         cat: 'Infra',  url: 'https://manager.eu.ovhcloud.com/#/billing/history', price: null, cycle: 'yearly', source: 'portal', shot: 'ovh.jpg' },
+            { name: 'Legalplace',  cat: 'Legal',  url: '',  price: null, cycle: 'monthly', source: 'email', shot: null },
+            { name: 'Google Play', cat: 'Outil',  url: '',  price: null, cycle: 'monthly', source: 'email', shot: null },
+            { name: 'Anthropic',   cat: 'IA',     url: '',  price: null, cycle: 'monthly', source: 'email', shot: null },
+            { name: 'IONOS',       cat: 'Infra',  url: '',  price: null, cycle: 'yearly',  source: 'email', shot: null },
+            { name: 'Supabase',    cat: 'Infra',  url: '',  price: null, cycle: 'monthly', source: 'email', shot: null },
+            { name: 'Vercel',      cat: 'Infra',  url: '',  price: null, cycle: 'monthly', source: 'email', shot: null }
+        ];
+        var SHOT_BASE = '../assets/images/compta/';
+
+        function euro(n) { return Math.round(n).toLocaleString('fr-FR') + ' €'; }
+        function euro2(n) { return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+        function monthlyOf(s) { return s.price == null ? null : (s.cycle === 'monthly' ? s.price : s.price / 12); }
+        function yearlyOf(s) { return s.price == null ? null : (s.cycle === 'monthly' ? s.price * 12 : s.price); }
+        function esc(t) { var d = document.createElement('div'); d.textContent = t || ''; return d.innerHTML; }
+
+        // ── Cartes abonnements ──
+        function renderSubs() {
+            var grid = document.getElementById('subs-grid');
+            grid.innerHTML = SUBSCRIPTIONS.map(function(s, i) {
+                var priceHtml = s.price == null
+                    ? '<div class="sub-card__price-val --empty">— €</div>'
+                    : '<div class="sub-card__price-val">' + euro2(s.price) + '</div>';
+                var cycleLabel = s.cycle === 'monthly' ? '/ mois' : '/ an';
+
+                var actions;
+                if (s.source === 'portal') {
+                    actions = '<div class="sub-card__actions">' +
+                        (s.url ? '<a class="sub-btn sub-btn--access" href="' + s.url + '" target="_blank" rel="noopener">' +
+                            '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Accéder</a>' : '') +
+                        '<button class="sub-btn sub-btn--invoice" onclick="openShot(' + i + ')">' +
+                            '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Parcours facture</button>' +
+                    '</div>';
+                } else {
+                    actions = '<div class="sub-card__email-tag">' +
+                        '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>' +
+                        'Reçue par email</div>';
+                }
+
+                return '<div class="sub-card">' +
+                    '<div class="sub-card__top">' +
+                        '<div><div class="sub-card__name">' + esc(s.name) + '</div><span class="sub-card__cat">' + esc(s.cat) + '</span></div>' +
+                        '<div class="sub-card__price">' + priceHtml + '<div class="sub-card__price-cycle">' + cycleLabel + '</div></div>' +
+                    '</div>' +
+                    actions +
+                '</div>';
+            }).join('');
+        }
+
+        // ── Tableau récap + KPIs ──
+        function renderTable() {
+            var body = document.getElementById('expenses-body');
+            var totalMonth = 0, totalYear = 0, filled = 0;
+
+            body.innerHTML = SUBSCRIPTIONS.map(function(s) {
+                var m = monthlyOf(s), y = yearlyOf(s);
+                if (m != null) { totalMonth += m; totalYear += y; filled++; }
+                var cycleBadge = '<span class="exp-cycle-badge --' + s.cycle + '">' + (s.cycle === 'monthly' ? 'Mensuel' : 'Annuel') + '</span>';
+                return '<tr>' +
+                    '<td><span class="exp-name">' + esc(s.name) + '</span> <span class="exp-cat">· ' + esc(s.cat) + '</span></td>' +
+                    '<td>' + (s.price == null ? '<span class="--empty">à renseigner</span>' : euro2(s.price)) + '</td>' +
+                    '<td>' + cycleBadge + '</td>' +
+                    '<td>' + (m == null ? '<span class="--empty">—</span>' : euro2(m)) + '</td>' +
+                    '<td>' + (y == null ? '<span class="--empty">—</span>' : euro2(y)) + '</td>' +
+                '</tr>';
+            }).join('');
+
+            document.getElementById('expenses-foot').innerHTML =
+                '<tr>' +
+                    '<td>Total (' + filled + '/' + SUBSCRIPTIONS.length + ' renseignés)</td>' +
+                    '<td></td><td></td>' +
+                    '<td class="exp-total-month">' + euro2(totalMonth) + '</td>' +
+                    '<td class="exp-total-year">' + euro2(totalYear) + '</td>' +
+                '</tr>';
+
+            document.getElementById('kpi-month').textContent = euro(totalMonth);
+            document.getElementById('kpi-year').textContent = euro(totalYear);
+            document.getElementById('kpi-count').textContent = SUBSCRIPTIONS.length;
+        }
+
+        // ── Modal capture ──
+        window.openShot = function(i) {
+            var s = SUBSCRIPTIONS[i];
+            document.getElementById('shot-title').textContent = 'Récupérer la facture — ' + s.name;
+            var body = document.getElementById('shot-body');
+            if (s.shot) {
+                var img = new Image();
+                img.className = 'shot-modal__img';
+                img.alt = 'Parcours facture ' + s.name;
+                img.onload = function() { body.innerHTML = ''; body.appendChild(img); };
+                img.onerror = function() {
+                    body.innerHTML = '<div class="shot-modal__empty">Capture pas encore ajoutée pour ' + esc(s.name) + '.<br><span style="font-size:0.8rem;">Dépose une image nommée <code>' + esc(s.shot) + '</code> dans <code>assets/images/compta/</code>.</span></div>';
+                };
+                body.innerHTML = '<div class="shot-modal__empty">Chargement…</div>';
+                img.src = SHOT_BASE + s.shot;
+            } else {
+                body.innerHTML = '<div class="shot-modal__empty">Aucune capture pour cet abonnement.</div>';
+            }
+            document.getElementById('shot-modal').classList.add('--open');
+        };
+        window.closeShot = function() { document.getElementById('shot-modal').classList.remove('--open'); };
+
+        // ── Auth + init ──
         if (sessionStorage.getItem('regen_admin_auth') !== 'true') {
             window.location.href = '../connexion.html';
         }
-
-        // Déconnexion
         document.getElementById('btn-logout').addEventListener('click', function () {
             sessionStorage.removeItem('regen_admin_auth');
             window.location.href = '../connexion.html';
         });
+
+        renderSubs();
+        renderTable();
     </script>
     <script src="admin-shell.js"></script>
 </body>
