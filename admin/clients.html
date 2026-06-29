@@ -1545,6 +1545,44 @@
 
         <!-- ═══ Agency View (cross-clients) ═══ -->
         <div id="agency-view">
+            <!-- ⚡ Actions groupées (admin) -->
+            <div class="card" id="agency-bulk-panel" data-admin-only style="border:2px solid var(--green,#2FB963); background:linear-gradient(180deg, rgba(47,185,99,0.05), transparent);">
+                <h3 class="card__title"><span class="card__title-icon">&#9889;</span> Actions groupées</h3>
+
+                <!-- Sync globale -->
+                <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                    <button class="btn btn--sm btn--sync-gads" id="sync-all-btn" style="font-weight:700;">&#9889; Tout synchroniser (Google + Meta)</button>
+                    <span id="sync-all-status" class="text-sm text-muted" style="flex:1; min-width:160px;"></span>
+                </div>
+                <div id="sync-all-log" class="hidden" style="margin-top:10px; max-height:220px; overflow-y:auto; font-size:0.8rem; line-height:1.7; background:var(--card-bg,#fff); border:1px solid var(--card-border,#eee); border-radius:8px; padding:10px;"></div>
+
+                <hr style="border:none; border-top:1px solid var(--card-border,#eee); margin:18px 0;">
+
+                <!-- Import groupe CSV -->
+                <h4 class="text-bold" style="margin-bottom:6px;">&#128228; Import groupé des commandes (CSV)</h4>
+                <p class="text-sm text-muted" style="margin-bottom:10px;">Glissez <b>tous</b> les CSV d'un coup (un par client). Chaque fichier est associé automatiquement au bon client d'après son nom — vérifiez puis importez.</p>
+                <div class="upload-zone" id="bulk-csv-zone" style="cursor:pointer;">
+                    <div class="upload-zone__text">&#128193; Glissez vos CSV ici ou cliquez (plusieurs fichiers)</div>
+                    <div class="upload-zone__hint">.csv — sélection multiple</div>
+                    <input type="file" id="bulk-csv-input" accept=".csv" multiple style="display:none">
+                </div>
+                <div id="bulk-csv-wrap" class="hidden" style="margin-top:16px;">
+                    <div style="overflow-x:auto;">
+                        <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                            <thead><tr style="text-align:left; border-bottom:2px solid var(--card-border,#eee);">
+                                <th style="padding:8px;">Fichier</th><th style="padding:8px;">Client associé</th><th style="padding:8px; text-align:right;">Commandes</th><th style="padding:8px;">Statut</th>
+                            </tr></thead>
+                            <tbody id="bulk-csv-body"></tbody>
+                        </table>
+                    </div>
+                    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:12px;">
+                        <button class="btn btn--sm" id="bulk-csv-clear" style="background:var(--card-bg);border:1.5px solid var(--card-border);color:var(--dark);">Annuler</button>
+                        <button class="btn btn--primary btn--sm" id="bulk-csv-import">Tout importer</button>
+                    </div>
+                    <div id="bulk-csv-result" class="hidden" style="margin-top:12px;"></div>
+                </div>
+            </div>
+
             <div class="card">
                 <h3 class="card__title"><span class="card__title-icon"><img src="../assets/images/https.png" alt=""></span> Performance par client</h3>
                 <div id="agency-client-table">
@@ -2134,6 +2172,8 @@
         setupTabs();
         if (!isClientMode) {
             setupCSVUpload();
+            setupBulkImport();
+            setupSyncAll();
             setupSpendForm();
             setupModals();
         }
@@ -3522,8 +3562,16 @@
     }
 
     function parseCSV(content) {
+        if (content.trim().split('\n').length < 2) { alert('CSV vide.'); return; }
+        parsedOrders = parseOrdersFromContent(content);
+        console.log('Parsed orders:', parsedOrders.length);
+        showPreview();
+    }
+
+    // Pure parser : texte CSV -> tableau de commandes (reutilise par import simple + groupe)
+    function parseOrdersFromContent(content) {
         var lines = content.trim().split('\n');
-        if (lines.length < 2) { alert('CSV vide.'); return; }
+        if (lines.length < 2) return [];
 
         // ── Auto-detect delimiter (, or ;) ──
         var delim = detectDelimiter(lines[0]);
@@ -3532,9 +3580,8 @@
         // ── Auto-detect columns from header ──
         var headerFields = parseCSVLine(lines[0], delim).map(function(h) { return clean(h).toLowerCase().replace(/\s+/g, '_'); });
         var colMap = detectColumnMap(headerFields);
-        console.log('CSV columns detected:', colMap);
 
-        parsedOrders = [];
+        var orders = [];
         for (var i = 1; i < lines.length; i++) {
             var line = lines[i].trim();
             if (!line) continue;
@@ -3595,7 +3642,7 @@
             var total = parseFloat(totalStr.replace(/[^\d,.-]/g, '').replace(',', '.'));
 
             if (externalId && orderDate && !isNaN(total)) {
-                parsedOrders.push({
+                orders.push({
                     external_id: externalId,
                     reference: reference,
                     order_date: orderDate,
@@ -3607,8 +3654,7 @@
             }
         }
 
-        console.log('Parsed orders:', parsedOrders.length);
-        showPreview();
+        return orders;
     }
 
     // ── Auto-detect CSV delimiter ──
@@ -3771,6 +3817,179 @@
         }
 
         btn.disabled = false; btn.textContent = 'Importer';
+    }
+
+    // ═══════════════════════════════════════
+    // IMPORT GROUPE + SYNC GLOBALE (vue agence, admin)
+    // ═══════════════════════════════════════
+    var bulkRows = [];
+
+    function normName(s) {
+        return (s || '').toString().toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, '');
+    }
+    // Alias nom de fichier -> nom client (pour les abreviations)
+    var CSV_FILE_ALIASES = { eh: 'emilehenry', nw: 'nordicware', vita: 'vitamix' };
+
+    function matchClientByFilename(fileName) {
+        var key = normName(fileName.replace(/\.csv$/i, ''));
+        var target = CSV_FILE_ALIASES[key] || key;
+        if (!target) return '';
+        var i;
+        for (i = 0; i < allClients.length; i++) {
+            if (normName(allClients[i].name) === target) return allClients[i].id;
+        }
+        for (i = 0; i < allClients.length; i++) {
+            var cn = normName(allClients[i].name);
+            if (cn && (cn.indexOf(target) !== -1 || target.indexOf(cn) !== -1)) return allClients[i].id;
+        }
+        return '';
+    }
+
+    function setupBulkImport() {
+        var zone = document.getElementById('bulk-csv-zone');
+        var input = document.getElementById('bulk-csv-input');
+        if (!zone || !input) return;
+        zone.addEventListener('click', function() { input.click(); });
+        zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('upload-zone--active'); });
+        zone.addEventListener('dragleave', function() { zone.classList.remove('upload-zone--active'); });
+        zone.addEventListener('drop', function(e) {
+            e.preventDefault(); zone.classList.remove('upload-zone--active');
+            if (e.dataTransfer.files.length) handleBulkFiles(e.dataTransfer.files);
+        });
+        input.addEventListener('change', function() { if (input.files.length) handleBulkFiles(input.files); });
+        document.getElementById('bulk-csv-clear').addEventListener('click', function() {
+            bulkRows = []; input.value = '';
+            document.getElementById('bulk-csv-wrap').classList.add('hidden');
+            document.getElementById('bulk-csv-result').classList.add('hidden');
+        });
+        document.getElementById('bulk-csv-import').addEventListener('click', runBulkImport);
+    }
+
+    function readFileText(file) {
+        return new Promise(function(resolve) {
+            var r = new FileReader();
+            r.onload = function(e) { resolve(e.target.result); };
+            r.onerror = function() { resolve(''); };
+            r.readAsText(file, 'UTF-8');
+        });
+    }
+
+    async function handleBulkFiles(fileList) {
+        var files = Array.prototype.slice.call(fileList).filter(function(f) { return /\.csv$/i.test(f.name); });
+        if (!files.length) { alert('Aucun fichier CSV.'); return; }
+        for (var i = 0; i < files.length; i++) {
+            var content = await readFileText(files[i]);
+            var orders = content ? parseOrdersFromContent(content) : [];
+            bulkRows = bulkRows.filter(function(r) { return r.fileName !== files[i].name; });
+            bulkRows.push({ fileName: files[i].name, orders: orders, clientId: matchClientByFilename(files[i].name), status: 'ready', msg: '' });
+        }
+        renderBulkTable();
+    }
+
+    function renderBulkTable() {
+        var body = document.getElementById('bulk-csv-body');
+        body.innerHTML = bulkRows.map(function(r, idx) {
+            var opts = '<option value="">— choisir —</option>' + allClients.map(function(c) {
+                return '<option value="' + c.id + '"' + (c.id === r.clientId ? ' selected' : '') + '>' + c.name + '</option>';
+            }).join('');
+            var sel = '<select data-idx="' + idx + '" class="bulk-client-sel form-input" style="padding:4px 8px; font-size:0.8rem; max-width:240px;">' + opts + '</select>';
+            var statusHtml = r.status === 'done' ? '<span class="text-success">✅ ' + r.msg + '</span>'
+                : r.status === 'error' ? '<span class="text-danger">❌ ' + r.msg + '</span>'
+                : r.status === 'importing' ? '<span class="text-muted">⏳ Import…</span>'
+                : (r.clientId ? '<span class="text-muted">Prêt</span>' : '<span class="text-danger">⚠️ Client ?</span>');
+            return '<tr style="border-bottom:1px solid var(--card-border,#eee);">' +
+                '<td style="padding:8px;"><code style="font-size:0.78rem;">' + r.fileName + '</code></td>' +
+                '<td style="padding:8px;">' + sel + '</td>' +
+                '<td style="padding:8px; text-align:right;" class="text-bold">' + r.orders.length + '</td>' +
+                '<td style="padding:8px;">' + statusHtml + '</td></tr>';
+        }).join('');
+        body.querySelectorAll('.bulk-client-sel').forEach(function(s) {
+            s.addEventListener('change', function() { bulkRows[parseInt(s.getAttribute('data-idx'))].clientId = s.value; });
+        });
+        document.getElementById('bulk-csv-wrap').classList.remove('hidden');
+        document.getElementById('bulk-csv-result').classList.add('hidden');
+    }
+
+    async function runBulkImport() {
+        var pending = bulkRows.filter(function(r) { return r.clientId && r.orders.length && r.status !== 'done'; });
+        if (!pending.length) { alert('Associez au moins un fichier (avec des commandes) à un client.'); return; }
+        var btn = document.getElementById('bulk-csv-import');
+        btn.disabled = true; btn.textContent = 'Import…';
+        var totalImp = 0, totalSkip = 0, errs = 0;
+        for (var i = 0; i < bulkRows.length; i++) {
+            var r = bulkRows[i];
+            if (!r.clientId || !r.orders.length || r.status === 'done') continue;
+            r.status = 'importing'; renderBulkTable();
+            try {
+                var res = await sb.rpc('import_orders_batch', { p_client_id: r.clientId, p_orders: r.orders, p_source: 'csv' });
+                if (res.error) throw res.error;
+                var d = res.data;
+                if (d.log_id) { await sb.from('import_logs').update({ source: r.fileName }).eq('id', d.log_id); }
+                r.status = 'done'; r.msg = d.imported + ' importées, ' + d.skipped + ' doublons';
+                totalImp += d.imported; totalSkip += d.skipped;
+            } catch (err) {
+                r.status = 'error'; r.msg = (err.message || err).toString().substring(0, 80); errs++;
+            }
+            renderBulkTable();
+        }
+        var resEl = document.getElementById('bulk-csv-result');
+        resEl.className = 'result-box ' + (errs ? 'result-box--error' : 'result-box--success');
+        resEl.innerHTML = '<p class="text-bold">' + (errs ? 'Terminé avec ' + errs + ' erreur(s)' : 'Import groupé terminé !') + '</p>' +
+            '<p>' + totalImp + ' commandes importées, ' + totalSkip + ' doublons ignorés.</p>';
+        resEl.classList.remove('hidden');
+        btn.disabled = false; btn.textContent = 'Tout importer';
+        loadAgencyDashboard();
+    }
+
+    // ── Sync globale : tous les clients x Google + Meta ──
+    function setupSyncAll() {
+        var btn = document.getElementById('sync-all-btn');
+        if (btn) btn.addEventListener('click', runSyncAll);
+    }
+
+    async function runSyncAll() {
+        if (!allClients.length) { alert('Aucun client.'); return; }
+        var ids = allClients.map(function(c) { return c.id; });
+        var nameById = {}; allClients.forEach(function(c) { nameById[c.id] = c.name; });
+        var statusEl = document.getElementById('sync-all-status');
+        var logEl = document.getElementById('sync-all-log');
+        var btn = document.getElementById('sync-all-btn');
+
+        statusEl.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;"></div> Recherche des comptes connectés…';
+        var intRes = await sb.from('integrations').select('client_id, platform').in('client_id', ids).in('platform', ['google_ads', 'meta_ads']);
+        var integrations = intRes.data || [];
+        if (!integrations.length) { statusEl.textContent = 'Aucun compte Google/Meta connecté.'; return; }
+
+        var clientCount = new Set(integrations.map(function(it) { return it.client_id; })).size;
+        if (!confirm('Synchroniser ' + integrations.length + ' compte(s) ads sur ' + clientCount + ' client(s) ?\nCela peut prendre 1 à 2 minutes.')) { statusEl.textContent = ''; return; }
+
+        btn.disabled = true;
+        logEl.classList.remove('hidden'); logEl.innerHTML = '';
+        var fnByPlatform = { google_ads: 'sync-google-ads', meta_ads: 'sync-meta-ads' };
+        var totalCamp = 0, totalMet = 0, errs = 0;
+
+        for (var i = 0; i < integrations.length; i++) {
+            var it = integrations[i];
+            var label = (nameById[it.client_id] || it.client_id) + ' — ' + (it.platform === 'google_ads' ? 'Google' : 'Meta');
+            statusEl.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;"></div> ' + (i + 1) + '/' + integrations.length + ' : ' + label + '…';
+            var line = document.createElement('div');
+            line.innerHTML = '⏳ ' + label + '…';
+            logEl.appendChild(line); logEl.scrollTop = logEl.scrollHeight;
+            try {
+                var res = await sb.functions.invoke(fnByPlatform[it.platform], { body: { client_id: it.client_id, trigger: 'manual_bulk' } });
+                if (res.error) throw res.error;
+                var d = res.data || {};
+                totalCamp += (d.total_campaigns || 0); totalMet += (d.total_metrics || 0);
+                line.innerHTML = '✅ ' + label + ' — ' + (d.total_campaigns || 0) + ' camp., ' + (d.total_metrics || 0) + ' métriques';
+            } catch (err) {
+                errs++;
+                line.innerHTML = '❌ ' + label + ' — ' + ((err.message || err).toString().substring(0, 120));
+            }
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+        statusEl.innerHTML = '<span class="text-success text-bold">Sync terminée</span> — ' + totalCamp + ' campagnes, ' + totalMet + ' métriques' + (errs ? ', <span class="text-danger">' + errs + ' erreur(s)</span>' : '');
+        btn.disabled = false;
+        setTimeout(function() { loadAgencyDashboard(); }, 1200);
     }
 
     // ═══════════════════════════════════════
