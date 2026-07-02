@@ -328,6 +328,7 @@
                     <input type="date" class="rv-date" id="rv-to">
                     <button class="btn-header btn-deconnexion" id="rv-period-apply" style="padding:.45rem .9rem;">Voir</button>
                 </span>
+                <button class="rv-select" id="rv-recat-btn" style="margin-left:auto; cursor:pointer;" title="Ré-appliquer les règles de catégorisation auto à tout l'historique">&#8635; Recatégoriser</button>
             </div>
 
             <div id="rv-content"><div class="rv-empty">Importe tes relevés Swan pour commencer.</div></div>
@@ -345,6 +346,29 @@
                 <button class="shot-modal__close" type="button" onclick="closeShot()">×</button>
             </div>
             <div class="shot-modal__body" id="shot-body"></div>
+        </div>
+    </div>
+
+    <!-- Modal édition catégorisation -->
+    <div class="shot-modal" id="rv-edit-modal" onclick="if(event.target===this)rvCloseEdit()">
+        <div class="shot-modal__box" style="max-width:440px;">
+            <div class="shot-modal__header">
+                <span class="shot-modal__title">Reclasser la transaction</span>
+                <button class="shot-modal__close" type="button" onclick="rvCloseEdit()">×</button>
+            </div>
+            <div class="shot-modal__body">
+                <div id="rv-edit-label" style="font-size:.82rem; color:#6b7280; margin-bottom:1.1rem; line-height:1.4;"></div>
+                <label style="font-size:.72rem; font-weight:700; color:#173C3A; text-transform:uppercase; letter-spacing:.03em;">Poste</label>
+                <input type="text" id="rv-edit-poste" class="rv-select" list="rv-poste-list" style="width:100%; margin:.3rem 0 1rem; cursor:text;">
+                <datalist id="rv-poste-list"></datalist>
+                <label style="font-size:.72rem; font-weight:700; color:#173C3A; text-transform:uppercase; letter-spacing:.03em;">Catégorie</label>
+                <input type="text" id="rv-edit-cat" class="rv-select" list="rv-cat-list" style="width:100%; margin:.3rem 0 1.3rem; cursor:text;">
+                <datalist id="rv-cat-list"></datalist>
+                <div style="display:flex; gap:.5rem; justify-content:flex-end;">
+                    <button class="btn-header btn-retour" type="button" onclick="rvCloseEdit()">Annuler</button>
+                    <button class="btn-header btn-deconnexion" type="button" id="rv-edit-save">Enregistrer</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -517,7 +541,10 @@
             { re: /abonnement mensuel/i,               poste: 'Abonnement non identifié',  category: 'À élucider' },
             { re: /^ur\s?\d|urssaf/i,                  poste: 'URSSAF / charges sociales', category: 'Charges sociales' },
             { re: /\btva\d*/i,                         poste: 'TVA',                       category: 'Taxes' },
-            { re: /salaire|duval|jaemeson|\bdieu\b/i,  poste: 'Salaires',                  category: 'Salaires' },
+            { re: /\b(mathieu|duval)\b/i,              poste: 'Salaire Mathieu',           category: 'Salaires' },
+            { re: /\b(jaemeson|dieu)\b/i,              poste: 'Salaire Jaemeson',          category: 'Salaires' },
+            { re: /salaire|r[ée]mun[ée]ration/i,       poste: 'Salaire (à attribuer)',     category: 'Salaires' },
+            { re: /^(janvier|f[ée]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[ée]cembre)[\s.\/]*\d/i, poste: 'Salaire (à attribuer)', category: 'Salaires' },
             { re: /alma/i,                             poste: 'Alma (financement)',        category: 'Investissement' },
             { re: /commission/i,                       poste: 'Commissions bancaires',     category: 'Frais bancaires' },
             { re: /foreign currency|^frais$/i,         poste: 'Frais bancaires',           category: 'Frais bancaires' },
@@ -663,12 +690,64 @@
                 var amt = parseFloat(t.amount) || 0;
                 html += '<tr><td class="num">' + rvFmtDate(t.tx_date) + '</td>' +
                     '<td>' + esc(t.label) + '</td>' +
-                    '<td><span class="rv-tag">' + esc(t.category || '') + '</span></td>' +
+                    '<td><span class="rv-tag" style="cursor:pointer;" onclick="rvOpenEdit(\'' + t.id + '\')" title="Reclasser">' + esc(t.category || '') + ' &#9998;</span></td>' +
                     '<td class="num ' + (t.direction === 'debit' ? 'out' : '') + '">' + (t.direction === 'debit' ? euro2(amt) : '') + '</td>' +
                     '<td class="num ' + (t.direction === 'credit' ? 'in' : '') + '">' + (t.direction === 'credit' ? euro2(amt) : '') + '</td></tr>';
             });
             html += '</tbody></table>';
             el.innerHTML = html;
+        }
+
+        // ── Édition manuelle d'une transaction ──
+        var rvEditId = null;
+        window.rvOpenEdit = function(id) {
+            var t = null; for (var i = 0; i < ALL_TX.length; i++) { if (ALL_TX[i].id === id) { t = ALL_TX[i]; break; } }
+            if (!t) return;
+            rvEditId = id;
+            document.getElementById('rv-edit-label').textContent = rvFmtDate(t.tx_date) + ' · ' + t.label + ' · ' + euro2(parseFloat(t.amount) || 0);
+            document.getElementById('rv-edit-poste').value = t.poste || '';
+            document.getElementById('rv-edit-cat').value = t.category || '';
+            var postes = {}, cats = {};
+            ALL_TX.forEach(function(x) { if (x.poste) postes[x.poste] = 1; if (x.category) cats[x.category] = 1; });
+            document.getElementById('rv-poste-list').innerHTML = Object.keys(postes).sort().map(function(p) { return '<option value="' + esc(p) + '"></option>'; }).join('');
+            document.getElementById('rv-cat-list').innerHTML = Object.keys(cats).sort().map(function(c) { return '<option value="' + esc(c) + '"></option>'; }).join('');
+            document.getElementById('rv-edit-modal').classList.add('--open');
+        };
+        window.rvCloseEdit = function() { document.getElementById('rv-edit-modal').classList.remove('--open'); rvEditId = null; };
+        async function rvSaveEdit() {
+            if (!rvEditId || !sb) return;
+            var poste = document.getElementById('rv-edit-poste').value.trim();
+            var cat = document.getElementById('rv-edit-cat').value.trim();
+            if (!poste || !cat) { alert('Poste et catégorie requis.'); return; }
+            var btn = document.getElementById('rv-edit-save'); btn.disabled = true; btn.textContent = '…';
+            var r = await sb.from('bank_transactions').update({ poste: poste, category: cat }).eq('id', rvEditId);
+            btn.disabled = false; btn.textContent = 'Enregistrer';
+            if (r.error) { alert('Erreur : ' + (r.error.message || r.error)); return; }
+            var t = null; for (var i = 0; i < ALL_TX.length; i++) { if (ALL_TX[i].id === rvEditId) { t = ALL_TX[i]; break; } }
+            if (t) { t.poste = poste; t.category = cat; }
+            rvCloseEdit(); rvRender();
+        }
+
+        // ── Recatégoriser tout l'historique avec les règles auto ──
+        async function rvRecategorize() {
+            if (!sb || !ALL_TX.length) return;
+            if (!confirm('Ré-appliquer les règles de catégorisation automatique à toutes les transactions ?\n(Les corrections manuelles seront écrasées.)')) return;
+            var btn = document.getElementById('rv-recat-btn'); btn.disabled = true; var old = btn.innerHTML; btn.innerHTML = '…';
+            var updates = [];
+            ALL_TX.forEach(function(t) { var c = rvCategorize(t.label, t.direction); if (c.poste !== t.poste || c.category !== t.category) updates.push({ id: t.id, poste: c.poste, category: c.category }); });
+            var done = 0, err = null;
+            for (var i = 0; i < updates.length; i += 20) {
+                var chunk = updates.slice(i, i + 20);
+                var results = await Promise.all(chunk.map(function(u) { return sb.from('bank_transactions').update({ poste: u.poste, category: u.category }).eq('id', u.id); }));
+                for (var k = 0; k < results.length; k++) { if (results[k].error) { err = results[k].error; break; } }
+                if (err) break;
+                done += chunk.length;
+            }
+            btn.disabled = false; btn.innerHTML = old;
+            var resEl = document.getElementById('rv-import-result'); resEl.classList.remove('hidden');
+            if (err) { resEl.innerHTML = '<span style="color:#ef4444;">Erreur recatégorisation : ' + esc(err.message || String(err)) + '</span>'; return; }
+            await loadTransactions(); rvRender();
+            resEl.innerHTML = '<span style="color:#2FB963; font-weight:700;">Recatégorisation terminée.</span> ' + done + ' transaction(s) mise(s) à jour.';
         }
 
         function rvRender() {
@@ -721,6 +800,8 @@
             document.getElementById('rv-year').addEventListener('change', function() { rvYear = parseInt(this.value); rvRender(); });
             document.getElementById('rv-month').addEventListener('change', function() { rvMonth = parseInt(this.value); rvRender(); });
             document.getElementById('rv-period-apply').addEventListener('click', rvRender);
+            document.getElementById('rv-recat-btn').addEventListener('click', rvRecategorize);
+            document.getElementById('rv-edit-save').addEventListener('click', rvSaveEdit);
         }
 
         async function initReleve() {
