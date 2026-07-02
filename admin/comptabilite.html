@@ -226,6 +226,9 @@
         .rv-tag { display: inline-block; font-size: .66rem; font-weight: 700; padding: .12rem .5rem; border-radius: 20px; background: #eef2ef; color: #4b5563; }
         .rv-h4 { font-size: .95rem; font-weight: 700; color: #173C3A; margin: .5rem 0 .6rem; }
         .rv-empty { text-align: center; color: #9ca3af; padding: 2.2rem; font-weight: 600; }
+        .rv-quick { border: 1px solid #bcd6c6; background: #f0f7f2; color: #173C3A; font-family: inherit; font-size: .64rem; font-weight: 700; padding: .12rem .45rem; border-radius: 6px; cursor: pointer; margin-left: .25rem; white-space: nowrap; }
+        .rv-quick:hover { background: #2FB963; border-color: #2FB963; color: #fff; }
+        .rv-lock { font-size: .62rem; color: #9ca3af; margin-left: .2rem; }
     </style>
 </head>
 <body>
@@ -313,6 +316,9 @@
                 <input type="file" id="rv-file-input" accept=".csv" multiple style="display:none">
             </div>
             <div id="rv-import-result" class="hidden" style="margin-top:.8rem; font-size:.82rem;"></div>
+            <div id="rv-mig-warn" style="display:none; margin-top:.8rem; font-size:.8rem; font-weight:600; color:#b45309; background:#fef3c7; border:1px solid #fcd34d; border-radius:8px; padding:.6rem .9rem;">
+                ⚠️ Migration <code>sql/022-bank-tx-manual.sql</code> non appliquée dans Supabase — les corrections manuelles ne sont pas protégées contre « Recatégoriser ». Lance-la puis recharge la page.
+            </div>
 
             <div class="rv-toolbar">
                 <div class="rv-modes">
@@ -332,6 +338,10 @@
             </div>
 
             <div id="rv-content"><div class="rv-empty">Importe tes relevés Swan pour commencer.</div></div>
+            <div class="compta-hint" style="margin-top:1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Montants = débits/crédits bancaires réels (TTC), contrairement au tableau abonnements ci-dessus (HT). Clique sur une catégorie ✎ pour reclasser une ligne — tes corrections 🔒 sont conservées lors des recatégorisations.
+            </div>
         </section>
 
         <!-- Footer -->
@@ -533,20 +543,23 @@
             { re: /ionos/i,                            poste: 'IONOS',                     category: 'Abonnement infra' },
             { re: /google\s*one/i,                     poste: 'Google One',                category: 'Abonnement outil' },
             { re: /google\s*workspace/i,               poste: 'Google Workspace',          category: 'Abonnement outil' },
-            { re: /prestashop/i,                       poste: 'PrestaShop',                category: 'Abonnement outil' },
+            { re: /prestashop/i,                       poste: 'PrestaShop (achat client)', category: 'Achats pour clients' },
             { re: /pennylane/i,                        poste: 'Pennylane',                 category: 'Comptabilité' },
             { re: /rydge|efe\d{6}/i,                   poste: 'RYDGE (comptable)',         category: 'Comptabilité' },
             { re: /legalplace/i,                       poste: 'LegalPlace',                category: 'Juridique' },
             { re: /allianz|ph97669|nav1ag/i,           poste: 'Allianz (assurance)',       category: 'Assurance' },
             { re: /abonnement mensuel/i,               poste: 'Abonnement non identifié',  category: 'À élucider' },
-            { re: /^ur\s?\d|urssaf/i,                  poste: 'URSSAF / charges sociales', category: 'Charges sociales' },
+            { re: /1580755138/,                        poste: 'URSSAF Mathieu',            category: 'Charges sociales' },
+            { re: /1578657874/,                        poste: 'URSSAF Jaemeson',           category: 'Charges sociales' },
+            { re: /^ur\s?\d|urssaf/i,                  poste: 'URSSAF / autres',           category: 'Charges sociales' },
+            { re: /^demande\s+\d{6,}/i,                poste: 'URSSAF (régularisation)',   category: 'Charges sociales' },
             { re: /\btva\d*/i,                         poste: 'TVA',                       category: 'Taxes' },
             { re: /\b(mathieu|duval)\b/i,              poste: 'Salaire Mathieu',           category: 'Salaires' },
             { re: /\b(jaemeson|dieu)\b/i,              poste: 'Salaire Jaemeson',          category: 'Salaires' },
             { re: /salaire|r[ée]mun[ée]ration/i,       poste: 'Salaire (à attribuer)',     category: 'Salaires' },
             { re: /^(janvier|f[ée]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[ée]cembre)[\s.\/]*\d/i, poste: 'Salaire (à attribuer)', category: 'Salaires' },
             { re: /alma/i,                             poste: 'Alma (financement)',        category: 'Investissement' },
-            { re: /commission/i,                       poste: 'Commissions bancaires',     category: 'Frais bancaires' },
+            { re: /commission/i,                       poste: 'Commissions reversées',     category: 'Sous-traitance' },
             { re: /foreign currency|^frais$/i,         poste: 'Frais bancaires',           category: 'Frais bancaires' },
             { re: /amzn|amazon/i,                      poste: 'Amazon',                    category: 'Achats divers' },
             { re: /clo[ée]|presta|\bservice\b/i,       poste: 'Prestataires freelance',    category: 'Sous-traitance' }
@@ -688,8 +701,14 @@
             html += '<table class="rv-table"><thead><tr><th>Date</th><th>Libellé</th><th>Catégorie</th><th class="num">Débit</th><th class="num">Crédit</th></tr></thead><tbody>';
             list.slice().sort(function(x, y) { return x.tx_date < y.tx_date ? 1 : (x.tx_date > y.tx_date ? -1 : 0); }).forEach(function(t) {
                 var amt = parseFloat(t.amount) || 0;
+                var quick = '';
+                if (t.poste === 'Salaire (à attribuer)') {
+                    quick = ' <button class="rv-quick" onclick="rvQuickAssign(\'' + t.id + '\',\'Salaire Mathieu\')">&rarr; Mathieu</button>' +
+                            '<button class="rv-quick" onclick="rvQuickAssign(\'' + t.id + '\',\'Salaire Jaemeson\')">&rarr; Jaemeson</button>';
+                }
+                var lock = t.manual_override ? ' <span class="rv-lock" title="Corrigé manuellement — conservé lors des recatégorisations">&#128274;</span>' : '';
                 html += '<tr><td class="num">' + rvFmtDate(t.tx_date) + '</td>' +
-                    '<td>' + esc(t.label) + '</td>' +
+                    '<td>' + esc(t.label) + '<span style="color:#9ca3af; font-size:.7rem;"> · ' + esc(t.poste || '') + '</span>' + quick + lock + '</td>' +
                     '<td><span class="rv-tag" style="cursor:pointer;" onclick="rvOpenEdit(\'' + t.id + '\')" title="Reclasser">' + esc(t.category || '') + ' &#9998;</span></td>' +
                     '<td class="num ' + (t.direction === 'debit' ? 'out' : '') + '">' + (t.direction === 'debit' ? euro2(amt) : '') + '</td>' +
                     '<td class="num ' + (t.direction === 'credit' ? 'in' : '') + '">' + (t.direction === 'credit' ? euro2(amt) : '') + '</td></tr>';
@@ -714,27 +733,74 @@
             document.getElementById('rv-edit-modal').classList.add('--open');
         };
         window.rvCloseEdit = function() { document.getElementById('rv-edit-modal').classList.remove('--open'); rvEditId = null; };
+
+        // rvHasManualCol : la colonne manual_override existe-t-elle (migration 022 appliquée) ?
+        var rvHasManualCol = false;
+        async function rvProbeManualCol() {
+            if (!sb) return;
+            var r = await sb.from('bank_transactions').select('manual_override').limit(1);
+            rvHasManualCol = !r.error;
+            var warnEl = document.getElementById('rv-mig-warn');
+            if (warnEl) warnEl.style.display = rvHasManualCol ? 'none' : '';
+        }
+        // Avertit AVANT une correction si elle ne sera pas protégée (022 manquante)
+        function rvConfirmUnprotected() {
+            if (rvHasManualCol) return true;
+            return confirm('⚠️ La migration sql/022 n\'est pas encore appliquée dans Supabase.\nCette correction fonctionnera, mais elle ne sera PAS protégée : un clic sur « Recatégoriser » l\'écrasera.\n\nContinuer quand même ?');
+        }
+        // Update : persiste le flag manual_override uniquement si la colonne existe
+        async function rvUpdateTx(id, poste, cat) {
+            var payload = rvHasManualCol
+                ? { poste: poste, category: cat, manual_override: true }
+                : { poste: poste, category: cat };
+            var r = await sb.from('bank_transactions').update(payload).eq('id', id);
+            if (r.error && /manual_override/.test(r.error.message || '')) {
+                rvHasManualCol = false;
+                r = await sb.from('bank_transactions').update({ poste: poste, category: cat }).eq('id', id);
+            }
+            return r;
+        }
+        function rvApplyLocal(id, poste, cat) {
+            for (var i = 0; i < ALL_TX.length; i++) {
+                // Le cadenas local reflète la réalité : pas de 🔒 si le flag n'a pas été persisté
+                if (ALL_TX[i].id === id) { ALL_TX[i].poste = poste; ALL_TX[i].category = cat; ALL_TX[i].manual_override = rvHasManualCol; break; }
+            }
+        }
+
         async function rvSaveEdit() {
             if (!rvEditId || !sb) return;
             var poste = document.getElementById('rv-edit-poste').value.trim();
             var cat = document.getElementById('rv-edit-cat').value.trim();
             if (!poste || !cat) { alert('Poste et catégorie requis.'); return; }
+            if (!rvConfirmUnprotected()) return;
             var btn = document.getElementById('rv-edit-save'); btn.disabled = true; btn.textContent = '…';
-            var r = await sb.from('bank_transactions').update({ poste: poste, category: cat }).eq('id', rvEditId);
+            var r = await rvUpdateTx(rvEditId, poste, cat);
             btn.disabled = false; btn.textContent = 'Enregistrer';
             if (r.error) { alert('Erreur : ' + (r.error.message || r.error)); return; }
-            var t = null; for (var i = 0; i < ALL_TX.length; i++) { if (ALL_TX[i].id === rvEditId) { t = ALL_TX[i]; break; } }
-            if (t) { t.poste = poste; t.category = cat; }
+            rvApplyLocal(rvEditId, poste, cat);
             rvCloseEdit(); rvRender();
         }
+
+        // Attribution rapide d'un salaire (boutons → Mathieu / → Jaemeson)
+        window.rvQuickAssign = async function(id, poste) {
+            if (!sb) return;
+            if (!rvConfirmUnprotected()) return;
+            var r = await rvUpdateTx(id, poste, 'Salaires');
+            if (r.error) { alert('Erreur : ' + (r.error.message || r.error)); return; }
+            rvApplyLocal(id, poste, 'Salaires');
+            rvRender();
+        };
 
         // ── Recatégoriser tout l'historique avec les règles auto ──
         async function rvRecategorize() {
             if (!sb || !ALL_TX.length) return;
-            if (!confirm('Ré-appliquer les règles de catégorisation automatique à toutes les transactions ?\n(Les corrections manuelles seront écrasées.)')) return;
+            var recatMsg = rvHasManualCol
+                ? 'Ré-appliquer les règles de catégorisation automatique à toutes les transactions ?\n(Tes corrections manuelles 🔒 sont conservées.)'
+                : '⚠️ Ré-appliquer les règles de catégorisation automatique ?\nATTENTION : la migration sql/022 n\'est pas appliquée — TOUTES les corrections manuelles seront écrasées.';
+            if (!confirm(recatMsg)) return;
             var btn = document.getElementById('rv-recat-btn'); btn.disabled = true; var old = btn.innerHTML; btn.innerHTML = '…';
             var updates = [];
-            ALL_TX.forEach(function(t) { var c = rvCategorize(t.label, t.direction); if (c.poste !== t.poste || c.category !== t.category) updates.push({ id: t.id, poste: c.poste, category: c.category }); });
+            ALL_TX.forEach(function(t) { if (t.manual_override) return; var c = rvCategorize(t.label, t.direction); if (c.poste !== t.poste || c.category !== t.category) updates.push({ id: t.id, poste: c.poste, category: c.category }); });
             var done = 0, err = null;
             for (var i = 0; i < updates.length; i += 20) {
                 var chunk = updates.slice(i, i + 20);
@@ -808,6 +874,7 @@
             try { sb = window.supabase.createClient(SB_URL, SB_KEY); } catch (e) { console.error('supabase init', e); }
             buildMonthOptions();
             setupReleveUI();
+            await rvProbeManualCol();
             await loadTransactions();
             if (ALL_TX.length) {
                 var latest = ALL_TX[0].statement_month || (ALL_TX[0].tx_date || '').slice(0, 7);
