@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -197,7 +198,34 @@
             .compta-kpi { border-right: none; border-bottom: 1px solid #e8ede9; }
             .compta-kpi:last-child { border-bottom: none; }
             .subs-grid { grid-template-columns: 1fr; }
+            .rv-kpis { grid-template-columns: 1fr; }
         }
+
+        /* ── Relevés bancaires ── */
+        .rv-drop { border: 2px dashed #bcd6c6; border-radius: 12px; padding: 1.6rem; text-align: center; cursor: pointer; background: #f7fbf8; transition: all .2s ease; }
+        .rv-drop:hover, .rv-drop.--active { border-color: #2FB963; background: #eef8f1; }
+        .rv-drop__t { font-weight: 700; color: #173C3A; font-size: .9rem; }
+        .rv-drop__h { font-size: .75rem; color: #6b7280; margin-top: .25rem; }
+        .rv-toolbar { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin: 1.3rem 0 1.1rem; }
+        .rv-select, .rv-date { font-family: inherit; font-size: .82rem; padding: .45rem .7rem; border: 1.5px solid #d8e3dc; border-radius: 8px; background: #fff; color: #173C3A; font-weight: 600; cursor: pointer; }
+        .rv-modes { display: inline-flex; background: #eef2ef; border-radius: 9px; padding: 3px; gap: 2px; }
+        .rv-mode { border: none; background: transparent; font-family: inherit; font-weight: 700; font-size: .8rem; padding: .42rem .85rem; border-radius: 7px; cursor: pointer; color: #6b7280; }
+        .rv-mode.--on { background: #fff; color: #173C3A; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+        .rv-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin-bottom: 1.3rem; }
+        .rv-kpi { background: #fff; border: 1px solid #e8ede9; border-radius: 12px; padding: 1rem; text-align: center; }
+        .rv-kpi__v { font-size: 1.3rem; font-weight: 800; line-height: 1.1; }
+        .rv-kpi__l { font-size: .66rem; color: #6b7280; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; margin-top: .3rem; }
+        .rv-kpi--out .rv-kpi__v { color: #ef4444; }
+        .rv-kpi--in .rv-kpi__v { color: #2FB963; }
+        .rv-table { width: 100%; border-collapse: collapse; font-size: .83rem; margin-bottom: 1.5rem; }
+        .rv-table th { text-align: left; font-size: .66rem; text-transform: uppercase; letter-spacing: .03em; color: #6b7280; padding: .5rem .6rem; border-bottom: 2px solid #e8ede9; }
+        .rv-table td { padding: .5rem .6rem; border-bottom: 1px solid #f0f3f1; vertical-align: top; }
+        .rv-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .rv-table .out { color: #ef4444; font-weight: 700; }
+        .rv-table .in { color: #2FB963; font-weight: 700; }
+        .rv-tag { display: inline-block; font-size: .66rem; font-weight: 700; padding: .12rem .5rem; border-radius: 20px; background: #eef2ef; color: #4b5563; }
+        .rv-h4 { font-size: .95rem; font-weight: 700; color: #173C3A; margin: .5rem 0 .6rem; }
+        .rv-empty { text-align: center; color: #9ca3af; padding: 2.2rem; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -270,6 +298,39 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                 Les coûts annuels sont normalisés (un abonnement mensuel = ×12, un annuel = /12 pour le coût mensuel). Prix HT.
             </div>
+        </section>
+
+        <!-- 4. Relevés bancaires -->
+        <section>
+            <h2 class="section-title">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="21" x2="21" y2="21"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><line x1="4" y1="10" x2="4" y2="21"/><line x1="20" y1="10" x2="20" y2="21"/><line x1="8" y1="14" x2="8" y2="17"/><line x1="12" y1="14" x2="12" y2="17"/><line x1="16" y1="14" x2="16" y2="17"/></svg>
+                Relevés bancaires
+            </h2>
+
+            <div class="rv-drop" id="rv-drop">
+                <div class="rv-drop__t">&#128193; Glissez vos relevés Swan (CSV) ici — ou cliquez</div>
+                <div class="rv-drop__h">Plusieurs mois d'un coup · catégorisation automatique · réimport sans doublon</div>
+                <input type="file" id="rv-file-input" accept=".csv" multiple style="display:none">
+            </div>
+            <div id="rv-import-result" class="hidden" style="margin-top:.8rem; font-size:.82rem;"></div>
+
+            <div class="rv-toolbar">
+                <div class="rv-modes">
+                    <button class="rv-mode --on" data-mode="month">Par mois</button>
+                    <button class="rv-mode" data-mode="year">Sur l'année</button>
+                    <button class="rv-mode" data-mode="period">Période</button>
+                </div>
+                <select class="rv-select" id="rv-year"></select>
+                <select class="rv-select" id="rv-month"></select>
+                <span id="rv-period-fields" style="display:none; gap:.5rem; align-items:center;">
+                    <input type="date" class="rv-date" id="rv-from">
+                    <span style="color:#9ca3af;">&rarr;</span>
+                    <input type="date" class="rv-date" id="rv-to">
+                    <button class="btn-header btn-deconnexion" id="rv-period-apply" style="padding:.45rem .9rem;">Voir</button>
+                </span>
+            </div>
+
+            <div id="rv-content"><div class="rv-empty">Importe tes relevés Swan pour commencer.</div></div>
         </section>
 
         <!-- Footer -->
@@ -421,6 +482,262 @@
 
         renderSubs();
         renderTable();
+
+        // ═══════════════════════════════════════════════════════════════
+        //  RELEVÉS BANCAIRES — import Swan + vues (Supabase)
+        // ═══════════════════════════════════════════════════════════════
+        var SB_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
+        var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
+        var AGENCY_ID = '00000000-0000-0000-0000-000000000001';
+        var sb = null;
+        var ALL_TX = [];
+        var rvMode = 'month', rvYear = null, rvMonth = null;
+        var RV_MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+        // ── Règles de catégorisation auto (débits) ──
+        var TX_RULES = [
+            { re: /ringover|quicktalk/i,               poste: 'Quicktalk',                 category: 'Abonnement outil' },
+            { re: /openai|chatgpt/i,                   poste: 'ChatGPT',                   category: 'Abonnement IA' },
+            { re: /claude\.?ai|anthropic/i,            poste: 'Anthropic / Claude',        category: 'Abonnement IA' },
+            { re: /adobe/i,                            poste: 'Adobe',                     category: 'Abonnement créa' },
+            { re: /artlist/i,                          poste: 'Artlist',                   category: 'Abonnement créa' },
+            { re: /canva/i,                            poste: 'Canva',                     category: 'Abonnement créa' },
+            { re: /elementor/i,                        poste: 'Elementor',                 category: 'Abonnement créa' },
+            { re: /supabase/i,                         poste: 'Supabase',                  category: 'Abonnement infra' },
+            { re: /vercel/i,                           poste: 'Vercel',                    category: 'Abonnement infra' },
+            { re: /ovh/i,                              poste: 'OVH',                       category: 'Abonnement infra' },
+            { re: /ionos/i,                            poste: 'IONOS',                     category: 'Abonnement infra' },
+            { re: /google\s*one/i,                     poste: 'Google One',                category: 'Abonnement outil' },
+            { re: /google\s*workspace/i,               poste: 'Google Workspace',          category: 'Abonnement outil' },
+            { re: /prestashop/i,                       poste: 'PrestaShop',                category: 'Abonnement outil' },
+            { re: /pennylane/i,                        poste: 'Pennylane',                 category: 'Comptabilité' },
+            { re: /rydge|efe\d{6}/i,                   poste: 'RYDGE (comptable)',         category: 'Comptabilité' },
+            { re: /legalplace/i,                       poste: 'LegalPlace',                category: 'Juridique' },
+            { re: /allianz|ph97669|nav1ag/i,           poste: 'Allianz (assurance)',       category: 'Assurance' },
+            { re: /abonnement mensuel/i,               poste: 'Abonnement non identifié',  category: 'À élucider' },
+            { re: /^ur\s?\d|urssaf/i,                  poste: 'URSSAF / charges sociales', category: 'Charges sociales' },
+            { re: /\btva\d*/i,                         poste: 'TVA',                       category: 'Taxes' },
+            { re: /salaire|duval|jaemeson|\bdieu\b/i,  poste: 'Salaires',                  category: 'Salaires' },
+            { re: /alma/i,                             poste: 'Alma (financement)',        category: 'Investissement' },
+            { re: /commission/i,                       poste: 'Commissions bancaires',     category: 'Frais bancaires' },
+            { re: /foreign currency|^frais$/i,         poste: 'Frais bancaires',           category: 'Frais bancaires' },
+            { re: /amzn|amazon/i,                      poste: 'Amazon',                    category: 'Achats divers' },
+            { re: /clo[ée]|presta|\bservice\b/i,       poste: 'Prestataires freelance',    category: 'Sous-traitance' }
+        ];
+        // ── Règles crédits (revenus) ──
+        var CREDIT_RULES = [
+            { re: /emile|henry|occmp|sanithermelec|arsene|kcmh|fa-?ra|fac-?ra|facture|virement instantane|transfer from/i, poste: 'Revenus clients', category: 'Revenus' }
+        ];
+        function rvCategorize(label, direction) {
+            var rules = direction === 'credit' ? CREDIT_RULES : TX_RULES;
+            for (var i = 0; i < rules.length; i++) { if (rules[i].re.test(label)) return { poste: rules[i].poste, category: rules[i].category }; }
+            return direction === 'credit' ? { poste: 'Autre encaissement', category: 'Revenus' } : { poste: 'Autre', category: 'Non catégorisé' };
+        }
+
+        // ── Helpers ──
+        function rvClean(v) { return (v || '').replace(/^"|"$/g, '').trim(); }
+        function rvParseLine(line, d) { var f = [], c = '', q = false; for (var i = 0; i < line.length; i++) { var ch = line[i]; if (ch === '"') q = !q; else if (ch === d && !q) { f.push(c); c = ''; } else c += ch; } f.push(c); return f; }
+        function rvToISO(dmy) { if (!dmy) return null; if (/^\d{4}-\d{2}-\d{2}$/.test(dmy)) return dmy; var p = dmy.split(/[\/\-]/); if (p.length !== 3 || p[0].length > 2) return null; return p[2] + '-' + p[1] + '-' + p[0]; }
+        function rvPad(n) { return ('0' + n).slice(-2); }
+        function rvFmtDate(iso) { var p = (iso || '').split('-'); return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : iso; }
+
+        // ── Parse un CSV Swan ──
+        function parseSwanCSV(content, fileName) {
+            var lines = content.replace(/\r/g, '').split('\n').filter(function(l) { return l.trim(); });
+            if (lines.length < 2) return [];
+            var delim = (lines[0].split(';').length > lines[0].split(',').length) ? ';' : ',';
+            var out = [], seen = {};
+            for (var i = 1; i < lines.length; i++) {
+                var f = rvParseLine(lines[i], delim);
+                if (f.length < 5) continue;
+                var dateRaw = rvClean(f[0]);
+                var label = rvClean(f[1]);
+                var type = rvClean(f[2]);
+                var dc = rvClean(f[3]);
+                var amtRaw = rvClean(f[4]);
+                var sp = dateRaw.split(' ');
+                var iso = rvToISO(sp[0]); if (!iso) continue;
+                var amt = parseFloat(amtRaw.replace(/\s/g, '').replace(/[^\d,.-]/g, '').replace(',', '.'));
+                if (isNaN(amt)) continue;
+                var direction = (amt < 0 || /d[ée]bit/i.test(dc)) ? 'debit' : 'credit';
+                var abs = Math.abs(amt);
+                var cat = rvCategorize(label, direction);
+                var base = iso + '|' + direction + '|' + abs.toFixed(2) + '|' + label;
+                seen[base] = (seen[base] || 0) + 1;
+                out.push({
+                    agency_id: AGENCY_ID, tx_date: iso, tx_time: sp[1] || '', label: label, tx_type: type,
+                    direction: direction, amount: abs, category: cat.category, poste: cat.poste,
+                    statement_month: iso.slice(0, 7), source_file: fileName, dedup_hash: base + '|' + seen[base]
+                });
+            }
+            return out;
+        }
+
+        function rvReadText(file) {
+            return new Promise(function(resolve) {
+                var r = new FileReader();
+                r.onload = function(e) { resolve(e.target.result); };
+                r.onerror = function() { resolve(''); };
+                r.readAsText(file, 'UTF-8');
+            });
+        }
+
+        async function importBankFiles(fileList) {
+            var files = Array.prototype.slice.call(fileList).filter(function(f) { return /\.csv$/i.test(f.name); });
+            var resEl = document.getElementById('rv-import-result');
+            resEl.classList.remove('hidden');
+            if (!files.length) { resEl.innerHTML = '<span style="color:#ef4444;">Aucun fichier CSV.</span>'; return; }
+            resEl.innerHTML = '<span style="color:#6b7280;">Lecture de ' + files.length + ' fichier(s)…</span>';
+            var all = [];
+            for (var i = 0; i < files.length; i++) { var c = await rvReadText(files[i]); all = all.concat(parseSwanCSV(c, files[i].name)); }
+            if (!all.length) { resEl.innerHTML = '<span style="color:#ef4444;">Aucune transaction lue (format Swan attendu : Date, Libellé, Type, Débit/Crédit, Montant).</span>'; return; }
+            if (!sb) { resEl.innerHTML = '<span style="color:#ef4444;">Supabase non initialisé — reconnecte-toi.</span>'; return; }
+            var inserted = 0, err = null;
+            for (var j = 0; j < all.length; j += 500) {
+                var chunk = all.slice(j, j + 500);
+                var r = await sb.from('bank_transactions').upsert(chunk, { onConflict: 'agency_id,dedup_hash', ignoreDuplicates: true }).select('id');
+                if (r.error) { err = r.error; break; }
+                inserted += (r.data ? r.data.length : 0);
+            }
+            if (err) { resEl.innerHTML = '<span style="color:#ef4444;">Erreur import : ' + esc(err.message || String(err)) + '</span>'; return; }
+            resEl.innerHTML = '<span style="color:#2FB963; font-weight:700;">Import terminé.</span> ' + all.length + ' lignes lues, <b>' + inserted + ' nouvelles</b> ajoutées (' + (all.length - inserted) + ' doublons ignorés).';
+            document.getElementById('rv-file-input').value = '';
+            await loadTransactions();
+            rvRender();
+        }
+
+        async function loadTransactions() {
+            if (!sb) return;
+            ALL_TX = [];
+            var from = 0, size = 1000;
+            while (true) {
+                var r = await sb.from('bank_transactions').select('*').eq('agency_id', AGENCY_ID).order('tx_date', { ascending: false }).range(from, from + size - 1);
+                if (r.error) { console.warn('load tx error', r.error); break; }
+                ALL_TX = ALL_TX.concat(r.data || []);
+                if (!r.data || r.data.length < size) break;
+                from += size;
+            }
+            buildYearOptions();
+        }
+
+        // ── Agrégation + rendu ──
+        function rvAggregate(list) {
+            var byPoste = {}, totOut = 0, totIn = 0;
+            list.forEach(function(t) {
+                var amt = parseFloat(t.amount) || 0;
+                if (t.direction === 'debit') totOut += amt; else totIn += amt;
+                var p = t.poste || 'Autre';
+                if (!byPoste[p]) byPoste[p] = { poste: p, category: t.category || '', out: 0, in: 0, n: 0 };
+                byPoste[p][t.direction === 'debit' ? 'out' : 'in'] += amt;
+                byPoste[p].n++;
+            });
+            return { totOut: totOut, totIn: totIn, byPoste: Object.keys(byPoste).map(function(k) { return byPoste[k]; }) };
+        }
+
+        function rvRenderAgg(list) {
+            var el = document.getElementById('rv-content');
+            if (!list.length) { el.innerHTML = '<div class="rv-empty">Aucune transaction sur cette période.</div>'; return; }
+            var a = rvAggregate(list);
+            var net = a.totIn - a.totOut;
+            var postes = a.byPoste.sort(function(x, y) { return (y.out - x.out) || (y.in - x.in); });
+
+            var html = '<div class="rv-kpis">' +
+                '<div class="rv-kpi rv-kpi--out"><div class="rv-kpi__v">' + euro(a.totOut) + '</div><div class="rv-kpi__l">Dépenses</div></div>' +
+                '<div class="rv-kpi rv-kpi--in"><div class="rv-kpi__v">' + euro(a.totIn) + '</div><div class="rv-kpi__l">Revenus</div></div>' +
+                '<div class="rv-kpi"><div class="rv-kpi__v" style="color:' + (net >= 0 ? '#2FB963' : '#ef4444') + ';">' + euro(net) + '</div><div class="rv-kpi__l">Solde net</div></div>' +
+            '</div>';
+
+            html += '<div class="rv-h4">Total par poste (' + list.length + ' transactions)</div>';
+            html += '<table class="rv-table"><thead><tr><th>Poste</th><th>Catégorie</th><th class="num">Dépenses</th><th class="num">Revenus</th></tr></thead><tbody>';
+            postes.forEach(function(p) {
+                html += '<tr><td><b>' + esc(p.poste) + '</b> <span style="color:#9ca3af; font-size:.7rem;">×' + p.n + '</span></td>' +
+                    '<td><span class="rv-tag">' + esc(p.category) + '</span></td>' +
+                    '<td class="num ' + (p.out ? 'out' : '') + '">' + (p.out ? euro2(p.out) : '—') + '</td>' +
+                    '<td class="num ' + (p.in ? 'in' : '') + '">' + (p.in ? euro2(p.in) : '—') + '</td></tr>';
+            });
+            html += '</tbody></table>';
+
+            html += '<div class="rv-h4">Détail des transactions</div>';
+            html += '<table class="rv-table"><thead><tr><th>Date</th><th>Libellé</th><th>Catégorie</th><th class="num">Débit</th><th class="num">Crédit</th></tr></thead><tbody>';
+            list.slice().sort(function(x, y) { return x.tx_date < y.tx_date ? 1 : (x.tx_date > y.tx_date ? -1 : 0); }).forEach(function(t) {
+                var amt = parseFloat(t.amount) || 0;
+                html += '<tr><td class="num">' + rvFmtDate(t.tx_date) + '</td>' +
+                    '<td>' + esc(t.label) + '</td>' +
+                    '<td><span class="rv-tag">' + esc(t.category || '') + '</span></td>' +
+                    '<td class="num ' + (t.direction === 'debit' ? 'out' : '') + '">' + (t.direction === 'debit' ? euro2(amt) : '') + '</td>' +
+                    '<td class="num ' + (t.direction === 'credit' ? 'in' : '') + '">' + (t.direction === 'credit' ? euro2(amt) : '') + '</td></tr>';
+            });
+            html += '</tbody></table>';
+            el.innerHTML = html;
+        }
+
+        function rvRender() {
+            document.getElementById('rv-month').style.display = (rvMode === 'month') ? '' : 'none';
+            document.getElementById('rv-year').style.display = (rvMode === 'period') ? 'none' : '';
+            document.getElementById('rv-period-fields').style.display = (rvMode === 'period') ? 'inline-flex' : 'none';
+            if (!ALL_TX.length) { document.getElementById('rv-content').innerHTML = '<div class="rv-empty">Importe tes relevés Swan pour commencer.</div>'; return; }
+            if (rvMode === 'month') {
+                var mm = rvYear + '-' + rvPad(rvMonth + 1);
+                rvRenderAgg(ALL_TX.filter(function(t) { return t.statement_month === mm; }));
+            } else if (rvMode === 'year') {
+                rvRenderAgg(ALL_TX.filter(function(t) { return (t.tx_date || '').slice(0, 4) === String(rvYear); }));
+            } else {
+                var fr = document.getElementById('rv-from').value, to = document.getElementById('rv-to').value;
+                if (!fr || !to) { document.getElementById('rv-content').innerHTML = '<div class="rv-empty">Choisis une date de début et de fin, puis clique « Voir ».</div>'; return; }
+                rvRenderAgg(ALL_TX.filter(function(t) { return t.tx_date >= fr && t.tx_date <= to; }));
+            }
+        }
+
+        function buildYearOptions() {
+            var years = {};
+            ALL_TX.forEach(function(t) { var y = (t.tx_date || '').slice(0, 4); if (y) years[y] = 1; });
+            var yl = Object.keys(years).sort().reverse();
+            if (!yl.length) yl = [String(new Date().getFullYear())];
+            var sel = document.getElementById('rv-year');
+            sel.innerHTML = yl.map(function(y) { return '<option value="' + y + '">' + y + '</option>'; }).join('');
+            if (rvYear === null || yl.indexOf(String(rvYear)) === -1) rvYear = parseInt(yl[0]);
+            sel.value = String(rvYear);
+        }
+        function buildMonthOptions() {
+            var sel = document.getElementById('rv-month');
+            sel.innerHTML = RV_MONTHS.map(function(m, i) { return '<option value="' + i + '">' + m + '</option>'; }).join('');
+            if (rvMonth === null) rvMonth = new Date().getMonth();
+            sel.value = String(rvMonth);
+        }
+
+        function setupReleveUI() {
+            var zone = document.getElementById('rv-drop'), input = document.getElementById('rv-file-input');
+            zone.addEventListener('click', function() { input.click(); });
+            zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('--active'); });
+            zone.addEventListener('dragleave', function() { zone.classList.remove('--active'); });
+            zone.addEventListener('drop', function(e) { e.preventDefault(); zone.classList.remove('--active'); if (e.dataTransfer.files.length) importBankFiles(e.dataTransfer.files); });
+            input.addEventListener('change', function() { if (input.files.length) importBankFiles(input.files); });
+            document.querySelectorAll('.rv-mode').forEach(function(b) {
+                b.addEventListener('click', function() {
+                    document.querySelectorAll('.rv-mode').forEach(function(x) { x.classList.remove('--on'); });
+                    b.classList.add('--on'); rvMode = b.getAttribute('data-mode'); rvRender();
+                });
+            });
+            document.getElementById('rv-year').addEventListener('change', function() { rvYear = parseInt(this.value); rvRender(); });
+            document.getElementById('rv-month').addEventListener('change', function() { rvMonth = parseInt(this.value); rvRender(); });
+            document.getElementById('rv-period-apply').addEventListener('click', rvRender);
+        }
+
+        async function initReleve() {
+            try { sb = window.supabase.createClient(SB_URL, SB_KEY); } catch (e) { console.error('supabase init', e); }
+            buildMonthOptions();
+            setupReleveUI();
+            await loadTransactions();
+            if (ALL_TX.length) {
+                var latest = ALL_TX[0].statement_month || (ALL_TX[0].tx_date || '').slice(0, 7);
+                if (latest) { rvYear = parseInt(latest.slice(0, 4)); rvMonth = parseInt(latest.slice(5, 7)) - 1; }
+                document.getElementById('rv-year').value = String(rvYear);
+                document.getElementById('rv-month').value = String(rvMonth);
+            }
+            rvRender();
+        }
+
+        initReleve();
     </script>
     <script src="admin-shell.js"></script>
 </body>
