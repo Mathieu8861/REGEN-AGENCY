@@ -542,7 +542,8 @@
             { re: /ovh/i,                              poste: 'OVH',                       category: 'Abonnement infra' },
             { re: /ionos/i,                            poste: 'IONOS',                     category: 'Abonnement infra' },
             { re: /google\s*one/i,                     poste: 'Google One',                category: 'Abonnement outil' },
-            { re: /google\s*workspace/i,               poste: 'Google Workspace',          category: 'Abonnement outil' },
+            { re: /google.?workspace/i,                poste: 'Google Workspace',          category: 'Abonnement outil' },
+            { re: /google payment/i,                   poste: 'Google One',                category: 'Abonnement outil' },
             { re: /prestashop/i,                       poste: 'PrestaShop (achat client)', category: 'Achats pour clients' },
             { re: /pennylane/i,                        poste: 'Pennylane',                 category: 'Comptabilité' },
             { re: /rydge|efe\d{6}/i,                   poste: 'RYDGE (comptable)',         category: 'Comptabilité' },
@@ -554,6 +555,9 @@
             { re: /^ur\s?\d|urssaf/i,                  poste: 'URSSAF / autres',           category: 'Charges sociales' },
             { re: /^demande\s+\d{6,}/i,                poste: 'URSSAF (régularisation)',   category: 'Charges sociales' },
             { re: /\btva\d*/i,                         poste: 'TVA',                       category: 'Taxes' },
+            { re: /dgfip|imp[oô]t|\bcfe\b/i,           poste: 'DGFiP / Impôts',            category: 'Taxes' },
+            { re: /^is-\d/i,                           poste: 'Impôt sur les sociétés',    category: 'Taxes' },
+            { re: /coaching/i,                         poste: 'Formation / coaching',      category: 'Formation' },
             { re: /\b(mathieu|duval)\b/i,              poste: 'Salaire Mathieu',           category: 'Salaires' },
             { re: /\b(jaemeson|dieu|jae)\b/i,          poste: 'Salaire Jaemeson',          category: 'Salaires' },
             { re: /salaire|r[ée]mun[ée]ration/i,       poste: 'Salaire (à attribuer)',     category: 'Salaires' },
@@ -561,18 +565,40 @@
             { re: /^avance\b/i,                        poste: 'Salaire (à attribuer)',     category: 'Salaires' },
             { re: /alma/i,                             poste: 'Alma (financement)',        category: 'Investissement' },
             { re: /commission/i,                       poste: 'Commissions reversées',     category: 'Sous-traitance' },
-            { re: /foreign currency|^frais$/i,         poste: 'Frais bancaires',           category: 'Frais bancaires' },
+            { re: /foreign currency|^frais$|direct debit rejection|en devise/i, poste: 'Frais bancaires', category: 'Frais bancaires' },
+            { re: /monday/i,                           poste: 'Monday.com',                category: 'Abonnement outil' },
+            { re: /\bslack\b/i,                        poste: 'Slack',                     category: 'Abonnement outil' },
+            { re: /envato/i,                           poste: 'Envato',                    category: 'Abonnement créa' },
+            { re: /qr code ai/i,                       poste: 'QR Code AI',                category: 'Abonnement outil' },
+            { re: /\bmalt\b|mgp\*malt/i,               poste: 'Malt (freelances)',         category: 'Sous-traitance' },
+            { re: /vistaprint/i,                       poste: 'Vistaprint (print)',        category: 'Achats divers' },
+            { re: /google\s*\*?ads/i,                  poste: 'Google Ads (pub)',          category: 'Publicité' },
+            { re: /apporteur/i,                        poste: 'Commissions reversées',     category: 'Sous-traitance' },
+            { re: /siostra|^\/inv\/177\d|^177\d{7}\b|^facture 177\d/i, poste: 'Siostra Studio (Cloé)', category: 'Sous-traitance' },
+            { re: /lubrano|christophe/i,               poste: 'Christophe Lubrano (freelance)', category: 'Sous-traitance' },
+            { re: /ferrand|s[ée]ance du/i,             poste: 'Caroline Ferrand',          category: 'Sous-traitance' },
+            { re: /paiement mensuel rs/i,              poste: 'Community management (RS)', category: 'Sous-traitance' },
+            { re: /\bharu\b/i,                         poste: 'Haru (dev)',                category: 'Sous-traitance' },
+            { re: /consulting/i,                       poste: 'Consulting externe',        category: 'Sous-traitance' },
+            { re: /balise/i,                           poste: 'Tracking / balises (presta)', category: 'Sous-traitance' },
+            { re: /cr[ée]ation site|accompagnement site/i, poste: 'Presta dev site',       category: 'Sous-traitance' },
+            { re: /note de frais/i,                    poste: 'Notes de frais',            category: 'Remboursements' },
+            { re: /remboursement/i,                    poste: 'Remboursements',            category: 'Remboursements' },
+            { re: /occmp/i,                            poste: 'Achats pour clients',       category: 'Achats pour clients' },
             { re: /amzn|amazon/i,                      poste: 'Amazon',                    category: 'Achats divers' },
             { re: /clo[ée]|presta|\bservice\b/i,       poste: 'Prestataires freelance',    category: 'Sous-traitance' }
         ];
-        // ── Règles crédits (revenus) ──
+        // ── Règles crédits (revenus) — défaut : Revenus clients ──
         var CREDIT_RULES = [
-            { re: /emile|henry|occmp|sanithermelec|arsene|kcmh|fa-?ra|fac-?ra|facture|virement instantane|transfer from/i, poste: 'Revenus clients', category: 'Revenus' }
+            { re: /restitution.*cap+ital|d[ée]p[oô]t de capital/i, poste: 'Capital social',  category: 'Capital' },
+            { re: /urssaf|return of direct debit/i,    poste: 'URSSAF (remboursement)',    category: 'Charges sociales' },
+            { re: /refund|rembours/i,                  poste: 'Remboursement reçu',        category: 'Remboursements' },
+            { re: /adobe/i,                            poste: 'Remboursement Adobe',       category: 'Remboursements' }
         ];
         function rvCategorize(label, direction) {
             var rules = direction === 'credit' ? CREDIT_RULES : TX_RULES;
             for (var i = 0; i < rules.length; i++) { if (rules[i].re.test(label)) return { poste: rules[i].poste, category: rules[i].category }; }
-            return direction === 'credit' ? { poste: 'Autre encaissement', category: 'Revenus' } : { poste: 'Autre', category: 'Non catégorisé' };
+            return direction === 'credit' ? { poste: 'Revenus clients', category: 'Revenus' } : { poste: 'Autre', category: 'Non catégorisé' };
         }
 
         // ── Helpers ──

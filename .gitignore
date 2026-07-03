@@ -6,6 +6,9 @@ node_modules/
 # Secrets & credentials (NE JAMAIS commiter)
 MCP META GOOGLE PRESTA/
 
+# Donnees bancaires (local + GDrive uniquement — pousser = servi en PUBLIC par Vercel)
+comptabilite/
+
 # Fichiers temporaires Supabase CLI
 supabase/.temp/
 
