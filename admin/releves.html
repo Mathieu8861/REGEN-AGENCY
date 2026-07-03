@@ -98,6 +98,7 @@
                 <h1>Comptabilité</h1>
             </div>
             <div class="page-header-actions">
+                <a href="equilibre-associes.html" class="btn-header btn-retour">&#9878;&#65039; Équilibre associés</a>
                 <a href="comptabilite.html" class="btn-header btn-retour">Gestion comptable</a>
                 <button class="btn-header btn-deconnexion" id="btn-logout">Déconnexion</button>
             </div>
@@ -219,7 +220,7 @@
             { re: /pennylane/i,                        poste: 'Pennylane',                 category: 'Comptabilité' },
             { re: /rydge|efe\d{6}/i,                   poste: 'RYDGE (comptable)',         category: 'Comptabilité' },
             { re: /legalplace/i,                       poste: 'LegalPlace',                category: 'Juridique' },
-            { re: /allianz|ph97669|nav1ag/i,           poste: 'Allianz (assurance)',       category: 'Assurance' },
+            { re: /allianz|ph97669|nav1ag/i,           poste: 'Allianz (mutuelle Mathieu)', category: 'Assurance' },
             { re: /abonnement mensuel/i,               poste: 'Abonnement non identifié',  category: 'À élucider' },
             { re: /1580755138/,                        poste: 'URSSAF Mathieu',            category: 'Charges sociales' },
             { re: /1578657874/,                        poste: 'URSSAF Jaemeson',           category: 'Charges sociales' },
@@ -234,7 +235,7 @@
             { re: /salaire|r[ée]mun[ée]ration/i,       poste: 'Salaire (à attribuer)',     category: 'Salaires' },
             { re: /^(janvier|f[ée]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[ée]cembre)[\s.\/]*\d/i, poste: 'Salaire (à attribuer)', category: 'Salaires' },
             { re: /^avance\b/i,                        poste: 'Salaire (à attribuer)',     category: 'Salaires' },
-            { re: /alma/i,                             poste: 'Alma (financement)',        category: 'Investissement' },
+            { re: /alma/i,                             poste: 'Alma (PC Mathieu)',         category: 'Investissement' },
             { re: /commission/i,                       poste: 'Commissions reversées',     category: 'Sous-traitance' },
             { re: /foreign currency|^frais$|direct debit rejection|en devise/i, poste: 'Frais bancaires', category: 'Frais bancaires' },
             { re: /monday/i,                           poste: 'Monday.com',                category: 'Abonnement outil' },
