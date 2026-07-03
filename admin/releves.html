@@ -86,6 +86,27 @@
         .rv-quick { border: 1px solid #bcd6c6; background: #f0f7f2; color: #173C3A; font-family: inherit; font-size: .64rem; font-weight: 700; padding: .12rem .45rem; border-radius: 6px; cursor: pointer; margin-left: .25rem; white-space: nowrap; }
         .rv-quick:hover { background: #2FB963; border-color: #2FB963; color: #fff; }
         .rv-lock { font-size: .62rem; color: #9ca3af; margin-left: .2rem; }
+
+        /* ── Graphiques ── */
+        .rv-charts { display: grid; grid-template-columns: minmax(300px, 2fr) minmax(320px, 3fr); gap: .9rem; margin-bottom: 1.5rem; }
+        @media (max-width: 800px) { .rv-charts { grid-template-columns: 1fr; } }
+        .rv-chart { background: #fff; border: 1px solid #e8ede9; border-radius: 12px; padding: 1rem 1.1rem; }
+        .rv-chart__t { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #6b7280; margin-bottom: .7rem; }
+        .rv-donut-wrap { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .rv-donut-legend { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: .32rem; font-size: .74rem; }
+        .rv-donut-legend > div { display: flex; align-items: center; gap: .45rem; }
+        .rv-donut-legend .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+        .rv-donut-legend .pc { margin-left: auto; font-weight: 700; color: #173C3A; font-variant-numeric: tabular-nums; }
+        .rv-bars { display: flex; gap: 8px; align-items: flex-end; overflow-x: auto; padding: 6px 2px 2px; min-height: 170px; }
+        .rv-bar-group { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; min-width: 34px; }
+        .rv-bar-pair { display: flex; gap: 3px; align-items: flex-end; height: 130px; }
+        .rv-bar { width: 12px; border-radius: 4px 4px 0 0; min-height: 2px; }
+        .rv-bar--out { background: linear-gradient(180deg, #f87171, #ef4444); }
+        .rv-bar--in { background: linear-gradient(180deg, var(--color-secondary, #2FB963), #05C08A); }
+        .rv-bar-month { font-size: .6rem; color: #6b7280; font-weight: 700; white-space: nowrap; }
+        .rv-bar-group.--hl .rv-bar-month { color: #173C3A; background: #e8f9ef; padding: 1px 5px; border-radius: 6px; }
+        .rv-bars-legend { display: flex; gap: 1rem; font-size: .68rem; color: #6b7280; font-weight: 600; margin-top: .4rem; }
+        .rv-bars-legend .dot { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
     </style>
 </head>
 <body>
@@ -373,6 +394,97 @@
             return { totOut: totOut, totIn: totIn, byPoste: Object.keys(byPoste).map(function(k) { return byPoste[k]; }) };
         }
 
+        // ── Graphiques : donut catégories + barres mensuelles ──
+        var RV_CHART_COLORS = ['#2FB963', '#173C3A', '#f59e0b', '#3b82f6', '#8b5cf6', '#ef4444', '#14b8a6', '#ec4899', '#9ca3af'];
+        var RV_MONTH_SHORT = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+
+        function rvDonutHTML(list) {
+            var byCat = {}, tot = 0;
+            list.forEach(function(t) {
+                if (t.direction !== 'debit') return;
+                var a = parseFloat(t.amount) || 0;
+                var c = t.category || 'Autre';
+                byCat[c] = (byCat[c] || 0) + a; tot += a;
+            });
+            if (tot <= 0) return '';
+            var cats = Object.keys(byCat).map(function(k) { return { k: k, v: byCat[k] }; })
+                .sort(function(x, y) { return y.v - x.v; });
+            if (cats.length > 7) {
+                var rest = cats.slice(7).reduce(function(s, c) { return s + c.v; }, 0);
+                cats = cats.slice(0, 7);
+                cats.push({ k: 'Autres', v: rest });
+            }
+            var r = 52, C = 2 * Math.PI * r, off = 0;
+            var segs = '', legend = '';
+            cats.forEach(function(c, i) {
+                var frac = c.v / tot;
+                var color = RV_CHART_COLORS[i % RV_CHART_COLORS.length];
+                segs += '<circle r="' + r + '" cx="70" cy="70" fill="none" stroke="' + color + '" stroke-width="24"' +
+                    ' stroke-dasharray="' + (frac * C).toFixed(2) + ' ' + C.toFixed(2) + '"' +
+                    ' stroke-dashoffset="' + (-off * C).toFixed(2) + '" transform="rotate(-90 70 70)">' +
+                    '<title>' + esc(c.k) + ' : ' + euro2(c.v) + '</title></circle>';
+                var pc = Math.round(frac * 100);
+                legend += '<div><span class="dot" style="background:' + color + ';"></span>' + esc(c.k) +
+                    '<span class="pc">' + (pc === 0 ? '&lt;1' : pc) + '%</span></div>';
+                off += frac;
+            });
+            return '<div class="rv-chart"><div class="rv-chart__t">Dépenses par catégorie</div>' +
+                '<div class="rv-donut-wrap">' +
+                '<svg viewBox="0 0 140 140" width="150" height="150" style="flex-shrink:0;">' + segs +
+                '<text x="70" y="66" text-anchor="middle" font-size="15" font-weight="800" fill="#173C3A" font-family="Quicksand, sans-serif">' + euro(tot) + '</text>' +
+                '<text x="70" y="82" text-anchor="middle" font-size="8" font-weight="700" fill="#9ca3af" font-family="Quicksand, sans-serif">DÉPENSES</text></svg>' +
+                '<div class="rv-donut-legend">' + legend + '</div></div></div>';
+        }
+
+        function rvBarsHTML(list) {
+            function group(arr) {
+                var m = {};
+                arr.forEach(function(t) {
+                    var k = (t.tx_date || '').slice(0, 7);
+                    if (!m[k]) m[k] = { out: 0, in: 0 };
+                    m[k][t.direction === 'debit' ? 'out' : 'in'] += parseFloat(t.amount) || 0;
+                });
+                return m;
+            }
+            var months = group(list);
+            var keys = Object.keys(months).sort();
+            var highlight = null;
+            if (keys.length <= 1) {
+                // Un seul mois affiché → contexte : les 12 mois de son année, mois en surbrillance
+                highlight = keys[0] || (rvYear + '-' + rvPad(rvMonth + 1));
+                var y = highlight.slice(0, 4);
+                months = group(ALL_TX.filter(function(t) { return (t.tx_date || '').slice(0, 4) === y; }));
+                keys = Object.keys(months).sort();
+            }
+            if (!keys.length) return '';
+            var max = 0;
+            keys.forEach(function(k) { max = Math.max(max, months[k].out, months[k].in); });
+            if (max <= 0) return '';
+            var multiYear = keys[0].slice(0, 4) !== keys[keys.length - 1].slice(0, 4);
+            var bars = keys.map(function(k) {
+                var d = months[k];
+                var mIdx = parseInt(k.slice(5, 7), 10) - 1;
+                var label = (RV_MONTH_SHORT[mIdx] || k) + (multiYear ? ' ' + k.slice(2, 4) : '');
+                var hOut = Math.max(2, Math.round(d.out / max * 128));
+                var hIn = Math.max(2, Math.round(d.in / max * 128));
+                return '<div class="rv-bar-group' + (k === highlight ? ' --hl' : '') + '">' +
+                    '<div class="rv-bar-pair">' +
+                    '<div class="rv-bar rv-bar--out" style="height:' + hOut + 'px;" title="Dépenses ' + label + ' : ' + euro2(d.out) + '"></div>' +
+                    '<div class="rv-bar rv-bar--in" style="height:' + hIn + 'px;" title="Revenus ' + label + ' : ' + euro2(d.in) + '"></div>' +
+                    '</div><div class="rv-bar-month">' + label + '</div></div>';
+            }).join('');
+            return '<div class="rv-chart"><div class="rv-chart__t">Dépenses vs revenus par mois</div>' +
+                '<div class="rv-bars">' + bars + '</div>' +
+                '<div class="rv-bars-legend"><span><span class="dot" style="background:#ef4444;"></span>Dépenses</span>' +
+                '<span><span class="dot" style="background:#2FB963;"></span>Revenus</span></div></div>';
+        }
+
+        function rvChartsHTML(list) {
+            var donut = rvDonutHTML(list), bars = rvBarsHTML(list);
+            if (!donut && !bars) return '';
+            return '<div class="rv-charts">' + donut + bars + '</div>';
+        }
+
         function rvRenderAgg(list) {
             var el = document.getElementById('rv-content');
             if (!list.length) { el.innerHTML = '<div class="rv-empty">Aucune transaction sur cette période.</div>'; return; }
@@ -385,6 +497,8 @@
                 '<div class="rv-kpi rv-kpi--in"><div class="rv-kpi__v">' + euro(a.totIn) + '</div><div class="rv-kpi__l">Revenus</div></div>' +
                 '<div class="rv-kpi"><div class="rv-kpi__v" style="color:' + (net >= 0 ? '#2FB963' : '#ef4444') + ';">' + euro(net) + '</div><div class="rv-kpi__l">Solde net</div></div>' +
             '</div>';
+
+            html += rvChartsHTML(list);
 
             html += '<div class="rv-h4">Total par poste (' + list.length + ' transactions)</div>';
             html += '<table class="rv-table"><thead><tr><th>Poste</th><th>Catégorie</th><th class="num">Dépenses</th><th class="num">Revenus</th></tr></thead><tbody>';
