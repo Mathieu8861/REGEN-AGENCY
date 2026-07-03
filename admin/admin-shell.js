@@ -26,6 +26,7 @@
         if (key === 'dashboard') return page === 'dashboard.html';
         if (key === 'documents') return page === 'documents.html';
         if (key === 'comptabilite') return page === 'comptabilite.html';
+        if (key === 'releves') return page === 'releves.html';
         if (key === 'taches') return page === 'taches.html';
         if (key === 'profil') return page === 'profil-agence.html';
         return false;
@@ -133,6 +134,9 @@
                 link('comptabilite.html', 'comptabilite',
                     '<path d="M3 3h18v18H3zM3 9h18M9 21V9"/>',
                     'Comptabilité') +
+                link('releves.html', 'releves',
+                    '<line x1="3" y1="21" x2="21" y2="21"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><line x1="4" y1="10" x2="4" y2="21"/><line x1="20" y1="10" x2="20" y2="21"/><line x1="8" y1="14" x2="8" y2="17"/><line x1="16" y1="14" x2="16" y2="17"/>',
+                    'Relevés bancaires') +
                 link('taches.html', 'taches',
                     '<path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
                     'Tâches') +
