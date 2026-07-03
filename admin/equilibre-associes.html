@@ -113,7 +113,7 @@
             </h2>
             <div id="eq-histo"></div>
             <div class="eq-note">Montant négatif (rose dans ton Excel) = payé en fonds propres ou salaire manqué → dû à Mathieu. Montant positif (vert) = avantage dont Mathieu a bénéficié → déduit. Ce bloc couvre la période structure étrangère (oct. 2023 → mars 2024) et les avantages 2024. Pour le modifier : édite le tableau <code>HISTO</code> dans le code de cette page.</div>
-            <div class="eq-note --warn">⚠️ À confirmer : les deux salaires manqués (−1 500 et −1 800) correspondent bien à la <b>période structure étrangère</b> (avant les relevés bancaires français). Si en fait ils désignent mars/avril 2026 côté banque française, dis-le — sinon une petite partie serait comptée deux fois avec l'écart banque 2024.</div>
+            <div class="eq-note">✓ Confirmé par Mathieu (03/07/2026) : les deux salaires manqués (−1 500 et −1 800) = <b>janvier et février 2024, période structure étrangère</b> (Jaemeson payé, Mathieu non — l'Excel les note en mars/avril par décalage). Hors banque française → aucun recouvrement avec l'écart de salaires calculé depuis les relevés (qui démarre fin mars 2024).</div>
         </section>
 
         <footer class="page-footer">Regen Agency &copy; 2026 - Espace réservé</footer>
@@ -136,8 +136,8 @@
             { month: 'Avril',     label: 'Monday (payé en propre)',            amount: -60.00 },
             { month: 'Janvier',   label: 'Slack (payé en propre)',             amount: -20.00 },
             { month: 'Février',   label: 'Slack (payé en propre)',             amount: -20.00 },
-            { month: 'Mars',      label: 'Salaire manqué Mathieu',             amount: -1500.00 },
-            { month: 'Avril',     label: 'Salaire manqué Mathieu',             amount: -1800.00 },
+            { month: 'Mars',      label: 'Salaire manqué Mathieu (janv. 2024, décalage Excel)', amount: -1500.00 },
+            { month: 'Avril',     label: 'Salaire manqué Mathieu (févr. 2024, décalage Excel)', amount: -1800.00 },
             { month: 'Novembre',  label: 'Mutuelle (avantage Mathieu)',        amount: 176.35 },
             { month: 'Octobre',   label: 'Achat matériel Jaemeson',            amount: -166.17 },
             { month: 'Août',      label: 'Caroline F. (avantage Mathieu)',     amount: 240.00 },
