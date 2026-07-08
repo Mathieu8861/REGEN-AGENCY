@@ -1773,7 +1773,7 @@
                             </h3>
                         </div>
                         <div class="bp-toolbar__right">
-                            <button class="btn btn--sm btn--primary" id="bp-add-promo" data-admin-only>＋ Ajouter une promo</button>
+                            <button class="btn btn--sm btn--primary" id="bp-add-promo">＋ Ajouter une promo</button>
                         </div>
                     </div>
                     <div id="bp-promos-grid">
@@ -5214,13 +5214,15 @@
             return;
         }
 
-        // Détermine si l'utilisateur courant peut éditer (admin/staff)
+        // Qui peut éditer ? Admin/staff ET clients connectés : le client remplit lui-même
+        // son budget prévisionnel et son calendrier promo (migration 023).
+        // La base (RLS) limite l'écriture du client à SES marques et interdit de toucher
+        // aux cellules "dépense réelle" (is_actual, issues de la sync Google/Meta).
         var isAdmin = false;
         try {
             var sess = await sb.auth.getSession();
             if (sess.data && sess.data.session) {
-                var profRes = await sb.from('profiles').select('role').eq('id', sess.data.session.user.id).single();
-                isAdmin = profRes.data && (profRes.data.role === 'admin' || profRes.data.role === 'staff');
+                isAdmin = true; // tout utilisateur authentifié édite ; RLS = vrai garde-fou
             }
         } catch(e) { isAdmin = false; }
         budgetState.isAdmin = isAdmin;
