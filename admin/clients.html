@@ -4663,13 +4663,18 @@
             return;
         }
 
-        // Métriques 30j de TOUTES les campagnes en UNE requête (au lieu d'une par campagne)
-        var from30 = new Date(); from30.setDate(from30.getDate() - 30);
-        var fromStr = from30.toISOString().split('T')[0];
+        // Métriques sur la PÉRIODE SÉLECTIONNÉE (même sélecteur que la Vue mensuelle,
+        // pour que les chiffres concordent entre les onglets). Une seule requête.
+        var fromStr = dateRange.from, toStr = dateRange.to;
+        if (!fromStr || !toStr) {
+            var from30 = new Date(); from30.setDate(from30.getDate() - 30);
+            fromStr = from30.toISOString().split('T')[0];
+            toStr = new Date().toISOString().split('T')[0];
+        }
         var campIds = allCampaigns.map(function(c) { return c.id; });
         var metRes = await sb.from('ad_daily_metrics')
             .select('campaign_id, spend, clicks, impressions, conversions, revenue_reported')
-            .in('campaign_id', campIds).gte('date', fromStr);
+            .in('campaign_id', campIds).gte('date', fromStr).lte('date', toStr);
         var byCamp = {};
         (metRes.data || []).forEach(function(m) {
             var s = byCamp[m.campaign_id] || (byCamp[m.campaign_id] = { spend: 0, clicks: 0, impr: 0, conv: 0, rev: 0 });
@@ -4697,7 +4702,7 @@
         html += '<th style="text-align:left;">Campagne</th>';
         html += '<th>Plateforme</th>';
         html += '<th>Statut</th>';
-        html += '<th class="text-right">Depense (30j)</th>';
+        html += '<th class="text-right">Depense (période)</th>';
         html += '<th class="text-right">Clics</th>';
         html += '<th class="text-right">Impressions</th>';
         html += '<th class="text-right">CPC</th>';
