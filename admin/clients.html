@@ -4663,9 +4663,35 @@
             return;
         }
 
-        // Get metrics for each campaign (last 30 days)
+        // Métriques 30j de TOUTES les campagnes en UNE requête (au lieu d'une par campagne)
         var from30 = new Date(); from30.setDate(from30.getDate() - 30);
         var fromStr = from30.toISOString().split('T')[0];
+        var campIds = allCampaigns.map(function(c) { return c.id; });
+        var metRes = await sb.from('ad_daily_metrics')
+            .select('campaign_id, spend, clicks, impressions, conversions, revenue_reported')
+            .in('campaign_id', campIds).gte('date', fromStr);
+        var byCamp = {};
+        (metRes.data || []).forEach(function(m) {
+            var s = byCamp[m.campaign_id] || (byCamp[m.campaign_id] = { spend: 0, clicks: 0, impr: 0, conv: 0, rev: 0 });
+            s.spend += parseFloat(m.spend || 0);
+            s.clicks += parseInt(m.clicks || 0);
+            s.impr += parseInt(m.impressions || 0);
+            s.conv += parseFloat(m.conversions || 0);
+            s.rev += parseFloat(m.revenue_reported || 0);
+        });
+
+        // Tri : actives d'abord, en pause à la fin — et dans chaque groupe, dépense décroissante
+        var rows = allCampaigns.map(function(camp) {
+            return {
+                camp: camp,
+                s: byCamp[camp.id] || { spend: 0, clicks: 0, impr: 0, conv: 0, rev: 0 },
+                isActive: camp.status === 'enabled' || camp.status === 'active'
+            };
+        });
+        rows.sort(function(a, b) {
+            if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+            return b.s.spend - a.s.spend;
+        });
 
         var html = '<div class="table-wrap"><table class="attr-table"><thead><tr>';
         html += '<th style="text-align:left;">Campagne</th>';
@@ -4676,52 +4702,48 @@
         html += '<th class="text-right">Impressions</th>';
         html += '<th class="text-right">CPC</th>';
         html += '<th class="text-right">Conversions</th>';
+        html += '<th class="text-right">ROAS</th>';
         html += '</tr></thead><tbody>';
 
         // Aggrégats pour la ligne total
-        var grandSpend = 0, grandClicks = 0, grandImpr = 0, grandConv = 0;
+        var grandSpend = 0, grandClicks = 0, grandImpr = 0, grandConv = 0, grandRev = 0;
 
-        for (var c = 0; c < allCampaigns.length; c++) {
-            var camp = allCampaigns[c];
-            var metRes = await sb.from('ad_daily_metrics').select('spend, clicks, impressions, conversions, cpc').eq('campaign_id', camp.id).gte('date', fromStr);
-            var metrics = metRes.data || [];
+        // Vrais logos plateformes (mêmes assets que l'attribution)
+        var PLATFORM_META = {
+            google_ads: { label: 'Google Ads', icon: '<img src="../assets/images/adwords.png" style="width:20px;height:20px;object-fit:contain;">' },
+            meta_ads: { label: 'Meta Ads', icon: '<img src="../assets/images/meta.png" style="width:20px;height:20px;object-fit:contain;">' },
+            tiktok_ads: { label: 'TikTok Ads', icon: '<div class="attr-source-icon attr-icon--tiktok">T</div>' }
+        };
 
-            var totSpend = 0, totClicks = 0, totImpr = 0, totConv = 0;
-            metrics.forEach(function(m) {
-                totSpend += parseFloat(m.spend || 0);
-                totClicks += parseInt(m.clicks || 0);
-                totImpr += parseInt(m.impressions || 0);
-                totConv += parseFloat(m.conversions || 0);
-            });
+        rows.forEach(function(r) {
+            var camp = r.camp, s = r.s;
+            grandSpend += s.spend; grandClicks += s.clicks; grandImpr += s.impr; grandConv += s.conv; grandRev += s.rev;
 
-            grandSpend += totSpend;
-            grandClicks += totClicks;
-            grandImpr += totImpr;
-            grandConv += totConv;
+            var avgCpc = s.clicks > 0 ? (s.spend / s.clicks) : 0;
+            var pf = PLATFORM_META[camp.platform] || { label: camp.platform, icon: '?' };
+            var statusBadge = r.isActive
+                ? '<span style="color:#10b981; font-weight:700;">Actif</span>'
+                : '<span class="text-muted">' + (camp.status || '-') + '</span>';
+            var roas = (s.spend > 0 && s.rev > 0) ? (s.rev / s.spend) : null;
+            var roasHtml = roas === null ? '<span class="text-muted">—</span>'
+                : '<span style="font-weight:700; color:' + (roas >= 1 ? '#10b981' : '#ef4444') + ';">' + roas.toFixed(2) + 'x</span>';
 
-            var avgCpc = totClicks > 0 ? (totSpend / totClicks) : 0;
-            // Icône colorée par plateforme (cohérence agency view)
-            var platformIcon = {
-                google_ads: { label: 'Google Ads', icon: 'G', cls: 'attr-icon--google' },
-                meta_ads: { label: 'Meta Ads', icon: 'M', cls: 'attr-icon--meta' },
-                tiktok_ads: { label: 'TikTok Ads', icon: 'T', cls: 'attr-icon--tiktok' }
-            }[camp.platform] || { label: camp.platform, icon: '?', cls: 'attr-icon--direct' };
-            var statusBadge = camp.status === 'enabled' || camp.status === 'active' ? '<span style="color:#10b981; font-weight:700;">Actif</span>' : '<span class="text-muted">' + (camp.status || '-') + '</span>';
-
-            html += '<tr>';
+            html += '<tr' + (r.isActive ? '' : ' style="opacity:.65;"') + '>';
             html += '<td class="text-bold">' + (camp.name || camp.external_id) + '</td>';
-            html += '<td><div class="attr-source"><div class="attr-source-icon ' + platformIcon.cls + '">' + platformIcon.icon + '</div>' + platformIcon.label + '</div></td>';
+            html += '<td><div class="attr-source">' + pf.icon + ' ' + pf.label + '</div></td>';
             html += '<td>' + statusBadge + '</td>';
-            html += '<td class="text-right text-bold">' + formatMoney(totSpend) + '</td>';
-            html += '<td class="text-right">' + totClicks.toLocaleString('fr-FR') + '</td>';
-            html += '<td class="text-right">' + totImpr.toLocaleString('fr-FR') + '</td>';
+            html += '<td class="text-right text-bold">' + formatMoney(s.spend) + '</td>';
+            html += '<td class="text-right">' + s.clicks.toLocaleString('fr-FR') + '</td>';
+            html += '<td class="text-right">' + s.impr.toLocaleString('fr-FR') + '</td>';
             html += '<td class="text-right">' + formatMoney(avgCpc) + '</td>';
-            html += '<td class="text-right">' + totConv.toFixed(1) + '</td>';
+            html += '<td class="text-right">' + s.conv.toFixed(1) + '</td>';
+            html += '<td class="text-right">' + roasHtml + '</td>';
             html += '</tr>';
-        }
+        });
 
         // Ligne total
         var grandCpc = grandClicks > 0 ? grandSpend / grandClicks : 0;
+        var grandRoas = (grandSpend > 0 && grandRev > 0) ? (grandRev / grandSpend).toFixed(2) + 'x' : '—';
         html += '<tr class="attr-total">';
         html += '<td><strong>Total (' + allCampaigns.length + ' campagne' + (allCampaigns.length > 1 ? 's' : '') + ')</strong></td>';
         html += '<td>—</td>';
@@ -4731,6 +4753,7 @@
         html += '<td class="text-right">' + grandImpr.toLocaleString('fr-FR') + '</td>';
         html += '<td class="text-right">' + formatMoney(grandCpc) + '</td>';
         html += '<td class="text-right">' + grandConv.toFixed(1) + '</td>';
+        html += '<td class="text-right"><strong>' + grandRoas + '</strong></td>';
         html += '</tr>';
 
         html += '</tbody></table></div>';
