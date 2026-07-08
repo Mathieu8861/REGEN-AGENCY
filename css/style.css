@@ -1802,8 +1802,20 @@ p:last-child {
 
 /* Variante trio : 2 fondateurs en haut + Océane en bas (triangle qui se chevauche) */
 .hero-page__visual--trio {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     min-height: 400px;
+}
+/* Illustration 3D de l'équipe (remplace les photos) */
+.hero-page__visual--trio .hero-visual__team {
+    position: relative;
+    z-index: 3;
+    display: block;
+    width: 100%;
+    max-width: 540px;
+    height: auto;
+    filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.35));
 }
 .hero-page__visual--trio .hero-visual__photo {
     position: absolute;

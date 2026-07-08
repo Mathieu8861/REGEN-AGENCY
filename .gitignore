@@ -9,6 +9,9 @@ MCP META GOOGLE PRESTA/
 # Donnees bancaires (local + GDrive uniquement — pousser = servi en PUBLIC par Vercel)
 comptabilite/
 
+# Source PNG 4 Mo de l'illustration equipe (seul le .webp optimise part en prod)
+assets/images/equipe-3d.png
+
 # Fichiers temporaires Supabase CLI
 supabase/.temp/
 
