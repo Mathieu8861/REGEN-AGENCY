@@ -1806,6 +1806,7 @@ p:last-child {
     align-items: center;
     justify-content: center;
     min-height: 400px;
+    padding-bottom: 64px; /* réserve la place du badge sous l'illustration */
 }
 /* Illustration 3D de l'équipe (remplace les photos) */
 .hero-page__visual--trio .hero-visual__team {
@@ -1831,7 +1832,7 @@ p:last-child {
     top: 150px; left: 50%; transform: translateX(-50%); z-index: 4;
 }
 .hero-page__visual--trio .hero-visual__blob { z-index: 0; }
-.hero-page__visual--trio .hero-visual__chip { bottom: 4px; right: 6%; }
+.hero-page__visual--trio .hero-visual__chip { bottom: 0; left: 50%; right: auto; transform: translateX(-50%); white-space: nowrap; }
 
 /* Petits laptops : colonne visuelle plus étroite → photos réduites pour
    garder un chevauchement léger (évite que les fondateurs se masquent) */
