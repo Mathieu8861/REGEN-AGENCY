@@ -521,6 +521,12 @@ p:last-child {
     outline: none;
 }
 
+/* Sur la barre en verre depoli, le vert vif manque de contraste */
+.header .btn--secondary {
+    color: var(--color-primary);
+    box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
 .btn--white {
     background: var(--color-white);
     color: var(--color-primary);
