@@ -19,3 +19,6 @@ supabase/.temp/
 HANDOVER-*.md
 
 .env.local
+
+# Source PNG illustration e-reputation (seul le .webp part en prod)
+assets/images/boutique_5_etoiles.png
