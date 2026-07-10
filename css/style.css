@@ -10934,7 +10934,7 @@ html.dark-mode .theme-toggle__icon {
     display: flex; align-items: center; justify-content: space-between; gap: 34px;
     overflow: hidden;
 }
-.erep-teaser__stars { position: absolute; top: 22px; right: 130px; font-size: 1.3rem; letter-spacing: 6px; transform: rotate(6deg); }
+.erep-teaser__stars { display: inline-block; font-size: 1rem; letter-spacing: 5px; margin-bottom: 12px; }
 .erep-teaser__dots {
     position: absolute; bottom: 18px; left: 38%; width: 120px; height: 80px; pointer-events: none;
     background-image: radial-gradient(circle, rgba(255,255,255,0.14) 2px, transparent 2px);
@@ -10945,7 +10945,6 @@ html.dark-mode .theme-toggle__icon {
 .erep-teaser__text { color: rgba(255,255,255,0.72); font-size: 0.92rem; max-width: 52ch; }
 @media (max-width: 820px) {
     .erep-teaser { flex-direction: column; align-items: flex-start; padding: 36px 26px; }
-    .erep-teaser__stars { display: none; }
 }
 
 /* ============================================ */
