@@ -629,22 +629,19 @@ p:last-child {
     background: rgba(255, 255, 255, 0.75);
 }
 
-/* Halo clair diffus derriere le bloc texte : eclaircit la video juste la,
-   sans cadre visible */
-.hero__banner .hero__text {
-    position: relative;
-}
-
-.hero__banner .hero__text::before {
+/* Voile lateral pleine hauteur : opaque a gauche (zone texte), il s'evanouit
+   avant la scene — se lit comme l'eclairage de la video, pas comme un halo */
+.hero__banner::after {
     content: '';
     position: absolute;
-    inset: -70px -90px;
-    background: radial-gradient(ellipse at 42% 45%,
-        rgba(253, 253, 253, 0.75) 0%,
-        rgba(253, 253, 253, 0.38) 55%,
-        transparent 78%);
-    z-index: -1;
+    inset: 0;
+    background: linear-gradient(90deg,
+        rgba(252, 252, 251, 0.9) 0%,
+        rgba(252, 252, 251, 0.62) 32%,
+        rgba(252, 252, 251, 0.25) 48%,
+        transparent 62%);
     pointer-events: none;
+    z-index: 1;
 }
 
 /* Le degrade du logo finit trop clair pour le gris de la video :
@@ -675,6 +672,11 @@ p:last-child {
         min-height: 0;
         height: auto;
         background: none;
+    }
+
+    /* Sur mobile le texte est au-dessus de la video : pas de voile */
+    .hero__banner::after {
+        display: none;
     }
 
     .hero__banner-video {
