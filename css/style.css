@@ -1168,6 +1168,14 @@ p:last-child {
     stroke: var(--color-white);
 }
 
+.expertise-card__icon--web {
+    background: linear-gradient(135deg, #F5A623, #FFD66B);
+}
+
+.expertise-card__icon--web svg {
+    stroke: var(--color-white);
+}
+
 .expertise-card__icon--consent {
     background: linear-gradient(135deg, var(--color-primary), #2D5A58);
 }
