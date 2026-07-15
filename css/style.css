@@ -551,12 +551,86 @@ p:last-child {
 /* 7. HERO                                     */
 /* ============================================ */
 .hero {
-    padding-top: 140px;
+    padding-top: 0;
     padding-bottom: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     background: #FDFDFD;
+}
+
+/* Bannière vidéo pleine largeur : la vidéo passe sous le header en verre,
+   le texte se superpose sur la zone libre à gauche de la scène */
+.hero__banner {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-height: 560px;
+    overflow: hidden;
+}
+
+.hero__banner-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+}
+
+.hero__banner-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-top: 120px;
+}
+
+/* Lisibilite du texte sur le gris de la video */
+.hero__banner .hero__subtitle {
+    color: #454545;
+}
+
+.hero__banner .hero__badge {
+    background: rgba(255, 255, 255, 0.75);
+}
+
+@media (max-width: 1024px) {
+    .hero__banner .hero__text {
+        max-width: 460px;
+        text-align: left;
+    }
+}
+
+/* Mobile : le texte repasse au-dessus de la vidéo (plus de superposition) */
+@media (max-width: 768px) {
+    .hero {
+        min-height: 0;
+    }
+
+    .hero__banner {
+        flex-direction: column;
+        align-items: stretch;
+        min-height: 0;
+    }
+
+    .hero__banner-video {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        height: auto;
+        order: 2;
+    }
+
+    .hero__banner-content {
+        order: 1;
+        padding-top: 110px;
+        padding-bottom: var(--spacing-lg);
+    }
+
+    .hero__banner .hero__text {
+        max-width: 100%;
+    }
 }
 
 .hero__content {
