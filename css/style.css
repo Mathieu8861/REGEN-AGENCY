@@ -241,13 +241,13 @@ p:last-child {
     max-width: calc(100% - 2rem);
     z-index: 1000;
 
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(28px) saturate(170%);
-    -webkit-backdrop-filter: blur(28px) saturate(170%);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(16px) saturate(170%);
+    -webkit-backdrop-filter: blur(16px) saturate(170%);
+    border: 1px solid rgba(255, 255, 255, 0.55);
     border-radius: var(--radius-lg);
     /* Reflet lumineux sur la tranche superieure = effet verre "liquid glass" */
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 8px 24px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 8px 24px rgba(0, 0, 0, 0.05);
 
     transition: var(--transition-normal);
 }
@@ -532,9 +532,9 @@ p:last-child {
 /* Pages a hero sombre : verre teinte sombre + texte blanc tant qu'on n'a pas scrolle
    (sur fond vert fonce, le verre transparent + texte sombre serait illisible) */
 .header--on-dark:not(.scrolled) {
-    background: rgba(13, 30, 28, 0.18);
-    border-color: rgba(255, 255, 255, 0.22);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 24px rgba(0, 0, 0, 0.18);
+    background: rgba(13, 30, 28, 0.25);
+    border-color: rgba(255, 255, 255, 0.26);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 .header--on-dark:not(.scrolled) .nav__link,
@@ -4676,10 +4676,10 @@ body.loading {
 }
 
 .header.scrolled {
-    background: rgba(255, 255, 255, 0.6);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 10px 40px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(28px) saturate(170%);
-    -webkit-backdrop-filter: blur(28px) saturate(170%);
+    background: rgba(255, 255, 255, 0.65);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 10px 40px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(16px) saturate(170%);
+    -webkit-backdrop-filter: blur(16px) saturate(170%);
 }
 
 .header.scrolled .nav {
