@@ -236,8 +236,9 @@ p:last-child {
     top: var(--spacing-md);
     left: 50%;
     transform: translateX(-50%);
-    width: calc(100% - 2rem);
-    max-width: var(--max-width);
+    /* Pill compacte : la barre epouse son contenu au lieu de s'etirer sur 1200px */
+    width: max-content;
+    max-width: calc(100% - 2rem);
     z-index: 1000;
 
     background: rgba(255, 255, 255, 0.08);
@@ -260,7 +261,7 @@ p:last-child {
     justify-content: space-between;
     align-items: center;
     height: 72px;
-    gap: var(--spacing-lg);
+    gap: 36px;
 }
 
 /* Logo */
