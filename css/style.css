@@ -645,9 +645,10 @@ p:last-child {
 }
 
 /* Le degrade du logo finit trop clair pour le gris de la video :
-   version verts profonds, reservee au titre du hero */
+   version verts francs (jamais noire, pour ne pas se confondre avec le texte),
+   reservee au titre du hero */
 .hero__banner .hero__title .text-gradient {
-    background: linear-gradient(120deg, #1C8A4E 0%, #2FB963 60%, #173C3A 100%);
+    background: linear-gradient(120deg, #1C8A4E 0%, #2FB963 55%, #1E9152 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
