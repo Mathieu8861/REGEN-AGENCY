@@ -1457,7 +1457,7 @@ p:last-child {
     display: flex;
     gap: var(--spacing-lg);
     padding: var(--spacing-lg);
-    background: var(--color-white);
+    background: var(--color-primary);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     transition: var(--transition-normal);
@@ -1465,6 +1465,7 @@ p:last-child {
 
 .collab-item:hover {
     box-shadow: var(--shadow-md);
+    background: #1C4644;
 }
 
 .collab-item__number {
@@ -1478,12 +1479,12 @@ p:last-child {
 .collab-item__title {
     font-size: 1.125rem;
     margin-bottom: var(--spacing-xs);
-    color: var(--color-primary);
+    color: var(--color-white);
 }
 
 .collab-item__text {
     font-size: 0.9375rem;
-    color: #666;
+    color: rgba(255, 255, 255, 0.78);
     line-height: 1.6;
 }
 
@@ -5051,7 +5052,7 @@ html.dark-mode .team-card__role {
 }
 
 html.dark-mode .collab-item {
-    background: #1a1a1a;
+    background: var(--color-primary);
 }
 
 html.dark-mode .collab-item__title {
@@ -5059,7 +5060,7 @@ html.dark-mode .collab-item__title {
 }
 
 html.dark-mode .collab-item__text {
-    color: #b0b0b0;
+    color: rgba(255, 255, 255, 0.78);
 }
 
 html.dark-mode .collab__decoration {
