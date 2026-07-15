@@ -6451,7 +6451,8 @@ html.dark-mode .theme-toggle__icon {
 }
 
 .realisation-card {
-    min-width: min(360px, calc(33vw - 40px));
+    /* 4 cartes visibles par vue (25vw) au lieu de 3 */
+    min-width: min(276px, calc(25vw - 40px));
     scroll-snap-align: start;
     background: var(--color-white);
     border-radius: var(--radius-lg);
