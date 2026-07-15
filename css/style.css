@@ -606,17 +606,21 @@ p:last-child {
 .hero__banner-video {
     position: absolute;
     top: 0;
-    right: 0;
+    /* Decollee du bord droit pour equilibrer avec la marge du texte */
+    right: clamp(0px, 3vw, 60px);
     height: 100%;
     width: auto;
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 140px);
-    mask-image: linear-gradient(to right, transparent 0, #000 140px);
+    /* Fondu des deux bords (la scene s'arrete a 89% de la video, marge sure) */
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 140px, #000 92%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 140px, #000 92%, transparent 100%);
 }
 
 .hero__banner-content {
     position: relative;
     z-index: 2;
     width: 100%;
+    /* Conteneur elargi : le texte demarre plus a gauche que le reste du site */
+    max-width: clamp(1200px, 86vw, 1460px);
     padding-top: 120px;
 }
 
