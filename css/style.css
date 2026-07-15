@@ -629,6 +629,33 @@ p:last-child {
     background: rgba(255, 255, 255, 0.75);
 }
 
+/* Halo clair diffus derriere le bloc texte : eclaircit la video juste la,
+   sans cadre visible */
+.hero__banner .hero__text {
+    position: relative;
+}
+
+.hero__banner .hero__text::before {
+    content: '';
+    position: absolute;
+    inset: -70px -90px;
+    background: radial-gradient(ellipse at 42% 45%,
+        rgba(253, 253, 253, 0.75) 0%,
+        rgba(253, 253, 253, 0.38) 55%,
+        transparent 78%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Le degrade du logo finit trop clair pour le gris de la video :
+   version verts profonds, reservee au titre du hero */
+.hero__banner .hero__title .text-gradient {
+    background: linear-gradient(120deg, #1C8A4E 0%, #2FB963 60%, #173C3A 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 @media (max-width: 1024px) {
     .hero__banner .hero__text {
         max-width: 460px;
