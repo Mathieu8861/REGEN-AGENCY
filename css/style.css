@@ -529,6 +529,35 @@ p:last-child {
     box-shadow: inset 0 0 0 2px var(--color-primary);
 }
 
+/* Bouton Espace Utilisateur : pastille de verre assortie a la barre,
+   avec icone utilisateur (mask = suit la couleur du texte) */
+.header .nav__cta--client {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--color-primary);
+    background: rgba(255, 255, 255, 0.45);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+                0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.header .nav__cta--client::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.42 0-8 2.24-8 5v2h16v-2c0-2.76-3.58-5-8-5z'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.42 0-8 2.24-8 5v2h16v-2c0-2.76-3.58-5-8-5z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.header .nav__cta--client:hover {
+    background: var(--gradient-logo);
+    color: var(--color-white);
+    box-shadow: 0 4px 14px rgba(47, 185, 99, 0.35);
+}
+
 /* Pages a hero sombre : verre teinte sombre + texte blanc tant qu'on n'a pas scrolle
    (sur fond vert fonce, le verre transparent + texte sombre serait illisible) */
 .header--on-dark:not(.scrolled) {
@@ -549,7 +578,10 @@ p:last-child {
 
 .header--on-dark:not(.scrolled) .btn--secondary {
     color: #ffffff;
-    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+                0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .header--on-dark:not(.scrolled) .nav__toggle span {
