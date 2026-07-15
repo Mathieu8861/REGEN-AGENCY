@@ -654,7 +654,20 @@ p:last-child {
     width: 100%;
     /* Conteneur elargi : le texte demarre plus a gauche que le reste du site */
     max-width: clamp(1200px, 86vw, 1460px);
-    padding-top: 120px;
+    padding-top: 110px;
+    padding-bottom: 40px;
+}
+
+/* Titre raccourci = un cran plus gros, calibre sur la hauteur de l'animation */
+@media (min-width: 1025px) {
+    .hero__banner .hero__title {
+        font-size: 3.5rem;
+        line-height: 1.12;
+    }
+
+    .hero__banner .hero__subtitle {
+        max-width: 480px;
+    }
 }
 
 /* Lisibilite du texte sur le gris de la video */
