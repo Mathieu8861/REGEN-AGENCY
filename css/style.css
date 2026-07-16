@@ -11479,22 +11479,27 @@ html.dark-mode .theme-toggle__icon {
     .cform__nav .btn { width: 100%; }
 }
 
-/* Illustration boite aux lettres : a cheval sur la section et le footer */
-.contact-illu {
-    position: relative;
-    z-index: 2;
-    text-align: right;
-    padding-right: 7vw;
-    margin-top: -20px;
-    margin-bottom: -84px;
-    pointer-events: none;
+/* Hero contact : illustration boite aux lettres a gauche, texte a droite */
+.contact-hero__grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    align-items: center;
+    gap: var(--spacing-2xl);
 }
 
-.contact-illu img {
-    width: min(300px, 30vw);
+.contact-hero__text {
+    text-align: left;
+}
+
+.contact-hero__visual {
+    text-align: center;
+}
+
+.contact-hero__visual img {
+    width: min(340px, 26vw);
     height: auto;
     animation: contactFloat 6s ease-in-out infinite;
-    filter: drop-shadow(0 18px 30px rgba(15, 42, 41, 0.25));
+    filter: drop-shadow(0 22px 36px rgba(0, 0, 0, 0.32));
 }
 
 @keyframes contactFloat {
@@ -11502,6 +11507,18 @@ html.dark-mode .theme-toggle__icon {
     50% { transform: translateY(-10px); }
 }
 
-@media (max-width: 760px) {
-    .contact-illu { display: none; }
+/* Sous le texte du hero, les atouts passent en 2 colonnes */
+.contact-hero__text .contact-perks {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 900px) {
+    .contact-hero__grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .contact-hero__visual img {
+        width: 220px;
+    }
 }
