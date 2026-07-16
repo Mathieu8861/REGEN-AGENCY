@@ -680,7 +680,7 @@ p:last-child {
 }
 
 /* Voile lateral pleine hauteur : opaque a gauche (zone texte), il s'evanouit
-   avant la scene — se lit comme l'eclairage de la video, pas comme un halo */
+   avant la scene : se lit comme l'eclairage de la video, pas comme un halo */
 .hero__banner::after {
     content: '';
     position: absolute;
@@ -1259,7 +1259,7 @@ p:last-child {
     margin-top: var(--spacing-xl);
 }
 
-/* Carousel horizontal — format portrait pour captures de campagnes ads */
+/* Carousel horizontal : format portrait pour captures de campagnes ads */
 .realisations__carousel {
     display: flex;
     gap: var(--spacing-lg);
@@ -3668,7 +3668,7 @@ p:last-child {
         linear-gradient(180deg, #eaf6f0 0%, #f3faf6 58%, #ecf6f0 100%);
 }
 
-/* ── Décor texture (dots) — 2 clusters entièrement contenus ── */
+/* ── Décor texture (dots) : 2 clusters entièrement contenus ── */
 .team-decor { position: absolute; pointer-events: none; z-index: 0; }
 .team-decor--dots {
     width: 180px; height: 180px;
@@ -7256,7 +7256,7 @@ html.dark-mode .theme-toggle__icon {
     box-shadow: var(--shadow-sm);
 }
 
-/* Google/Meta tags — seules les icônes sont colorées */
+/* Google/Meta tags : seules les icônes sont colorées */
 .dual-bloc__tag--google-blue,
 .dual-bloc__tag--google-red,
 .dual-bloc__tag--google-yellow,
@@ -9024,7 +9024,7 @@ html.dark-mode .theme-toggle__icon {
     height: 20px;
 }
 
-/* Step actif au scroll — le numéro se transforme en icône */
+/* Step actif au scroll : le numéro se transforme en icône */
 .process-creation__step--active .process-creation__number {
     background: linear-gradient(135deg, #2FB963, #05C08A);
     color: #fff;
@@ -9130,7 +9130,7 @@ html.dark-mode .theme-toggle__icon {
 }
 
 /* ==========================================
-   PROCESS VISUAL — Illustration animée sticky
+   PROCESS VISUAL : Illustration animée sticky
    ========================================== */
 .process-creation__visual {
     position: sticky;
@@ -9219,7 +9219,7 @@ html.dark-mode .theme-toggle__icon {
     background: #fafafa;
 }
 
-/* Layers — toutes superposées */
+/* Layers : toutes superposées */
 .process-visual__layer {
     position: absolute;
     inset: 0;
@@ -9671,7 +9671,7 @@ html.dark-mode .theme-toggle__icon {
 
 
 /* ============================================== */
-/*  DATA & TRACKING PAGE — SPECIFIC STYLES        */
+/*  DATA & TRACKING PAGE : SPECIFIC STYLES        */
 /* ============================================== */
 
 /* --- Dual-Bloc Variants: Tracking & Consent --- */
