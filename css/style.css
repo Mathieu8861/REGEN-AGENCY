@@ -1177,6 +1177,16 @@ p:last-child {
     stroke: var(--color-white);
 }
 
+/* Chips du hero services : cliquables */
+a.contact-perk {
+    transition: var(--transition-normal);
+}
+
+a.contact-perk:hover {
+    background: rgba(255, 255, 255, 0.14);
+    transform: translateY(-3px);
+}
+
 .expertise-card__icon--consent {
     background: linear-gradient(135deg, var(--color-primary), #2D5A58);
 }
@@ -3401,6 +3411,22 @@ p:last-child {
 }
 
 .service-card__icon--data svg {
+    stroke: var(--color-white);
+}
+
+.service-card__icon--web {
+    background: linear-gradient(135deg, #F5A623, #FFD66B);
+}
+
+.service-card__icon--web svg {
+    stroke: var(--color-white);
+}
+
+.service-card__icon--maintenance {
+    background: linear-gradient(135deg, var(--color-primary), #2D5A58);
+}
+
+.service-card__icon--maintenance svg {
     stroke: var(--color-white);
 }
 
