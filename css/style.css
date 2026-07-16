@@ -910,9 +910,15 @@ p:last-child {
 /* 8. SERVICES                                 */
 /* ============================================ */
 .section--services {
-    background: #ffffff;
+    background: #DCDBD4;
     position: relative;
     overflow: hidden;
+}
+
+/* Sur le fond beige, le JPG a fond blanc devient une carte assumee */
+.section--services .services__illustration {
+    border-radius: var(--radius-lg);
+    box-shadow: 0 16px 40px rgba(23, 60, 58, 0.12);
 }
 
 .section--services::before {
