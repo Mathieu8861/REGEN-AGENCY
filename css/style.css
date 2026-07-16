@@ -11271,6 +11271,14 @@ html.dark-mode .theme-toggle__icon {
     align-items: start;
 }
 
+/* Colonne gauche : les deux cartes voyagent ensemble en scroll */
+.contact-side {
+    position: sticky;
+    top: 110px;
+    display: grid;
+    gap: 20px;
+}
+
 /* Carte humaine */
 .contact-human {
     background: var(--color-white);
@@ -11278,8 +11286,49 @@ html.dark-mode .theme-toggle__icon {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     padding: 28px;
-    position: sticky;
-    top: 120px;
+}
+
+/* Deroule du premier rendez-vous (grille 2x2 facon FLO) */
+.contact-meeting {
+    background: var(--color-white);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 22px;
+}
+
+.contact-meeting__title {
+    font-size: 1.02rem;
+    color: var(--color-primary);
+    margin: 0 0 14px;
+}
+
+.contact-meeting__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.contact-meeting__item {
+    background: rgba(47, 185, 99, 0.07);
+    border: 1px solid rgba(47, 185, 99, 0.14);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+}
+
+.contact-meeting__t {
+    display: block;
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 0.9rem;
+}
+
+.contact-meeting__s {
+    display: block;
+    color: #6b7280;
+    font-size: 0.78rem;
+    margin-top: 3px;
+    line-height: 1.45;
 }
 
 .contact-human__photo {
