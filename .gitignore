@@ -28,3 +28,12 @@ assets/images/page_contact.png
 
 # Export video 4K brut (31 Mo) — seule la version compressee part en prod
 assets/videos/video_banner_accueil2.source.mp4
+
+# POC abandonne, jamais en prod
+studio.html
+css/studio.css
+js/studio.js
+
+# Captures factures compta (usage interne)
+assets/images/Image comptabilit*/
+assets/images/collaboration-vous-et-nous.original.jpg
