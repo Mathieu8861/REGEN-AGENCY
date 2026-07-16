@@ -561,7 +561,7 @@
         }
 
         /* ═══════════════════════════════════════
-           BUDGET & PLANNING — onglet dédié
+           BUDGET & PLANNING : onglet dédié
            ═══════════════════════════════════════ */
         .budget-kpis {
             display: grid; grid-template-columns: repeat(3, 1fr);
@@ -891,7 +891,7 @@
         }
 
         /* ═══════════════════════════════════════
-           MODAL "Promotion" — Ajout / édition
+           MODAL "Promotion" : Ajout / édition
            ═══════════════════════════════════════ */
         .promo-modal-overlay {
             position: fixed; inset: 0;
@@ -1560,10 +1560,10 @@
 
                 <!-- Import groupe CSV -->
                 <h4 class="text-bold" style="margin-bottom:6px;">&#128228; Import groupé des commandes (CSV)</h4>
-                <p class="text-sm text-muted" style="margin-bottom:10px;">Glissez <b>tous</b> les CSV d'un coup (un par client). Chaque fichier est associé automatiquement au bon client d'après son nom — vérifiez puis importez.</p>
+                <p class="text-sm text-muted" style="margin-bottom:10px;">Glissez <b>tous</b> les CSV d'un coup (un par client). Chaque fichier est associé automatiquement au bon client d'après son nom : vérifiez puis importez.</p>
                 <div class="upload-zone" id="bulk-csv-zone" style="cursor:pointer;">
                     <div class="upload-zone__text">&#128193; Glissez vos CSV ici ou cliquez (plusieurs fichiers)</div>
-                    <div class="upload-zone__hint">.csv — sélection multiple</div>
+                    <div class="upload-zone__hint">.csv : sélection multiple</div>
                     <input type="file" id="bulk-csv-input" accept=".csv" multiple style="display:none">
                 </div>
                 <div id="bulk-csv-wrap" class="hidden" style="margin-top:16px;">
@@ -1658,13 +1658,13 @@
                     </div>
                     <div class="budget-kpi__main">
                         <div class="budget-kpi__label">Budget Total Année</div>
-                        <div class="budget-kpi__value" id="bp-total">—</div>
-                        <div class="budget-kpi__sub" id="bp-total-sub">—</div>
+                        <div class="budget-kpi__value" id="bp-total">-</div>
+                        <div class="budget-kpi__sub" id="bp-total-sub">-</div>
                         <!-- Barre de progression "dépensé / prévu" -->
                         <div class="budget-kpi__progress">
                             <div class="budget-kpi__progress-bar" id="bp-progress-fill" style="width:0%;"></div>
                         </div>
-                        <div class="budget-kpi__progress-label" id="bp-progress-label">—</div>
+                        <div class="budget-kpi__progress-label" id="bp-progress-label">-</div>
                     </div>
                 </div>
                 <div class="budget-kpi budget-kpi--blue">
@@ -1673,8 +1673,8 @@
                     </div>
                     <div class="budget-kpi__main">
                         <div class="budget-kpi__label">Google Ads</div>
-                        <div class="budget-kpi__value" id="bp-google">—</div>
-                        <div class="budget-kpi__sub" id="bp-google-sub">—</div>
+                        <div class="budget-kpi__value" id="bp-google">-</div>
+                        <div class="budget-kpi__sub" id="bp-google-sub">-</div>
                     </div>
                 </div>
                 <div class="budget-kpi budget-kpi--purple">
@@ -1683,8 +1683,8 @@
                     </div>
                     <div class="budget-kpi__main">
                         <div class="budget-kpi__label">Meta Ads</div>
-                        <div class="budget-kpi__value" id="bp-meta">—</div>
-                        <div class="budget-kpi__sub" id="bp-meta-sub">—</div>
+                        <div class="budget-kpi__value" id="bp-meta">-</div>
+                        <div class="budget-kpi__sub" id="bp-meta-sub">-</div>
                     </div>
                 </div>
             </div>
@@ -1726,7 +1726,7 @@
                     <div id="bp-monthly-table">
                         <div class="loading"><div class="spinner"></div><span>Chargement du budget…</span></div>
                     </div>
-                    <p class="bp-hint" id="bp-edit-hint" style="display:none;">Clique sur une cellule pour éditer — l'auto-save se fait au blur.</p>
+                    <p class="bp-hint" id="bp-edit-hint" style="display:none;">Clique sur une cellule pour éditer : l'auto-save se fait au blur.</p>
                 </div>
             </div>
 
@@ -1735,7 +1735,7 @@
                 <div class="card">
                     <h3 class="card__title">
                         <span class="card__title-icon"><img src="../assets/images/statistiques.png" alt=""></span>
-                        Breakdown hebdomadaire — sélectionne une plage de mois
+                        Breakdown hebdomadaire : sélectionne une plage de mois
                     </h3>
                     <div class="bp-weekly-controls">
                         <label>Du mois :
@@ -1869,7 +1869,7 @@
                                     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                                 </div>
                                 <div class="promo-uploader__text">Clique ou glisse-dépose tes images</div>
-                                <div class="promo-uploader__hint">PNG, JPG, WEBP, GIF — max 5 Mo / fichier</div>
+                                <div class="promo-uploader__hint">PNG, JPG, WEBP, GIF : max 5 Mo / fichier</div>
                             </div>
                             <div class="promo-uploader__previews" id="bp-promo-previews"></div>
                         </div>
@@ -1894,11 +1894,11 @@
                         </div>
                         <div class="promo-form-row promo-form-row--2">
                             <div class="promo-form-field">
-                                <label>CA Ads (€) — canaux payants</label>
+                                <label>CA Ads (€) : canaux payants</label>
                                 <input type="number" id="bp-promo-revenue-ads" class="form-input" min="0" step="0.01" placeholder="0">
                             </div>
                             <div class="promo-form-field">
-                                <label>CA total (€) — tous canaux</label>
+                                <label>CA total (€) : tous canaux</label>
                                 <input type="number" id="bp-promo-revenue" class="form-input" min="0" step="0.01" placeholder="0">
                             </div>
                         </div>
@@ -1936,7 +1936,7 @@
             <div class="card">
                 <h3 class="card__title"><span class="card__title-icon">&#128228;</span> Importer des commandes (CSV)</h3>
                 <p class="text-muted text-sm mb-16">
-                    Format : CSV separateur virgule (,) ou point-virgule (;) — detection automatique.<br>
+                    Format : CSV separateur virgule (,) ou point-virgule (;), detection automatique.<br>
                     Colonnes detectees : ID, Reference, Date, Total TTC, Source/Touchpoints, Produits...
                 </p>
                 <div class="upload-zone" id="upload-zone">
@@ -2117,7 +2117,7 @@
             }
             showApp();
         } else if (!isAdminMode) {
-            // No Supabase session and no admin password — redirect to login
+            // No Supabase session and no admin password : redirect to login
             window.location.href = '../connexion.html';
             return;
         }
@@ -2441,7 +2441,7 @@
     var dateRange = { from: null, to: null };
     var currentMonth = new Date();
 
-    // Paginated fetch — bypasses Supabase 1000-row default limit
+    // Paginated fetch : bypasses Supabase 1000-row default limit
     async function fetchAll(buildQuery) {
         var all = [], from = 0, size = 1000;
         while (true) {
@@ -2648,9 +2648,9 @@
         html += '<th class="text-right">CA Ads</th>';
         html += '<th class="text-right">Commandes</th>';
         html += '<th class="text-right">Spend</th>';
-        html += '<th class="text-right">ROAS Site' + infoBubble('<strong>ROAS Site</strong> = <code>CA Ads / Spend</code><br><br>Calculé à partir des commandes <strong>réellement passées sur ton site</strong> et attribuées aux Ads via le tracking UTM (channel = google_ads, meta_ads, tiktok_ads).<br><br>C\'est la mesure côté <strong>site/CMS</strong> — différente du ROAS Gads/Meta qui prend les conversions remontées par chaque plateforme (souvent surestimées).') + '</th>';
+        html += '<th class="text-right">ROAS Site' + infoBubble('<strong>ROAS Site</strong> = <code>CA Ads / Spend</code><br><br>Calculé à partir des commandes <strong>réellement passées sur ton site</strong> et attribuées aux Ads via le tracking UTM (channel = google_ads, meta_ads, tiktok_ads).<br><br>C\'est la mesure côté <strong>site/CMS</strong> : différente du ROAS Gads/Meta qui prend les conversions remontées par chaque plateforme (souvent surestimées).') + '</th>';
         html += '<th class="text-right">CPA</th>';
-        // Groupe de droite (séparé) — KPIs détaillés clients
+        // Groupe de droite (séparé) : KPIs détaillés clients
         html += '<th class="text-right perf-clients-divider">CA Total</th>';
         html += '<th class="text-right">ROAS Gads</th>';
         html += '<th class="text-right">ROAS Meta</th>';
@@ -2879,7 +2879,7 @@
                 .lte('order_date', toStr);
         });
 
-        // Fetch API daily metrics (filtered by date range) — priority source
+        // Fetch API daily metrics (filtered by date range) : priority source
         var apiSpend = { google_ads: 0, meta_ads: 0, tiktok_ads: 0 };
         var apiGadsRevenue = { google_ads: 0, meta_ads: 0, tiktok_ads: 0 };
         var hasApiData = false;
@@ -2931,7 +2931,7 @@
             totalOrders++;
         });
 
-        // Map spend to channels — API data has priority, fallback to manual
+        // Map spend to channels : API data has priority, fallback to manual
         var totalSpend = 0;
         if (hasApiData) {
             // Use API spend (filtered by date range)
@@ -2963,7 +2963,7 @@
             }
         });
 
-        // Update stat cards (Ads-only — cohérent avec la vue agency)
+        // Update stat cards (Ads-only : cohérent avec la vue agency)
         // Les 6 cards affichent les KPI restreints aux canaux payants (google_ads / meta_ads / tiktok_ads),
         // sauf "Dépenses Ads" qui reste totalSpend par définition.
         var adsAov = adsOrders > 0 ? adsCA / adsOrders : 0;
@@ -3007,7 +3007,7 @@
         html += '<th class="text-right">CA</th>';
         html += '<th class="text-right">Commandes</th>';
         html += '<th class="text-right">Spend</th>';
-        html += '<th class="text-right">ROAS Site' + infoBubble('<strong>ROAS Site</strong> = <code>CA / Spend</code><br><br>Calculé à partir des commandes <strong>réellement passées sur le site</strong> attribuées à cette source via UTM. Mesure côté site/CMS — souvent plus juste que les conversions remontées par les plateformes Ads.') + '</th>';
+        html += '<th class="text-right">ROAS Site' + infoBubble('<strong>ROAS Site</strong> = <code>CA / Spend</code><br><br>Calculé à partir des commandes <strong>réellement passées sur le site</strong> attribuées à cette source via UTM. Mesure côté site/CMS : souvent plus juste que les conversions remontées par les plateformes Ads.') + '</th>';
         html += '<th class="text-right">CPA</th>';
         html += '<th class="text-right perf-clients-divider">AOV</th>';
         html += '<th class="text-right">ROAS Google<br>& Meta Ads' + infoBubble('<strong>ROAS Google & Meta Ads</strong> = <code>CA déclaré par la plateforme / Spend</code><br><br>Affiche pour chaque source son <strong>ROAS tel que rapporté par sa propre API</strong> (Google Ads pour la ligne Google Ads, Meta pour la ligne Meta Ads). À comparer au ROAS Site, qui mesure côté site/CMS via UTM.') + '</th>';
@@ -3520,7 +3520,7 @@
         html += '<tr class="attr-total">';
         html += '<td colspan="3"><strong>Total (' + orders.length + ' commande' + (orders.length > 1 ? 's' : '') + ')</strong></td>';
         html += '<td class="text-right">' + formatMoney(totalRevenue) + '</td>';
-        html += '<td colspan="2">—</td>';
+        html += '<td colspan="2">-</td>';
         html += '</tr>';
 
         html += '</tbody></table></div>';
@@ -3889,7 +3889,7 @@
     function renderBulkTable() {
         var body = document.getElementById('bulk-csv-body');
         body.innerHTML = bulkRows.map(function(r, idx) {
-            var opts = '<option value="">— choisir —</option>' + allClients.map(function(c) {
+            var opts = '<option value="">- choisir -</option>' + allClients.map(function(c) {
                 return '<option value="' + c.id + '"' + (c.id === r.clientId ? ' selected' : '') + '>' + c.name + '</option>';
             }).join('');
             var sel = '<select data-idx="' + idx + '" class="bulk-client-sel form-input" style="padding:4px 8px; font-size:0.8rem; max-width:240px;">' + opts + '</select>';
@@ -3970,7 +3970,7 @@
 
         for (var i = 0; i < integrations.length; i++) {
             var it = integrations[i];
-            var label = (nameById[it.client_id] || it.client_id) + ' — ' + (it.platform === 'google_ads' ? 'Google' : 'Meta');
+            var label = (nameById[it.client_id] || it.client_id) + ' : ' + (it.platform === 'google_ads' ? 'Google' : 'Meta');
             statusEl.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;"></div> ' + (i + 1) + '/' + integrations.length + ' : ' + label + '…';
             var line = document.createElement('div');
             line.innerHTML = '⏳ ' + label + '…';
@@ -3980,14 +3980,14 @@
                 if (res.error) throw res.error;
                 var d = res.data || {};
                 totalCamp += (d.total_campaigns || 0); totalMet += (d.total_metrics || 0);
-                line.innerHTML = '✅ ' + label + ' — ' + (d.total_campaigns || 0) + ' camp., ' + (d.total_metrics || 0) + ' métriques';
+                line.innerHTML = '✅ ' + label + ' : ' + (d.total_campaigns || 0) + ' camp., ' + (d.total_metrics || 0) + ' métriques';
             } catch (err) {
                 errs++;
-                line.innerHTML = '❌ ' + label + ' — ' + ((err.message || err).toString().substring(0, 120));
+                line.innerHTML = '❌ ' + label + ' : ' + ((err.message || err).toString().substring(0, 120));
             }
             logEl.scrollTop = logEl.scrollHeight;
         }
-        statusEl.innerHTML = '<span class="text-success text-bold">Sync terminée</span> — ' + totalCamp + ' campagnes, ' + totalMet + ' métriques' + (errs ? ', <span class="text-danger">' + errs + ' erreur(s)</span>' : '');
+        statusEl.innerHTML = '<span class="text-success text-bold">Sync terminée</span> : ' + totalCamp + ' campagnes, ' + totalMet + ' métriques' + (errs ? ', <span class="text-danger">' + errs + ' erreur(s)</span>' : '');
         btn.disabled = false;
         setTimeout(function() { loadAgencyDashboard(); }, 1200);
     }
@@ -4358,12 +4358,12 @@
 
             document.getElementById('config-gads-id').value = gadsInt ? (gadsInt.credentials || {}).customer_id || '' : '';
             document.getElementById('gads-status').innerHTML = gadsInt
-                ? '<span class="text-success">Connecte</span> — Sync : ' + (gadsInt.last_sync ? new Date(gadsInt.last_sync).toLocaleString('fr-FR') : 'jamais')
+                ? '<span class="text-success">Connecte</span> : Sync : ' + (gadsInt.last_sync ? new Date(gadsInt.last_sync).toLocaleString('fr-FR') : 'jamais')
                 : '<span class="text-muted">Non configure</span>';
 
             document.getElementById('config-meta-id').value = metaInt ? (metaInt.credentials || {}).ad_account_id || '' : '';
             document.getElementById('meta-status').innerHTML = metaInt
-                ? '<span class="text-success">Connecte</span> — Sync : ' + (metaInt.last_sync ? new Date(metaInt.last_sync).toLocaleString('fr-FR') : 'jamais')
+                ? '<span class="text-success">Connecte</span> : Sync : ' + (metaInt.last_sync ? new Date(metaInt.last_sync).toLocaleString('fr-FR') : 'jamais')
                 : '<span class="text-muted">Non configure</span>';
 
             // ── Load Acces client ──
@@ -4578,7 +4578,7 @@
                 try {
                     var gRes = await sb.from('clients').update({ group_name: groupName || null }).eq('id', currentClient.id);
                     if (gRes.error && gRes.error.message.indexOf('group_name') !== -1) {
-                        // Column doesn't exist — run migration
+                        // Column doesn't exist : run migration
                         console.warn('group_name column missing, trying to add it...');
                         await sb.rpc('exec_sql', { query: 'ALTER TABLE clients ADD COLUMN IF NOT EXISTS group_name TEXT' }).catch(function(){});
                         await sb.from('clients').update({ group_name: groupName || null }).eq('id', currentClient.id);
@@ -4685,7 +4685,7 @@
             s.rev += parseFloat(m.revenue_reported || 0);
         });
 
-        // Tri : actives d'abord, en pause à la fin — et dans chaque groupe, dépense décroissante
+        // Tri : actives d'abord, en pause à la fin, et dans chaque groupe, dépense décroissante
         var rows = allCampaigns.map(function(camp) {
             return {
                 camp: camp,
@@ -4730,7 +4730,7 @@
                 ? '<span style="color:#10b981; font-weight:700;">Actif</span>'
                 : '<span class="text-muted">' + (camp.status || '-') + '</span>';
             var roas = (s.spend > 0 && s.rev > 0) ? (s.rev / s.spend) : null;
-            var roasHtml = roas === null ? '<span class="text-muted">—</span>'
+            var roasHtml = roas === null ? '<span class="text-muted">-</span>'
                 : '<span style="font-weight:700; color:' + (roas >= 1 ? '#10b981' : '#ef4444') + ';">' + roas.toFixed(2) + 'x</span>';
 
             html += '<tr' + (r.isActive ? '' : ' style="opacity:.65;"') + '>';
@@ -4748,11 +4748,11 @@
 
         // Ligne total
         var grandCpc = grandClicks > 0 ? grandSpend / grandClicks : 0;
-        var grandRoas = (grandSpend > 0 && grandRev > 0) ? (grandRev / grandSpend).toFixed(2) + 'x' : '—';
+        var grandRoas = (grandSpend > 0 && grandRev > 0) ? (grandRev / grandSpend).toFixed(2) + 'x' : '-';
         html += '<tr class="attr-total">';
         html += '<td><strong>Total (' + allCampaigns.length + ' campagne' + (allCampaigns.length > 1 ? 's' : '') + ')</strong></td>';
-        html += '<td>—</td>';
-        html += '<td>—</td>';
+        html += '<td>-</td>';
+        html += '<td>-</td>';
         html += '<td class="text-right">' + formatMoney(grandSpend) + '</td>';
         html += '<td class="text-right">' + grandClicks.toLocaleString('fr-FR') + '</td>';
         html += '<td class="text-right">' + grandImpr.toLocaleString('fr-FR') + '</td>';
@@ -4852,7 +4852,7 @@
         if (integrations.length === 0) {
             bar.classList.remove('hidden');
             bar.style.display = 'flex';
-            statusEl.innerHTML = '<span style="color:var(--gray);">Aucune API connectee — utilisez la saisie manuelle ou l\'import CSV</span>';
+            statusEl.innerHTML = '<span style="color:var(--gray);">Aucune API connectee : utilisez la saisie manuelle ou l\'import CSV</span>';
             gadsBtn.style.display = 'none';
             metaBtn.style.display = 'none';
             return;
@@ -5319,7 +5319,7 @@
             if (r.platform === 'google_ads') totalGoogle += amt;
             if (r.platform === 'meta_ads') totalMeta += amt;
         });
-        var pct = function(v) { return totalAll > 0 ? Math.round(v / totalAll * 100) + ' %' : '—'; };
+        var pct = function(v) { return totalAll > 0 ? Math.round(v / totalAll * 100) + ' %' : '-'; };
         var setText = function(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
         setText('bp-total', formatMoney(totalAll));
         setText('bp-total-sub', budgetState.year);

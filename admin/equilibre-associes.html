@@ -102,7 +102,7 @@
                 Avantages perçus depuis 2025 (déduits / ajoutés)
             </h2>
             <div id="eq-benefits"><div class="eq-loading">Chargement…</div></div>
-            <div class="eq-note">Avantage Mathieu (mutuelle Allianz, PC via Alma, séances Caroline, matériel…) = <b>déduit</b> de ce que la société lui doit. Avantage Jaemeson = <b>ajouté</b> (pour rééquilibrer). Les avantages ≤ 2024 sont déjà comptés dans l'historique Excel ci-dessous — pas de double compte.</div>
+            <div class="eq-note">Avantage Mathieu (mutuelle Allianz, PC via Alma, séances Caroline, matériel…) = <b>déduit</b> de ce que la société lui doit. Avantage Jaemeson = <b>ajouté</b> (pour rééquilibrer). Les avantages ≤ 2024 sont déjà comptés dans l'historique Excel ci-dessous : pas de double compte.</div>
         </section>
 
         <!-- Historique Excel -->
@@ -113,7 +113,7 @@
             </h2>
             <div id="eq-histo"></div>
             <div class="eq-note">Montant négatif (rose dans ton Excel) = payé en fonds propres ou salaire manqué → dû à Mathieu. Montant positif (vert) = avantage dont Mathieu a bénéficié → déduit. Ce bloc couvre la période structure étrangère (oct. 2023 → mars 2024) et les avantages 2024. Pour le modifier : édite le tableau <code>HISTO</code> dans le code de cette page.</div>
-            <div class="eq-note">✓ Confirmé par Mathieu (03/07/2026) : les deux salaires manqués (−1 500 et −1 800) = <b>janvier et février 2024, période structure étrangère</b> (Jaemeson payé, Mathieu non — l'Excel les note en mars/avril par décalage). Hors banque française → aucun recouvrement avec l'écart de salaires calculé depuis les relevés (qui démarre fin mars 2024).</div>
+            <div class="eq-note">✓ Confirmé par Mathieu (03/07/2026) : les deux salaires manqués (−1 500 et −1 800) = <b>janvier et février 2024, période structure étrangère</b> (Jaemeson payé, Mathieu non : l'Excel les note en mars/avril par décalage). Hors banque française → aucun recouvrement avec l'écart de salaires calculé depuis les relevés (qui démarre fin mars 2024).</div>
         </section>
 
         <footer class="page-footer">Regen Agency &copy; 2026 - Espace réservé</footer>
@@ -121,7 +121,7 @@
 
     <script>
         // ═══════════════════════════════════════════════════════════════
-        //  AJUSTEMENTS HISTORIQUES — report exact de l'Excel de Mathieu
+        //  AJUSTEMENTS HISTORIQUES : report exact de l'Excel de Mathieu
         //  (période structure étrangère oct.2023→mars 2024 + année 2024)
         //  amount < 0 : payé en fonds propres / salaire manqué → dû à Mathieu
         //  amount > 0 : avantage reçu par Mathieu → déduit
@@ -249,7 +249,7 @@
                 }
                 bHtml += '</tbody></table></div>';
                 if (un.total > 0) {
-                    bHtml += '<div class="eq-note --warn">⚠️ ' + euro2(un.total) + ' de « Notes de frais / Remboursements » depuis 2025 non attribués — reclasse-les sur la page Comptabilité (✎ → poste « Achat matériel Mathieu » ou « Achat matériel Jaemeson ») pour qu\'ils comptent dans le solde.</div>';
+                    bHtml += '<div class="eq-note --warn">⚠️ ' + euro2(un.total) + ' de « Notes de frais / Remboursements » depuis 2025 non attribués : reclasse-les sur la page Comptabilité (✎ → poste « Achat matériel Mathieu » ou « Achat matériel Jaemeson ») pour qu\'ils comptent dans le solde.</div>';
                 }
                 document.getElementById('eq-benefits').innerHTML = bHtml;
 
@@ -259,7 +259,7 @@
                     { t: 'Historique 2023-2024 (Excel)', v: owedHisto, d: 'Fonds propres, salaires manqués, avantages 2024' },
                     { t: 'Écart salaires (banque)', v: salDiff, d: 'Σ Jaemeson − Σ Mathieu, mars 2024 → aujourd\'hui' },
                     { t: 'Avantages Mathieu ≥ 2025', v: -bm.total, d: 'Mutuelle Allianz, PC Alma, Caroline, matériel…' },
-                    { t: 'Avantages Jaemeson ≥ 2025', v: bj.total, d: 'Matériel & co — rééquilibre en faveur de Mathieu' }
+                    { t: 'Avantages Jaemeson ≥ 2025', v: bj.total, d: 'Matériel & co : rééquilibre en faveur de Mathieu' }
                 ];
                 document.getElementById('eq-cards').innerHTML = cards.map(function(c) {
                     var v = c.v || 0; // normalise -0

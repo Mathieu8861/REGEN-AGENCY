@@ -196,7 +196,7 @@
     <div class="page-header">
         <div>
             <h1 class="page-title">Formulaires<span>.</span></h1>
-            <p class="page-subtitle">Crée et partage des formulaires de qualification — les réponses alimentent automatiquement le CRM</p>
+            <p class="page-subtitle">Crée et partage des formulaires de qualification : les réponses alimentent automatiquement le CRM</p>
         </div>
         <button class="btn btn--primary" id="btnNewForm">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
@@ -267,10 +267,10 @@
             <div class="form-field">
                 <label class="form-label">Type de prestation envisagée</label>
                 <select class="form-select" id="wizServiceType">
-                    <option value="">— Choisir —</option>
+                    <option value="">- Choisir -</option>
                     <option value="site-creation">Création de site web (vitrine / e-commerce / SaaS)</option>
                     <option value="site-refonte">Refonte de site existant</option>
-                    <option value="ads">Gestion publicitaire (Ads — Google / Meta)</option>
+                    <option value="ads">Gestion publicitaire (Ads : Google / Meta)</option>
                     <option value="seo">SEO / Référencement naturel</option>
                     <option value="audit">Audit (technique / SEO / acquisition)</option>
                     <option value="problem">Résolution de problématique (tracking, hack, bug, récup compte...)</option>
@@ -297,7 +297,7 @@
             <div class="form-field">
                 <label class="form-label">Source du contact</label>
                 <select class="form-select" id="wizSource">
-                    <option value="">— Pas renseigné —</option>
+                    <option value="">- Pas renseigné -</option>
                     <option value="recommandation">Recommandation</option>
                     <option value="inbound">Inbound (formulaire / contact site)</option>
                     <option value="email">Prospection email</option>
@@ -311,7 +311,7 @@
             <div class="form-field">
                 <label class="form-label">Budget pressenti</label>
                 <select class="form-select" id="wizBudget">
-                    <option value="">— Pas renseigné —</option>
+                    <option value="">- Pas renseigné -</option>
                     <option value="lt-2k">&lt; 2 000 €</option>
                     <option value="2-5k">2 000 - 5 000 €</option>
                     <option value="5-10k">5 000 - 10 000 €</option>
@@ -323,7 +323,7 @@
             <div class="form-field">
                 <label class="form-label">Urgence / deadline</label>
                 <select class="form-select" id="wizUrgency">
-                    <option value="">— Pas renseigné —</option>
+                    <option value="">- Pas renseigné -</option>
                     <option value="low">Pas pressé</option>
                     <option value="medium">1 à 3 mois</option>
                     <option value="high">Sous 1 mois</option>
@@ -668,7 +668,7 @@
     function renderRecap() {
         var p = wizardData.prospectId ? allProspects.find(function(x) { return x.id === wizardData.prospectId; }) : null;
         var rattachement = wizardData.attachMode === 'existing'
-            ? (p ? '<strong>' + escapeHtml(p.company_name) + '</strong> (existant)' : '—')
+            ? (p ? '<strong>' + escapeHtml(p.company_name) + '</strong> (existant)' : '-')
             : '<strong>' + escapeHtml(wizardData.company) + '</strong> (nouveau prospect créé à la génération)';
         var notesPreview = wizardData.notes ? (wizardData.notes.length > 80 ? wizardData.notes.substring(0, 80) + '...' : wizardData.notes) : '';
         var html = '<strong>Récapitulatif</strong><br>' +
@@ -735,7 +735,7 @@
         // Crée le formulaire (titre = prestation si renseignée, sinon objectif, sinon générique)
         var formTitle = 'Questionnaire prospect';
         if (wizardData.serviceType) {
-            formTitle = 'Questionnaire — ' + (SERVICE_LABELS[wizardData.serviceType] || wizardData.serviceType);
+            formTitle = 'Questionnaire : ' + (SERVICE_LABELS[wizardData.serviceType] || wizardData.serviceType);
         } else if (wizardData.objective) {
             formTitle = 'Questionnaire ' + wizardData.objective;
         }

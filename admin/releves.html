@@ -133,13 +133,13 @@
             </h2>
 
             <div class="rv-drop" id="rv-drop">
-                <div class="rv-drop__t">&#128193; Glissez vos relevés Swan (CSV) ici — ou cliquez</div>
+                <div class="rv-drop__t">&#128193; Glissez vos relevés Swan (CSV) ici, ou cliquez</div>
                 <div class="rv-drop__h">Plusieurs mois d'un coup · catégorisation automatique · réimport sans doublon</div>
                 <input type="file" id="rv-file-input" accept=".csv" multiple style="display:none">
             </div>
             <div id="rv-import-result" class="hidden" style="margin-top:.8rem; font-size:.82rem;"></div>
             <div id="rv-mig-warn" style="display:none; margin-top:.8rem; font-size:.8rem; font-weight:600; color:#b45309; background:#fef3c7; border:1px solid #fcd34d; border-radius:8px; padding:.6rem .9rem;">
-                ⚠️ Migration <code>sql/022-bank-tx-manual.sql</code> non appliquée dans Supabase — les corrections manuelles ne sont pas protégées contre « Recatégoriser ». Lance-la puis recharge la page.
+                ⚠️ Migration <code>sql/022-bank-tx-manual.sql</code> non appliquée dans Supabase : les corrections manuelles ne sont pas protégées contre « Recatégoriser ». Lance-la puis recharge la page.
             </div>
 
             <div class="rv-toolbar">
@@ -162,7 +162,7 @@
             <div id="rv-content"><div class="rv-empty">Importe tes relevés Swan pour commencer.</div></div>
             <div class="compta-hint" style="margin-top:1rem;">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                Montants = débits/crédits bancaires réels (TTC), contrairement au tableau abonnements ci-dessus (HT). Clique sur une catégorie ✎ pour reclasser une ligne — tes corrections 🔒 sont conservées lors des recatégorisations.
+                Montants = débits/crédits bancaires réels (TTC), contrairement au tableau abonnements ci-dessus (HT). Clique sur une catégorie ✎ pour reclasser une ligne : tes corrections 🔒 sont conservées lors des recatégorisations.
             </div>
         </section>
 
@@ -211,7 +211,7 @@
         });
 
         // ═══════════════════════════════════════════════════════════════
-        //  RELEVÉS BANCAIRES — import Swan + vues (Supabase)
+        //  RELEVÉS BANCAIRES : import Swan + vues (Supabase)
         // ═══════════════════════════════════════════════════════════════
         var SB_URL = 'https://jrhqqsybebdkoqrnogez.supabase.co';
         var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyaHFxc3liZWJka29xcm5vZ2V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDU2NzEsImV4cCI6MjA4ODEyMTY3MX0._BykT5zc-GH6SLwi_jaaukNmmmR_zpcdsuic3E5dFm8';
@@ -281,7 +281,7 @@
             { re: /amzn|amazon/i,                      poste: 'Amazon',                    category: 'Achats divers' },
             { re: /clo[ée]|presta|\bservice\b/i,       poste: 'Prestataires freelance',    category: 'Sous-traitance' }
         ];
-        // ── Règles crédits (revenus) — défaut : Revenus clients ──
+        // ── Règles crédits (revenus) : défaut : Revenus clients ──
         var CREDIT_RULES = [
             { re: /restitution.*cap+ital|d[ée]p[oô]t de capital/i, poste: 'Capital social',  category: 'Capital' },
             { re: /urssaf|return of direct debit/i,    poste: 'URSSAF (remboursement)',    category: 'Charges sociales' },
@@ -351,7 +351,7 @@
             var all = [];
             for (var i = 0; i < files.length; i++) { var c = await rvReadText(files[i]); all = all.concat(parseSwanCSV(c, files[i].name)); }
             if (!all.length) { resEl.innerHTML = '<span style="color:#ef4444;">Aucune transaction lue (format Swan attendu : Date, Libellé, Type, Débit/Crédit, Montant).</span>'; return; }
-            if (!sb) { resEl.innerHTML = '<span style="color:#ef4444;">Supabase non initialisé — reconnecte-toi.</span>'; return; }
+            if (!sb) { resEl.innerHTML = '<span style="color:#ef4444;">Supabase non initialisé : reconnecte-toi.</span>'; return; }
             var inserted = 0, err = null;
             for (var j = 0; j < all.length; j += 500) {
                 var chunk = all.slice(j, j + 500);
@@ -505,8 +505,8 @@
             postes.forEach(function(p) {
                 html += '<tr><td><b>' + esc(p.poste) + '</b> <span style="color:#9ca3af; font-size:.7rem;">×' + p.n + '</span></td>' +
                     '<td><span class="rv-tag">' + esc(p.category) + '</span></td>' +
-                    '<td class="num ' + (p.out ? 'out' : '') + '">' + (p.out ? euro2(p.out) : '—') + '</td>' +
-                    '<td class="num ' + (p.in ? 'in' : '') + '">' + (p.in ? euro2(p.in) : '—') + '</td></tr>';
+                    '<td class="num ' + (p.out ? 'out' : '') + '">' + (p.out ? euro2(p.out) : '-') + '</td>' +
+                    '<td class="num ' + (p.in ? 'in' : '') + '">' + (p.in ? euro2(p.in) : '-') + '</td></tr>';
             });
             html += '</tbody></table>';
 
@@ -519,7 +519,7 @@
                     quick = ' <button class="rv-quick" onclick="rvQuickAssign(\'' + t.id + '\',\'Salaire Mathieu\')">&rarr; Mathieu</button>' +
                             '<button class="rv-quick" onclick="rvQuickAssign(\'' + t.id + '\',\'Salaire Jaemeson\')">&rarr; Jaemeson</button>';
                 }
-                var lock = t.manual_override ? ' <span class="rv-lock" title="Corrigé manuellement — conservé lors des recatégorisations">&#128274;</span>' : '';
+                var lock = t.manual_override ? ' <span class="rv-lock" title="Corrigé manuellement : conservé lors des recatégorisations">&#128274;</span>' : '';
                 html += '<tr><td class="num">' + rvFmtDate(t.tx_date) + '</td>' +
                     '<td>' + esc(t.label) + '<span style="color:#9ca3af; font-size:.7rem;"> · ' + esc(t.poste || '') + '</span>' + quick + lock + '</td>' +
                     '<td><span class="rv-tag" style="cursor:pointer;" onclick="rvOpenEdit(\'' + t.id + '\')" title="Reclasser">' + esc(t.category || '') + ' &#9998;</span></td>' +
@@ -609,7 +609,7 @@
             if (!sb || !ALL_TX.length) return;
             var recatMsg = rvHasManualCol
                 ? 'Ré-appliquer les règles de catégorisation automatique à toutes les transactions ?\n(Tes corrections manuelles 🔒 sont conservées.)'
-                : '⚠️ Ré-appliquer les règles de catégorisation automatique ?\nATTENTION : la migration sql/022 n\'est pas appliquée — TOUTES les corrections manuelles seront écrasées.';
+                : '⚠️ Ré-appliquer les règles de catégorisation automatique ?\nATTENTION : la migration sql/022 n\'est pas appliquée : TOUTES les corrections manuelles seront écrasées.';
             if (!confirm(recatMsg)) return;
             var btn = document.getElementById('rv-recat-btn'); btn.disabled = true; var old = btn.innerHTML; btn.innerHTML = '…';
             var updates = [];

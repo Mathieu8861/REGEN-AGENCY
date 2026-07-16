@@ -1,6 +1,6 @@
 /**
  * =====================================================
- * REGEN AGENCY — main.js
+ * REGEN AGENCY : main.js
  * =====================================================
  *
  * ARCHITECTURE SIMPLIFIÉE :
@@ -77,7 +77,7 @@
     }
 
     // =============================================
-    // 2. SCROLL REVEAL — SYSTÈME UNIVERSEL
+    // 2. SCROLL REVEAL : SYSTÈME UNIVERSEL
     // =============================================
     // COMMENT UTILISER :
     //   <div class="reveal">...</div>           → anime cet élément
@@ -930,7 +930,7 @@
     }
 
     // =====================================================
-    // SERVICES TABS — Tab navigation for services section
+    // SERVICES TABS : Tab navigation for services section
     // =====================================================
     function initServicesTabs() {
         // Services Explorer (new grid + panel layout)
@@ -1000,7 +1000,7 @@
     }
 
     // =====================================================
-    // PROCESS LINE — scroll-driven fill animation
+    // PROCESS LINE : scroll-driven fill animation
     // =====================================================
     function initProcessLine() {
         const section = document.querySelector('.process-creation');

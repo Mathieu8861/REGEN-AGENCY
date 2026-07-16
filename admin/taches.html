@@ -721,7 +721,7 @@
                 .order('created_at', { ascending: false });
             var acts = (actsRes.data || []).filter(function(a) {
                 if (!a.prospect || a.prospect.agency_id !== AGENCY_ID) return false;
-                // Exclure les tâches "remplacées" — elles ne doivent plus apparaître dans le kanban,
+                // Exclure les tâches "remplacées" : elles ne doivent plus apparaître dans le kanban,
                 // elles vivent uniquement dans la timeline d'activité du prospect (historique).
                 var meta = a.metadata || {};
                 if (meta.replaced === true) return false;
@@ -731,7 +731,7 @@
             // ── Auto-clean rétroactif des doublons hérités du bug précédent ─────────────
             // Si plusieurs tasks non-done existent pour un même prospect, on garde la plus récente
             // (déjà triée par created_at desc) et on marque les autres comme replaced=true en DB.
-            // Ce nettoyage ne s'exécute qu'une fois — au 2e load les rows sont déjà filtrées.
+            // Ce nettoyage ne s'exécute qu'une fois : au 2e load les rows sont déjà filtrées.
             var seenProspect = {};
             var actsClean = [];
             for (var i = 0; i < acts.length; i++) {
@@ -782,7 +782,7 @@
         }
 
         // ── Marque toutes les tâches non-done d'un prospect comme done (replaced=true)
-        // Utilisé pour le comportement "1 next_action active à la fois" — quand on ajoute une nouvelle
+        // Utilisé pour le comportement "1 next_action active à la fois" : quand on ajoute une nouvelle
         // action via le modal, l'ancienne sort du kanban automatiquement (gardée en DB pour l'historique).
         async function markPreviousTasksDone(prospectId) {
             if (!sb || !prospectId) return;
@@ -1190,7 +1190,7 @@
                     '<td><div class="cell-editable" contenteditable="true" data-field="contact" data-id="' + p.id + '" data-placeholder="Nom du contact">' + esc(p.contact) + '</div></td>' +
                     '<td><div class="cell-editable" contenteditable="true" data-field="entreprise" data-id="' + p.id + '" data-placeholder="Entreprise">' + esc(p.entreprise) + '</div></td>' +
                     '<td><span class="status-badge status-' + p.status + '" data-field="status" data-id="' + p.id + '">' + esc(statusLabel) + '</span></td>' +
-                    '<td>' + (p.canal ? '<span class="canal-badge canal-' + p.canal + '" data-field="canal" data-id="' + p.id + '">' + esc(canalLabel) + '</span>' : '<span class="canal-badge" style="background:#f3f4f6;color:#999;" data-field="canal" data-id="' + p.id + '">—</span>') + '</td>' +
+                    '<td>' + (p.canal ? '<span class="canal-badge canal-' + p.canal + '" data-field="canal" data-id="' + p.id + '">' + esc(canalLabel) + '</span>' : '<span class="canal-badge" style="background:#f3f4f6;color:#999;" data-field="canal" data-id="' + p.id + '">-</span>') + '</td>' +
                     '<td><span data-field="assignee" data-id="' + p.id + '">' + avatarHtml(p.assignee, 'sm') + '</span></td>' +
                     '<td><input type="date" class="date-input" data-field="date_contact" data-id="' + p.id + '" value="' + (p.date_contact || '') + '"></td>' +
                     '<td><div class="cell-editable" contenteditable="true" data-field="notes" data-id="' + p.id + '" data-placeholder="Notes...">' + esc(p.notes) + '</div></td>' +

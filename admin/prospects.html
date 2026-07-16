@@ -481,7 +481,7 @@
         .activity-item--ai .activity-item__icon { background: #ede9fe; color: #7c3aed; }
         .activity-item--ai .activity-item__badge { background: #ede9fe; color: #7c3aed; }
 
-        /* STATUS CHANGE (mini, plus discret — juste une ligne) */
+        /* STATUS CHANGE (mini, plus discret : juste une ligne) */
         .activity-item--status {
             background: transparent; box-shadow: none;
             border: none; border-left: none;
@@ -1986,7 +1986,7 @@
         </div>
         <div class="next-action-banner__body">
             <span class="next-action-banner__label" id="nextActionLabel">Prochaine action</span>
-            <span class="next-action-banner__text" id="nextActionText">Aucune prochaine action — clique pour définir</span>
+            <span class="next-action-banner__text" id="nextActionText">Aucune prochaine action : clique pour définir</span>
         </div>
         <span class="next-action-banner__date" id="nextActionDate"></span>
         <button class="next-action-banner__edit" type="button" title="Modifier l'action" onclick="event.stopPropagation(); editNextAction();">
@@ -3327,7 +3327,7 @@
     // ── TIMELINE / ACTIVITIES ──
     async function loadTimeline(prospectId) {
         var container = document.getElementById('timelineList');
-        if (!container) return; // plus utilisé — la timeline unifiée a remplacé ça
+        if (!container) return; // plus utilisé : la timeline unifiée a remplacé ça
         var res = await sb.from('prospect_activities').select('*').eq('prospect_id', prospectId).order('created_at', { ascending: false });
         var activities = res.data || [];
         if (!activities.length) {
@@ -4517,7 +4517,7 @@
     window.submitInlineAction = submitInlineAction;
 
     // Marque toutes les activités type=task non-done d'un prospect comme done (replaced=true)
-    // Utilisé pour le comportement "1 next_action active à la fois" — quand on ajoute une nouvelle
+    // Utilisé pour le comportement "1 next_action active à la fois" : quand on ajoute une nouvelle
     // action, l'ancienne sort automatiquement du kanban Tâches en passant en "Terminé".
     async function markPreviousTasksDone(prospectId) {
         if (!sb || !prospectId) return;
@@ -4724,7 +4724,7 @@
     window.summarizeTranscript = summarizeTranscript;
 
     // ── COMPLETENESS ──
-    // updateCompleteness removed — no longer needed with sidebar tabs
+    // updateCompleteness removed : no longer needed with sidebar tabs
     function updateCompleteness() {}
     window.updateCompleteness = updateCompleteness;
 
@@ -5215,7 +5215,7 @@
                     // Check if bold part itself needs wrapping
                     var boldLines = doc.splitTextToSize(boldPart, availW);
                     if (boldLines.length > 1) {
-                        // Bold part is very long — wrap it, then text on new lines
+                        // Bold part is very long : wrap it, then text on new lines
                         boldLines.forEach(function(bl, i) {
                             if (i > 0) checkY(4.5);
                             doc.text(bl, bulletX, y);
@@ -6161,7 +6161,7 @@
             banner.className = 'next-action-banner next-action-banner--empty';
             iconWrap.innerHTML = NEXT_ACTION_ICONS.empty;
             labelEl.textContent = 'Prochaine action';
-            textEl.textContent = 'Aucune action définie — clique pour en ajouter une';
+            textEl.textContent = 'Aucune action définie : clique pour en ajouter une';
             dateEl.innerHTML = '';
             return;
         }
@@ -6299,7 +6299,7 @@
                 prospect_id: currentProspectId,
                 activity_type: 'task',
                 title: prevAction,
-                content: prevDate ? 'Echeance : ' + formatDate(prevDate) + ' — ' + statusLabel : statusLabel,
+                content: prevDate ? 'Echeance : ' + formatDate(prevDate) + ' · ' + statusLabel : statusLabel,
                 metadata: { action: prevAction, date: prevDate, completed_at: new Date().toISOString() },
                 created_by: 'admin'
             });
@@ -7121,7 +7121,7 @@
             prospect_id: convProspectId,
             activity_type: 'status_change',
             title: 'Converti en client',
-            content: (obj ? obj + ' — ' : '') + 'Type : ' + convSelectedType + (monthly ? ' · ' + monthly + ' €/mois' : '') + (oneshot ? ' · ' + oneshot + ' € one-shot' : ''),
+            content: (obj ? obj + ' : ' : '') + 'Type : ' + convSelectedType + (monthly ? ' · ' + monthly + ' €/mois' : '') + (oneshot ? ' · ' + oneshot + ' € one-shot' : ''),
             metadata: { client_id: newClient.id, contract_type: convSelectedType },
             created_by: 'system'
         }]);
@@ -7170,7 +7170,7 @@
                 '<div class="conversion-banner__icon" style="background:#6366f1;">✓</div>' +
                 '<div class="conversion-banner__text" style="color:#3730a3;">' +
                     '<strong>Client actif.</strong> ' +
-                    (p.contract_object ? escapeHtml(p.contract_object) + ' — ' : '') +
+                    (p.contract_object ? escapeHtml(p.contract_object) + ' : ' : '') +
                     (p.contract_validated ? 'Contrat signé ✓' : '<span style="color:#b45309;">⏳ En attente de signature</span>') +
                 '</div>' +
                 '<button class="btn btn--ghost btn--sm" onclick="openConvModal(\'' + prospectId + '\', true)">Modifier le contrat</button>';
@@ -7216,20 +7216,20 @@
             '</div>';
         }
 
-        var typeLabel = { mensuel: 'Récurrent', one_shot: 'One-shot', hybride: 'Hybride' }[p.contract_type] || '—';
+        var typeLabel = { mensuel: 'Récurrent', one_shot: 'One-shot', hybride: 'Hybride' }[p.contract_type] || '-';
         var statusLabel = { actif: '🟢 Actif', en_pause: '🟡 En pause', termine: '⚫ Terminé' }[p.contract_status] || '🟢 Actif';
         var renewalLabel = {
             tacite: 'Tacite',
             expresse: 'Expresse',
             aucune: 'Non reconductible',
-            non_defini: '—'
-        }[p.contract_renewal_type] || '—';
+            non_defini: '-'
+        }[p.contract_renewal_type] || '-';
         var billingLabel = {
             mensuelle: 'Mensuelle',
             trimestrielle: 'Trimestrielle',
             annuelle: 'Annuelle',
             unique: 'Paiement unique'
-        }[p.contract_billing_frequency] || '—';
+        }[p.contract_billing_frequency] || '-';
 
         // Calcul jours restants avant fin période ferme
         var daysBadge = '';
@@ -7256,19 +7256,19 @@
                 '<span class="contract-details__status-pill">' + statusLabel + '</span>' +
             '</div>' +
             '<div class="contract-details__grid">' +
-                row('Objet', p.contract_object ? escapeHtml(p.contract_object) : '—') +
+                row('Objet', p.contract_object ? escapeHtml(p.contract_object) : '-') +
                 row('Type de contrat', typeLabel, true) +
-                row('Montant', amountHtml || '—', true) +
+                row('Montant', amountHtml || '-', true) +
                 row('Facturation', billingLabel) +
-                row('Délai de paiement', p.contract_payment_terms_days != null ? (p.contract_payment_terms_days === 0 ? 'À réception' : p.contract_payment_terms_days + ' jours') : '—') +
-                row('Date de signature', p.contract_signed_at ? formatDate(p.contract_signed_at) : '—') +
-                row('Début prestation', p.contract_start_date ? formatDate(p.contract_start_date) : '—') +
-                row('Période ferme', p.contract_firm_period_months ? p.contract_firm_period_months + ' mois' : '—') +
-                row('Fin période ferme', p.contract_firm_end_date ? formatDate(p.contract_firm_end_date) + daysBadge : '—') +
+                row('Délai de paiement', p.contract_payment_terms_days != null ? (p.contract_payment_terms_days === 0 ? 'À réception' : p.contract_payment_terms_days + ' jours') : '-') +
+                row('Date de signature', p.contract_signed_at ? formatDate(p.contract_signed_at) : '-') +
+                row('Début prestation', p.contract_start_date ? formatDate(p.contract_start_date) : '-') +
+                row('Période ferme', p.contract_firm_period_months ? p.contract_firm_period_months + ' mois' : '-') +
+                row('Fin période ferme', p.contract_firm_end_date ? formatDate(p.contract_firm_end_date) + daysBadge : '-') +
                 row('Reconduction', renewalLabel) +
-                row('Durée reconduction', p.contract_renewal_duration_months ? p.contract_renewal_duration_months + ' mois' : '—') +
-                row('Préavis résiliation', p.contract_notice_days ? p.contract_notice_days + ' jours' : '—') +
-                row('Contrat PDF', p.contract_pdf_url ? '<a href="' + escapeHtml(p.contract_pdf_url) + '" target="_blank" style="color:var(--green);text-decoration:none;font-weight:700;">📄 Ouvrir le PDF</a>' : '—') +
+                row('Durée reconduction', p.contract_renewal_duration_months ? p.contract_renewal_duration_months + ' mois' : '-') +
+                row('Préavis résiliation', p.contract_notice_days ? p.contract_notice_days + ' jours' : '-') +
+                row('Contrat PDF', p.contract_pdf_url ? '<a href="' + escapeHtml(p.contract_pdf_url) + '" target="_blank" style="color:var(--green);text-decoration:none;font-weight:700;">📄 Ouvrir le PDF</a>' : '-') +
             '</div>' +
             (p.contract_notes ? '<div class="contract-details__notes"><strong>Notes :</strong> ' + escapeHtml(p.contract_notes) + '</div>' : '');
     }
@@ -7353,7 +7353,7 @@
 
         var fmt = function(n) { return Math.round(n).toLocaleString('fr-FR'); };
         var fmtRoas = function(n) {
-            if (n <= 0) return '—';
+            if (n <= 0) return '-';
             if (roasOverCap) return ROAS_CAP + 'x+';
             return n.toFixed(2) + 'x';
         };
