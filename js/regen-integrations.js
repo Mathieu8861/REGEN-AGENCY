@@ -126,7 +126,7 @@
         var client = window.REGEN.currentClient;
         if (!client) {
             renderEmptyState('ecommerce-integrations');
-            renderEmptyState('ads-integrations');
+            renderEmptyState('platform-integrations');
             return;
         }
 
@@ -145,7 +145,7 @@
             });
 
             renderPlatformCards('ecommerce-integrations', PLATFORMS.ecommerce);
-            renderPlatformCards('ads-integrations', PLATFORMS.ads);
+            renderPlatformCards('platform-integrations', PLATFORMS.ads);
 
         } catch (err) {
             console.error('Load integrations error:', err);
