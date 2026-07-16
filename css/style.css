@@ -1187,6 +1187,93 @@ a.contact-perk:hover {
     transform: translateY(-3px);
 }
 
+/* Bande sombre packs (page services) */
+.spacks {
+    background: linear-gradient(165deg, var(--color-primary) 0%, #0F2A29 100%);
+}
+
+.spacks__badge {
+    background: rgba(47, 185, 99, 0.18);
+    color: #8ce8af;
+}
+
+.spacks .spacks__title {
+    color: #ffffff;
+}
+
+.spacks .spacks__subtitle {
+    color: rgba(255, 255, 255, 0.68);
+}
+
+.spacks__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-top: var(--spacing-xl);
+    align-items: stretch;
+}
+
+.spack {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 26px 24px;
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: var(--transition-normal);
+}
+
+.spack:hover {
+    background: rgba(255, 255, 255, 0.11);
+    transform: translateY(-4px);
+}
+
+.spack--star {
+    border-color: rgba(245, 166, 35, 0.55);
+    background: rgba(245, 166, 35, 0.08);
+}
+
+.spack__ribbon {
+    position: absolute;
+    top: -12px;
+    right: 18px;
+    background: linear-gradient(135deg, #F5A623, #F7C948);
+    color: var(--color-primary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    box-shadow: 0 6px 16px rgba(245, 166, 35, 0.35);
+}
+
+.spack__name {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.12rem;
+}
+
+.spack__desc {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    flex: 1;
+}
+
+.spack__cta {
+    color: var(--color-secondary);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+    .spacks__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .expertise-card__icon--consent {
     background: linear-gradient(135deg, var(--color-primary), #2D5A58);
 }
@@ -3427,6 +3514,38 @@ a.contact-perk:hover {
 }
 
 .service-card__icon--maintenance svg {
+    stroke: var(--color-white);
+}
+
+.service-card__icon--multi {
+    background: linear-gradient(135deg, #0A66C2, #E1306C);
+}
+
+.service-card__icon--multi svg {
+    stroke: var(--color-white);
+}
+
+.service-card__icon--migration {
+    background: linear-gradient(135deg, #FF6B6B, #FFE66D);
+}
+
+.service-card__icon--migration svg {
+    stroke: var(--color-white);
+}
+
+.service-card__icon--dashboard {
+    background: linear-gradient(135deg, #4285F4, #00C6FF);
+}
+
+.service-card__icon--dashboard svg {
+    stroke: var(--color-white);
+}
+
+.service-card__icon--gbp {
+    background: linear-gradient(135deg, #34A853, #FBBC05);
+}
+
+.service-card__icon--gbp svg {
     stroke: var(--color-white);
 }
 
