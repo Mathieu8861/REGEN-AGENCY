@@ -998,7 +998,7 @@ p:last-child {
 /* 9. VALEUR AJOUTÉE                           */
 /* ============================================ */
 .section--value {
-    background: linear-gradient(180deg, #e8f5f0 0%, #f0faf7 100%);
+    background: #ffffff;
     border-top: 1px solid rgba(var(--color-secondary-rgb), 0.1);
     border-bottom: 1px solid rgba(var(--color-secondary-rgb), 0.1);
     position: relative;
@@ -1030,7 +1030,8 @@ p:last-child {
     background: var(--color-white);
     padding: var(--spacing-xl);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-md);
     transition: var(--transition-normal);
     text-align: center;
 }
