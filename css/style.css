@@ -633,7 +633,7 @@ p:last-child {
     min-height: 480px;
     overflow: hidden;
     /* Degrade échantillonné sur le bord gauche de la vidéo */
-    background: linear-gradient(180deg, #989A9A 0%, #9EA09D 25%, #9EA09F 50%, #C6C5BC 75%, #ACAEAD 100%);
+    background: linear-gradient(180deg, #8F9491 0%, #979893 25%, #989A9A 50%, #C2C3BA 75%, #A2A9A8 100%);
 }
 
 .hero__banner-video {
@@ -643,9 +643,9 @@ p:last-child {
     right: clamp(0px, 3vw, 60px);
     height: 100%;
     width: auto;
-    /* Fondu des deux bords (la scene s'arrete a 89% de la video, marge sure) */
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 140px, #000 92%, transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0, #000 140px, #000 92%, transparent 100%);
+    /* Fondu des deux bords (les barres s'arretent a ~90%, seules des feuilles frolent le bord) */
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 140px, #000 95%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 140px, #000 95%, transparent 100%);
 }
 
 .hero__banner-content {

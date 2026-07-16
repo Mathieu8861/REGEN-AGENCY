@@ -25,3 +25,6 @@ assets/images/boutique_5_etoiles.png
 assets/images/avis_langue.png
 assets/images/erep-avis-3d.png
 assets/images/page_contact.png
+
+# Export video 4K brut (31 Mo) — seule la version compressee part en prod
+assets/videos/video_banner_accueil2.source.mp4
